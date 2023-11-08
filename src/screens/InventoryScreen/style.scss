@@ -1,0 +1,15 @@
+@use "/src/variables";
+.btn-date {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid;
+    padding: 3px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: variables.$background-color-primary ;
+    
+    &:hover {
+        background-color: #42a5f5;
+    }
+}

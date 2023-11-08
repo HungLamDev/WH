@@ -1,0 +1,61 @@
+@use "../../variables";
+#login-screen {
+  width: 100%;
+  height: 100%;
+  background: url("../../assets/app-bg.jpg") no-repeat;
+  background-size: cover;
+
+  @media (max-width: 1350px) {
+    background-size: contain;
+    background-repeat: round;
+  }
+  //
+  //& .blur-backdrop {
+  //  position: absolute;
+  //  width: 100%;
+  //  height: 100%;
+  //  filter: blur(3px);
+  //  background: url("../../assets/adidas-background.jpg") no-repeat;
+  //  z-index: -1;
+  //  background-size: cover;
+  //}
+  & .my-login-form {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: variables.$border-radius;
+    backdrop-filter: blur(8px);
+    background-color: hsla(0, 0%, 10%, 0.1);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.19);
+
+  }
+}
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee-content {
+  display: flex;
+  align-items: end;
+  white-space: nowrap;
+  animation: marquee 15s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-20%);
+  }
+}
+
+.choose-factory {
+  position: absolute;
+  top: 1.5rem;
+  right: 11rem;
+}
+
+

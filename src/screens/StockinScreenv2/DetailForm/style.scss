@@ -1,0 +1,21 @@
+@use "/src/variables";
+
+.display-center{
+    justify-content: center;
+    align-items: center;
+}
+
+.text{
+    color: white;
+    font-size: 16px !important;
+}
+
+.text-field{
+    border: 2px solid white !important;
+    border-radius: 4 !important;
+    color: 'white' !important;
+}
+
+.margin-input{
+    margin-bottom: 2 !important;
+}

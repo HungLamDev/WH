@@ -1,0 +1,92 @@
+@use "./variables";
+
+*,
+html {
+  display: "fullscreen";
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  // khóa quét khối 
+  user-select: none;
+}
+body{
+  // khóa f5
+  overscroll-behavior: contain;
+  
+}
+html {
+  font-size: 18px;
+  // for test in multiple section relative screen
+  section {
+    position: relative;
+  }
+  .App {
+    height: 100vh;
+    width: 100vw;
+    max-height: 100vh;
+    max-width: 100vw;
+    .top-menu {
+      background: variables.$background-color-secondary;
+    }
+  }
+}
+.icon-wrapper {
+  cursor: pointer;
+}
+.fit-screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.dark-bg-primary {
+  background: variables.$background-color-primary !important;
+}
+.dark-bg-secondary {
+  background: variables.$background-color-secondary !important;
+}
+
+.display-center{
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+
+
+.input-field-container {
+  width: 22rem;
+}
+.border-bottom-white {
+  border-bottom: 1px solid white;
+}
+.MuiDataGrid-cell{
+  padding-bottom: 0.5rem !important;
+  padding-top: 0.5rem !important;
+}
+
+@media screen  and (orientation: portrait ) {
+  body {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: '100%';
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+
+.textsize {
+  @media screen and (max-width: 1000px) {
+    font-size: 15px !important;
+  }
+}
+
+.td-responesive{
+  @media screen and (max-width: 1000px) {
+    font-size: 12px !important;
+    text-align: center !important;
+  }
+}

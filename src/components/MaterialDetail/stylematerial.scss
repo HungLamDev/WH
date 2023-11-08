@@ -1,0 +1,28 @@
+.material-detail-container {
+    width: 110px;
+    height: 105px;
+    background: white;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 2px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: 1px solid;
+}
+
+.material-detail-color{
+    font-size: 13px;
+}
+.material-detail-qty {
+    font-size: larger ;
+    font-weight: 700;
+}
+
+.material-detail-no{
+    font-size: 13px;
+}
+.material-detail-name {
+    font-size: 11px;
+}

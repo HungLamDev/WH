@@ -1,0 +1,34 @@
+.btn{
+    border: 2px solid white !important;
+    border-radius: 15px !important;
+    color: white !important;
+    background-color: #1c2538 !important;
+    padding: 10px !important;
+    width: 120px !important;
+    font-size: 11px !important;
+    &:hover{
+        background-color: cornflowerblue !important;
+    }
+}
+
+.text{
+    color: white !important;
+    
+}
+.custom-header {
+    font-weight: bold;
+    color: aqua;
+    font-size: 18px;
+    font-weight: bold;
+
+}
+
+.btn-center{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+
+

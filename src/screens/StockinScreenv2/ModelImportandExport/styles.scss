@@ -1,0 +1,19 @@
+.input_label{
+   padding-left: 20px !important;
+}
+.btn{
+    border: 2px solid white !important;
+    border-radius: 15px !important;
+    color: white !important;
+    background-color: #1c2538 !important;
+    padding: 10px !important;
+    width: 120px !important;
+    font-size: 11px !important;
+    &:hover{
+        background-color: cornflowerblue !important;
+    }
+}
+
+._text{
+    color: aqua !important;
+}
