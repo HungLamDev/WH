@@ -26,9 +26,15 @@ const ArrayStockout = createSlice({
         copyValuesArrayStockout: (state, action: PayloadAction<any[]>) => {
             state.items = action.payload;
         },
+        updateColorArrayStockout: (state, action: PayloadAction<{ barcode: any, value: any }>) => {
+            const { barcode, value } = action.payload;
+            const itemIndex = state.items.findIndex(item => item.Barcode === barcode);
+            console.log(value)
+            state.items[itemIndex].Color = value
+        }
     }
 })
 
-export const { addItemArrayStockout,clearArrayStockout,removeArrayStockoutByBarcode,copyValuesArrayStockout } = ArrayStockout.actions;
+export const { addItemArrayStockout,clearArrayStockout,removeArrayStockoutByBarcode,copyValuesArrayStockout, updateColorArrayStockout } = ArrayStockout.actions;
 
 export default ArrayStockout.reducer;

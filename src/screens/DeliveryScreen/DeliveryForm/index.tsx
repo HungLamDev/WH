@@ -168,13 +168,15 @@ const DeliveryScreen = () => {
   const [historyMaterial, setHistoryMaterial] = useState([])
   const [dataModalLocation, setDataModalLocation] = useState([])
   const [disable, setDisable] = useState(false)
-  const [valueAutocomplete, setValueAutocomplete] = React.useState<string | null>(null);
+  const [valueAutocomplete, setValueAutocomplete] = React.useState<string | null>('');
   const [chxOffset, setChxOffSet] = useState(false)
   const [dataStatistic, setDataStatistic] = useState('')
   const [materialNoLocation, setMaterialNoLocation] = useState('')
   const [chxLoad_Data, setChxLoad_Data] = useState(true)
   const [chxRack, setChxRack] = useState(false)
   const [onFocus, setOnFocus] = useState(false)
+  const [chxAll, setChxAll] = useState(false)
+
   const contentDetail = locate.state
   //#endregion
   
@@ -189,6 +191,10 @@ const DeliveryScreen = () => {
 
   const handleChxOffSet = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChxOffSet(event.target.checked);
+  };
+
+  const handleChxAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChxAll(event.target.checked);
   };
 
   const handleChxLoadData = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -242,7 +248,7 @@ const DeliveryScreen = () => {
         setMaterialName(response.data[0].txtMaterial_Name);
         setColor(response.data[0].txtColor);
         //Set list for row modal
-        const dataArray = response.data[0].txtAccept_No.split(', ');
+        const dataArray = response.data[0].txtAccept_No.split(', ').map((item:any) => item.replace(/^,|,$/g, '')).filter((item:any) => item !== '')
         let rowtemp = null;
         const newRows = dataArray.map((item: any, index: number) => {
           rowtemp = { _id: index, Material_No: item }
@@ -362,7 +368,7 @@ const DeliveryScreen = () => {
       dtpFrom_Date: updateDateFrom,
       dtpTo_Date: updateDateTo,
       txtNum_No: orderNo,
-      chxAll: false,
+      chxAll: chxAll,
       lblOutsource: checked,
       cboSupplier: valueAutocomplete,
       get_version: dataUser[0].WareHouse
@@ -795,7 +801,6 @@ const DeliveryScreen = () => {
     })
   }
   //#endregion
-  
   return (
     <FullScreenContainerWithNavBar hidden={true} sideBarDisable={true} onShowScan={handleScanClick} sideBarNavigate='' title={t("lblData_Material_Delivery")} navigate="/">
       <Box
@@ -941,7 +946,7 @@ const DeliveryScreen = () => {
         </Stack>
         <Stack marginTop={'10px'} width={'100%'} direction={'row'} spacing={1} justifyContent={'center'}>
           <FormGroup >
-            <FormControlLabel className="text" sx={styletext} control={<Checkbox
+            <FormControlLabel className="text" sx={styletext} control={<Checkbox value={chxAll} onChange={handleChxAll}
               sx={{ color: 'white' }} />}
               label={t('chxAll')} />
           </FormGroup>

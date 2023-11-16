@@ -115,7 +115,7 @@ const PrintShelveCode = () => {
                 className={"dark-bg-secondary border-bottom-white"}
             >
                 <Stack direction={'row'} height={'100%'} justifyContent={'center'}>
-                    <Grid spacing={4} container width={'70%'} height={'100%'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                    <Grid spacing={4} container width={'90%'} height={'100%'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                         <Grid item xs={3}>
                             <RadioGroup value={selectedValue} onChange={handleChange}>
                                 <FormControlLabel value="oneRack" control={<Radio />} label={t("rbtPrint_One") as string} />
@@ -167,7 +167,7 @@ const PrintShelveCode = () => {
                                     "& .MuiInputBase-root": {
                                         height: "2rem",
                                     },
-
+                                  
                                 }}
                                 renderInput={(params) => (
                                     <TextField
@@ -185,7 +185,8 @@ const PrintShelveCode = () => {
                                                 paddingTop: "0 !important",
                                                 paddingBottom: "20px !important",
                                                 paddingLeft: "5px !important"
-                                            }
+                                            },
+                                            
                                         }}
                                     />
                                 )}

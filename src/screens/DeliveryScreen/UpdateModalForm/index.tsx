@@ -94,7 +94,8 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
   //#endregion
 
   //#region  useEffect
-  useEffect(() => {
+  
+  const loadData = () =>{
     const keys = Object.keys(dataUpdate);
     if (dataUpdate && keys.length !== 0) {
       const url = connect_string + "api/btn_Update_Click_Delivery"
@@ -117,7 +118,10 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
       })
 
     }
+  }
 
+  useEffect(() => {
+    loadData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataUpdate])
   //#endregion
@@ -154,7 +158,8 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
       axios.post(url, data, config).then(response => {
         if (response.data === true) {
           handleOpenConfirm('success')
-          updateTrangThaiByMaVatTu(item.Material_No, item.RY, item.RY_Status)
+          loadData()
+          // updateTrangThaiByMaVatTu(item.Material_No, item.RY, item.RY_Status, item.Data_Material_Delivery_Serial)
         }
         else {
           handleOpenConfirm('error')
@@ -163,9 +168,9 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
     }
   }
 
-  const updateTrangThaiByMaVatTu = (materialNo: string, ry: string, ry_status: string) => {
+  const updateTrangThaiByMaVatTu = (materialNo: string, ry: string, ry_status: string,Data_Material_Delivery_Serial: string ) => {
     const updatedRows = rows.map((row: any) => {
-      if (row.Material_No === materialNo && row.RY === ry && ry_status === 'In') {
+      if (row.Data_Material_Delivery_Serial === Data_Material_Delivery_Serial && row.Material_No === materialNo && row.RY === ry && ry_status === 'In') {
         return { ...row, RY_Status: "Out" };
       }
       else {

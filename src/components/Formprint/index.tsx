@@ -25,6 +25,16 @@ const Formprint = (props: {
         overflowY: 'scroll',
         overflowX: "hidden"
     };
+    function countOccurrences(str: string, char: string): number {
+        let count: number = 0;
+        for (let i: number = 0; i < str.length; i++) {
+            if (str.charAt(i) === char) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     return (
         <>
             <Modal
@@ -65,7 +75,7 @@ const Formprint = (props: {
                                             </tr>
                                             <tr>
                                                 <td className="border-right">PO No. <span className="text-right bold ">{item.Order_No ? item.Order_No : item.CGNO_Order_No}</span></td>
-                                                <td colSpan={4} className="text-center bold">{item.Work_Order ? item.Work_Order : item.ZLBH_Work_Order}</td>
+                                                <td colSpan={4} className="text-center bold">{item.Work_Order && countOccurrences(item.Work_Order, "-") < 2 ? item.Work_Order : item.ZLBH_Work_Order}</td>
                                             </tr>
                                             <tr>
                                                 <td className="border-right">Roll No/Lot/Batch</td>
@@ -160,9 +170,15 @@ const Formprint = (props: {
                                                 <td style={{ width: '5%', border: 'none !important' }}></td>
                                                 <td style={{ width: '20%', paddingTop: '10px', border: 'none !important' }}>
                                                     <QRCode value={item.Barcode} size={70} />
-                                                    {/* <img src="./qrcode.jpg" height="70px" width="70px" alt="" /> */}
                                                 </td>
-                                                <td style={{ border: 'none !important', fontSize: '20px' }} className=" bold ">{item.Barcode}</td>
+                                                <td  className=" bold ">
+                                                    <tr>
+                                                        <td style={{ border: 'none !important', fontSize: '20px' }}>
+                                                            {item.Barcode}
+                                                        </td>
+                                                    </tr>
+                                                    {item.Work_Order && countOccurrences(item.Work_Order, "-") > 2 ? item.Work_Order : ""}
+                                                </td>
                                             </tr>
 
                                         </tbody>

@@ -307,17 +307,17 @@ const Menu = () => {
   //#endregion
 
   //#region useEffect
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const newTime = new Date().toLocaleTimeString('vi-VN');
-      setCtime(newTime);
-    }, 1000); // Cập nhật mỗi giây
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     const newTime = new Date().toLocaleTimeString('vi-VN');
+  //     setCtime(newTime);
+  //   }, 1000); // Cập nhật mỗi giây
 
-    return () => {
-      // Hủy bỏ interval khi component bị unmount
-      clearInterval(intervalId);
-    };
-  }, []);
+  //   return () => {
+  //     // Hủy bỏ interval khi component bị unmount
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
   //#endregion
 
   //#region  Func Logic
@@ -395,7 +395,7 @@ const Menu = () => {
           <Typography>{dataUser[0].UserName}</Typography>
           <Box display={'flex'} justifyContent={'space-between'}>
             <Typography marginRight={'20px'} variant="subtitle2">{dataUser[0].UserId}  </Typography>
-            <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography>
+            {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
           </Box>
         </Stack>
         <LogoutIcon sx={{ color: 'white', cursor: 'pointer' }} onClick={() => window.location.reload()} />

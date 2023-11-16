@@ -28,7 +28,7 @@ import EnterShelves from "../EnterShelves"
 export const styletext = {
     '& .MuiTypography-root': {
         '@media screen and (max-width: 1000px)': {
-            fontSize: '15px !important',
+            fontSize: '14px !important',
         },
     },
 };

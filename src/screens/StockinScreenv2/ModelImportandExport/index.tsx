@@ -21,7 +21,7 @@ import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
 //#endregion
-function ImportAndExport({ open, onClose, form }: { open: any, onClose: any, form: any }) {
+function ImportAndExport({ open, onClose, form, data }: { open: any, onClose: any, form: any, data?: any }) {
     const dispatch = useDispatch()
     const { t } = useTranslation();
 
@@ -199,7 +199,7 @@ function ImportAndExport({ open, onClose, form }: { open: any, onClose: any, for
                             Material_No: item.Material_No,
                             Supplier: item.Supplier,
                             Material_Name: item.Material_Name,
-                            Color: item.Color,
+                            Color: item.colorValue,
                             Size: item.Size,
                             QTY: item.QTY,
                             Print_QTY: item.Print_QTY,
@@ -297,7 +297,6 @@ function ImportAndExport({ open, onClose, form }: { open: any, onClose: any, for
         }
     }
     //#endregion
-    
     return (
         <Modal
             open={open}

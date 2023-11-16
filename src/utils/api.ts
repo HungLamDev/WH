@@ -1,10 +1,10 @@
 import axios from "axios";
 
 //server test
-export const connect_string = 'https://192.168.32.81/'
+// export const connect_string = 'https://192.168.32.81/'
 
 // server tỷ xuân
-// export const connect_string = 'https://192.168.60.21:7777/'
+export const connect_string = 'https://192.168.60.21:7777/'
 
 //server lạc tỷ 2
 // export const connect_string = 'https://192.168.32.100:7777/'

@@ -23,7 +23,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
-   
+
     useEffect(() => {
         setSelected([])
     }, [rows])
@@ -187,9 +187,9 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                         const isProductionCell = key === "ywsm_Production" || key === "ngay";
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                                         let ngay = item.ngay;
-                                       
-                 
-                                        
+
+
+
                                         return (
                                             <TableCell
                                                 className="td-responesive"
@@ -226,12 +226,12 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                     <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
                                                         monthAndYear: key === "ngay" ? "YYYY/MM/DD" : "MM/YYYY",
                                                     }}>
-                                                        
+
                                                         <DateTimePicker
                                                             className="td-responesive"
-                                                            format= {key === "ngay" ? "YYYY-MM-DD": "MMMM YYYY"}
+                                                            format={key === "ngay" ? "YYYY-MM-DD" : "MMMM YYYY"}
                                                             // value={selectedDateArr[index]}
-                                                            defaultValue={key === "ngay" ? moment():null}
+                                                            defaultValue={key === "ngay" ? moment() : null}
                                                             onChange={(params) => handleDateTimePickerChange(index, key, params)}
                                                             views={key === "ngay" ? ['year', 'month', 'day'] : ['month', 'year']}
                                                             slotProps={{
@@ -251,9 +251,11 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                             sx={{
                                                                 width: '180px',
                                                                 '& .MuiInputBase-input': {
-                                                                    fontSize: '15px'
-                                                                },
-
+                                                                    fontSize: '15px',
+                                                                    '@media screen and (max-width: 1000px)': {
+                                                                        fontSize: '14px !important',
+                                                                    },
+                                                                },                                                              
                                                             }} />
                                                     </LocalizationProvider>
 

@@ -10,17 +10,17 @@ import {
   } from "@mui/material";
   import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
   import { useState, useEffect } from "react";
-  import { useSelector } from "react-redux";
-  
-  const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string, dschx?: any[] }) => {
-    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick,dschx  } = props;
+  import { useDispatch, useSelector } from "react-redux";
+  import { updateColorArrayStockout } from "../../redux/ArrayStockout";
+  const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string, dschx?: any[], chxColor?: boolean }) => {
+    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick,dschx,chxColor  } = props;
   
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
     const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
-  
+    const dispatch = useDispatch();
     useEffect(() => {
       setSelected([])
     }, [rows])
@@ -174,6 +174,9 @@ import {
                     const column = columns.find((col) => col.field === key);
                     if (column) {
                       const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
+                      if(chxColor && item.Material_Name.indexOf(':') !== -1){
+                        dispatch(updateColorArrayStockout({barcode:item.Barcode, value: item.Material_Name.substring(item.Material_Name.lastIndexOf(':') +1 , item.Material_Name.length)}))
+                      }
                       return (
                         <TableCell
                           className="td-responesive"
@@ -186,6 +189,7 @@ import {
                           onBlur={(event) => handleCellBlur(event, item._id)}
                           sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                         >
+                          
                           {isEditing ? (
                             <TextField
                               className="td-responesive"

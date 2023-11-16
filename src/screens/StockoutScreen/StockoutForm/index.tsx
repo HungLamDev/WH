@@ -179,6 +179,18 @@ const StockoutScreen = () => {
     const [disable, setDisable] = useState(false)
     const [stockoutDetailValue, setStockOutDetailValue] = useState(stockout && stockout[0].Value_Qty)
     const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
+    const dataModal = {
+        chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
+        rbtColor_A: chcolor === true && value === 'A' ? true : false,
+        rbtColor_B: chcolor === true && value === 'B' ? true : false,
+        rbtColor_C: chcolor === true && value === 'C' ? true : false,
+        rbtColor_D: chcolor === true && value === 'D' ? true : false,
+        rbtColor_E: chcolor === true && value === 'E' ? true : false,
+        rbtColor_F: chcolor === true && value === 'F' ? true : false,
+        rbtColor_G: chcolor === true && value === 'G' ? true : false,
+        rbtColor_H: chcolor === true && value === 'H' ? true : false,
+        rbtColor_O: chcolor === true && value === 'O' ? true : false,
+    }
     //#endregion
 
     //#region Func OnChange Input
@@ -296,7 +308,7 @@ const StockoutScreen = () => {
                         Material_No: item.Material_No,
                         Supplier: item.Supplier,
                         Material_Name: item.Material_Name,
-                        Color: item.Color,
+                        Color: item.colorValue,
                         Size: item.Size,
                         QTY: item.QTY,
                         Print_QTY: item.Print_QTY,
@@ -333,7 +345,7 @@ const StockoutScreen = () => {
                 Value_Total: "",
                 Value_Remain: stockout[0].Value_Qty,
                 Check_ScanMore: rows.findIndex((item: any) => item.Barcode == qrcode) != -1, //nếu tồn tại barcode trong bảng thì true không thì fale
-                chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì fale
+                chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
                 rbtColor_A: chcolor === true && value === 'A' ? true : false,
                 rbtColor_B: chcolor === true && value === 'B' ? true : false,
                 rbtColor_C: chcolor === true && value === 'C' ? true : false,
@@ -351,12 +363,12 @@ const StockoutScreen = () => {
 
                     response.data.map((item: any, index: any) => {
                         const newItem = {
-                            _id: index,
+                            _id: item.Barcode,
                             Barcode: item.Barcode,
                             Material_No: item.Material_No,
                             Supplier: item.Supplier,
                             Material_Name: item.Material_Name,
-                            Color: item.Color,
+                            Color: item.colorValue,
                             Size: item.Size,
                             QTY: item.QTY,
                             Print_QTY: item.Print_QTY,
@@ -424,11 +436,12 @@ const StockoutScreen = () => {
         axios.post(url, data, config).then(response => {
             if (response.data == true) {
                 setModalCofirm(false)
+                const result = ArrayStockout.find((item:any) => item.Barcode === qrcodedelte)
+                if(stockout && result.Material_No=== stockout[0].Value_Material){
+                    const cal = String(Number(TotalQtyOut) - Number(result.QTY));
+                    dispatch(addTotalQtyOut(cal))
+                }
                 dispatch(removeArrayStockoutByBarcode(qrcodedelte))
-                // const result = ArrayStockout.filter((item:any) => item.Barcode === qrcodedelte)
-                // if(result[0].Material_No === stockout[0].Value_Material){
-
-                // }
             }
         }).finally(() => {
             setDisable(false)
@@ -573,7 +586,7 @@ const StockoutScreen = () => {
                                 </Grid>
                                 <Grid item>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
-                                    <ImportAndExport onClose={handleClose} open={open} form={'stockout'} />
+                                    <ImportAndExport data={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
                             </Grid>
                             <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>
@@ -583,7 +596,7 @@ const StockoutScreen = () => {
                 </Stack>
             </Box>
             <Stack sx={{ height: '100%', overflow: 'hidden' }}>
-                <TableCheckBoxRedux listChx={handleRowSelectionModelChange} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
+                <TableCheckBoxRedux chxColor={chcolor} listChx={handleRowSelectionModelChange} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
             </Stack>
