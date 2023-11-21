@@ -21,7 +21,7 @@ import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
 //#endregion
-function ImportAndExport({ open, onClose, form, data }: { open: any, onClose: any, form: any, data?: any }) {
+function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
     const dispatch = useDispatch()
     const { t } = useTranslation();
 
@@ -187,7 +187,19 @@ function ImportAndExport({ open, onClose, form, data }: { open: any, onClose: an
                     txtScan: Barcode,
                     User_Serial_Key: dataUser[0].UserId,
                     chxAll: chxAll,
-                    get_version: dataUser[0].WareHouse
+                    get_version: dataUser[0].WareHouse,
+                    Value_Remain : dataColor.Value_Remain,
+                    chxColor : dataColor.chxColor,
+                    rbtColor_A : dataColor.rbtColor_A,
+                    rbtColor_B: dataColor.rbtColor_B,
+                    rbtColor_C:dataColor.rbtColor_C,
+                    rbtColor_D:dataColor.rbtColor_D,
+                    rbtColor_E:dataColor.rbtColor_E,
+                    rbtColor_F:dataColor.rbtColor_F,
+                    rbtColor_G:dataColor.rbtColor_G,
+                    rbtColor_H:dataColor.rbtColor_H,
+                    rbtColor_O:dataColor.rbtColor_O,
+                    Check_ScanMore: false
                 }
 
                 axios.post(url, data, config).then(response => {

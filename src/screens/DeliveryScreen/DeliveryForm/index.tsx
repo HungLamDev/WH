@@ -371,8 +371,8 @@ const DeliveryScreen = () => {
       chxAll: chxAll,
       lblOutsource: checked,
       cboSupplier: valueAutocomplete,
-      get_version: dataUser[0].WareHouse
-
+      get_version: dataUser[0].WareHouse,
+      saFactory: dataUser[0].factoryName
     }
 
     axios.post(url, data, config).then(response => {

@@ -174,7 +174,7 @@ import {
                     const column = columns.find((col) => col.field === key);
                     if (column) {
                       const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
-                      if(chxColor && item.Material_Name.indexOf(':') !== -1){
+                      if(chxColor && item.Material_Name.indexOf(':') !== -1 && item.Material_Name.length - (item.Material_Name.lastIndexOf(':') + 1)  === 1){
                         dispatch(updateColorArrayStockout({barcode:item.Barcode, value: item.Material_Name.substring(item.Material_Name.lastIndexOf(':') +1 , item.Material_Name.length)}))
                       }
                       return (

@@ -10,7 +10,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from "../../../redux/UserLogin";
 import CircularProgress from '@mui/material/CircularProgress';
-import { connect_string } from "../../../utils/api";
+import { config, connect_string } from "../../../utils/api";
 import ModalCofirm from "../../../components/ModalConfirm";
 import { setWareHouse, getWareHouse, getFactory, setFactory } from "../../../utils/localStorage";
 //#endregion
@@ -18,7 +18,7 @@ const LoginForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const navigate = useNavigate();
-  
+
   //#region List Warehouse
   const currencies = [
     {
@@ -47,7 +47,7 @@ const LoginForm = () => {
     },
   ];
   //#endregion
-  
+
   //#region Variable
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -62,6 +62,17 @@ const LoginForm = () => {
   //#endregion
 
   //#region Func Logic
+  const showBuilding = async () => {
+
+    const url = connect_string + "api/show_Value_Buiding";
+    const data = {
+      user_id: username
+    };
+
+    const response = await axios.post(url, data, config);
+    return response.data;
+  };
+
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -77,9 +88,9 @@ const LoginForm = () => {
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  function handleSubmit(event: any): void {
+  async function handleSubmit(event: any): Promise<void> {
     event.preventDefault();
-    const url = connect_string + 'api/Login'
+    const url = connect_string + 'api/Login';
     const config = {
       headers: {
         'Content-Type': 'application/json'
@@ -88,34 +99,40 @@ const LoginForm = () => {
     const dataUser = {
       User_Id: username,
       pass: md5(password).toUpperCase(),
-
-    }
-    setIsLoading(true)
-    axios.post(url, dataUser, config).then(response => {
-      if (response.data.length != 0) {
-        dispatch(addUser(
-          [
+    };
+  
+    setIsLoading(true);
+    try {
+      const response = await axios.post(url, dataUser, config);
+      if (response.data.length !== 0) {
+        const buildingData = await showBuilding(); // Chờ đợi showBuilding trả về dữ liệu
+        dispatch(
+          addUser([
             {
               UserId: response.data[0]['Rp_User_Id'],
               UserName: response.data[0]['Rp_User_name'],
               UserRole: response.data[0]['Rp_Usere_level'],
               WareHouse: selectedWareHouse,
-              factoryName: factoryName
+              factoryName: factoryName,
+              building: buildingData // Sử dụng dữ liệu từ showBuilding ở đây
             }
-          ]
-        ))
+          ])
+        );
         handleFulfilled();
+      } else {
+        setOpen(true);
       }
-      else {
-        setOpen(true)
-      }
-    }).finally(() => {
+    } catch (error) {
+      console.error('Lỗi khi gọi API: ', error);
+      // Xử lý lỗi ở đây nếu cần
+      setOpen(true);
+    } finally {
       setIsLoading(false);
-    });
-
+    }
   }
-  //#endregion
   
+  //#endregion
+
   return (
     <Box >
       <form onSubmit={handleSubmit} >
@@ -129,7 +146,7 @@ const LoginForm = () => {
             justifyContent={"center"}
             alignItems={"center"}
             spacing={5}
-           >
+          >
             <TextField
               sx={{ width: '90%' }}
               label={t("lblUser_Name")}

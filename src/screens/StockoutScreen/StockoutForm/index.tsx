@@ -180,6 +180,7 @@ const StockoutScreen = () => {
     const [stockoutDetailValue, setStockOutDetailValue] = useState(stockout && stockout[0].Value_Qty)
     const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
     const dataModal = {
+        Value_Remain: stockout ? stockout[0].Value_Qty : "",
         chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
         rbtColor_A: chcolor === true && value === 'A' ? true : false,
         rbtColor_B: chcolor === true && value === 'B' ? true : false,
@@ -227,6 +228,7 @@ const StockoutScreen = () => {
     useEffect(() => {
         const arrBarcode = ArrayStockout.map((item: any) => item.Barcode)
         const arrMaterial_No = ArrayStockout.map((item: any) => item.Material_No)
+        const arrColor = ArrayStockout.map((item: any) => item.Color)
         if (stockout) {
             setContentDetail({
                 chxColor: chcolor,
@@ -234,7 +236,8 @@ const StockoutScreen = () => {
                 Value_Qty: stockout[0].Value_Qty,
                 Barcode: arrBarcode, // mảng barcode
                 Material_No: arrMaterial_No, // mảng "Material_No": 
-                Delivery_Serial: stockout[0].Delivery_Serial
+                Delivery_Serial: stockout[0].Delivery_Serial,
+                list_Color: arrColor // mảng màu
             })
             //    dispatch(congTotalQtyOut(ArrayStockout.length.toString()))
             if (stockout) {
@@ -586,7 +589,7 @@ const StockoutScreen = () => {
                                 </Grid>
                                 <Grid item>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
-                                    <ImportAndExport data={dataModal} onClose={handleClose} open={open} form={'stockout'} />
+                                    <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
                             </Grid>
                             <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>

@@ -39,7 +39,7 @@ import axios from "axios";
 import ModalChoose from "../../../components/ModalChoose/index.tsx";
 import ChangePassword from "../../ModalScreen/ChangePasswordForm/index.tsx";
 import { useEffect, useState } from "react";
-import { connect_string } from "../../../utils/api.ts";
+import { config, connect_string } from "../../../utils/api.ts";
 import { useSelector } from "react-redux";
 import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
 import { year } from "../../LoginScreen/index.tsx";
@@ -308,15 +308,7 @@ const Menu = () => {
 
   //#region useEffect
   // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     const newTime = new Date().toLocaleTimeString('vi-VN');
-  //     setCtime(newTime);
-  //   }, 1000); // Cập nhật mỗi giây
-
-  //   return () => {
-  //     // Hủy bỏ interval khi component bị unmount
-  //     clearInterval(intervalId);
-  //   };
+  //   showBuilding()
   // }, []);
   //#endregion
 
@@ -340,7 +332,6 @@ const Menu = () => {
     }, 1400);
     axios.post(url, data, config)
   }
-
   const handleOpen = (name: any) => {
     setModalName(name);
     setOpen(true);
@@ -349,8 +340,9 @@ const Menu = () => {
     setOpen(false);
     setModalName('');
   };
+
   //#endregion
-  
+
   return (
     <Stack
       className={`fit-screen`}
@@ -394,7 +386,7 @@ const Menu = () => {
         <Stack marginLeft={'10px'} marginRight={'20px'}>
           <Typography>{dataUser[0].UserName}</Typography>
           <Box display={'flex'} justifyContent={'space-between'}>
-            <Typography marginRight={'20px'} variant="subtitle2">{dataUser[0].UserId}  </Typography>
+            <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
             {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
           </Box>
         </Stack>

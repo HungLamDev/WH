@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 const WareHouseF = () => {
     const { t } = useTranslation();
     const { state } = useLocation();
+    
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     //#endregion
@@ -1039,10 +1040,10 @@ const WareHouseF = () => {
     const [listRack, setListRack] = useState<any[]>([])
     const [countFetch, setCountFetch] = useState(0)
     const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...listA] : [])
-    const [warehouse, setWareHouse] = useState(factory === 'LHG' ? 'F' : factory === 'LVL' ? 'A' : '')
+    const [warehouse, setWareHouse] = useState(dataUser[0].building)
     const [apiRequestComplete, setApiRequestComplete] = useState(false);
     //#endregion
-    
+
     //#region useEffect
     useEffect(() => {
 
@@ -1064,8 +1065,9 @@ const WareHouseF = () => {
         }
     }, [state]);
     //#endregion
-   
+
     //#region Func Logic
+  
     const url = connect_string + "api/show_chart"
 
     const updateData = () => {
@@ -1154,7 +1156,7 @@ const WareHouseF = () => {
         }
     }
     //#endregion
-    
+
     return (
         <FullScreenContainerWithNavBar navigate="/" sideBarDisable={true} sideBarNavigate="" title={t("lblTracking_Board")}>
             <Box
@@ -1165,7 +1167,7 @@ const WareHouseF = () => {
             >
                 <Stack direction={'row'} width={'50%'}>
                     {
-                        factory === 'LHG' ?
+                        dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F' ?
                             (
                                 <>  <Button className={`warehouse-button ${warehouse === 'G' ? 'active' : ''}`} onClick={() => handleClick('G')}>G</Button>
                                     <Button className={`warehouse-button ${warehouse === 'R1' ? 'active' : ''}`} onClick={() => handleClick('R1')}>R</Button>
