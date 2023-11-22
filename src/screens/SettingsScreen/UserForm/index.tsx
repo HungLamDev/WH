@@ -86,6 +86,7 @@ const UserForm = () => {
     const [userSerialKey, setUserSerialKey] = useState('')
     const [startDate, setStartDate] = useState(moment())
     const [leaveDate, setLeaveDate] = useState(moment())
+    const [lblUserName, setLblUserName] = useState(false)
     //#endregion
 
     //#region Func OnChange Input
@@ -100,6 +101,9 @@ const UserForm = () => {
     };
     const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
+    };
+    const handlelblUserName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLblUserName(event.target.checked);
     };
     //#endregion
 
@@ -163,12 +167,16 @@ const UserForm = () => {
             dtpLeave_Date: leaveDate.format("YYYY-MM-DD"),
             lblUser_Name: false,
             get_version: dataUser[0].WareHouse,
-            cboGroup_Serial_Key: listGroupUser.filter((item: any) =>  item.cbxText === "Administrator")[0].cbxValue
-
+            cboGroup_Serial_Key: listGroupUser.filter((item: any) =>  item.cbxText === groupUser)[0].cbxValue
         }
+        
         axios.post(url, data, config).then(response => {
             if (response.data.length > 0) {
-                handleSearch()
+                const arr = response.data.map((item: any, index: any) => ({
+                    _id: index + 1,
+                    ...item,
+                }))
+                setRows(arr)
             }
 
         })
@@ -201,7 +209,7 @@ const UserForm = () => {
                     <Grid container marginBottom={'10px'} justifyContent={'center'} width={'95%'} alignItems={'center'}>
                         <Grid item xs={0.5} >
                             <FormControlLabel
-                                control={<Checkbox />}
+                                control={<Checkbox value={lblUserName} onChange={handlelblUserName}/>}
                                 label={null}
                             />
                         </Grid>
@@ -245,7 +253,6 @@ const UserForm = () => {
                                     },
                                     className: "dark-bg-primary",
                                     sx: {
-
                                         borderRadius: "50px",
                                         color: "white",
                                         height: "2rem",

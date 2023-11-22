@@ -305,17 +305,19 @@ const DeliveryScreen = () => {
     setDisable(true)
     const url = connect_string + "api/btnEntern_Delivery1"
     const data = {
-      Num_No: orderNo,
-      lblOutsource: checked,
       chxOffset: chxOffset,
-      txtAccept_No: acceptNo,
-      User_Serial_Key: dataUser[0].UserId,
-      txtLocation: location,
-      chxAll: false,
       chxLoad_Data: chxLoad_Data,
+      chxAll: chxAll,
+      Num_No: orderNo,
+      txtAccept_No: acceptNo,
+      cboSupplier: valueAutocomplete,
+      txtLocation: location,
+      User_Serial_Key: dataUser[0].UserId,
+      lblOutsource: checked,
       dtpFrom_Date: moment(updateDateFrom).format('YYYY/MM/DD HH:mm:ss'),
       dtpTo_Date: moment(updateDateTo).format('YYYY/MM/DD HH:mm:ss'),
       get_version: dataUser[0].WareHouse,
+      saFactory: dataUser[0].factoryName
     }
     axios.post(url, data, config).then(response => {
       const array = response.data.map((item: any, index: any) => ({
@@ -360,17 +362,17 @@ const DeliveryScreen = () => {
     setIsLoading(true)
     const url = connect_string + "api/SearchDelivery"
     const data = {
-      User_Serial_Key: dataUser[0].UserId,
-      txtLocation: location,
-      txtAccept_No: acceptNo,
-      dtpFrom_Open: openDateFrom,
-      dtpTo_Open: openDateTo,
-      dtpFrom_Date: updateDateFrom,
-      dtpTo_Date: updateDateTo,
-      txtNum_No: orderNo,
+      chxOffset: chxOffset,
+      chxLoad_Data: chxLoad_Data,
       chxAll: chxAll,
-      lblOutsource: checked,
+      Num_No: orderNo,
+      txtAccept_No: acceptNo,
       cboSupplier: valueAutocomplete,
+      txtLocation: location,
+      User_Serial_Key: dataUser[0].UserId,
+      lblOutsource: checked,
+      dtpFrom_Date: moment(updateDateFrom).format('YYYY/MM/DD HH:mm:ss'),
+      dtpTo_Date: moment(updateDateTo).format('YYYY/MM/DD HH:mm:ss'),
       get_version: dataUser[0].WareHouse,
       saFactory: dataUser[0].factoryName
     }
@@ -401,6 +403,7 @@ const DeliveryScreen = () => {
       setDisable(false)
     })
   }
+
   const handleReset = () => {
     dispatch(clearItemsMaterialTable())
     dispatch(clearItemsMaterialTableChecked())
@@ -418,6 +421,7 @@ const DeliveryScreen = () => {
     setModalType(name)
     setOpen(true);
   }
+
   const handleClose = () => {
     setOpen(false);
     setModalType('');
@@ -769,10 +773,12 @@ const DeliveryScreen = () => {
       link.click();
     });
   };
+
   const handleScanClick = () => {
 
     setModalScan(true);
   }
+
   const handleScan = async (result: any | null) => {
 
     if (result || result.text) {
@@ -801,6 +807,7 @@ const DeliveryScreen = () => {
     })
   }
   //#endregion
+ 
   return (
     <FullScreenContainerWithNavBar hidden={true} sideBarDisable={true} onShowScan={handleScanClick} sideBarNavigate='' title={t("lblData_Material_Delivery")} navigate="/">
       <Box
