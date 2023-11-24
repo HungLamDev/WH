@@ -49,6 +49,7 @@ import WareHouseF from "./screens/Inventory Statistics/WareHouseForm";
 import MaterialDetailForm from "./screens/Inventory Statistics/MaterialDetailForm";
 import PermissionPrintScreen from "./screens/SettingsScreen/PrintPermissionForm";
 import CheckData from "./screens/DeliveryScreen/CheckData";
+import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
   if (!authenticate) {
@@ -138,6 +139,7 @@ function App() {
           <Route path={"/material-detail"} element={<MaterialDetailForm />}></Route>
           <Route path={"/permission-print"} element={<PermissionPrintScreen />}></Route>
           <Route path={"/check-data"} element={<CheckData />}></Route>
+          <Route path={"/register-label"} element={<RegisterLabel />}></Route>
         </Route>
         <Route path={"/login"} element={<LoginScreen />} />
         <Route path={"/*"} element={<ErrorScreen />} />

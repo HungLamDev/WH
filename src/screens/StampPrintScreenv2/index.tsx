@@ -27,10 +27,13 @@ import Formprint from "../../components/Formprint";
 import ModalCofirm from "../../components/ModalConfirm";
 import TableDateTimePicker from "../../components/TableDateTimePicker";
 import { styletext } from "../StockinScreenv2/StockinForm";
+import { useNavigate } from "react-router-dom";
 //#endregion
 const StampPrintScreen = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     //#region column header  
     const columnsUp: GridColDef[] = [
         {
@@ -247,7 +250,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "ZLBH_Work_Order",
-            headerName: t("dcpWork_Order") as string +"\u2002"+"\u2002"+"\u2002"+"\u2002"+"\u2002"+"\u2002"+"\u2002" + "\u2002" + "\u2002"+"\u2002",
+            headerName: t("dcpWork_Order") as string + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002",
             align: "center",
             width: 150,
             headerAlign: 'center'
@@ -764,6 +767,7 @@ const StampPrintScreen = () => {
                     <MyButton name={t("btnDelete") as string} onClick={handleDelete} disabled={disable} />
                     <MyButton name={t("btnPrint") as string} onClick={handlePrint} disabled={disable} />
                     <MyButton name={t("btnPrivewPrint") as string} onClick={() => setOpen(true)} disabled={disable} />
+                    <MyButton name={"Đăng ký"} disabled={disable} onClick={() => navigate("/register-label")} />
                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                     {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
                     {/* {cofirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />} */}
@@ -778,7 +782,7 @@ const StampPrintScreen = () => {
                     <TableCheckBox columns={columnsUp} rows={rowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
                 <Stack sx={{ height: '50%', }}>
-                    <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production","ZLBH_Work_Order","ngay"]} arrNotShowCell={['_id']} />
+                    <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>

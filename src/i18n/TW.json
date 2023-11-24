@@ -370,5 +370,10 @@
     "btnLYM": "林姆",
     "lblWareHouse":"仓库",
     "lblRackName": "货架名称",
-    "lblQuantityOfSupplies":"供货数量"
+    "lblQuantityOfSupplies":"供货数量",
+    "lblOrderNo_Register":"登记顺序",
+    "lblData_Register_Print_Lable":"印章登记",
+    "chxRegister_Date": "注册日期",
+    "chxPrint_Date": "打印日期"
+
 }

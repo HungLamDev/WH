@@ -8,7 +8,7 @@ import { currentDay, previousDate } from "../../utils/date.ts";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import { clearChangeMonth } from "../../redux/Datetimepicker.ts";
-const DatePickerField = ({ label, valueDate, onValueChange, readonly }: { label?: string, valueDate?: any, onValueChange?: string, readonly?: boolean }) => {
+const DatePickerField = ({ label, valueDate, onValueChange, readonly, customClass }: { label?: string, valueDate?: any, onValueChange?: string, readonly?: boolean, customClass?: string }) => {
   const dispatch = useDispatch()
   const [selectedDate, setSelectedDate] = useState(moment());
   //const changeMonth = useSelector((state: any) => state.DateTimePicker.dates);
@@ -21,7 +21,7 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly }: { label?
     <HorizontalStack
       direction={"row"}
       justifyContent={"space-between"}
-      className={"input-field-container"}
+      className={`input-field-container ${customClass}` }
     >
       <Typography className="textsize">{label}</Typography>
       <LocalizationProvider
@@ -59,7 +59,7 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly }: { label?
               },
               sx: {
                 "& fieldset": { border: "none!important" },
-
+                
               },
             },
             toolbar: {

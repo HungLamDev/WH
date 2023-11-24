@@ -372,5 +372,9 @@
     "btnLYM": "LYM",
     "lblWareHouse":"Kho",
     "lblRackName": "Tên kệ",
-    "lblQuantityOfSupplies":"Số lượng vật tư"
+    "lblQuantityOfSupplies":"Số lượng vật tư",
+    "lblOrderNo_Register": "Đơn hàng đăng ký",
+    "lblData_Register_Print_Lable": "Đăng Ký Tem",
+    "chxRegister_Date": "Ngày đăng ký",
+    "chxPrint_Date":"Ngày In"
 }

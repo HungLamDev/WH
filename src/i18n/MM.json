@@ -338,5 +338,9 @@
     "btnLYM": "LYM",
     "lblWareHouse":"ဂိုဒေါင်",
     "lblRackName": "စင်အမည်",
-    "lblQuantityOfSupplies":"ထောက်ပံ့ရေးပမာဏ"
+    "lblQuantityOfSupplies":"ထောက်ပံ့ရေးပမာဏ",
+    "lblOrderNo_Register":"မှတ်ပုံတင်အမိန့်",
+    "lblData_Register_Print_Lable":"တံဆိပ်ခေါင်းမှတ်ပုံတင်",
+    "chxRegister_Date":"မှတ်ပုံတင်ရက်စွဲ",
+    "chxPrint_Date":"ပုံနှိပ်ရက်စွဲ"
 }
