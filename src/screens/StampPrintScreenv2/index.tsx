@@ -19,7 +19,11 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 import { clearArrayRowDowntoUp } from "../../redux/ArrayRowDowntoUp";
 import { GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
-import { checkPermissionPrint, config, connect_string } from "../../utils/api";
+import {  config } from "../../utils/api";
+import { checkPermissionPrint } from "../LoginScreen/ChooseFactory";
+
+import { connect_string } from "../LoginScreen/ChooseFactory";
+
 import CircularProgress from '@mui/material/CircularProgress';
 import TableCheckBox from "../../components/TableCheckBox";
 import { useTranslation } from "react-i18next";

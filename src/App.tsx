@@ -50,6 +50,7 @@ import MaterialDetailForm from "./screens/Inventory Statistics/MaterialDetailFor
 import PermissionPrintScreen from "./screens/SettingsScreen/PrintPermissionForm";
 import CheckData from "./screens/DeliveryScreen/CheckData";
 import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
+import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
   if (!authenticate) {
@@ -72,7 +73,6 @@ function App() {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const navigate = useNavigate();
   const [authenticate, setAuthenticate] = useState(false)
-
   // useEffect(() => {
   //   showInstallPromotion();
   // }, []);

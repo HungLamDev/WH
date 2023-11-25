@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import './styles.scss'
 import MyButton from '../../../components/MyButton';
-import { checkPermissionPrint, config, connect_string } from '../../../utils/api';
+import { config } from '../../../utils/api';
+import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
+import { connect_string } from '../../LoginScreen/ChooseFactory';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import { addItemArrayStockout } from '../../../redux/ArrayStockout';

@@ -4,7 +4,6 @@ import ChooseLanguage from "./ChooseLanguage";
 import { Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChooseFactory from "./ChooseFactory";
-import { registerSW } from "virtual:pwa-register";
 export const year = new Date().getFullYear()
 const LoginScreen = () => {
   const { t } = useTranslation();

@@ -2,11 +2,13 @@
 import { Box, FormControl, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { getFactory, setFactory } from "../../../utils/localStorage";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import lhgIcon from "../../../assets/LHG.png";
 import lyvIcon from "../../../assets/LYV.png";
 import lvlIcon from "../../../assets/LVL.png";
 import lymIcon from "../../../assets/LYM.png";
+import { config } from "../../../utils/api";
+import axios from "axios";
 export type FactoryName = "LHG" | "LYV" | "LVL" | "LYM";
 export interface IFactoryItem {
     factoryName: string;
@@ -14,9 +16,24 @@ export interface IFactoryItem {
     value: FactoryName;
 }
 //#endregion
+export let connect_string =  'https://192.168.32.81/'
+
+export const checkPermissionPrint = async (UserId: string) => {
+    const url = connect_string + 'api/check_print_name';
+    const data = {
+        user_id1: UserId,
+    };
+    try {
+        const response = await axios.post(url, data, config);
+        return response.data;
+    } catch (error) {
+        return false; 
+    }
+};
 
 const ChooseFactory = () => {
     const { t } = useTranslation();
+    
     //#region List Factory
     const myArray: IFactoryItem[] = [
         {
@@ -44,9 +61,23 @@ const ChooseFactory = () => {
 
     //#region Variable
     const appFactory = getFactory() === null ? setFactory("LHG") : getFactory();
+
     const [selectedValue, setSelectedValue] = useState<FactoryName>(
         appFactory ? appFactory : "LHG"
     );
+
+    useEffect(() => {
+        if (selectedValue === 'LVL') {
+            connect_string='https://192.168.60.21:7777/'
+        }
+        else if (selectedValue === 'LHG'){
+            // connect_string='https://192.168.32.100:7777/'
+            connect_string =  'https://192.168.32.81/'
+        }
+        
+    }, [selectedValue])
+
+    
     //#endregion
 
     //#region Func Logic
@@ -55,7 +86,7 @@ const ChooseFactory = () => {
         setFactory(lng);
     }
     //#endregion
-   
+
     return (
         <Box className={"choose-factory"}>
             <FormControl>

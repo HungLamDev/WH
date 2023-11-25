@@ -6,7 +6,8 @@ import { useLocation } from "react-router-dom";
 import { Backdrop, Box, Card, CircularProgress, Stack, Typography } from "@mui/material";
 import { useState, useEffect, useRef } from 'react'
 import axios from "axios";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import './tablestyle.scss'
 import Detail from "../../StockinScreenv2/DetailForm";
 import { saFactory_LHG } from "../../../utils/constants";

@@ -8,7 +8,9 @@ import { GridColDef } from "@mui/x-data-grid";
 import InputField from "../../../components/InputField";
 import MyButton from "../../../components/MyButton";
 import { styletext } from "../StockinForm";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
+
 import axios from "axios";
 import { useSelector } from "react-redux";
 import ModalCofirm from "../../../components/ModalConfirm";

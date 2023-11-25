@@ -1,0 +1,56 @@
+
+.chartlvl-container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 5px;
+    // margin-bottom: 10px;
+    flex-direction: row;
+    // border: 1px solid yellow;
+}
+
+.barlvl-container{
+    width:75%;
+    height:100%;
+    display:flex;
+    flex-direction:column; 
+    justify-content:flex-end;
+    border: 1.5px solid white;
+    border-radius: 5px;
+    cursor: pointer
+}
+
+.barlvl {
+    width: 100%;
+    height: 100%;
+    background-color: #3498db;
+    transition: height 0.5s, background-color 0.5s;
+    border-radius: 5px;
+    
+}
+
+.barlvl-label {
+    text-align: center;
+    // margin-top: 5px;
+    font-size: smaller;
+    z-index: 999;
+}
+
+.barlvl-title{
+    // position: absolute;
+    // margin-top: 20px;
+    margin-right: 5px;
+    color: #F4CE14;
+}
+
+.pallet{
+    
+        width: 100%;
+        height: 100%;
+        background-color: #a8a8a8;
+        transition: height 0.5s, background-color 0.5s;
+        // border-radius: 5px;
+        
+    
+}

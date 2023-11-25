@@ -7,7 +7,8 @@ import changepasswordIcon from "../../../assets/reset-password.png"
 import userIcon from "../../../assets/user.png"
 import { GridColDef } from '@mui/x-data-grid';
 import { useState, useEffect } from 'react';
-import { config, connect_string } from '../../../utils/api';
+import { config } from '../../../utils/api';
+import { connect_string } from '../../LoginScreen/ChooseFactory';
 import axios from 'axios';
 import TableOrigin from '../../../components/TableOrigin';
 import { useTranslation } from 'react-i18next';

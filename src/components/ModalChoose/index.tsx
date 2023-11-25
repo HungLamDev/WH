@@ -6,7 +6,6 @@ import inventoryIcon from "../../../assets/inventory.png";
 import reportIcon from "../../../assets/report.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { connect_string } from "../../utils/api";
 import Load from "../../../src/assets/load.gif";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import { getAppLang, setAppLang, setWareHouse } from "../../utils/localStorage";
 import { LanguageName } from "../../screens/LoginScreen/ChooseLanguage/type";
 import { useState } from "react";
 import './style.scss'
+import { connect_string } from "../../screens/LoginScreen/ChooseFactory";
 const GridItem = (props: any) => {
     return (
         <Grid

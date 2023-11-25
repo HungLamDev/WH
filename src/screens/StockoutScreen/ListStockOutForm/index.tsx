@@ -8,7 +8,8 @@ import MyTable3 from "../../../components/MyTable3"
 import { GridColDef } from "@mui/x-data-grid"
 import { useState } from "react"
 import moment from "moment"
-import { config, connect_string } from "../../../utils/api"
+import { config } from "../../../utils/api"
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import axios from "axios"
 import CircularProgress from '@mui/material/CircularProgress';
 import TableOrigin from "../../../components/TableOrigin"

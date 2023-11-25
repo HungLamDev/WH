@@ -1,1045 +1,34 @@
 //#region import
 import { useTranslation } from "react-i18next";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar"
-import { Backdrop, Box, Button, Card, CardActionArea, CardContent, CardMedia, CircularProgress, Stack, Typography } from "@mui/material";
+import { Backdrop, Box, Button, Card, CardActionArea, CardContent, CardMedia, CircularProgress, Grid, Stack, Typography } from "@mui/material";
 import '../stylechart.scss'
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import Chart from "../../../components/Chart";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import ChartLVL from "../../../components/ChartLVL";
+import { ListB5_F1, ListB5_F2 } from "../../../utils/listRackLVL";
+import { listF, listG, listR } from "../../../utils/listRackLHG";
 //#endregion
 const WareHouseF = () => {
     const { t } = useTranslation();
     const { state } = useLocation();
-    
+
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     //#endregion
 
-    //#region List Rack WareHouse
-    const listF = [
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q8"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q7"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q6"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q5"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q2"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "Q1"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "N4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "N3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "N2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "N1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "M4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "M3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "M2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "M1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "K2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "K1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "G2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "G1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "P1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "F2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "F1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L5"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L6"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L7"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "L8"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '95px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '95px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '59px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '95px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        },
-        {
-            width: '95px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "FP"
-        }
-    ]
-    const listG = [
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "A1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "A2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "A3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "A4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "A5"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B5"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "B6"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C5"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C6"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C7"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D5"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D6"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D7"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D8"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "D9"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E5"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E6"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E7"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E8"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E9"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E10"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "E11"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "O1"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "O2"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "O3"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "O4"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C8"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C9"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C10"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C11"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C12"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C13"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C14"
-        },
-        {
-            width: '45px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C15"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C16"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C17"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C18"
-        },
-        {
-            width: '44px',
-            height: '100%',
-            Sum_Total: "0",
-            Rack_Total: "C19"
-        },
-    ]
-    const listR = [
-        {
-            width: '80px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y0"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y0"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y8"
-        },
-        {
-            width: '80px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y9"
-        },
-
-        {
-            width: '59px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y10"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y11"
-        },
-        {
-            width: '110px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y12"
-        },
-        {
-            width: '110px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y13"
-        },
-        {
-            width: '110px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y14"
-        },
-        {
-            width: '110px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y15"
-        },
-
-        {
-            width: '170px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y16"
-        },
-        {
-            width: '80px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y0"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y1"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y2"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y3"
-        },
-        {
-            width: '150px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y4"
-        },
-        {
-            width: '205px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y5"
-        },
-        {
-            width: '205px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y6"
-        },
-        {
-            width: '205px',
-            height: '70%',
-            Sum_Total: "0",
-            Rack_Total: "Y7"
-        },
-
-        {
-            width: '80px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y17"
-        },
-        {
-            width: '80px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y18"
-        },
-        {
-            width: '110px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y0"
-        },
-        {
-            width: '110px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y19"
-        },
-        {
-            width: '110px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y20"
-        },
-        {
-            width: '110px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y21"
-        },
-        {
-            width: '150px',
-            height: '50%',
-            Sum_Total: "0",
-            Rack_Total: "Y22"
-        },
-
-    ]
-    const listA = [
-        {
-            width: '60px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D77"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D78"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D79"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D80"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D81"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D82"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D83"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D84"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D85"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D86"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D87"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D88"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D89"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D90"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D91"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D92"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D93"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D94"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D95"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D96"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D97"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D98"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D99"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D100"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D101"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D102"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D103"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D104"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D105"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D106"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D107"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D108"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D109"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D110"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D111"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D112"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D113"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D114"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D115"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D116"
-        },
-        {
-            width: '59px',
-            height: '90%',
-            Sum_Total: "0",
-            Rack_Total: "D117"
-        },
-    ]
     //#endregion
 
     //#region Variable
     const factory = dataUser[0].factoryName
     const [listRack, setListRack] = useState<any[]>([])
     const [countFetch, setCountFetch] = useState(0)
-    const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...listA] : [])
+    const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...ListB5_F2] : [])
     const [warehouse, setWareHouse] = useState(dataUser[0].building)
     const [apiRequestComplete, setApiRequestComplete] = useState(false);
     //#endregion
@@ -1067,7 +56,7 @@ const WareHouseF = () => {
     //#endregion
 
     //#region Func Logic
-  
+
     const url = connect_string + "api/show_chart"
 
     const updateData = () => {
@@ -1121,8 +110,8 @@ const WareHouseF = () => {
                 setApiRequestComplete(true);
                 setListRack1(listG)
             }
-            else if (warehouse === 'A') {
-                listA.forEach(item1 => {
+            else if (warehouse === 'B5L2') {
+                ListB5_F2.forEach(item1 => {
                     const matchingItem = response.data.find((item2: any) => item1.Rack_Total === item2.Rack_Total && item1.Sum_Total !== item2.Sum_Total);
                     if (matchingItem) {
                         if (matchingItem.Sum_Total as number > 100) {
@@ -1134,7 +123,22 @@ const WareHouseF = () => {
                     }
                 });
                 setApiRequestComplete(true);
-                setListRack1(listA)
+                setListRack1(ListB5_F2)
+            }
+            else if (warehouse === 'B5L1') {
+                ListB5_F1.forEach(item1 => {
+                    const matchingItem = response.data.find((item2: any) => item1.Rack_Total === item2.Rack_Total && item1.Sum_Total !== item2.Sum_Total);
+                    if (matchingItem) {
+                        if (matchingItem.Sum_Total as number > 100) {
+                            item1.Sum_Total = "100";
+                        }
+                        else {
+                            item1.Sum_Total = matchingItem.Sum_Total;
+                        }
+                    }
+                });
+                setApiRequestComplete(true);
+                setListRack1(ListB5_F1)
             }
             setCountFetch(item => item + 1)
         })
@@ -1151,12 +155,16 @@ const WareHouseF = () => {
         else if (name == 'R1') {
             setListRack1(listR)
         }
-        else if (name == 'A') {
-            setListRack1(listA)
+        else if (name == 'B5L1') {
+            setListRack1(ListB5_F1)
+        }
+        else if (name == 'B5L2') {
+            setListRack1(ListB5_F2)
         }
     }
     //#endregion
 
+    // ok
     return (
         <FullScreenContainerWithNavBar navigate="/" sideBarDisable={true} sideBarNavigate="" title={t("lblTracking_Board")}>
             <Box
@@ -1177,7 +185,9 @@ const WareHouseF = () => {
                             :
                             (
                                 <>
-                                    <Button className={`warehouse-button ${warehouse === 'A' ? 'active' : ''}`} onClick={() => handleClick('A')}>A</Button>
+                                    <Button className={`warehouse-button ${warehouse === 'B5L1' ? 'active' : ''}`} onClick={() => handleClick('B5L1')}>B5L1</Button>
+                                    <Button className={`warehouse-button ${warehouse === 'B5L2' ? 'active' : ''}`} onClick={() => handleClick('B5L2')}>B5L2</Button>
+                                
                                 </>
                             )
                     }
@@ -1186,21 +196,124 @@ const WareHouseF = () => {
                     <Typography variant="caption" style={{ fontStyle: "italic" }}>{t("dcmUnit") + ": (%)"}</Typography>
                 </Stack>
             </Box>
-            <Stack height={'100%'}>
-                <Stack height={'50%'} >
-                    <div className="bar-chart">
-                        {
-                            listRack1.map((item: any, index: number) => {
-                                return (
-                                    <Chart listRack={item} wareHouse={warehouse} />
-                                )
-                            })
-                        }
-                    </div>
-                </Stack>
+            {
+                (dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F') ?
+                    (
+                        <Stack height={'100%'}>
+                            <Stack height={'50%'} >
+                                <div className="bar-chart">
+                                    {
+                                        listRack1.map((item: any, index: number) => {
+                                            return (
+                                                <Chart listRack={item} wareHouse={warehouse} />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </Stack>
+                        </Stack>
+                    )
+                    :
+                    <div style={{
+                        width: '100%',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        overflowX: 'hidden',
+                        marginTop: '15px'
+                    }}>
+                        <Grid container >
+                            <Grid item xs={2} >
+                                <Grid container direction={'column'}>
+                                    <Grid item xs={4} marginBottom={'200px'} sx={{ border: '1px solid yellow' }}>
+                                        <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <span>Khu Phoi Hang</span>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={8} >
+                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid red' }}>
+                                            <span>Y001</span>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                            <span>Khu Chat Trang Tri</span>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '5px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                            <span>Water Room</span>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '239px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                            <span>WC</span>
+                                        </Box>
+                                        <Box sx={{ height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                            <span>Khu Phat Hang</span>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Grid container justifyContent={'center'} rowSpacing={1}>
+                                    {
+                                        listRack1.map((item: any, index: number) => {
+                                            if (index % 2 !== 0) {
+                                                return (
+                                                    <>
+                                                        <Grid item xs={2} display={'flex'} justifyContent={'center'}>
+                                                        </Grid>
+                                                        <Grid item xs={4} >
+                                                            <ChartLVL listRack={item} wareHouse={warehouse} />
+                                                        </Grid>
+                                                    </>
+                                                )
+                                            } else {
 
-            </Stack>
+                                                return (
+                                                    <>
+                                                        <Grid item xs={4} >
+                                                            <ChartLVL listRack={item} wareHouse={warehouse} />
+                                                        </Grid>
+                                                    </>
+
+                                                )
+                                            }
+                                        })
+                                    }
+                                </Grid>
+                                <Grid container marginTop={'100px'}>
+                                    <Grid item xs={2}></Grid>
+                                    <Grid item xs={3}>
+                                        <Box sx={{ marginBottom: '5px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid blue' }}>
+                                            <span>Pallet</span>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={3}></Grid>
+                                    <Grid item xs={3}>
+                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid purple' }}>
+                                            <span>Khu Kiem Hang QC</span>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={2} >
+                                <Grid container direction={'column'}>
+                                    <Grid item xs={4} marginBottom={'200px'} sx={{ border: '1px solid yellow' }}>
+                                        <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <span>Khu Phoi Hang</span>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={8} >
+                                        <Box sx={{ marginBottom: '5px', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                            <span>Khu Phoi Hang</span>
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </div>
+
+
+            }
+
         </FullScreenContainerWithNavBar>
     )
+
 }
 export default WareHouseF

@@ -10,7 +10,9 @@ import { GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useState } from "react";
 import moment from "moment";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
+
 import { useSelector } from "react-redux";
 //#endregion
 const DeleteOrder = () => {

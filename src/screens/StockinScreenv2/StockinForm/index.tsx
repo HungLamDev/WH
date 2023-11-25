@@ -15,7 +15,7 @@ import Detail from "../DetailForm";
 import Statistics from "../StatisticsForm";
 import QC from "../QCForm";
 import ImportAndExport from "../ModelImportandExport";
-import { connect_string } from "../../../utils/api"
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import CircularProgress from '@mui/material/CircularProgress';
 import TableOrigin from "../../../components/TableOrigin"
 import { useTranslation } from "react-i18next"

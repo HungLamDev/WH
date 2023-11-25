@@ -22,7 +22,9 @@ import Statistics from "../../StockinScreenv2/StatisticsForm";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import axios from "axios";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
+
 import { useSelector } from "react-redux";
 import TableOrigin from "../../../components/TableOrigin";
 import { useTranslation } from "react-i18next";
@@ -778,7 +780,7 @@ const AccountingCardScreen = () => {
               display={"flex"}
             >
               <InputField
-                customClass="customStack"
+                customClass="customStack1"
                 handle={handleChangeTxtMaterialNo}
                 keydown={null}
                 value={txtMaterial_No}
@@ -804,7 +806,7 @@ const AccountingCardScreen = () => {
           </Grid>
           <Grid item xs={3} justifyContent={"center"} display={"flex"}>
             <InputField
-              customClass="customStack"
+              customClass="customStack1"
               handle={handleChangeTxtOrderNo}
               keydown={handleSearchUserID}
               value={txtOrder_No}

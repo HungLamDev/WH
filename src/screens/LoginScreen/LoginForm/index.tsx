@@ -10,9 +10,10 @@ import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from "../../../redux/UserLogin";
 import CircularProgress from '@mui/material/CircularProgress';
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
 import ModalCofirm from "../../../components/ModalConfirm";
 import { setWareHouse, getWareHouse, getFactory, setFactory } from "../../../utils/localStorage";
+import { connect_string } from "../ChooseFactory";
 //#endregion
 const LoginForm = () => {
   const { t } = useTranslation();

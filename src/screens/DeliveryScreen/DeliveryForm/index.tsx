@@ -14,7 +14,7 @@ import { BsListCheck } from "react-icons/bs";
 import moment from 'moment';
 import { currentDay } from '../../../utils/date';
 import TableCheckBox from '../../../components/TableCheckBox';
-import { connect_string } from '../../../utils/api';
+import { connect_string } from '../../LoginScreen/ChooseFactory'; 
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import { addItemMaterialTable, removeItemMaterialTable, clearItemsMaterialTable } from '../../../redux/array';

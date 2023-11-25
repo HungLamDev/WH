@@ -13,7 +13,8 @@ import FullScreenContainerWithNavBar from "../../../components/FullScreenContain
 import InputField from "../../../components/InputField";
 import MyButton from "../../../components/MyButton";
 import TableOrigin from "../../../components/TableOrigin";
-import { config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import ModalCofirm from "../../../components/ModalConfirm";
 //#endregion
 const PermissionPrintScreen = () => {

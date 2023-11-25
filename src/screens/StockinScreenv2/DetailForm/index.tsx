@@ -6,7 +6,8 @@ import InputField from '../../../components/InputField';
 import './style.scss'
 import { useEffect, useState } from 'react';
 import MyTable3 from '../../../components/MyTable3';
-import { config, connect_string } from '../../../utils/api';
+import { config } from '../../../utils/api';
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';

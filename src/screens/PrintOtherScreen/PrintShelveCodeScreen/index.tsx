@@ -8,7 +8,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import moment from "moment";
-import { checkPermissionPrint, config, connect_string } from "../../../utils/api";
+import { config } from "../../../utils/api";
+import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
 import ModalCofirm from "../../../components/ModalConfirm";
 //#endregion
 const PrintShelveCode = () => {
