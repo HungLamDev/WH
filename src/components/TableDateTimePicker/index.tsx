@@ -115,7 +115,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
         }
     };
     return (
-        <TableContainer sx={{ height: '100%' }}>
+        <TableContainer sx={{ height: '100%' }} >
             <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
                 <TableHead>
                     <TableRow>
@@ -187,9 +187,6 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                         const isProductionCell = key === "ywsm_Production" || key === "ngay";
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                                         let ngay = item.ngay;
-
-
-
                                         return (
                                             <TableCell
                                                 className="td-responesive"

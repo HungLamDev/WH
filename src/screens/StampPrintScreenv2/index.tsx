@@ -304,6 +304,7 @@ const StampPrintScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [resetCheckbox, setResetCheckbox] = useState(false);
     const [disable, setDisable] = useState(false)
+    const [isApi, setIsApi] = useState(true)
     //#endregion
 
     //#region Func OnChange Input
@@ -430,80 +431,85 @@ const StampPrintScreen = () => {
     }
 
     const handleDoubleClick = (name: any, params: any) => {
-        const date_temp = params.ngay.toString().replaceAll("/", "-").split('-')
-        const ngay = date_temp[0] + '-' + date_temp[1] + '-' + date_temp[2]
-        setIsLoading(true)
-        setDisable(true)
-        const url1 = connect_string + 'api/Divide_stamp'
-        const data_stamp = {
-            Order_No: params.CGNO_Order_No,
-            Material_No: params.CLBH_Material_No,
-            Material_Type: params.cllb_Material_Type,
-            Color: params.Color,
-            Unit: params.dwbh_Units,
-            Qty_ROLL: params.qty_roll ? params.qty_roll : "",
-            QTY: params.QTY,
-            Arrival_QTY: params.Arrival_QTY,
-            Roll: params.Roll,
-            Size: params.Size,
-            Material_Name: params.ywpm_Material,
-            Supplier: params.zsywjc_Supplier,
-            Date: moment(ngay).format("YYYY-MM-DD"),
-            Work_Order: params.ZLBH_Work_Order,
-            user_id: dataUser[0].UserId,
-            chxResidual_supplies: chxResidual_supplies,
-            chxRY: chxRY,
-            chxReprint: chxReprint,
-            chxReprint_RY: chxReprint_RY,
-            chxPrint_All_RY: chxPrint_All_RY,
-            chxPrint_RY: chxPrint_RY,
-            get_version: dataUser[0].WareHouse,
-            Production: params.ywsm_Production
-
-        }
-
-        axios.post(url1, data_stamp, config).then(response => {
-            setDataInRowUps(dataInRowUps1 => {
-                const newDataInRowUps = response.data.map((item: any, index: any) => {
-                    return {
-                        _id: item.Barcode,
-                        Supplier: item.Supplier,
-                        Print_Date: item.Print_Date,
-                        Supplier_No: item.Supplier_No,
-                        Material_No: item.Material_No,
-                        Material_Name: item.Material_Name,
-                        Color: item.Color,
-                        Size: item.Size,
-                        Print_QTY: item.Print_QTY,
-                        QTY: item.QTY,
-                        Unit: item.Print_QTY.split(" ")[1],
-                        Order_No: item.Order_No,
-                        Roll: item.Roll,
-                        ngay: moment(item.Print_Date).format("YYYY-MM-DD"),
-                        Production: item.Production,
-                        Work_Order: item.Work_Order,
-                        Material_Type: item.Material_Type,
-                        Barcode: item.Barcode,
-                    };
-                });
-                // xóa phần tử có qrcode trùng trên bảng
-                const filteredDataInRowUps1 = dataInRowUps1.filter((oldItem: any) => {
-                    return !newDataInRowUps.some((newItem: any) => {
-                        return newItem.Barcode === oldItem.Barcode;
+        if(isApi === true){
+            const date_temp = params.ngay.toString().replaceAll("/", "-").split('-')
+            const ngay = date_temp[0] + '-' + date_temp[1] + '-' + date_temp[2]
+            setIsApi(false)
+            setIsLoading(true)
+            setDisable(true)
+            const url1 = connect_string + 'api/Divide_stamp'
+            const data_stamp = {
+                Order_No: params.CGNO_Order_No,
+                Material_No: params.CLBH_Material_No,
+                Material_Type: params.cllb_Material_Type,
+                Color: params.Color,
+                Unit: params.dwbh_Units,
+                Qty_ROLL: params.qty_roll ? params.qty_roll : "",
+                QTY: params.QTY,
+                Arrival_QTY: params.Arrival_QTY,
+                Roll: params.Roll,
+                Size: params.Size,
+                Material_Name: params.ywpm_Material,
+                Supplier: params.zsywjc_Supplier,
+                Date: moment(ngay).format("YYYY-MM-DD"),
+                Work_Order: params.ZLBH_Work_Order,
+                user_id: dataUser[0].UserId,
+                chxResidual_supplies: chxResidual_supplies,
+                chxRY: chxRY,
+                chxReprint: chxReprint,
+                chxReprint_RY: chxReprint_RY,
+                chxPrint_All_RY: chxPrint_All_RY,
+                chxPrint_RY: chxPrint_RY,
+                get_version: dataUser[0].WareHouse,
+                Production: params.ywsm_Production
+    
+            }
+    
+            axios.post(url1, data_stamp, config).then(response => {
+                setDataInRowUps(dataInRowUps1 => {
+                    const newDataInRowUps = response.data.map((item: any, index: any) => {
+                        return {
+                            _id: item.Barcode,
+                            Supplier: item.Supplier,
+                            Print_Date: item.Print_Date,
+                            Supplier_No: item.Supplier_No,
+                            Material_No: item.Material_No,
+                            Material_Name: item.Material_Name,
+                            Color: item.Color,
+                            Size: item.Size,
+                            Print_QTY: item.Print_QTY,
+                            QTY: item.QTY,
+                            Unit: item.Print_QTY.split(" ")[1],
+                            Order_No: item.Order_No,
+                            Roll: item.Roll,
+                            ngay: moment(item.Print_Date).format("YYYY-MM-DD"),
+                            Production: item.Production,
+                            Work_Order: item.Work_Order,
+                            Material_Type: item.Material_Type,
+                            Barcode: item.Barcode,
+                        };
                     });
+                    // xóa phần tử có qrcode trùng trên bảng
+                    const filteredDataInRowUps1 = dataInRowUps1.filter((oldItem: any) => {
+                        return !newDataInRowUps.some((newItem: any) => {
+                            return newItem.Barcode === oldItem.Barcode;
+                        });
+                    });
+                    const mergedDataInRowUps = [...filteredDataInRowUps1, ...newDataInRowUps];
+                    setrowUps(mergedDataInRowUps);
+                    dispatch(copyValues(rowDowns));
+                    dispatch(copyValuesRowUps(mergedDataInRowUps));
+                    // console.log(mergedDataInRowUps)
+                    return mergedDataInRowUps;
                 });
-                const mergedDataInRowUps = [...filteredDataInRowUps1, ...newDataInRowUps];
-                setrowUps(mergedDataInRowUps);
-                dispatch(copyValues(rowDowns));
-                dispatch(copyValuesRowUps(mergedDataInRowUps));
-                // console.log(mergedDataInRowUps)
-                return mergedDataInRowUps;
-            });
-
-        }).finally(() => {
-            setIsLoading(false)
-            setDisable(false)
-        })
+    
+            }).finally(() => {
+                setIsLoading(false)
+                setDisable(false)
+                setIsApi(true)
+            })
+        }
+      
 
     }
 
@@ -785,7 +791,7 @@ const StampPrintScreen = () => {
                 <Stack sx={{ height: '50%', }}>
                     <TableCheckBox columns={columnsUp} rows={rowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
-                <Stack sx={{ height: '50%', }}>
+                <Stack sx={{ height: '50%'}} >
                     <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>

@@ -176,6 +176,7 @@ const DeliveryScreen = () => {
   const [chxRack, setChxRack] = useState(false)
   const [onFocus, setOnFocus] = useState(false)
   const [chxAll, setChxAll] = useState(false)
+  const [isApi, setIsApi] = useState(true)
 
   const contentDetail = locate.state
   //#endregion
@@ -434,224 +435,247 @@ const DeliveryScreen = () => {
   })
 
   const handleDoubleClick = (columnName: any, item: any) => {
-    const url = connect_string + 'api/GetData_CellDoubleClick_Delivery'
-
-    if (columnName === 'Material_No') {
-      const data = {
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcmMaterial_No",
-        Material_No: item.Material_No,
-        User_Serial_Key: dataUser[0].UserId,
-        get_version: dataUser[0].WareHouse
-      }
-      axios.post(url, data, config).then(response => {
-        if (response.data.length > 0) {
-          const arr = response.data.map((item: any, index: any) => ({
-            _id: index,
-            ...item
-          }))
-          setHistoryMaterial(arr)
-        }
-      })
-      handleOpen('history-material')
-    }
-    if (columnName === 'Date_Start') {
-      setDisable(true)
-      setIsLoading(true)
-      const data = {
-        User_Serial_Key: dataUser[0].UserId,
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcmOpen_Date",
-        Stamp_RY: "",
-        Delivery_Serial: item.Delivery_Serial,
-        RY_Status: item.RY_Status2,
-        Material_No: item.Material_No,
-        Open_date: item.Date_Start,
-        txtLocation: location,
-        dtpFrom_Date: updateDateFrom.format("DD/MM/YYYY HH:MM:SS"),
-        dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
-        get_version: dataUser[0].WareHouse
-      }
-      axios.post(url, data, config).then(response => {
-        const array = response.data.map((item: any, index: any) => ({
-          _id: index,
-          Date_Start: item.Date_Start,
-          Num_No: item.Num_No,
+    if(isApi === true){
+      const url = connect_string + 'api/GetData_CellDoubleClick_Delivery'
+      if (columnName === 'Material_No') {
+        setIsApi(false)
+        const data = {
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcmMaterial_No",
           Material_No: item.Material_No,
-          Count_Stock_Qty: item.Count_Stock_Qty,
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          RY_Status: item.RY_Status,
-          RY: item.RY,
-          Rack: item.Rack,
-          RY_Status1: "",
-          RY_Status2: item.RY_Status1,
-          User_Serial_Key: item.User_Serial_Key,
-          Delivery_Serial: item.Delivery_Serial
-        }));
-
-        dispatch(copyArrayDelivery(array))
-        setRows(array);
-
-      }).finally(() => {
-        setIsLoading(false)
-        setDisable(false)
-      })
-
-    }
-    if (columnName === 'Num_No') {
-      const data = {
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcmOrder_No",
-        RY: item.RY,
-        Material_No: item.Material_No,
-        Delivery_Serial: item.Delivery_Serial,
-        Num_No: item.Num_No,
-        get_version: dataUser[0].WareHouse
-
-      }
-      axios.post(url, data, config).then(response => {
-        if (response.data.length > 0) {
-          dispatch(doublelickOrderNo({ orderNo: item.Num_No, RY: item.RY, newStatus: response.data }))
+          User_Serial_Key: dataUser[0].UserId,
+          get_version: dataUser[0].WareHouse
         }
-      })
-    }
-    if (columnName === 'RY_Status2') {
-      if (item.RY_Status2 === "In") {
+        axios.post(url, data, config).then(response => {
+          if (response.data.length > 0) {
+            const arr = response.data.map((item: any, index: any) => ({
+              _id: index,
+              ...item
+            }))
+            setHistoryMaterial(arr)
+          }
+        }).finally(()=>{
+          setIsApi(true)
+        })
+        handleOpen('history-material')
+      }
+      if (columnName === 'Date_Start') {
+        setDisable(true)
+        setIsLoading(true)
+        setIsApi(false)
         const data = {
           User_Serial_Key: dataUser[0].UserId,
           Count_dgv: ArrayDelivery.length,
-          Name_Column: "dcmStatus",
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          Stam_Num_No: orderNo,
+          Name_Column: "dcmOpen_Date",
+          Stamp_RY: "",
+          Delivery_Serial: item.Delivery_Serial,
           RY_Status: item.RY_Status2,
           Material_No: item.Material_No,
           Open_date: item.Date_Start,
           txtLocation: location,
-          dtpFrom_Date: moment(updateDateFrom).format("DD/MM/YYYY HH:MM:SS"),
+          dtpFrom_Date: updateDateFrom.format("DD/MM/YYYY HH:MM:SS"),
           dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
-          Content: item.RY_Status1,
-          Num_No: item.Num_No,
-          Delivery_Serial: item.Delivery_Serial,
           get_version: dataUser[0].WareHouse
-
         }
         axios.post(url, data, config).then(response => {
-          if (response.data.length > 0) {
-            dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
-          }
-        })
-      }
-      else {
-        const data = {
-          User_Serial_Key: dataUser[0].UserId,
-          Count_dgv: ArrayDelivery.length,
-          Name_Column: "dcmStatus",
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          Stam_Num_No: orderNo,
-          RY_Status: item.RY_Status2,
-          Material_No: item.Material_No,
-          Open_date: item.Date_Start,
-          txtLocation: location,
-          dtpFrom_Date: updateDateFrom,
-          dtpTo_Date: updateDateTo,
-          Content: item.RY_Status1,
-          Num_No: item.Num_No,
-          Delivery_Serial: item.Delivery_Serial,
-          get_version: dataUser[0].WareHouse
-
-        }
-        axios.post(url, data, config).then(response => {
-          // console.log(response.data)
-          if (response.data.length > 0) {
-            dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
-          }
-        })
-      }
-    }
-    if (columnName === 'RY_Status1') {
-      const data = {
-        Name_Column: "dcpContent",
-        RY_Status: item.RY_Status2,
-        User_Serial_Key: dataUser[0].UserId,
-        Material_No: item.Material_No,
-        Count_dgv: ArrayDelivery.length,
-        Qty: item.RY_Status,
-        get_version: dataUser[0].WareHouse,
-        Delivery_Serial: item.Delivery_Serial
-
-      }
-      axios.post(url, data, config).then(response => {
-        if (response.data.length > 0) {
-          navigate('/stock-out', { state: response.data });
-        }
-      })
-
-    }
-    if (columnName === 'Count_Stock_Qty') {
-      const data = {
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcpQty_Redundant",
-        RY: item.RY,
-        Material_No: item.Material_No,
-        Delivery_Serial: item.Delivery_Serial,
-        Num_No: item.Num_No,
-        get_version: dataUser[0].WareHouse,
-        Color: item.Color,
-        Material_Name: item.Material_Name,
-        User_Serial_Key: item.User_Serial_Key
-
-      }
-      setMaterialChange(data)
-      handleOpen('change-materialNo')
-    }
-    if (columnName === 'Color') {
-      const data = {
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcpQty_Redundant",
-        RY: item.RY,
-        Material_No: item.Material_No,
-        Delivery_Serial: item.Delivery_Serial,
-        Num_No: item.Num_No,
-        get_version: dataUser[0].WareHouse,
-        Color: item.Color,
-        Material_Name: item.Material_Name,
-        User_Serial_Key: item.User_Serial_Key
-
-      }
-      setMaterialNameChange(data)
-      handleOpen('change-materialName')
-    }
-    if (columnName === 'RY') {
-      const data = {
-        Count_dgv: ArrayDelivery.length,
-        Name_Column: "dcpRemak_RY",
-        RY: item.RY,
-        Material_No: item.Material_No,
-        Delivery_Serial: item.Delivery_Serial,
-        Num_No: item.Num_No,
-        get_version: dataUser[0].WareHouse,
-        Color: item.Color,
-        Material_Name: item.Material_Name,
-        User_Serial_Key: item.User_Serial_Key
-      }
-      axios.post(url, data, config).then(response => {
-        if (response.data.length > 0) {
-          const valueListArray = response.data[0].Value_List_Material_No.split(',');
-          const arr = valueListArray.map((item: any, index: any) => ({
+          const array = response.data.map((item: any, index: any) => ({
             _id: index,
-            Location: item
-          }))
-          setDataModalLocation(arr)
-
+            Date_Start: item.Date_Start,
+            Num_No: item.Num_No,
+            Material_No: item.Material_No,
+            Count_Stock_Qty: item.Count_Stock_Qty,
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            RY_Status: item.RY_Status,
+            RY: item.RY,
+            Rack: item.Rack,
+            RY_Status1: "",
+            RY_Status2: item.RY_Status1,
+            User_Serial_Key: item.User_Serial_Key,
+            Delivery_Serial: item.Delivery_Serial
+          }));
+  
+          dispatch(copyArrayDelivery(array))
+          setRows(array);
+  
+        }).finally(() => {
+          setIsLoading(false)
+          setDisable(false)
+          setIsApi(true)
+        })
+  
+      }
+      if (columnName === 'Num_No') {
+        setIsApi(false)
+        const data = {
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcmOrder_No",
+          RY: item.RY,
+          Material_No: item.Material_No,
+          Delivery_Serial: item.Delivery_Serial,
+          Num_No: item.Num_No,
+          get_version: dataUser[0].WareHouse
+  
         }
-      })
-      setMaterialNoLocation(item.Material_No)
-      handleOpen('modal-location')
-
+        axios.post(url, data, config).then(response => {
+          if (response.data.length > 0) {
+            dispatch(doublelickOrderNo({ orderNo: item.Num_No, RY: item.RY, newStatus: response.data }))
+          }
+        }).finally(()=>{
+          setIsApi(true)
+        })
+      }
+      if (columnName === 'RY_Status2') {
+        if (item.RY_Status2 === "In") {
+          setIsApi(false)
+          const data = {
+            User_Serial_Key: dataUser[0].UserId,
+            Count_dgv: ArrayDelivery.length,
+            Name_Column: "dcmStatus",
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            Stam_Num_No: orderNo,
+            RY_Status: item.RY_Status2,
+            Material_No: item.Material_No,
+            Open_date: item.Date_Start,
+            txtLocation: location,
+            dtpFrom_Date: moment(updateDateFrom).format("DD/MM/YYYY HH:MM:SS"),
+            dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
+            Content: item.RY_Status1,
+            Num_No: item.Num_No,
+            Delivery_Serial: item.Delivery_Serial,
+            get_version: dataUser[0].WareHouse
+  
+          }
+          axios.post(url, data, config).then(response => {
+            if (response.data.length > 0) {
+              dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
+            }
+          }).finally(()=>{
+            setIsApi(true)
+          })
+        }
+        else {
+          setIsApi(false)
+          const data = {
+            User_Serial_Key: dataUser[0].UserId,
+            Count_dgv: ArrayDelivery.length,
+            Name_Column: "dcmStatus",
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            Stam_Num_No: orderNo,
+            RY_Status: item.RY_Status2,
+            Material_No: item.Material_No,
+            Open_date: item.Date_Start,
+            txtLocation: location,
+            dtpFrom_Date: updateDateFrom,
+            dtpTo_Date: updateDateTo,
+            Content: item.RY_Status1,
+            Num_No: item.Num_No,
+            Delivery_Serial: item.Delivery_Serial,
+            get_version: dataUser[0].WareHouse
+  
+          }
+          axios.post(url, data, config).then(response => {
+            // console.log(response.data)
+            if (response.data.length > 0) {
+              dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
+            }
+          }).finally(()=>{
+            setIsApi(true)
+          })
+        }
+      }
+      if (columnName === 'RY_Status1') {
+        setIsApi(false)
+        const data = {
+          Name_Column: "dcpContent",
+          RY_Status: item.RY_Status2,
+          User_Serial_Key: dataUser[0].UserId,
+          Material_No: item.Material_No,
+          Count_dgv: ArrayDelivery.length,
+          Qty: item.RY_Status,
+          get_version: dataUser[0].WareHouse,
+          Delivery_Serial: item.Delivery_Serial
+  
+        }
+        axios.post(url, data, config).then(response => {
+          if (response.data.length > 0) {
+            navigate('/stock-out', { state: response.data });
+          }
+        }).finally(()=>{
+          setIsApi(true)
+        })
+  
+      }
+      if (columnName === 'Count_Stock_Qty') {
+        
+        const data = {
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcpQty_Redundant",
+          RY: item.RY,
+          Material_No: item.Material_No,
+          Delivery_Serial: item.Delivery_Serial,
+          Num_No: item.Num_No,
+          get_version: dataUser[0].WareHouse,
+          Color: item.Color,
+          Material_Name: item.Material_Name,
+          User_Serial_Key: item.User_Serial_Key
+  
+        }
+        setMaterialChange(data)
+        handleOpen('change-materialNo')
+      }
+      if (columnName === 'Color') {
+        const data = {
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcpQty_Redundant",
+          RY: item.RY,
+          Material_No: item.Material_No,
+          Delivery_Serial: item.Delivery_Serial,
+          Num_No: item.Num_No,
+          get_version: dataUser[0].WareHouse,
+          Color: item.Color,
+          Material_Name: item.Material_Name,
+          User_Serial_Key: item.User_Serial_Key
+  
+        }
+        setMaterialNameChange(data)
+        handleOpen('change-materialName')
+      }
+      if (columnName === 'RY') {
+        setIsApi(false)
+        const data = {
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcpRemak_RY",
+          RY: item.RY,
+          Material_No: item.Material_No,
+          Delivery_Serial: item.Delivery_Serial,
+          Num_No: item.Num_No,
+          get_version: dataUser[0].WareHouse,
+          Color: item.Color,
+          Material_Name: item.Material_Name,
+          User_Serial_Key: item.User_Serial_Key
+        }
+        axios.post(url, data, config).then(response => {
+          if (response.data.length > 0) {
+            const valueListArray = response.data[0].Value_List_Material_No.split(',');
+            const arr = valueListArray.map((item: any, index: any) => ({
+              _id: index,
+              Location: item
+            }))
+            setDataModalLocation(arr)
+  
+          }
+        }).finally(()=>{
+          setIsApi(true)
+        })
+        setMaterialNoLocation(item.Material_No)
+        handleOpen('modal-location')
+  
+      }
     }
+   
   }
 
   const handleRowClick = (colName: any, params: any) => {

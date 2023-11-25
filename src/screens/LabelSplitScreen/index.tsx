@@ -288,18 +288,20 @@ const LabelSplit = () => {
     const [openCofirm, setOpenCofirm] = useState(false)
     const [cofirmType, setCofirmType] = useState('')
     const [modalScan, setModalScan] = useState(false)
+    const [isApi, setIsApi] = useState(true)
+
     //#endregion
 
     //#region Func OnChange Input
     const handleQrCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQrCode(event.target.value);
     };
-   
+
     const handleChxAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChxAll(event.target.checked);
     };
     //#endregion
-   
+
     //#region Func Logic
     const handleOpenConfirm = (confirmName: string) => {
         setCofirmType(confirmName)
@@ -364,63 +366,67 @@ const LabelSplit = () => {
     };
 
     const handleDoubleClick = (colName: string, item: any) => {
-        setIsLoading(true)
-        setDisable(true)
-        const url = connect_string + "api/DoubleClick_Print_Label_Cut"
+        if (isApi === true) {
+            setIsLoading(true)
+            setDisable(true)
+            setIsApi(false)
+            const url = connect_string + "api/DoubleClick_Print_Label_Cut"
 
-        const duplicates = filterDuplicates(oldRows, item.BarCode);
-        const date_temp = item.ngay.split('/')
+            const duplicates = filterDuplicates(oldRows, item.BarCode);
+            const date_temp = item.ngay.split('/')
 
-        const data = {
-            dcmOrder_No: item.CGNO_Order_No,
-            dcmMaterial_No: item.CLBH_Material_No,
-            dcmMaterial_Type: item.cllb_Material_Type,
-            dcmColor: item.Color,
-            dcmUnit: item.dwbh_Units,
-            dcmQty_ROLL: item.Qty_Roll,
-            dcmArrival_QTY: item.Arrival_QTY,
-            dcmQTY: item.QTY,
-            dcmRoll: item.Roll,
-            dcmSize: item.Size,
-            dcmMaterial: item.ywpm_Material,
-            dcmProduction: item.ywsm_Production,
-            dcmWork_Order: item.ZLBH_Work_Order,
-            dcmSupplier_no: item.zsdh_Supplier_No,
-            dcmSupplier: item.zsywjc_Supplier,
-            dcmDate: date_temp[2] + "/" + date_temp[1] + "/" + date_temp[0],
-            dcmBarcode: item.BarCode,
-            Value_Roll_Cut: item.Qty_Roll,
-            Value_Roll_Print: duplicates,
-            User_Serial_Key: dataUser[0].UserId,
-            Value_Roll_Number: item.Value_Roll_Number,
-            Value_Material_Label_Serial: item.Material_Label_Serial,
-            get_version: dataUser[0].WareHouse
+            const data = {
+                dcmOrder_No: item.CGNO_Order_No,
+                dcmMaterial_No: item.CLBH_Material_No,
+                dcmMaterial_Type: item.cllb_Material_Type,
+                dcmColor: item.Color,
+                dcmUnit: item.dwbh_Units,
+                dcmQty_ROLL: item.Qty_Roll,
+                dcmArrival_QTY: item.Arrival_QTY,
+                dcmQTY: item.QTY,
+                dcmRoll: item.Roll,
+                dcmSize: item.Size,
+                dcmMaterial: item.ywpm_Material,
+                dcmProduction: item.ywsm_Production,
+                dcmWork_Order: item.ZLBH_Work_Order,
+                dcmSupplier_no: item.zsdh_Supplier_No,
+                dcmSupplier: item.zsywjc_Supplier,
+                dcmDate: date_temp[2] + "/" + date_temp[1] + "/" + date_temp[0],
+                dcmBarcode: item.BarCode,
+                Value_Roll_Cut: item.Qty_Roll,
+                Value_Roll_Print: duplicates,
+                User_Serial_Key: dataUser[0].UserId,
+                Value_Roll_Number: item.Value_Roll_Number,
+                Value_Material_Label_Serial: item.Material_Label_Serial,
+                get_version: dataUser[0].WareHouse
+            }
+            axios.post(url, data, config).then(response => {
+                const arr = response.data.map((item: any, index: any) => ({
+                    _id: index,
+                    zsdh_Supplier_No: item.zsywjc_Supplier,
+                    CLBH_Material_No: item.CLBH_Material_No,
+                    ywpm_Material: item.ywpm_Material,
+                    Color: item.Color,
+                    Size: item.Size,
+                    Print_QTY: item.Print_QTY,
+                    QTY: item.QTY,
+                    dwbh_Units: item.dwbh_Units,
+                    CGNO_Order_No: item.CGNO_Order_No,
+                    Roll: item.Roll,
+                    Date_Print: item.Date_Print,
+                    ywsm_Production: item.ywsm_Production,
+                    ZLBH_Work_Order: item.ZLBH_Work_Order,
+                    cllb_Material_Type: item.cllb_Material_Type,
+                    BarCode: item.BarCode,
+                }))
+                setRowUps(arr)
+                handleSearch()
+            }).finally(() => {
+                setIsLoading(false)
+                setDisable(false)
+                setIsApi(true)
+            })
         }
-        axios.post(url, data, config).then(response => {
-            const arr = response.data.map((item: any, index: any) => ({
-                _id: index,
-                zsdh_Supplier_No: item.zsywjc_Supplier,
-                CLBH_Material_No: item.CLBH_Material_No,
-                ywpm_Material: item.ywpm_Material,
-                Color: item.Color,
-                Size: item.Size,
-                Print_QTY: item.Print_QTY,
-                QTY: item.QTY,
-                dwbh_Units: item.dwbh_Units,
-                CGNO_Order_No: item.CGNO_Order_No,
-                Roll: item.Roll,
-                Date_Print: item.Date_Print,
-                ywsm_Production: item.ywsm_Production,
-                ZLBH_Work_Order: item.ZLBH_Work_Order,
-                cllb_Material_Type: item.cllb_Material_Type,
-                BarCode: item.BarCode,
-            }))
-            setRowUps(arr)
-            handleSearch()
-        }).finally(() => {
-            setIsLoading(false)
-            setDisable(false)
-        })
 
     }
 
@@ -442,7 +448,7 @@ const LabelSplit = () => {
 
         axios.post(url, arr, config).then(response => {
             if (response.data === true) {
-                 handleOpenConfirm('print-success')
+                handleOpenConfirm('print-success')
             }
             else {
                 handleOpenConfirm('print-erorr')
@@ -479,7 +485,7 @@ const LabelSplit = () => {
         }
     }
     //#endregion
-   
+
     return (
         <FullScreenContainerWithNavBar hidden={true} navigate="/" onShowScan={handleScanClick} sideBarDisable={true} sideBarNavigate="" title={t("btnPrint_Cut")}>
             <Box
@@ -522,7 +528,7 @@ const LabelSplit = () => {
                 {open && <Formprint open={open} onClose={() => setOpen(false)} rows={rowUps} />}
                 {/* {cofirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string } />} */}
                 {cofirmType === 'print-erorr' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintErrror") as string} />}
-                {cofirmType === 'delete-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgDeleteSuccesful") as string}/>}
+                {cofirmType === 'delete-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgDeleteSuccesful") as string} />}
             </Stack>
         </FullScreenContainerWithNavBar >
     )
