@@ -740,7 +740,7 @@ const StampPrintScreen = () => {
                             />
                         </Grid>
                         <Grid item xs={2}>
-                            {(dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === "Administrator") &&
+                            {(dataUser[0].TLLanguage === 'TW' || dataUser[0].UserRole === "Administrator") &&
                                 <FormControlLabel
                                     sx={styletext}
                                     control={<Checkbox defaultChecked={false} onChange={handlechxResidual_supplies} />}

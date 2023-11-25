@@ -107,6 +107,7 @@ const LoginForm = () => {
       const response = await axios.post(url, dataUser, config);
       if (response.data.length !== 0) {
         const buildingData = await showBuilding(); // Chờ đợi showBuilding trả về dữ liệu
+        console.log(response.data)
         dispatch(
           addUser([
             {
@@ -115,7 +116,8 @@ const LoginForm = () => {
               UserRole: response.data[0]['Rp_Usere_level'],
               WareHouse: selectedWareHouse,
               factoryName: factoryName,
-              building: buildingData // Sử dụng dữ liệu từ showBuilding ở đây
+              building: buildingData,
+              TLLanguage:response.data[0]['TLLanguage'] // Sử dụng dữ liệu từ showBuilding ở đây
             }
           ])
         );

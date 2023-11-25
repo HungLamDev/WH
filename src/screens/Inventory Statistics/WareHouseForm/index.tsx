@@ -28,7 +28,8 @@ const WareHouseF = () => {
     const factory = dataUser[0].factoryName
     const [listRack, setListRack] = useState<any[]>([])
     const [countFetch, setCountFetch] = useState(0)
-    const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...ListB5_F2] : [])
+    // Mặc định kho
+    const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...ListB5_F1] : [])
     const [warehouse, setWareHouse] = useState(dataUser[0].building)
     const [apiRequestComplete, setApiRequestComplete] = useState(false);
     //#endregion
@@ -175,6 +176,7 @@ const WareHouseF = () => {
             >
                 <Stack direction={'row'} width={'50%'}>
                     {
+                        // này của LHG
                         dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F' ?
                             (
                                 <>  <Button className={`warehouse-button ${warehouse === 'G' ? 'active' : ''}`} onClick={() => handleClick('G')}>G</Button>
@@ -182,12 +184,13 @@ const WareHouseF = () => {
                                     <Button className={`warehouse-button ${warehouse === 'F' ? 'active' : ''}`} onClick={() => handleClick('F')}>F</Button>
                                 </>
                             )
+                            // này của LVL
                             :
                             (
                                 <>
                                     <Button className={`warehouse-button ${warehouse === 'B5L1' ? 'active' : ''}`} onClick={() => handleClick('B5L1')}>B5L1</Button>
                                     <Button className={`warehouse-button ${warehouse === 'B5L2' ? 'active' : ''}`} onClick={() => handleClick('B5L2')}>B5L2</Button>
-                                
+
                                 </>
                             )
                     }
@@ -197,6 +200,7 @@ const WareHouseF = () => {
                 </Stack>
             </Box>
             {
+                // này của LHG
                 (dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F') ?
                     (
                         <Stack height={'100%'}>
@@ -213,6 +217,7 @@ const WareHouseF = () => {
                             </Stack>
                         </Stack>
                     )
+                    // này của LVL
                     :
                     <div style={{
                         width: '100%',
@@ -223,32 +228,99 @@ const WareHouseF = () => {
                         marginTop: '15px'
                     }}>
                         <Grid container >
+                            {/* Này là bên trái  */}
                             <Grid item xs={2} >
-                                <Grid container direction={'column'}>
-                                    <Grid item xs={4} marginBottom={'200px'} sx={{ border: '1px solid yellow' }}>
-                                        <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <span>Khu Phoi Hang</span>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={8} >
-                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid red' }}>
-                                            <span>Y001</span>
-                                        </Box>
-                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
-                                            <span>Khu Chat Trang Tri</span>
-                                        </Box>
-                                        <Box sx={{ marginBottom: '5px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
-                                            <span>Water Room</span>
-                                        </Box>
-                                        <Box sx={{ marginBottom: '239px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
-                                            <span>WC</span>
-                                        </Box>
-                                        <Box sx={{ height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
-                                            <span>Khu Phat Hang</span>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+                                {
+                                    warehouse === 'B5L2'
+                                        ?
+                                        (
+                                            <Grid container direction={'column'} height={'100%'} >
+                                                <Grid item xs={1.5}  >
+                                                    <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                                        <span>Khu Phoi Hang</span>
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}></Grid>
+                                                <Grid item xs={7}>
+                                                    <Grid container direction={'column'} height={'100%'} >
+                                                        <Grid item >
+                                                            <Box sx={{ marginBottom: '5px', height: '110px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid red' }}>
+                                                                <span>Y001</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item >
+                                                            <Box sx={{ marginBottom: '5px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                                                <span>Khu Chat Trang Tri</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item >
+                                                            <Box sx={{ marginBottom: '5px', height: '130px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>Water Room</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item >
+                                                            <Box sx={{ marginBottom: '0px', height: '130px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>WC</span>
+                                                            </Box>
+                                                        </Grid>
+
+                                                    </Grid>
+
+                                                </Grid>
+                                                <Grid item xs={1.5} >
+                                                    <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                        <span>Khu Phat Hang</span>
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                        :
+                                        warehouse === 'B5L1' &&
+                                        (
+                                            <Grid container direction={'column'} height={'100%'} >
+                                                <Grid item xs={4} height={'100%'}>
+                                                    <Grid container height={'100%'} direction={'column'} rowSpacing={1}>
+                                                        <Grid item xs={2}></Grid>
+                                                        <Grid item xs={2}></Grid>
+                                                        <Grid item xs={2}></Grid>
+                                                        <Grid item xs={2}></Grid>
+                                                        <Grid item xs={4}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid yellow' }}>
+                                                            </Box>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid item xs={1} height={'100%'}></Grid>
+                                                <Grid item xs={5} height={'100%'} >
+                                                    <Grid container height={'100%'} direction={'column'} rowSpacing={1}>
+                                                        <Grid item xs={3}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>Meeting Room</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>Label printing + photo room</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>Water Room</span>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={3}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                                <span>WC</span>
+                                                            </Box>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                }
+
                             </Grid>
+                            {/* Này là chart */}
                             <Grid item xs={8}>
                                 <Grid container justifyContent={'center'} rowSpacing={1}>
                                     {
@@ -278,33 +350,63 @@ const WareHouseF = () => {
                                     }
                                 </Grid>
                                 <Grid container marginTop={'100px'}>
-                                    <Grid item xs={2}></Grid>
-                                    <Grid item xs={3}>
-                                        <Box sx={{ marginBottom: '5px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid blue' }}>
-                                            <span>Pallet</span>
+                                    <Grid item xs={12}>
+                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid BLACK' }}>
+                                            <span>OFFICE/VAN PHONG</span>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={3}></Grid>
-                                    <Grid item xs={3}>
-                                        <Box sx={{ marginBottom: '5px', height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid purple' }}>
-                                            <span>Khu Kiem Hang QC</span>
-                                        </Box>
-                                    </Grid>
+                                   
                                 </Grid>
                             </Grid>
+                            {/* Này là bên phải  */}
                             <Grid item xs={2} >
-                                <Grid container direction={'column'}>
-                                    <Grid item xs={4} marginBottom={'200px'} sx={{ border: '1px solid yellow' }}>
-                                        <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <span>Khu Phoi Hang</span>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={8} >
-                                        <Box sx={{ marginBottom: '5px', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
-                                            <span>Khu Phoi Hang</span>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+                                {
+                                    warehouse === 'B5L2'
+                                        ?
+                                        (
+                                            <Grid container height={'100%'} direction={'column'}>
+                                                <Grid item xs={1.5}  >
+                                                    <Box sx={{ height: '100px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                                        <span>Khu Phoi Hang</span>
+                                                    </Box>
+                                                </Grid>
+                                                <Grid item xs={2}></Grid>
+                                                <Grid item xs={8} >
+                                                    <Box sx={{ marginBottom: '5px', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid yellow' }}>
+                                                        <span>Khu Phoi Hang</span>
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                        :
+                                        warehouse === 'B5L1' &&
+                                        (
+                                            <Grid container height={'100%'} direction={'column'}>
+                                                <Grid item xs={4} height={'100%'}>
+                                                    <Grid container height={'100%'} direction={'column'} rowSpacing={1}>
+                                                        <Grid item xs={2}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={2}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={2}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid black' }}>
+                                                            </Box>
+                                                        </Grid>
+                                                        <Grid item xs={2}></Grid>
+                                                        <Grid item xs={4}>
+                                                            <Box sx={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid purple' }}>
+                                                                <span>Khu Kiem Hang QC</span>
+                                                            </Box>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                }
                             </Grid>
                         </Grid>
                     </div>

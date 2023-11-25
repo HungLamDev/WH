@@ -85,7 +85,7 @@ export const ListB5_F1: {
       }
       ListB5_F2.push({
         width: "100%",
-        height: "80%",
+        height: "100%",
         Sum_Total: "0",
         Rack_Total: "D" + i,
       });
@@ -104,14 +104,14 @@ export const ListB5_F1: {
    
         ListB1_F1.push({
           width: "100%",
-          height: "80%",
+          height: "100%",
           Sum_Total:"0",
           Rack_Total: "D" + paddedIndex,
         });
         if(i==126){
             ListB1_F1.push({
                 width: "100%",
-                height: "80%",
+                height: "100%",
                 Sum_Total:"0",
                 Rack_Total: "Pallet",
               });

@@ -166,7 +166,7 @@ const UserForm = () => {
             txtUser_Serial_Key: userSerialKey,
             dtpStart_Date: startDate.format("YYYY-MM-DD"),
             dtpLeave_Date: leaveDate.format("YYYY-MM-DD"),
-            lblUser_Name: false,
+            lblUser_Name: lblUserName,
             get_version: dataUser[0].WareHouse,
             cboGroup_Serial_Key: listGroupUser.filter((item: any) =>  item.cbxText === groupUser)[0].cbxValue
         }

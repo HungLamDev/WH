@@ -14,7 +14,7 @@ const ChartLVL = ({ listRack, wareHouse }: { listRack: any, wareHouse: any }) =>
                     width: listRack.width,
                     height: listRack.height,
                 }} >
-                    <div className="barlvl-title">{listRack.Rack_Total}</div>
+                    <div className="barlvl-title">P</div>
                     <div className='barlvl-container' onClick={() => nag('/material-detail', { state: { Rack_Total: listRack.Rack_Total, wareHouse: wareHouse } })} >
     
                         <div
