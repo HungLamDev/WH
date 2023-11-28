@@ -16,7 +16,7 @@ export interface IFactoryItem {
     value: FactoryName;
 }
 //#endregion
-export let connect_string =  'https://192.168.32.81/'
+export let connect_string =  ''
 
 export const checkPermissionPrint = async (UserId: string) => {
     const url = connect_string + 'api/check_print_name';

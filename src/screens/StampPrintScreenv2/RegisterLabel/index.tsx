@@ -423,9 +423,9 @@ const RegisterLabel = () => {
                                 label={"Tìm lại"}
                             />
                         </Grid>
-                        <Grid item xs={2} display={'flex'} alignItems={'center'}>
+                        {/* <Grid item xs={2} display={'flex'} alignItems={'center'}>
                             {isLoading && <CircularProgress size={'25px'} color="info" />}
-                        </Grid>
+                        </Grid> */}
                         
 
                     </Grid>

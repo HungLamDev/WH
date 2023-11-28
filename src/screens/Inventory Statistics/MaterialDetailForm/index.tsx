@@ -15,7 +15,6 @@ import { saFactory_LHG } from "../../../utils/constants";
 const MaterialDetailForm = () => {
     const { t } = useTranslation();
     const { state } = useLocation();
-
     //#region Variable
     const [listMaterial, setListMaterial] = useState<any[]>([])
     const [rackDataDict, setRackDataDict] = useState<Record<string, any[]>>({});

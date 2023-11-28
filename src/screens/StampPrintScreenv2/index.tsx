@@ -181,7 +181,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "Color",
-            headerName: t("dcmColor") as string,
+            headerName: t("dcmColor") as string+ "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002",
             align: "center",
             headerAlign: 'center',
             width: 300,
@@ -792,7 +792,7 @@ const StampPrintScreen = () => {
                     <TableCheckBox columns={columnsUp} rows={rowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
                 <Stack sx={{ height: '50%'}} >
-                    <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay"]} arrNotShowCell={['_id']} />
+                    <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay","Color"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>
