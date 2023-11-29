@@ -118,7 +118,6 @@ const MyTable = ({ columns, rows, onClick, rowUps, handleDelete }: MyTableProps)
     }
   }
   function handleClick(row: any): void {
-    // console.log({ row });
 
   }
   return (

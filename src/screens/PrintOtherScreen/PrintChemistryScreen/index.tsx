@@ -454,7 +454,6 @@ const DataHistoryPrintScreen = () => {
           // Name_M: item.Name_M,
         }));
         setrowDowns(arr);
-        // console.log(arr);
       })
       .finally(() => {
         setIsLoading(false);

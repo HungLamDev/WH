@@ -19,11 +19,9 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 import { clearArrayRowDowntoUp } from "../../redux/ArrayRowDowntoUp";
 import { GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
-import {  config } from "../../utils/api";
+import { config } from "../../utils/api";
 import { checkPermissionPrint } from "../LoginScreen/ChooseFactory";
-
 import { connect_string } from "../LoginScreen/ChooseFactory";
-
 import CircularProgress from '@mui/material/CircularProgress';
 import TableCheckBox from "../../components/TableCheckBox";
 import { useTranslation } from "react-i18next";
@@ -181,7 +179,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "Color",
-            headerName: t("dcmColor") as string+ "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002"+ "\u2002",
+            headerName: t("dcmColor") as string ,
             align: "center",
             headerAlign: 'center',
             width: 300,
@@ -254,7 +252,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "ZLBH_Work_Order",
-            headerName: t("dcpWork_Order") as string + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002" + "\u2002",
+            headerName: t("dcpWork_Order") as string ,
             align: "center",
             width: 150,
             headerAlign: 'center'
@@ -354,33 +352,33 @@ const StampPrintScreen = () => {
     //#endregion
 
     //#region useEffect
-    useEffect(() => {
-        const ArrTemp = ArrayRowDowns.map((item: any, index: any) => ({
-            // item,
-            // ngay: moment(item.CGDate_Date).format('DD/MM/yyyy')
-            _id: index,
-            zsywjc_Supplier: item.zsywjc_Supplier,
-            CLBH_Material_No: item.CLBH_Material_No,
-            ywpm_Material: item.ywpm_Material,
-            Color: item.Color,
-            Size: item.Size,
-            qty_roll: item.qty_roll,
-            Arrival_QTY: item.Arrival_QTY,
-            QTY: item.QTY,
-            dwbh_Units: item.dwbh_Units,
-            CGNO_Order_No: item.CGNO_Order_No,
-            Roll: item.Roll,
-            ngay: moment(item.CGDate_Date).format('YYYY-MM-DD'),
-            ywsm_Production: item.ywsm_Production,
-            ZLBH_Work_Order: item.ZLBH_Work_Order,
-            cllb_Material_Type: item.cllb_Material_Type,
-            Name_Material_Detail: item.Name_Material_Detail,
-        }));
-        setrowDowns(ArrTemp)
-        setrowUps(ArrayRowUps)
+    // useEffect(() => {
+    //     // const ArrTemp = ArrayRowDowns.map((item: any, index: any) => ({
+    //     //     // item,
+    //     //     // ngay: moment(item.CGDate_Date).format('DD/MM/yyyy')
+    //     //     _id: index,
+    //     //     zsywjc_Supplier: item.zsywjc_Supplier,
+    //     //     CLBH_Material_No: item.CLBH_Material_No,
+    //     //     ywpm_Material: item.ywpm_Material,
+    //     //     Color: item.Color,
+    //     //     Size: item.Size,
+    //     //     qty_roll: item.qty_roll,
+    //     //     Arrival_QTY: item.Arrival_QTY,
+    //     //     QTY: item.QTY,
+    //     //     dwbh_Units: item.dwbh_Units,
+    //     //     CGNO_Order_No: item.CGNO_Order_No,
+    //     //     Roll: item.Roll,
+    //     //     ngay: moment(item.CGDate_Date).format('YYYY-MM-DD'),
+    //     //     ywsm_Production: item.ywsm_Production,
+    //     //     ZLBH_Work_Order: item.ZLBH_Work_Order,
+    //     //     cllb_Material_Type: item.cllb_Material_Type,
+    //     //     Name_Material_Detail: item.Name_Material_Detail,
+    //     // }));
+    //     // setrowDowns(ArrTemp)
+    //     setrowUps(ArrayRowUps)
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ArrayRowDowns, ArrayRowUps]);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [ArrayRowDowns, ArrayRowUps]);
     //#endregion
 
     //#region  Func Logic
@@ -420,7 +418,26 @@ const StampPrintScreen = () => {
 
 
         axios.post(url, data, config).then(response => {
-            dispatch(copyValues(response.data))
+            const arr = response.data.map((item: any,index: any) => ({
+                _id: index,
+                zsywjc_Supplier: item.zsywjc_Supplier,
+                CLBH_Material_No: item.CLBH_Material_No,
+                ywpm_Material: item.ywpm_Material,
+                Color: item.Color,
+                Size: item.Size,
+                qty_roll: item.qty_roll,
+                Arrival_QTY: item.Arrival_QTY,
+                QTY: item.QTY,
+                dwbh_Units: item.dwbh_Units,
+                CGNO_Order_No: item.CGNO_Order_No,
+                Roll: item.Roll,
+                ngay: moment(item.CGDate_Date).format('YYYY-MM-DD'),
+                ywsm_Production: item.ywsm_Production,
+                ZLBH_Work_Order: item.ZLBH_Work_Order,
+                cllb_Material_Type: item.cllb_Material_Type,
+                Name_Material_Detail: item.Name_Material_Detail,
+            }))
+            dispatch(copyValues(arr))
             setrowUps([]);
             setResetCheckbox(true);
         }).finally(() => {
@@ -431,7 +448,7 @@ const StampPrintScreen = () => {
     }
 
     const handleDoubleClick = (name: any, params: any) => {
-        if(isApi === true){
+        if (isApi === true) {
             const date_temp = params.ngay.toString().replaceAll("/", "-").split('-')
             const ngay = date_temp[0] + '-' + date_temp[1] + '-' + date_temp[2]
             setIsApi(false)
@@ -462,9 +479,9 @@ const StampPrintScreen = () => {
                 chxPrint_RY: chxPrint_RY,
                 get_version: dataUser[0].WareHouse,
                 Production: params.ywsm_Production
-    
+
             }
-    
+
             axios.post(url1, data_stamp, config).then(response => {
                 setDataInRowUps(dataInRowUps1 => {
                     const newDataInRowUps = response.data.map((item: any, index: any) => {
@@ -496,20 +513,20 @@ const StampPrintScreen = () => {
                         });
                     });
                     const mergedDataInRowUps = [...filteredDataInRowUps1, ...newDataInRowUps];
-                    setrowUps(mergedDataInRowUps);
-                    dispatch(copyValues(rowDowns));
+                    // setrowUps(mergedDataInRowUps);
+
+                    // dispatch(copyValues(rowDowns));
                     dispatch(copyValuesRowUps(mergedDataInRowUps));
-                    // console.log(mergedDataInRowUps)
                     return mergedDataInRowUps;
                 });
-    
+
             }).finally(() => {
                 setIsLoading(false)
                 setDisable(false)
                 setIsApi(true)
             })
         }
-      
+
 
     }
 
@@ -597,7 +614,6 @@ const StampPrintScreen = () => {
             get_version: dataUser[0].WareHouse
 
         }))
-        // console.log(dataprint)
         axios.post(url, dataprint, config).then(response => {
             if (response.status == 200) {
                 handleOpenConfirm('print-success')
@@ -630,6 +646,9 @@ const StampPrintScreen = () => {
                 if (response.data === true) {
                     dispatch(changeItemsByBarcodeArrayRowUps({ barcodes: listBarcode, modifyDate: dateChange, Work_Order: workorder }))
                     setrowUps(ArrayRowUps)
+                }
+                else{
+                    handleOpenConfirm('changedatefail') 
                 }
             }).finally(() => {
                 setIsLoading(false)
@@ -784,15 +803,16 @@ const StampPrintScreen = () => {
                     {cofirmType === 'print-error' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintDelete") as string} />}
                     {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
                     {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
+                    {cofirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={"Ngày cập nhật phải trong tháng"} />}
                 </Stack>
                 {open && <Formprint open={open} onClose={() => setOpen(false)} rows={ArrayDeleteAndPrint} />}
             </Box>
             <Stack overflow={"hidden"} sx={{ height: '100%' }}>
                 <Stack sx={{ height: '50%', }}>
-                    <TableCheckBox columns={columnsUp} rows={rowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
+                    <TableCheckBox columns={columnsUp} rows={ArrayRowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
-                <Stack sx={{ height: '50%'}} >
-                    <TableDateTimePicker columns={columnsDown} rows={rowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay","Color"]} arrNotShowCell={['_id']} />
+                <Stack sx={{ height: '50%' }} >
+                    <TableDateTimePicker columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>

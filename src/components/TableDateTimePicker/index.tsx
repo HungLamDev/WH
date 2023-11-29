@@ -13,8 +13,8 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { TextFieldChangeArrayRowDowns,DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
 const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
     const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
 
@@ -23,14 +23,12 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
-
+    const dispatch = useDispatch();
+    
     useEffect(() => {
         setSelected([])
     }, [rows])
-    // useEffect(() => {
-    //     setSelectedDateArr(arrdate)
-    //     console.log('may đâu', arrdate)
-    // }, [arrdate])
+
     useEffect(() => {
         if (tableName === 'delivery-material') {
             setSelected(MaterialTableChecked)
@@ -102,16 +100,20 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     };
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
-        rows[rowInd][colName] = value;
+         dispatch(TextFieldChangeArrayRowDowns({_id:rowInd,columnName:colName,value:value}))
     };
 
     const handleDateTimePickerChange = (rowInd: number, colName: string, params: any) => {
 
         if (colName === 'ywsm_Production') {
-            rows[rowInd][colName] = moment(params, "MMMM-YYYY").format("MMM-YYYY");
+            dispatch(DateTimePickerChangeArrayRowDowns({_id:rowInd,columnName:colName,value:moment(params, "MMMM-YYYY").format("MMM-YYYY")}))
+            // rows[rowInd][colName] = moment(params, "MMMM-YYYY").format("MMM-YYYY");
         }
-        else if (colName === 'ngay') {
-            rows[rowInd][colName] = moment(params).format("YYYY-MM-DD");
+        else if (colName === 'ngay' || colName === 'CGDate_Date') {
+            dispatch(DateTimePickerChangeArrayRowDowns({_id:rowInd,columnName:colName,value:moment(params).format("YYYY-MM-DD")}))
+
+            // rows[rowInd][colName] = moment(params).format("YYYY-MM-DD");
+           
         }
     };
     return (
@@ -184,7 +186,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                     const column = columns.find((col) => col.field === key);
 
                                     if (column) {
-                                        const isProductionCell = key === "ywsm_Production" || key === "ngay";
+                                        const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date';
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                                         let ngay = item.ngay;
                                         return (
@@ -205,10 +207,11 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                                                         size="small"
+
                                                         sx={{
-                                                            '& .css-ut84gl-MuiInputBase-input-MuiOutlinedInput-input': {
+                                                            '& .MuiInputBase-input': {
                                                                 padding: 0,
-                                                                width: '100%',
+                                                                width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
                                                                 textAlign: 'center',
                                                                 fontSize: '17px',
                                                                 '@media screen and (max-width: 1000px)': {
@@ -218,19 +221,19 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
 
                                                         }}
                                                     />
-                                                ) : isProductionCell ? (
+                                                ) : isProductionCell && key === "ywsm_Production" ? (
 
                                                     <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
-                                                        monthAndYear: key === "ngay" ? "YYYY/MM/DD" : "MM/YYYY",
+                                                        monthAndYear: "MM/YYYY",
                                                     }}>
 
                                                         <DateTimePicker
                                                             className="td-responesive"
-                                                            format={key === "ngay" ? "YYYY-MM-DD" : "MMMM YYYY"}
+                                                            format={"MMMM YYYY"}
                                                             // value={selectedDateArr[index]}
-                                                            defaultValue={key === "ngay" ? moment() : null}
+                                                            // defaultValue={key === "ngay" ? moment() : null}
                                                             onChange={(params) => handleDateTimePickerChange(index, key, params)}
-                                                            views={key === "ngay" ? ['year', 'month', 'day'] : ['month', 'year']}
+                                                            views={['month', 'year']}
                                                             slotProps={{
                                                                 toolbar: {
                                                                     hidden: true,
@@ -252,14 +255,53 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                                     '@media screen and (max-width: 1000px)': {
                                                                         fontSize: '14px !important',
                                                                     },
-                                                                },                                                              
+                                                                },
                                                             }} />
                                                     </LocalizationProvider>
 
-                                                ) :
+                                                ) : isProductionCell && ( key === "ngay" || key === 'CGDate_Date')
+                                                    ?
+                                                    (
+                                                        <LocalizationProvider dateAdapter={AdapterMoment} >
+
+                                                            <DateTimePicker
+                                                                className="td-responesive"
+                                                                format={"YYYY-MM-DD"}
+                                                                // value={selectedDateArr[index]}
+                                                                defaultValue={ moment()}
+                                                                onChange={(params) => handleDateTimePickerChange(index, key, params)}
+                                                                views={['year','month','day']}
+                                                                slotProps={{
+                                                                    toolbar: {
+                                                                        hidden: true,
+                                                                    },
+                                                                    textField: {
+                                                                        inputProps: {
+                                                                            sx: {
+                                                                                height: "0.5rem",
+                                                                                textAlign: "center",
+                                                                            },
+                                                                        },
+
+                                                                    },
+                                                                }}
+                                                                sx={{
+                                                                    width: '180px',
+                                                                    '& .MuiInputBase-input': {
+                                                                        fontSize: '15px',
+                                                                        '@media screen and (max-width: 1000px)': {
+                                                                            fontSize: '14px !important',
+                                                                        },
+                                                                    },
+                                                                }} />
+                                                        </LocalizationProvider>
+                                                    )
+                                                    :
+
                                                     (
                                                         item[key]
-                                                    )}
+                                                    )
+                                                }
                                             </TableCell>
                                         );
                                     }

@@ -48,7 +48,6 @@ const WareHouseF = () => {
     useEffect(() => {
         if(warehouse !== dataUser[0].building){
             updateData();
-            console.log(warehouse)
         }
     }, [warehouse]);
 

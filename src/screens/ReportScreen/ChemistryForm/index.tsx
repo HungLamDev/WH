@@ -186,7 +186,6 @@ const AccountingCardScreen = () => {
   //#region useEffect
   useEffect(() => {
     if (txtMaterial_No.length >= 10) {
-      // console.log('mã vật tư: ', txtMaterial_No)
       Material_Accounting_Card_Textchanged(txtMaterial_No);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -359,7 +358,6 @@ const AccountingCardScreen = () => {
           });
         });
         const arrWithoutLastRow = arr.slice(0, arr.length - 1);
-        // console.log(arrWithoutLastRow)
         // setRows(arrWithoutLastRow);
         const array = response.data;
         // setMaterialName(array[array.length - 1].Value_Material_Name);
@@ -489,7 +487,6 @@ const AccountingCardScreen = () => {
         });
     } else
       if (event.key === 'Enter' && chxOrder_No === false && dataUser[0].UserRole !== 'Administrator' && dataUser[0].UserRole !== 'Manager' && dataUser[0].UserRole !== 'Account') {
-        // console.log("1")
         LoadMaterial();
       }
   };

@@ -16,7 +16,7 @@ export interface IFactoryItem {
     value: FactoryName;
 }
 //#endregion
-export let connect_string =  ''
+export let connect_string = ''
 
 export const checkPermissionPrint = async (UserId: string) => {
     const url = connect_string + 'api/check_print_name';
@@ -27,13 +27,13 @@ export const checkPermissionPrint = async (UserId: string) => {
         const response = await axios.post(url, data, config);
         return response.data;
     } catch (error) {
-        return false; 
+        return false;
     }
 };
 
 const ChooseFactory = () => {
     const { t } = useTranslation();
-    
+
     //#region List Factory
     const myArray: IFactoryItem[] = [
         {
@@ -68,16 +68,17 @@ const ChooseFactory = () => {
 
     useEffect(() => {
         if (selectedValue === 'LVL') {
-            connect_string='https://192.168.60.21:7777/'
+            connect_string = 'https://192.168.60.21:7777/'
+            // connect_string =  'https://192.168.32.81/'
         }
-        else if (selectedValue === 'LHG'){
-            // connect_string='https://192.168.32.100:7777/'
+        else if (selectedValue === 'LHG') {
+            // connect_string = 'https://192.168.32.100:7777/'
             connect_string =  'https://192.168.32.81/'
         }
-        
+
     }, [selectedValue])
 
-    
+
     //#endregion
 
     //#region Func Logic

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { values } from 'lodash';
 
 export interface Stamp {
     Arrival_QTY: number,
@@ -53,9 +54,17 @@ const ArrayRowDowns = createSlice({
         },
         clearArrayRowDowns: (state) => {
             state.items = [];
+        },
+        TextFieldChangeArrayRowDowns: (state, action: PayloadAction<{ _id: number, columnName: string,value: any }>) => {
+            const { _id,columnName, value } = action.payload;
+            state.items[_id][columnName] = value;
+        },
+        DateTimePickerChangeArrayRowDowns: (state, action: PayloadAction<{ _id: number, columnName: string,value: any }>) => {
+            const { _id,columnName, value } = action.payload;
+            state.items[_id][columnName] = value;
         }
     }
 })
-export const { addItem, copyValues,removeItemByBarcode,clearArrayRowDowns } = ArrayRowDowns.actions;
+export const { addItem, copyValues, removeItemByBarcode, clearArrayRowDowns, TextFieldChangeArrayRowDowns,DateTimePickerChangeArrayRowDowns } = ArrayRowDowns.actions;
 
 export default ArrayRowDowns.reducer;

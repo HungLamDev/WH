@@ -206,14 +206,16 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                             onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                             size="small"
                             sx={{
-                              '& .css-ut84gl-MuiInputBase-input-MuiOutlinedInput-input': {
-                                padding: 0,
-                                width: '100%',
-                                textAlign: 'center',
-                                fontSize: '17px'
+                              '& .MuiInputBase-input': {
+                                  padding: 0,
+                                  width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
+                                  textAlign: 'center',
+                                  fontSize: '17px',
+                                  '@media screen and (max-width: 1000px)': {
+                                      fontSize: '12px !important',
+                                  },
                               },
-
-                            }}
+                          }}
                           />
                         ) : (
                           item[key]

@@ -582,9 +582,8 @@ const DeliverySampleScreen = () => {
                     get_version: dataUser[0].WareHouse
                 }
                 axios.post(url, data, config).then(response => {
-                    // console.log(response.data)
+                    dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
                 })
-                dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
             }
             else {
                 const data = {
@@ -606,9 +605,8 @@ const DeliverySampleScreen = () => {
                     get_version: dataUser[0].WareHouse
                 }
                 axios.post(url, data, config).then(response => {
-                    // console.log(response.data)
+                    dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
                 })
-                dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
             }
         }
 

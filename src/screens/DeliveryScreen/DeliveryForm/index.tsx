@@ -577,7 +577,6 @@ const DeliveryScreen = () => {
   
           }
           axios.post(url, data, config).then(response => {
-            // console.log(response.data)
             if (response.data.length > 0) {
               dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
             }

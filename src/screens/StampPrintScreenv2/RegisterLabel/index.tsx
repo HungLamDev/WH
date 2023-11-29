@@ -298,7 +298,6 @@ const RegisterLabel = () => {
             User_id: dataUser[0].UserId,
             Version: dataUser[0].WareHouse,
         }
-        // console.log(dataprint)
         axios.post(url, data, config).then(response => {
             if (response.data === true) {
                 handleOpenConfirm('print-success')

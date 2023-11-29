@@ -35,7 +35,6 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly, customClas
           format={"DD/MM/YYYY"}
           value={selectedDate}
           onChange={(value: any) => {
-            //console.log(selectedDate)
             setSelectedDate(value)
             valueDate(moment(value).format('MM/DD/YYYY'));
           }}

@@ -245,7 +245,6 @@ const CheckData = () => {
         }
         axios.post(url, data, config).then(response => {
             const arr = response.data;
-            // console.log(arr);
             setMateriaNo(arr)
 
         })

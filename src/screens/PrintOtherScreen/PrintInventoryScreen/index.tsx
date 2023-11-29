@@ -37,10 +37,13 @@ import Formprint from "../../../components/Formprint";
 import ModalCofirm from "../../../components/ModalConfirm";
 import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableDateTimePicker from "../../../components/TableDateTimePicker";
+import { copyValues, clearArrayRowDowns } from "../../../redux/ArrayRowDowns";
+import { copyValuesRowUps,clearArrayRowUps } from "../../../redux/ArrayRowUps";
+
 //#endregion
 const DataHistoryPrintScreen = () => {
   const { t } = useTranslation();
-
+  const dispatch = useDispatch();
   //#region column header table
   const columnsUp: GridColDef[] = [
     {
@@ -104,7 +107,7 @@ const DataHistoryPrintScreen = () => {
       headerClassName: "custom-header",
     },
     {
-      field: "Print_Date",
+      field: "ngay",
       headerName: t("dcpDate") as string, // Ngày
       width: 160,
       headerClassName: "custom-header",
@@ -235,9 +238,11 @@ const DataHistoryPrintScreen = () => {
     },
   ];
   //#endregion
- 
+
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
+  const ArrayRowUps = useSelector((state: any) => state.ArrayRowUps.items);
+  const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
   //#endregion
 
   //#region Variable
@@ -334,6 +339,7 @@ const DataHistoryPrintScreen = () => {
   }
 
   const handleSearch = () => {
+    dispatch(clearArrayRowDowns())
     setDisabled(true)
     const url = connect_string + "api/Data_Print_Inventory_Search"
     const data = {
@@ -368,10 +374,10 @@ const DataHistoryPrintScreen = () => {
         cllb_Material_Type: response.data.cllb_Material_Type,
         zsdh_Supplier_No: response.data.zsdh_Supplier_No
       }
-      if(item.CLBH_Material_No != null){
-        setrowDowns([item])
+      if (item.CLBH_Material_No != null) {
+        dispatch(copyValues([item]))
       }
-     
+
     }).finally(() => {
       setDisabled(false)
     })
@@ -397,7 +403,7 @@ const DataHistoryPrintScreen = () => {
       dcmWork_Order: params.ZLBH_Work_Order,
       dcmSupplier_no: params.zsdh_Supplier_No,
       dcmSupplier: params.zsywjc_Supplier,
-      dcmDate: params.CGDate_Date,
+      dcmDate: moment().format("DD/MM/YYYY") === params.CGDate_Date ? params.CGDate_Date :moment(params.CGDate_Date).format("DD/MM/YYYY"),
       User_Serial_Key: dataUser[0].UserId,
       get_version: dataUser[0].WareHouse
     }
@@ -414,6 +420,7 @@ const DataHistoryPrintScreen = () => {
         Unit: item.Unit,
         Order_No: item.Order_No,
         Roll: item.Roll,
+        ngay: moment(item.Print_Date).format("YYYY-MM-DD"),
         Print_Date: moment(item.Print_Date).format("DD/MM/YYYY"),
         Production: item.Production,
         Work_Order: item.Work_Order,
@@ -427,15 +434,15 @@ const DataHistoryPrintScreen = () => {
         });
       });
       const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-      setrowUps(mergedDataInRowUps);
+      dispatch(copyValuesRowUps(mergedDataInRowUps));
     }).finally(() => {
       setDisabled(false)
     })
   }
 
   const handleRefresh = () => {
-    setrowDowns([])
-    setrowUps([])
+    dispatch(clearArrayRowDowns())
+    dispatch(clearArrayRowUps())
   }
 
   const handleDelete = () => {
@@ -454,7 +461,7 @@ const DataHistoryPrintScreen = () => {
         const filteredArr1 = rowUps.filter((item1: any) => {
           return !listChx.some((item2: any) => item1.Barcode === item2.Barcode);
         });
-        setrowUps(filteredArr1)
+        dispatch(copyValuesRowUps(filteredArr1));
       }
       else {
         handleOpenConfirm('delete')
@@ -463,7 +470,7 @@ const DataHistoryPrintScreen = () => {
   }
 
   const handlePrint = async () => {
-    if(await checkPermissionPrint(dataUser[0].UserId)){
+    if (await checkPermissionPrint(dataUser[0].UserId)) {
       if (listChx.length > 0) {
         setDisabled(true)
         const url = connect_string + "api/Print_Inventory_Click"
@@ -474,7 +481,7 @@ const DataHistoryPrintScreen = () => {
           dcpBarcode: arr,
           User_Serial_Key: dataUser[0].UserId,
           get_version: dataUser[0].WareHouse
-  
+
         }
         axios.post(url, data, config).then(response => {
           if (response.data === true) {
@@ -490,15 +497,15 @@ const DataHistoryPrintScreen = () => {
       else {
         handleOpenConfirm('error-data')
       }
-  
+
     }
-    else{
+    else {
       handleOpenConfirm('print-permission')
-  }
-   
+    }
+
   }
   //#endregion
-  
+
   return (
     <FullScreenContainerWithNavBar
       sideBarDisable={true}
@@ -621,7 +628,7 @@ const DataHistoryPrintScreen = () => {
           {/* {cofirmType === 'print' && <ModalCofirm title={t("msgPrintSuccess") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />} */}
           {cofirmType === 'print-error' && <ModalCofirm title={t("msgPrintErrror") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
           {cofirmType === 'delete' && <ModalCofirm title={t("msgDeleteError") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
-          {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title= {t("msgChooseStamp") as string} />}
+          {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
           {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
         </Stack>
       </Box>
@@ -629,7 +636,7 @@ const DataHistoryPrintScreen = () => {
         <Stack sx={{ height: "50%" }}>
           <TableCheckBox
             columns={columnsUp}
-            rows={rowUps}
+            rows={ArrayRowUps}
             listChx={(params: any) => { setListChx(params) }}
             arrNotShowCell={["_id", "Print_QTY"]}
           />
@@ -637,7 +644,7 @@ const DataHistoryPrintScreen = () => {
         <Stack direction="row" sx={{ height: "50%" }}>
           <TableDateTimePicker
             columns={columnsDown}
-            rows={rowDowns}
+            rows={ArrayRowDowns}
             onDoubleClick={handleDoubleClick}
             arrEditCell={[
               "Size",
@@ -645,7 +652,8 @@ const DataHistoryPrintScreen = () => {
               "Roll",
               "ywpm_Material",
               "Arrial_Qty",
-              "ywsm_Production"
+              "ywsm_Production",
+              "CGDate_Date"
             ]}
             arrNotShowCell={["_id", "zsdh_Supplier_No"]}
           />

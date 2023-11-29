@@ -11,7 +11,6 @@ type MyTableType = {
   onDoubleClick: any;
 };
 const MyTable2 = ({ columns, rows, onDoubleClick }: MyTableType) => {
-  //console.log(rows)
   const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
   const ArrayRowUps = useSelector((state: any) => state.ArrayRowUps.items);
 
@@ -32,7 +31,6 @@ const MyTable2 = ({ columns, rows, onDoubleClick }: MyTableType) => {
     return newRow;
   };
   useEffect(() => {
-    //console.log(rowNew);
   }, [rowNew]);
 
   const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
@@ -97,7 +95,6 @@ const MyTable2 = ({ columns, rows, onDoubleClick }: MyTableType) => {
       }
     }
     else {
-      // console.log(key1)
       key1 = ''
       i = 0
     }
