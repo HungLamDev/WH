@@ -575,7 +575,6 @@ const StampPrintScreen = () => {
         })
     }
 
-
     const handlePrint = async () => {
         if (await checkPermissionPrint(dataUser[0].UserId)) {
             if (ArrayDeleteAndPrint.length > 0) {
@@ -628,7 +627,7 @@ const StampPrintScreen = () => {
 
     const handleOrderWordKeyDown = (event: any) => {
 
-        if (event.key === 'Enter' && chxReprint_RY === true) {
+        if (event.key === 'Enter' && chxReprint_RY === true && ArrayDeleteAndPrint.length >0) {
             setIsLoading(true)
             setDisable(true)
             const url = connect_string + "api/txtOrder_Word_KeyDown"
@@ -803,7 +802,7 @@ const StampPrintScreen = () => {
                     {cofirmType === 'print-error' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintDelete") as string} />}
                     {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
                     {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
-                    {cofirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={"Ngày cập nhật phải trong tháng"} />}
+                    {cofirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblChangeDateFail") as string} />}
                 </Stack>
                 {open && <Formprint open={open} onClose={() => setOpen(false)} rows={ArrayDeleteAndPrint} />}
             </Box>

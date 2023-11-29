@@ -38,7 +38,7 @@ import ModalCofirm from "../../../components/ModalConfirm";
 import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableDateTimePicker from "../../../components/TableDateTimePicker";
 import { copyValues, clearArrayRowDowns } from "../../../redux/ArrayRowDowns";
-import { copyValuesRowUps,clearArrayRowUps } from "../../../redux/ArrayRowUps";
+import { copyValuesRowUps, clearArrayRowUps } from "../../../redux/ArrayRowUps";
 
 //#endregion
 const DataHistoryPrintScreen = () => {
@@ -403,7 +403,7 @@ const DataHistoryPrintScreen = () => {
       dcmWork_Order: params.ZLBH_Work_Order,
       dcmSupplier_no: params.zsdh_Supplier_No,
       dcmSupplier: params.zsywjc_Supplier,
-      dcmDate: moment().format("DD/MM/YYYY") === params.CGDate_Date ? params.CGDate_Date :moment(params.CGDate_Date).format("DD/MM/YYYY"),
+      dcmDate: moment().format("DD/MM/YYYY") === params.CGDate_Date ? params.CGDate_Date : moment(params.CGDate_Date).format("DD/MM/YYYY"),
       User_Serial_Key: dataUser[0].UserId,
       get_version: dataUser[0].WareHouse
     }
@@ -472,38 +472,43 @@ const DataHistoryPrintScreen = () => {
   const handlePrint = async () => {
     if (await checkPermissionPrint(dataUser[0].UserId)) {
       if (listChx.length > 0) {
-        setDisabled(true)
-        const url = connect_string + "api/Print_Inventory_Click"
-        const arr = listChx.map((item: any) => item.Barcode)
-        const data =
-        {
-          dcpCheck: true,
-          dcpBarcode: arr,
-          User_Serial_Key: dataUser[0].UserId,
-          get_version: dataUser[0].WareHouse
-
-        }
-        axios.post(url, data, config).then(response => {
-          if (response.data === true) {
-            handleOpenConfirm('print')
-          }
-          else {
-            handleOpenConfirm('print-erorr')
-          }
-        }).finally(() => {
-          setDisabled(false)
-        })
+        handleOpenConfirm('print')
       }
       else {
         handleOpenConfirm('error-data')
       }
-
     }
     else {
       handleOpenConfirm('print-permission')
     }
 
   }
+
+  const handlePrintOK = () => {
+    setDisabled(true)
+    const url = connect_string + "api/Print_Inventory_Click"
+    const arr = listChx.map((item: any) => item.Barcode)
+    const data =
+    {
+      dcpCheck: true,
+      dcpBarcode: arr,
+      User_Serial_Key: dataUser[0].UserId,
+      get_version: dataUser[0].WareHouse
+
+    }
+    axios.post(url, data, config).then(response => {
+      if (response.data === true) {
+        handleOpenConfirm('print')
+      }
+      else {
+        handleOpenConfirm('print-erorr')
+      }
+    }).finally(() => {
+      handleCloseConfirm()
+      setDisabled(false)
+    })
+  }
+
   //#endregion
 
   return (
@@ -630,6 +635,7 @@ const DataHistoryPrintScreen = () => {
           {cofirmType === 'delete' && <ModalCofirm title={t("msgDeleteError") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
           {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
           {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
+          {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
         </Stack>
       </Box>
       <Stack overflow={"hidden"} sx={{ height: "100%" }}>

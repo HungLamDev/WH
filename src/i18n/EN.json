@@ -376,7 +376,6 @@
     "lblOrderNo_Register": "Registration order",
     "lblData_Register_Print_Lable": "Stamp Registration",
     "chxRegister_Date": "Registration Date",
-    "chxPrint_Date":"Print Date"
-
-
+    "chxPrint_Date":"Print Date",
+    "lblChangeDateFail":"The update date must be within the month"
 }

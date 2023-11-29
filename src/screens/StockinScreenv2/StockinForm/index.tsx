@@ -32,6 +32,7 @@ export const styletext = {
         },
     },
 };
+
 //#endregion
 const Stockin = () => {
     const navigate = useNavigate()
@@ -391,12 +392,12 @@ const Stockin = () => {
                                     </FormGroup>
                                 </Grid>
                                 <Grid item xs={2} display={'flex'} alignItems={'center'} justifyContent={'flex-start'}>
-                                    <Typography sx={{ color: 'aqua' }}>{txtshelve}</Typography>
+                                    <Typography className="textsize" sx={{ color: 'aqua' }}>{txtshelve}</Typography>
                                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                                 </Grid>
                                 <Grid item xs={5} display={'flex'} alignItems={'center'}>
                                     <FormGroup>
-                                        <Typography className="textsize" >{t("lblQty_In") as string} {total}</Typography>
+                                        <Typography className="textsizemini">{t("lblQty_In") as string} {total}</Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>
@@ -406,7 +407,7 @@ const Stockin = () => {
                                 </Grid>
                                 <Grid item xs={5} display={'flex'} alignItems={'center'}>
                                     <FormGroup>
-                                        <Typography className="textsize" >{t("lblQty_Scan") as string} {valueScan}</Typography>
+                                        <Typography className="textsizemini" >{t("lblQty_Scan") as string} {valueScan}</Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>

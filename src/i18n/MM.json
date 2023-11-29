@@ -342,5 +342,6 @@
     "lblOrderNo_Register":"မှတ်ပုံတင်အမိန့်",
     "lblData_Register_Print_Lable":"တံဆိပ်ခေါင်းမှတ်ပုံတင်",
     "chxRegister_Date":"မှတ်ပုံတင်ရက်စွဲ",
-    "chxPrint_Date":"ပုံနှိပ်ရက်စွဲ"
+    "chxPrint_Date":"ပုံနှိပ်ရက်စွဲ",
+    "lblChangeDateFail":"အပ်ဒိတ်ရက်စွဲသည် တစ်လအတွင်း ဖြစ်ရမည်။"
 }

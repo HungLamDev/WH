@@ -84,6 +84,12 @@ html {
   }
 }
 
+.textsizemini {
+  @media screen and (max-width: 1000px) {
+    font-size: 12px !important;
+  }
+}
+
 .td-responesive{
   @media screen and (max-width: 1000px) {
     font-size: 12px !important;

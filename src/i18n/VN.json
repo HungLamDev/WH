@@ -376,5 +376,6 @@
     "lblOrderNo_Register": "Đơn hàng đăng ký",
     "lblData_Register_Print_Lable": "Đăng Ký Tem",
     "chxRegister_Date": "Ngày đăng ký",
-    "chxPrint_Date":"Ngày In"
+    "chxPrint_Date":"Ngày In",
+    "lblChangeDateFail":"Ngày cập nhật phải trong tháng"
 }

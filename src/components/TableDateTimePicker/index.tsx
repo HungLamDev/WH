@@ -262,7 +262,9 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                 ) : isProductionCell && ( key === "ngay" || key === 'CGDate_Date')
                                                     ?
                                                     (
-                                                        <LocalizationProvider dateAdapter={AdapterMoment} >
+                                                        <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
+                                                            monthAndYear: "MM/YYYY",
+                                                        }}>
 
                                                             <DateTimePicker
                                                                 className="td-responesive"
