@@ -1,5 +1,6 @@
 import { Stack, Box, Modal, Typography, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import '../../App.scss'
 function ModalCofirm({ title, open, onClose, onPressOK }: { title?: string, open?: any, onClose?: any, onPressOK?: any }) {
     const { t } = useTranslation();
     const style = {
@@ -24,11 +25,11 @@ function ModalCofirm({ title, open, onClose, onPressOK }: { title?: string, open
             <Box sx={style}>
                 <Stack direction={'column'} height={'100%'} >
                     <Stack height={'50%'}  justifyContent={'center'}>
-                        <Typography color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
+                        <Typography className='textsizebtn' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
                     </Stack>
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                        <Button onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, width:'30%', height:'60%'}}>{t("btnSuccess")}</Button>
-                        <Button onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',width:'30%', height:'60%'}}>{t("btnCancel")}</Button>
+                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, width:'30%', height:'60%'}}>{t("btnSuccess")}</Button>
+                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',width:'30%', height:'60%'}}>{t("btnCancel")}</Button>
                     </Stack>
                 </Stack>
             </Box>

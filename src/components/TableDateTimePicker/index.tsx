@@ -200,6 +200,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                     );
                                                 }}
                                                 onBlur={(event) => handleCellBlur(event, item._id)}
+                                                height={'35px'}
                                                 sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                                             >
                                                 {isEditing && !isProductionCell ? (
@@ -214,8 +215,8 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                                 width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
                                                                 textAlign: 'center',
                                                                 fontSize: '17px',
-                                                                '@media screen and (max-width: 1000px)': {
-                                                                    fontSize: '12px !important',
+                                                                '@media screen and (max-width: 1200px)': {
+                                                                    fontSize: '15px !important',
                                                                 },
                                                             },
 
@@ -252,8 +253,8 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                                 width: '180px',
                                                                 '& .MuiInputBase-input': {
                                                                     fontSize: '15px',
-                                                                    '@media screen and (max-width: 1000px)': {
-                                                                        fontSize: '14px !important',
+                                                                    '@media screen and (max-width: 1200px)': {
+                                                                        fontSize: '15px !important',
                                                                     },
                                                                 },
                                                             }} />
@@ -291,8 +292,8 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                                     width: '180px',
                                                                     '& .MuiInputBase-input': {
                                                                         fontSize: '15px',
-                                                                        '@media screen and (max-width: 1000px)': {
-                                                                            fontSize: '14px !important',
+                                                                        '@media screen and (max-width: 1200px)': {
+                                                                            fontSize: '15px !important',
                                                                         },
                                                                     },
                                                                 }} />

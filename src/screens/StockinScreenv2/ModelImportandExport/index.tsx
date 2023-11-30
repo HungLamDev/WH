@@ -329,7 +329,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                             <CameraAltIcon onClick={handleScanClick} />
                         </IconButton>                    </Stack>
                     <Stack height={'90%'} direction={'row'}>
-                        <Stack width={'50%'}>
+                        <Stack width={'45%'}>
                             <Grid container height={'90%'} alignItems={'center'}>
                                 <Grid item xs={12}>
                                     <FormControl>
@@ -376,7 +376,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                                         <Typography className='textsize'>{t("lblMaterial_Name") as string}</Typography>
                                     </Grid>
                                     <Grid item xs={7.5} className='input_label' >
-                                        <Typography className='_text' >{MaterialName}</Typography>
+                                        <Typography className='_text' overflow={'hidden'} textOverflow={'ellipsis'}>{MaterialName}</Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid container>
@@ -397,8 +397,8 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                                 </Grid>
                             </Grid>
                         </Stack>
-                        <Stack width={'50%'}>
-                            <Grid container height={'90%'} alignItems={'center'}>
+                        <Stack width={'55%'}>
+                            <Grid container height={'90%'} width={'100%'} alignItems={'center'}>
                                 <Grid container >
                                     <Grid item xs={12} justifyContent={'flex-end'} className='input_label' sx={{ display: 'flex' }}>
                                         <InputField focus={true} label={t("gpbScan") as string} handle={handleScanQr} keydown={null} value={scanqr} disable={false} />

@@ -27,7 +27,7 @@ import EnterShelves from "../EnterShelves"
 //#region style
 export const styletext = {
     '& .MuiTypography-root': {
-        '@media screen and (max-width: 1000px)': {
+        '@media screen and (max-width: 1200px)': {
             fontSize: '14px !important',
         },
     },
@@ -392,7 +392,7 @@ const Stockin = () => {
                                     </FormGroup>
                                 </Grid>
                                 <Grid item xs={2} display={'flex'} alignItems={'center'} justifyContent={'flex-start'}>
-                                    <Typography className="textsize" sx={{ color: 'aqua' }}>{txtshelve}</Typography>
+                                    <Typography className="textsizebtn" sx={{ color: 'aqua' }}>{txtshelve}</Typography>
                                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                                 </Grid>
                                 <Grid item xs={5} display={'flex'} alignItems={'center'}>

@@ -184,8 +184,8 @@ const PermissionRack = () => {
                 className={"dark-bg-secondary border-bottom-white"}
             >
                 <Stack justifyContent={'center'} alignItems={'center'}>
-                    <Grid container marginBottom={'10px'} justifyContent={'center'} width={'70%'} alignItems={'center'}>
-                        <Grid item xs={4} display={'flex'} justifyContent={'start'} >
+                    <Grid container marginBottom={'10px'} justifyContent={'center'} width={'80%'} alignItems={'center'}>
+                        <Grid item xs={3} display={'flex'} justifyContent={'start'} >
                             <RadioGroup value={selectedValue} onChange={handleChange}>
                                 <FormControlLabel
                                     sx={styletext}
@@ -198,7 +198,7 @@ const PermissionRack = () => {
                         <Grid item xs={2} paddingLeft={'20px'}>
                             <Typography className="textsize">{t("dcmRack_ID")}</Typography>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={2.5}>
                             {/* <TextField
                                 id="outlined-select-currency"
                                 select
@@ -266,7 +266,7 @@ const PermissionRack = () => {
                         </Grid>
                         <Grid item xs={4}></Grid>
 
-                        <Grid item xs={4} display={'flex'} justifyContent={'start'} >
+                        <Grid item xs={3} display={'flex'} justifyContent={'start'} >
                             <RadioGroup value={selectedValue} onChange={handleChange}>
                                 <FormControlLabel
                                     sx={styletext}
@@ -279,7 +279,7 @@ const PermissionRack = () => {
                         <Grid item xs={2} paddingLeft={'20px'}>
                             <Typography className="textsize">{t("lblFrom")}</Typography>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={2.5}>
                             {/* <TextField
                                 id="outlined-select-currency"
                                 select
@@ -344,10 +344,10 @@ const PermissionRack = () => {
                                 )}
                             />
                         </Grid>
-                        <Grid item xs={2} paddingLeft={'20px'}>
+                        <Grid item xs={1.5} paddingLeft={'20px'}>
                             <Typography className="textsize">{t("lblTo")}</Typography>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={2.5}>
                             {/* <TextField
                                 select
                                 id="outlined-select-currency"
@@ -413,10 +413,10 @@ const PermissionRack = () => {
                             />
                         </Grid>
                         <Grid item xs={3}></Grid>
-                        <Grid item xs={3} paddingLeft={'20px'}>
+                        <Grid item xs={2} paddingLeft={'20px'}>
                             <Typography className="textsize">{t("lblPersonID_Rack")}</Typography>
                         </Grid>
-                        <Grid item xs={2}>
+                        <Grid item xs={2.5}>
                             <TextField
                                 id="outlined-select-currency"
                                 sx={{ width: '100%' }}

@@ -17,10 +17,10 @@ const TableOrigin = (props: {
   handlerowClick?: any;
   handleDoubleClick?: any;
   arrNotShowCell?: string[];
-  border?:boolean;
-  color?:boolean;
+  border?: boolean;
+  color?: boolean;
 }) => {
-  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border,color } = props;
+  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color } = props;
 
   const [keyDoubleClick, setKeyDoubleClick] = useState("");
   const [selectedRow, setSelectedRow] = useState("");
@@ -68,7 +68,7 @@ const TableOrigin = (props: {
             "& td": {
               whiteSpace: "pre",
               border: border ? " 1px solid white" : "",
-              padding:0.5,
+              padding: 0.5,
               color: color ? "aqua" : ""
             },
           }}
@@ -81,6 +81,7 @@ const TableOrigin = (props: {
                   backgroundColor:
                     item._id === selectedRow ? "#415a77" : "inherit",
                   cursor: "pointer",
+                  height:'35px'
                 }}
               >
                 {columns.map((column: GridColDef, i: number) => {
@@ -101,10 +102,10 @@ const TableOrigin = (props: {
                     if (str[0] === '0') {
                       textColor = "orangered";
                     }
-                  }else if( item.Num && item.Num.includes('*') ){
+                  } else if (item.Num && item.Num.includes('*')) {
                     textColor = "orange";
                   }
-                  else if( (item.Qty && item.Qty_ERP && item.RY && item.RY_ERP) && (item.Qty !== item.Qty_ERP || item.RY !== item.RY_ERP)){
+                  else if ((item.Qty && item.Qty_ERP && item.RY && item.RY_ERP) && (item.Qty !== item.Qty_ERP || item.RY !== item.RY_ERP)) {
                     textColor = "orange";
                   }
                   return (
@@ -121,7 +122,7 @@ const TableOrigin = (props: {
                       }}
                     >
                       {
-                        key === "Arr_Material" && item["Arr_Material"] === null && (item["RY"]) 
+                        key === "Arr_Material" && item["Arr_Material"] === null && (item["RY"])
                       }
                       {key === "Img_DF" ? (
                         <img

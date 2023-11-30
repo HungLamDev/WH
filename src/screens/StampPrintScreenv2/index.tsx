@@ -795,7 +795,7 @@ const StampPrintScreen = () => {
                     <MyButton name={t("btnDelete") as string} onClick={handleDelete} disabled={disable} />
                     <MyButton name={t("btnPrint") as string} onClick={handlePrint} disabled={disable} />
                     <MyButton name={t("btnPrivewPrint") as string} onClick={() => setOpen(true)} disabled={disable} />
-                    <MyButton name={"Đăng ký"} disabled={disable} onClick={() => navigate("/register-label")} />
+                    <MyButton name={t("btnRegister")} disabled={disable} onClick={() => navigate("/register-label")} />
                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                     {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
                     {/* {cofirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />} */}

@@ -29,11 +29,11 @@ function ModalDeleteForm({ barcode, open, onClose, onPressOK }: { barcode: strin
             <Box sx={style}>
                 <Stack direction={'column'} height={'100%'} >
                     <Stack height={'50%'}  justifyContent={'center'}>
-                        <Typography color={'white'} sx={{ fontSize: 20 }}>{t('msgDeleteBarcode') as string} {barcode}</Typography>
+                        <Typography className='textsizebtn' color={'white'} sx={{ fontSize: 20 }}>{t('msgDeleteBarcode') as string} {barcode}</Typography>
                     </Stack>
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                        <Button onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, width:'30%', height:'60%'}}>{t('btnSuccess') as string}</Button>
-                        <Button onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',width:'30%', height:'60%'}}>{t('btnCancel') as string}</Button>
+                        <Button className='textsizebtn'  onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, width:'30%', height:'60%'}}>{t('btnSuccess') as string}</Button>
+                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',width:'30%', height:'60%'}}>{t('btnCancel') as string}</Button>
                     </Stack>
                 </Stack>
             </Box>

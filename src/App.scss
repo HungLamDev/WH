@@ -79,20 +79,26 @@ html {
 }
 
 .textsize {
-  @media screen and (max-width: 1000px) {
-    font-size: 14px !important;
+  @media screen and (max-width: 1200px) {
+    font-size: 15px !important;
   }
 }
 
 .textsizemini {
-  @media screen and (max-width: 1000px) {
-    font-size: 12px !important;
+  @media screen and (max-width: 1200px) {
+    font-size: 14px !important;
   }
 }
 
 .td-responesive{
-  @media screen and (max-width: 1000px) {
-    font-size: 12px !important;
+  @media screen and (max-width: 1200px) {
+    font-size: 14px !important;
     text-align: center !important;
+  }
+}
+
+.textsizebtn {
+  @media screen and (max-width: 1200px) {
+    font-size: 17px !important;
   }
 }

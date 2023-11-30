@@ -375,5 +375,6 @@
     "lblData_Register_Print_Lable":"印章登记",
     "chxRegister_Date": "注册日期",
     "chxPrint_Date": "打印日期",
-    "lblChangeDateFail":"更新日期必须在一个月内"
+    "lblChangeDateFail":"更新日期必须在一个月内",
+    "lblFindAgain":"再次寻找"
 }

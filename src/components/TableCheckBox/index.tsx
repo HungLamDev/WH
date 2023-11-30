@@ -161,12 +161,13 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
             return (
               <TableRow
                 key={index}
-                hover
+                // hover
                 sx={{
                   backgroundColor:
                     item._id === selectedRow ? "#415a77" : "inherit",
                   cursor: "pointer",
                 }}
+              
               >
                 <TableCell padding="checkbox">
                   <Checkbox
@@ -196,6 +197,7 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                             item._id === selectedRow ? null : item._id
                           );
                         }}
+                        height={'35px'}
                         onBlur={(event) => handleCellBlur(event, item._id)}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
@@ -211,8 +213,8 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                                   width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
                                   textAlign: 'center',
                                   fontSize: '17px',
-                                  '@media screen and (max-width: 1000px)': {
-                                      fontSize: '12px !important',
+                                  '@media screen and (max-width: 1200px)': {
+                                      fontSize: '15px !important',
                                   },
                               },
                           }}

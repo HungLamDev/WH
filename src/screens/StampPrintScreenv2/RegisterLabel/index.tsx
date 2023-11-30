@@ -372,14 +372,14 @@ const RegisterLabel = () => {
                         <Grid item xs={6} display={'flex'}>
                             <InputField customClass="customStack" label={t("lblRY") as string} value={ry} handle={handleRY} keydown={null} disable={disable} />
                         </Grid>
-                        <Grid item lg={2} md={2.6} >
+                        <Grid item lg={2} md={2.3} >
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox value={chxDatePrint} onChange={handleChxDatePrint} />}
                                 label={t("chxPrint_Date")}
                             />
                         </Grid>
-                        <Grid item lg={2.6} md={3.4} display={'flex'} sx={{ ...(isScreenLarge && { marginRight: '125px' }) }}>
+                        <Grid item lg={2.6} md={3} display={'flex'} >
                             <DatePickerField
                                 valueDate={(params: any) => {
                                     setDatePrint(params);
@@ -387,14 +387,15 @@ const RegisterLabel = () => {
                                 customClass="customDateTimePicker"
                             />
                         </Grid>
-                        <Grid item lg={2} md={2.6}>
+                        <Grid item lg={1.4} md={0.7}></Grid>
+                        <Grid item lg={2} md={2.3}>
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox defaultChecked value={chxDatePrintRegister} onChange={handleChxDatePrintRegister} />}
                                 label={t("chxRegister_Date")}
                             />
                         </Grid>
-                        <Grid item lg={2.6} md={3.4} display={'flex'}>
+                        <Grid item lg={2.6} md={3} display={'flex'}>
                             <DatePickerField
                                 customClass="customDateTimePicker"
                                 valueDate={(params: any) => {
@@ -402,7 +403,7 @@ const RegisterLabel = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={2.5}></Grid>
+                        <Grid item xs={3.5}></Grid>
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
                         </Grid>
@@ -419,16 +420,13 @@ const RegisterLabel = () => {
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox value={chxFind} onChange={handleChxFind} />}
-                                label={"Tìm lại"}
+                                label={t("lblFindAgain")}
                             />
                         </Grid>
-                        {/* <Grid item xs={2} display={'flex'} alignItems={'center'}>
+                        <Grid item xs={2} display={'flex'} alignItems={'center'}>
                             {isLoading && <CircularProgress size={'25px'} color="info" />}
-                        </Grid> */}
-                        
-
+                        </Grid>
                     </Grid>
-
                 </Box>
                 {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
                 {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialImport") as string} />}
