@@ -30,7 +30,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#region Style
     const style = {
         position: 'absolute',
-        top: '50%',
+        top: '55%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '60%',
@@ -195,6 +195,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     txtScan: Barcode,
                     User_Serial_Key: dataUser[0].UserId,
                     chxAll: chxAll,
+                    chxpair: chxpair,
                     get_version: dataUser[0].WareHouse,
                     Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
                     chxColor: dataColor.chxColor,
@@ -327,7 +328,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className="icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>
                         <Typography variant="h5" component="h5" color={'white'}>{t('frmData_Warehousing')}</Typography>
                         <IconButton sx={{ marginLeft: '20px' }}  >
