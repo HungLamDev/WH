@@ -30,12 +30,13 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#region Style
     const style = {
         position: 'absolute',
-        top: '55%',
+        top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '60%',
-        "@media screen and (max-width: 1000px)": {
-            width: "85%",
+        "@media screen and (max-width: 1200px)": {
+            width: "70%",
+            top: '62%',
         },
         height: '60%',
         bgcolor: '#1c2538',
@@ -68,6 +69,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     const [mode, setMode] = useState(false)
     const [modalScan, setModalScan] = useState(false)
     const [qtyRemain, setQtyRemain] = useState(0)
+    const [chxpair, setChxPair] = useState(false)
     //#endregion
 
     //#region Func OnChange Input
@@ -91,6 +93,10 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     const handlechxALL = (event: React.ChangeEvent<HTMLInputElement>) => {
         setchxAll(event.target.checked);
+    };
+
+    const handlechxPair = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChxPair(event.target.checked);
     };
     //#endregion
 
@@ -190,20 +196,19 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     User_Serial_Key: dataUser[0].UserId,
                     chxAll: chxAll,
                     get_version: dataUser[0].WareHouse,
-                    Value_Remain : dataColor.Value_Remain,
-                    chxColor : dataColor.chxColor,
-                    rbtColor_A : dataColor.rbtColor_A,
+                    Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
+                    chxColor: dataColor.chxColor,
+                    rbtColor_A: dataColor.rbtColor_A,
                     rbtColor_B: dataColor.rbtColor_B,
-                    rbtColor_C:dataColor.rbtColor_C,
-                    rbtColor_D:dataColor.rbtColor_D,
-                    rbtColor_E:dataColor.rbtColor_E,
-                    rbtColor_F:dataColor.rbtColor_F,
-                    rbtColor_G:dataColor.rbtColor_G,
-                    rbtColor_H:dataColor.rbtColor_H,
-                    rbtColor_O:dataColor.rbtColor_O,
+                    rbtColor_C: dataColor.rbtColor_C,
+                    rbtColor_D: dataColor.rbtColor_D,
+                    rbtColor_E: dataColor.rbtColor_E,
+                    rbtColor_F: dataColor.rbtColor_F,
+                    rbtColor_G: dataColor.rbtColor_G,
+                    rbtColor_H: dataColor.rbtColor_H,
+                    rbtColor_O: dataColor.rbtColor_O,
                     Check_ScanMore: false
                 }
-
                 axios.post(url, data, config).then(response => {
                     const item = response.data;
                     if (item.Barcode !== null) {
@@ -433,8 +438,15 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                                     <Grid item xs={12} display={'flex'} justifyContent={'flex-end'} paddingLeft={'20px'}>
                                         <Box display={'flex'} width={'22rem'} marginRight={'16px'} justifyContent={'space-between'} alignItems={'center'}>
                                             <FormGroup>
-                                                <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
+                                                <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxAll} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
                                             </FormGroup>
+                                            {
+                                                form === "stockout" && (
+                                                    <FormGroup>
+                                                        <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxpair} onChange={handlechxPair} />} label={t("chxPair")} />
+                                                    </FormGroup>
+                                                )
+                                            }
                                             {isloading && <CircularProgress size={'25px'} color="info" />}
                                             <MyButton name={t("btnSave") as string} onClick={SavePartial} disabled={disable} />
                                         </Box>
@@ -447,7 +459,6 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'ok' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExportSuccess") as string} />}
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
-
             </Box>
         </Modal >
     )

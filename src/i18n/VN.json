@@ -378,5 +378,6 @@
     "chxRegister_Date": "Ngày đăng ký",
     "chxPrint_Date":"Ngày In",
     "lblChangeDateFail":"Ngày cập nhật phải trong tháng",
-    "lblFindAgain":"Tìm lại"
+    "lblFindAgain":"Tìm lại",
+    "chxPair":"Đôi"
 }

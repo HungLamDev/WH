@@ -46,9 +46,9 @@ const WareHouseF = () => {
     // }, [countFetch]);
 
     useEffect(() => {
-        if(warehouse !== dataUser[0].building){
+        // if(warehouse !== dataUser[0].building){
             updateData();
-        }
+        // }
     }, [warehouse]);
 
     useEffect(() => {
@@ -495,9 +495,7 @@ const Left_B5L2_LVL = (
                         <span>WC</span>
                     </Box>
                 </Grid>
-
             </Grid>
-
         </Grid>
         <Grid item xs={1.5} >
             <Box sx={{ borderRadius: '10px', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '3px solid black' }}>

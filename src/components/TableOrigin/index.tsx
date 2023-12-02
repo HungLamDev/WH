@@ -108,6 +108,12 @@ const TableOrigin = (props: {
                   else if ((item.Qty && item.Qty_ERP && item.RY && item.RY_ERP) && (item.Qty !== item.Qty_ERP || item.RY !== item.RY_ERP)) {
                     textColor = "orange";
                   }
+                  else if (item.Order_No_In && item.Order_No_In !== "") {
+                    textColor = "yellowgreen";
+                  }
+                  else if (item.Material_Name && item.Material_Name.trim().includes('(BU)')) {
+                    textColor = "aqua";
+                  }
                   return (
                     <TableCell
                       key={key}

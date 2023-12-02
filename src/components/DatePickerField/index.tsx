@@ -51,7 +51,7 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly, customClas
                   height: "2rem",
                   p: 0,
                   textAlign: "center",
-                  '@media screen and (max-width: 1000px)': {
+                  '@media screen and (max-width: 1200px)': {
                     fontSize: '14px !important',
                   },
                 },

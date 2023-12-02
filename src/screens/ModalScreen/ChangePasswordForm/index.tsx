@@ -1,7 +1,7 @@
 //#region import
 import InputField from '../../../components/InputField';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Stack, Box, Modal, Typography, IconButton, Divider, Grid, TextField, InputAdornment } from '@mui/material';
+import { Stack, Box, Modal, Typography, IconButton, Divider, Grid, TextField, InputAdornment, useMediaQuery } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import changepasswordIcon from "../../../assets/reset-password.png"
 import userIcon from "../../../assets/user.png"
@@ -28,10 +28,10 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '40%',
-        "@media screen and (max-width: 1000px)": {
-            width: "50%",
+        "@media screen and (max-width: 1200px)": {
+            width: "40%",
         },
-        height: '90%',
+        height: '100%',
         bgcolor: '#1c2538',
         border: '2px solid white',
         borderRadius: 3,
@@ -45,6 +45,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
     //#endregion
 
     //#region Variable
+    const isScreenLarge = useMediaQuery('(min-width:1200px)')
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
@@ -119,26 +120,26 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
         >
             <Box sx={style}>
                 <Stack height={'100%'} paddingBottom={'20px'}>
-                    <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                    <Stack height={'15%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
                             <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("btnChangepassword") as string}</Typography>
                         <Typography></Typography>
                     </Stack>
-                    <Stack height={'90%'} alignItems={'center'} justifyContent={'center'}>
+                    <Stack height={'75%'} alignItems={'center'} justifyContent={ isScreenLarge? 'center':'start'}>
                         <Stack height={'80%'} width={'100%'} alignItems={'center'}>
-                            <Stack marginTop={'10px'} marginBottom={'20px'} width={'100%'} height={'30%'} direction={'row'} alignItems={'center'} justifyContent={'center'}>
+                            <Stack marginBottom={'20px'} width={'100%'} height={'30%'} direction={'row'} alignItems={'center'} justifyContent={'center'}>
                                 <img src={userIcon} alt="enter" width={"70px"} />
                                 <Box marginLeft={'20px'}>
-                                    <Typography>{dataUser[0].UserId}</Typography>
-                                    <Typography>{dataUser[0].UserName}</Typography>
+                                    <Typography className='textsize'>{dataUser[0].UserId}</Typography>
+                                    <Typography className='textsize'>{dataUser[0].UserName}</Typography>
                                 </Box>
                             </Stack>
                             <Stack height={'100%'} width={'100%'} justifyContent={'center'} alignItems={'center'}>
                                 <Grid width={'50%'} >
                                     <Grid item xs={12}>
-                                        <Typography marginBottom={'10px'} textAlign={'left'}>{t("lblPassword_Old")}</Typography>
+                                        <Typography className='textsize' marginBottom={'10px'} textAlign={'left'}>{t("lblPassword_Old")}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -176,7 +177,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                         </TextField>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography marginBottom={'10px'} textAlign={'left'}>{t("lblPassword_New")}</Typography>
+                                        <Typography className='textsize' marginBottom={'10px'} textAlign={'left'}>{t("lblPassword_New")}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
@@ -214,7 +215,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                         </TextField>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography marginBottom={'10px'} textAlign={'left'} >{t("lblCofirm_Password")}</Typography>
+                                        <Typography className='textsize' marginBottom={'10px'} textAlign={'left'} >{t("lblCofirm_Password")}</Typography>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
