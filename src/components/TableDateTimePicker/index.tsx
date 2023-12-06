@@ -23,6 +23,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
+    const [selectedColumn, setSelectedColumn] = useState("");
     const dispatch = useDispatch();
     
     useEffect(() => {
@@ -76,6 +77,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
         if (arrEditCell !== undefined && arrEditCell.includes(params)) {
             if (editingCellId !== item._id) {
                 setEditingCellId(item._id);
+                setSelectedColumn(params);
             }
         }
         else {
@@ -184,11 +186,9 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                 </TableCell>
                                 {Object.keys(item).map((key, i) => {
                                     const column = columns.find((col) => col.field === key);
-
                                     if (column) {
                                         const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date';
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
-                                        let ngay = item.ngay;
                                         return (
                                             <TableCell
                                                 className="td-responesive"
@@ -201,22 +201,26 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                 }}
                                                 onBlur={(event) => handleCellBlur(event, item._id)}
                                                 height={'35px'}
-                                                sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
+                                                sx={
+                                                    item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}
+                                                }
                                             >
-                                                {isEditing && !isProductionCell ? (
+                                                {isEditing && !isProductionCell  && selectedColumn== key  ?(
                                                     <TextField
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                                                         size="small"
-
+                                                        autoFocus
                                                         sx={{
                                                             '& .MuiInputBase-input': {
                                                                 padding: 0,
-                                                                width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
-                                                                textAlign: 'center',
+                                                                width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 8)+35}px`,
+                                                                // textAlign: 'center',
                                                                 fontSize: '17px',
                                                                 '@media screen and (max-width: 1200px)': {
                                                                     fontSize: '15px !important',
+                                                                    textAlign: 'center',
+
                                                                 },
                                                             },
 

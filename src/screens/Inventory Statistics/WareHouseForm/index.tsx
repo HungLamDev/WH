@@ -29,8 +29,9 @@ const WareHouseF = () => {
     const [listRack, setListRack] = useState<any[]>([])
     const [countFetch, setCountFetch] = useState(0)
     // Mặc định kho
-    const [listRack1, setListRack1] = useState<any[]>(factory === 'LHG' ? [...listF] : factory === 'LVL' ? [...ListB1_F1] : [])
-    const [warehouse, setWareHouse] = useState(dataUser[0].building)
+    const [listRack1, setListRack1] = useState<any[]>([])
+    const [warehouse, setWareHouse] = useState('')
+    // const [warehouse1, setWareHouse1] = useState(dataUser[0].building)
     const [apiRequestComplete, setApiRequestComplete] = useState(false);
     //#endregion
 
@@ -46,9 +47,14 @@ const WareHouseF = () => {
     // }, [countFetch]);
 
     useEffect(() => {
-        // if(warehouse !== dataUser[0].building){
+       setWareHouse(dataUser[0].building)
+    }, []);
+
+    useEffect(() => {
+        if(warehouse !== ""){
             updateData();
-        // }
+        }
+       
     }, [warehouse]);
 
     useEffect(() => {
@@ -402,7 +408,7 @@ const WareHouseF = () => {
                         marginTop: '15px'
                     }}>
                         {
-                                warehouse === 'B1L1' ?
+                            warehouse === 'B1L1' ?
                                 (
                                     B1L1
                                 )
@@ -651,6 +657,7 @@ const Bottom_B1L1_LVL = (
         </Grid>
     </Grid>
 )
+
 
 
 export default WareHouseF

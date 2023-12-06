@@ -25,6 +25,7 @@ import { Howl } from 'howler';
 import { FAILURE_SOUND_PATH, SUCCESS_SOUND_PATH, successSound } from '../../../utils/pathsound';
 import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableCheckBoxRedux from "../../../components/TableCheckBoxRedux";
+import Decimal from "decimal.js";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -246,7 +247,9 @@ const StockoutScreen = () => {
                     .filter((item: any) => item.Material_No === stockout[0].Value_Material)
                     .reduce((accumulator: any, currentItem: any) => accumulator + currentItem.QTY, 0);
 
-                setStockOutDetailValue(stockoutTemp - totalQty)
+                const result = new Decimal(stockoutTemp).minus(totalQty).toNumber();
+                // setStockOutDetailValue(stockoutTemp - totalQty)
+                setStockOutDetailValue(result)
 
             }
         }
@@ -391,7 +394,9 @@ const StockoutScreen = () => {
                         dispatch(addItemArrayStockout(newItem));
                         if (response.data[0].Material_No === stockout[0].Value_Material) {
                             dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out))
-                            setStockOutDetailValue(stockoutDetailValue - response.data[0].Value_Qty_Out)
+                            const result = new Decimal(stockoutTemp).minus(response.data[0].Value_Qty_Out).toNumber();
+                            //  setStockOutDetailValue(stockoutDetailValue - response.data[0].Value_Qty_Out)
+                            setStockOutDetailValue(result)
                         }
                     });
                     setValueTotal((TotalQtyOut - response.data[0].Value_Remain).toString())
@@ -440,8 +445,8 @@ const StockoutScreen = () => {
         axios.post(url, data, config).then(response => {
             if (response.data == true) {
                 setModalCofirm(false)
-                const result = ArrayStockout.find((item:any) => item.Barcode === qrcodedelte)
-                if(stockout && result.Material_No=== stockout[0].Value_Material){
+                const result = ArrayStockout.find((item: any) => item.Barcode === qrcodedelte)
+                if (stockout && result.Material_No === stockout[0].Value_Material) {
                     const cal = String(Number(TotalQtyOut) - Number(result.QTY));
                     dispatch(addTotalQtyOut(cal))
                 }
@@ -528,7 +533,7 @@ const StockoutScreen = () => {
                                             <Grid item xs={4}>
                                                 <FormControlLabel sx={styletext} value="much" control={<Radio defaultChecked />} label={t("robBatch")} />
                                             </Grid>
-
+                                            {/* màu */}
                                             {chcolor &&
                                                 <>
                                                     <Grid item xs={7}>
@@ -593,7 +598,9 @@ const StockoutScreen = () => {
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
                             </Grid>
+                            {/* tổng */}
                             <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>
+                            {/* tổng xuất */}
                             <Typography className="textsize">{t("lblQty_Out")} {TotalQtyOut}</Typography>
                         </Stack>
                     </Box>
