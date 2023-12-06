@@ -215,7 +215,7 @@ const DataHistoryPrintScreen = () => {
     },
   ];
   const columnsOrderNo: GridColDef[] = [
-    
+
     {
       field: "CGNO_Order_No",
       headerName: t("dcmOrder_No") as string,
@@ -291,7 +291,7 @@ const DataHistoryPrintScreen = () => {
   //#endregion
 
   //#region useEffect
-  
+
   useEffect(() => {
     if (listChxOrder.length > 0) {
       const filteredListChx = rowDowns.filter((item: any) => {
@@ -316,7 +316,7 @@ const DataHistoryPrintScreen = () => {
     setCofirmType('')
     setOpenCofirm(false)
   }
-  
+
   const handleSearch = () => {
     setOpen(true)
     setIsLoading(true)
@@ -361,15 +361,16 @@ const DataHistoryPrintScreen = () => {
       )
       const arrfillter: any[] = [];
 
-      response.data.forEach((item: any, index:any) => {
+      response.data.forEach((item: any, index: any) => {
         if (!arrfillter.some(obj => obj.CGNO_Order_No === item.CGNO_Order_No)) {
-          arrfillter.push({ 
-            _id:index,
-            CGNO_Order_No: item.CGNO_Order_No });
+          arrfillter.push({
+            _id: index,
+            CGNO_Order_No: item.CGNO_Order_No
+          });
         }
       });
 
-        setrowOrderNo(arrfillter)
+      setrowOrderNo(arrfillter)
       setrowDowns(arr)
     }).finally(() => {
       setIsLoading(false)
@@ -379,83 +380,83 @@ const DataHistoryPrintScreen = () => {
 
   const handleDoubleClick = (colname: string, item: any) => {
     if (listChxDown && listChxDown.includes(item)) {
-    setOpen(true)
-    setIsLoading(true)
-    const url = connect_string + "api/DoubleClick_Data_Print_Sample"
-    const date_temp = item.CGDate_Date.split('/')
-    const data =
-    {
-      txtInvoid_No: txtInvoid_No,
-      txtOutsource: txtOutsource,
-      txtOrderNo: txtOrderNo,
-      txtMaterial_No: txtMaterial_No,
-      RFID_ini: "",
-      chxSize: chxSize,
-      chxResidual_supplies: chxResidual_supplies,
-      chxChange_Material: chxChange_Material,
-      chxRY: false,
-      chxAll_Outsourt: chxAll_Outsource,
-      chxReprint: chxReprint,
-      dcmCheck: true,
-      User_Serial_Key: dataUser[0].UserId,
-      dcmOrder_No: item.CGNO_Order_No,
-      dcmMaterial_No: item.CLBH_Material_No,
-      dcmMaterial_Type: item.cllb_Material_Type,
-      dcmColor: item.Color,
-      dcmUnit: item.dwbh_Units,
-      dcmQty_ROLL: item.Print_QTY ? item.Print_QTY : "",
-      dcmArrival_QTY: item.Arrial_Qty,
-      dcmQTY: item.QTY,
-      dcmRoll: item.Roll,
-      dcmSize: item.Size,
-      dcmMaterial: item.ywpm_Material,
-      dcmProduction: item.ywsm_Production,
-      dcmWork_Order: item.ZLBH_Work_Order,
-      dcmSupplier_no: item.zsdh_Supplier_No,
-      dcmSupplier: item.zsywjc_Supplier,
-      dcmDate: date_temp[0] + "/" + date_temp[1] + "/" + date_temp[2],
-      get_version: dataUser[0].WareHouse
+      setOpen(true)
+      setIsLoading(true)
+      const url = connect_string + "api/DoubleClick_Data_Print_Sample"
+      const date_temp = item.CGDate_Date.split('/')
+      const data =
+      {
+        txtInvoid_No: txtInvoid_No,
+        txtOutsource: txtOutsource,
+        txtOrderNo: txtOrderNo,
+        txtMaterial_No: txtMaterial_No,
+        RFID_ini: "",
+        chxSize: chxSize,
+        chxResidual_supplies: chxResidual_supplies,
+        chxChange_Material: chxChange_Material,
+        chxRY: false,
+        chxAll_Outsourt: chxAll_Outsource,
+        chxReprint: chxReprint,
+        dcmCheck: true,
+        User_Serial_Key: dataUser[0].UserId,
+        dcmOrder_No: item.CGNO_Order_No,
+        dcmMaterial_No: item.CLBH_Material_No,
+        dcmMaterial_Type: item.cllb_Material_Type,
+        dcmColor: item.Color,
+        dcmUnit: item.dwbh_Units,
+        dcmQty_ROLL: item.Print_QTY ? item.Print_QTY : "",
+        dcmArrival_QTY: item.Arrial_Qty,
+        dcmQTY: item.QTY,
+        dcmRoll: item.Roll,
+        dcmSize: item.Size,
+        dcmMaterial: item.ywpm_Material,
+        dcmProduction: item.ywsm_Production,
+        dcmWork_Order: item.ZLBH_Work_Order,
+        dcmSupplier_no: item.zsdh_Supplier_No,
+        dcmSupplier: item.zsywjc_Supplier,
+        dcmDate: date_temp[0] + "/" + date_temp[1] + "/" + date_temp[2],
+        get_version: dataUser[0].WareHouse
 
-    }
-    axios.post(url, data, config).then(response => {
-      if (response.data.length > 0) {
-        const arr = response.data.map((item: any, index: any) => ({
-          _id: item.Barcode,
-          Supplier: item.Supplier,
-          Material_No: item.Material_No,
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          Size: item.Size,
-          Print_QTY: item.Print_QTY,
-          QTY: item.QTY,
-          dwbh_Units: item.dwbh_Units,
-          Order_No: item.Order_No,
-          Roll: item.Roll,
-          Print_Date: moment(item.Print_Date).format("DD/MM/YYYY"),
-          Production: item.Production,
-          Work_Order: item.Work_Order,
-          Material_Types: item.Material_Types,
-          Barcode: item.Barcode,
-          Supplier_No: item.Supplier_No
-        }))
-        const filteredDataInRowUps1 = rowUps.filter((oldItem) => {
-          return !arr.some((newItem: any) => {
-            return newItem.Barcode === oldItem.Barcode;
-          });
-        });
-        const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-        setrowUps(mergedDataInRowUps);
       }
-    }).finally(() => {
-      setIsLoading(false)
-      setOpen(false)
-    })
-  }else{
-    alert('bạn phải check trước khi print')
-  }
+      axios.post(url, data, config).then(response => {
+        if (response.data.length > 0) {
+          const arr = response.data.map((item: any, index: any) => ({
+            _id: item.Barcode,
+            Supplier: item.Supplier,
+            Material_No: item.Material_No,
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            Size: item.Size,
+            Print_QTY: item.Print_QTY,
+            QTY: item.QTY,
+            dwbh_Units: item.dwbh_Units,
+            Order_No: item.Order_No,
+            Roll: item.Roll,
+            Print_Date: moment(item.Print_Date).format("DD/MM/YYYY"),
+            Production: item.Production,
+            Work_Order: item.Work_Order,
+            Material_Types: item.Material_Types,
+            Barcode: item.Barcode,
+            Supplier_No: item.Supplier_No
+          }))
+          const filteredDataInRowUps1 = rowUps.filter((oldItem) => {
+            return !arr.some((newItem: any) => {
+              return newItem.Barcode === oldItem.Barcode;
+            });
+          });
+          const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
+          setrowUps(mergedDataInRowUps);
+        }
+      }).finally(() => {
+        setIsLoading(false)
+        setOpen(false)
+      })
+    } else {
+      alert('bạn phải check trước khi print')
+    }
   }
 
-   const handleDelete = () => {
+  const handleDelete = () => {
     setOpen(true)
     setIsLoading(true)
     const url = connect_string + "api/Delete_Label_Sample"
@@ -482,9 +483,10 @@ const DataHistoryPrintScreen = () => {
       setOpen(false)
     })
 
-   }
+  }
 
-   const handlePrint = async () => {
+  const handlePrint = async () => {
+    handleOpenConfirm('print')
     if (await checkPermissionPrint(dataUser[0].UserId)) {
       setOpen(true)
       setIsLoading(true)
@@ -499,7 +501,7 @@ const DataHistoryPrintScreen = () => {
       }))
       axios.post(url, data, config).then(response => {
         if (response.data === true) {
-          handleOpenConfirm('print')
+
         }
         else {
           handleOpenConfirm('print-erorr')
@@ -509,10 +511,10 @@ const DataHistoryPrintScreen = () => {
         setOpen(false)
       })
     }
-    else{
+    else {
       handleOpenConfirm('print-permission')
+    }
   }
-   }
 
   const handleRefresh = () => {
     setListChx([])
@@ -527,7 +529,7 @@ const DataHistoryPrintScreen = () => {
   }
 
   //#endregion
-  
+
   return (
     <FullScreenContainerWithNavBar
       sideBarDisable={true}
@@ -713,9 +715,9 @@ const DataHistoryPrintScreen = () => {
             <TableCheckBox
               columns={columnsOrderNo}
               rows={rowOrderNo}
-              
+
               onDoubleClick={null}
-              listChx={(params: any) =>  setListChxOrder(params) }
+              listChx={(params: any) => setListChxOrder(params)}
               arrNotShowCell={["_id"]}
             />
           </Stack>

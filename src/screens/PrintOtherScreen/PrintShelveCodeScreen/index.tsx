@@ -86,6 +86,7 @@ const PrintShelveCode = () => {
     }
 
     const handleOK = () => {
+        setOpenCofirm(false)
         const url = connect_string + "api/Print_Rack"
         const data = {
             rbtPrint_One: selectedValue === "oneRack" ? true : false,
@@ -101,7 +102,7 @@ const PrintShelveCode = () => {
             if (response.data === true) {
                 setOpen(true)
             }
-            setOpenCofirm(false)
+           
         })
 
     }

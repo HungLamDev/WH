@@ -486,6 +486,7 @@ const DataHistoryPrintScreen = () => {
 
   const handlePrintOK = () => {
     setDisabled(true)
+    handleOpenConfirm('print')
     const url = connect_string + "api/Print_Inventory_Click"
     const arr = listChx.map((item: any) => item.Barcode)
     const data =
@@ -498,7 +499,7 @@ const DataHistoryPrintScreen = () => {
     }
     axios.post(url, data, config).then(response => {
       if (response.data === true) {
-        handleOpenConfirm('print')
+       
       }
       else {
         handleOpenConfirm('print-erorr')

@@ -387,6 +387,7 @@ const DataHistoryPrintScreen = () => {
     })
   }
   const handlePrint = async () => {
+    handleOpenConfirm('print-success')
     if(await checkPermissionPrint(dataUser[0].UserId)){
       if (listChx.length > 0) {
         setOpen(true)
@@ -400,7 +401,7 @@ const DataHistoryPrintScreen = () => {
         }
         axios.post(url, data, config).then(response => {
           if (response.data === true) {
-            handleOpenConfirm('print-success')
+            
           }
         }).finally(() => {
           setIsLoading(false)

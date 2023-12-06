@@ -590,6 +590,7 @@ const StampPrintScreen = () => {
     }
 
     const handlePrintOK = () => {
+        handleOpenConfirm('print-success')
         setIsLoading(true)
         setDisable(true)
         setDataInRowUps([])
@@ -615,7 +616,7 @@ const StampPrintScreen = () => {
         }))
         axios.post(url, dataprint, config).then(response => {
             if (response.status == 200) {
-                handleOpenConfirm('print-success')
+                // handleOpenConfirm('print-success')
             }
         }).catch(() => {
             handleOpenConfirm('print-permission')

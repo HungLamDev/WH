@@ -393,6 +393,8 @@ const DataHistoryPrintScreen = () => {
   }
 
   const handlePrint = async () => {
+    handleOpenConfirm('print')
+    setOpen(false)
     if (await checkPermissionPrint(dataUser[0].UserId)) {
       if (listChx.length > 0) {
         const url = connect_string + "api/btnPrint_Click_Print_Cutting"
@@ -403,8 +405,7 @@ const DataHistoryPrintScreen = () => {
         }))
         axios.post(url, data, config).then(response => {
           if (response.data === true) {
-            handleOpenConfirm('print')
-            setOpen(false)
+          
           }
           else {
             handleOpenConfirm('print-erorr')
