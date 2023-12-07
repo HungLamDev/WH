@@ -58,7 +58,7 @@ export interface Chemistry {
   Order_No_Out1: string;
 }
 //#endregion
-const AccountingCardScreen = () => {
+const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
   const { t } = useTranslation();
   const navigato = useNavigate();
   const dispatch = useDispatch();
@@ -166,20 +166,21 @@ const AccountingCardScreen = () => {
   const [chxOrder_No, setChxOrder_No] = useState(false);
   const [lblMaterialNo, setLblMaterialNo] = useState(true);
   const [openmodal, setOpenModal] = useState(false);
-  const [txtMaterial_No, setTxtMaterial_No] = useState("");
+  const [txtMaterial_No, setTxtMaterial_No] = useState( dataMaterialNo ? dataMaterialNo :  "");
   const [txtOrder_No, setTxtOrder_No] = useState("");
   const [rows, setRows] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [rowsMaterial, setRowsMaterial] = useState([]);
   const [itemToProcess, setItemToProcess] = useState<any>();
-  const [date, setDate] = useState(moment(accountCardRow.Value_Date_Card).format("DD/MM/YYYY"));
+  const [date, setDate] = useState(accountCardRow.Value_Date_Card);
   const [materialName, setMaterialName] = useState(accountCardRow.Value_Material_Name);
-  const [materialNo, setMaterialNo] = useState(accountCardRow.Value_Material_No);
+  const [materialNo, setMaterialNo] = useState(accountCardRow.Value_Material_No );
   const [unit, setUnit] = useState(accountCardRow.Value_Unit_Card);
   const [mess, setMess] = useState("");
   const [rowsExcel, setRowsExcel] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [modalScan, setModalScan] = useState(false)
   //#endregion
 
@@ -330,6 +331,7 @@ const AccountingCardScreen = () => {
   const Material_Accounting_Card_Textchanged = (material_no: string) => {
     dispatch(clearChemistry());
     setLoading(true);
+    setDisable(true)
     const url =
       connect_string +
       "api/Get_Data_Material_Label_Accounting_Card_Textchanged";
@@ -383,6 +385,7 @@ const AccountingCardScreen = () => {
       })
       .finally(() => {
         setLoading(false);
+        setDisable(false)
       });
   };
 
@@ -965,7 +968,7 @@ const AccountingCardScreen = () => {
             sx={{ paddingTop: "5px" }}
           >
 
-            <MyButton name={t("btnSearch") as string} onClick={Search} disabled={loading} />
+            <MyButton name={t("btnSearch") as string} onClick={Search} disabled={loading ? loading : disable} />
 
           </Grid>
           <Grid
@@ -975,7 +978,7 @@ const AccountingCardScreen = () => {
             justifyContent={"center"}
             sx={{ paddingTop: "5px" }}
           >
-            <MyButton name={t("btnExcel") as string} disabled={loading} onClick={exportToExcel} />
+            <MyButton name={t("btnExcel") as string} disabled={loading ? loading : disable} onClick={exportToExcel} />
           </Grid>
           <Grid
             item
@@ -986,7 +989,7 @@ const AccountingCardScreen = () => {
           >
             <MyButton
               name={t("btnClean") as string}
-              disabled={loading}
+              disabled={loading ? loading : disable}
               onClick={handleRefresh}
             />
           </Grid>
@@ -999,7 +1002,7 @@ const AccountingCardScreen = () => {
           >
             <MyButton
               name={t("btnInventory") as string}
-              disabled={loading}
+              disabled={loading ? loading : disable}
               onClick={() => {
                 navigato("/inventory", { state: txtMaterial_No });
               }}
@@ -1014,7 +1017,7 @@ const AccountingCardScreen = () => {
           >
             <MyButton
               name={t("btnStatistical") as string}
-              disabled={loading}
+              disabled={loading ? loading : disable}
               onClick={() => handleOpen("statistic")}
             />
             {modalType === "statistic" && (
@@ -1026,7 +1029,7 @@ const AccountingCardScreen = () => {
             )}
           </Grid>
           <Grid item xs={1.5} display={"flex"} alignItems={"center"} >
-            {loading && <CircularProgress size={'25px'} color="info" />}
+            {loading ? loading : disable && (<CircularProgress size={'25px'} color="info" />)}
           </Grid>
         </Grid>
       </Box>
@@ -1044,7 +1047,7 @@ const AccountingCardScreen = () => {
             border
           />
         </Grid>
-        <Grid sx={{ width: "86%", border: '1px solid' }} >
+        <Grid sx={{ width: "86%", borderLeft: '1px solid' }} >
           <TableOrigin
             columns={columns}
             rows={chemistryRow}

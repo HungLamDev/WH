@@ -1,6 +1,6 @@
 //#region import
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar";
-import { Box, Stack, FormControlLabel, Checkbox, Radio, Typography, Grid, FormControl, RadioGroup } from '@mui/material'
+import { Box, Stack, FormControlLabel, Checkbox, Radio, Typography, Grid, FormControl, RadioGroup, Modal, IconButton } from '@mui/material'
 import { GridColDef } from "@mui/x-data-grid";
 import MyButton from "../../../components/MyButton";
 import InputField from "../../../components/InputField";
@@ -27,6 +27,8 @@ import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableCheckBoxRedux from "../../../components/TableCheckBoxRedux";
 import Decimal from "decimal.js";
 import SimplePopper from "../../../components/Popper";
+import AccountingCardScreen from "../../ReportScreen/ChemistryForm";
+import { BiArrowBack } from "react-icons/bi";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -183,6 +185,7 @@ const StockoutScreen = () => {
     const [disable, setDisable] = useState(false)
     const [stockoutDetailValue, setStockOutDetailValue] = useState(stockout && stockout[0].Value_Qty)
     const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
+    const [openModal, setOpenModal] = useState(false)
     const dataModal = {
         Value_Remain: stockout ? stockout[0].Value_Qty : "",
         chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
@@ -600,17 +603,20 @@ const StockoutScreen = () => {
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
-                                <Grid item xs={3} display={'flex'}>
-                                    <MyButton name={"Thẻ kho"} disabled={true} />
-                                </Grid>
-                                <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                    {
-                                        stockout && (
-                                            <SimplePopper data={dataRY} />
-                                        )
-                                    }
+                                {
+                                    stockout && dataUser[0].factoryName === 'LVL' && (
+                                        <>
+                                            <Grid item xs={3} display={'flex'}>
+                                                <MyButton name={"Thẻ kho"} onClick={() => setOpenModal(true)} />
+                                                <ModalAccountingCard open={openModal} handleClose={() => setOpenModal(false)} data={stockout} />
+                                            </Grid>
+                                            <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                                                <SimplePopper data={dataRY} />
+                                            </Grid> 
+                                        </>
+                                    )
+                                }
 
-                                </Grid>
                             </Grid>
                             {/* tổng */}
                             <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>
@@ -630,5 +636,40 @@ const StockoutScreen = () => {
     );
 };
 
+
+const ModalAccountingCard = ({ open, handleClose, data }: { open: any, handleClose: any, data: any }) => {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        height: '100%',
+        bgcolor: '#1c2538',
+    };
+    return (
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <Box sx={{
+                    position: 'absolute',
+                    height: '10%',
+                    width: '10%',
+                    zIndex: '9',
+                    background: '#2f3b52'
+                }}>
+                    <IconButton className={'back-button'} onClick={handleClose}>
+                        <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                    </IconButton>
+                </Box>
+                <AccountingCardScreen dataMaterialNo={data && data[0].Value_Material} />
+            </Box>
+        </Modal>
+    )
+}
 
 export default StockoutScreen;

@@ -106,15 +106,15 @@ const MaterialDetailForm = () => {
             >
 
                 {Object.entries(rackDataDict).map(([rack, items]) => (
-                    <div key={rack}  >
+                    <div key={rack}  style={{marginLeft:'10px'}}>
                         {/* <h2 style={{ cursor: 'pointer', color: 'darkorange' }} onClick={() => handleClickRack(rack)}>{rack}</h2> */}
-                        <table style={{marginLeft:'10px'}}>
-                            <thead>
-                                <tr>
+                        <table  >
+                            <thead >
+                                <tr >
                                     <th style={{ cursor: 'pointer', color: 'darkorange', fontSize:'30px' }} onClick={() => handleClickRack(rack)}>{rack}</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody >
                                 {items.map((item: any) => (
                                     <tr  key={item.Material_Name + item.Material_No + item.Color}>
                                         <MaterialDetail item={item} />
