@@ -9,6 +9,7 @@ import lvlIcon from "../../../assets/LVL.png";
 import lymIcon from "../../../assets/LYM.png";
 import { config } from "../../../utils/api";
 import axios from "axios";
+import { ka } from "date-fns/locale";
 export type FactoryName = "LHG" | "LYV" | "LVL" | "LYM";
 export interface IFactoryItem {
     factoryName: string;
@@ -73,8 +74,8 @@ const ChooseFactory = () => {
         }
         else if (selectedValue === 'LHG') {
             // connect_string = 'https://192.168.30.100:7777/'
-            connect_string = 'https://192.168.32.84:7777/'
-            // connect_string =  'https://192.168.32.81/'
+            // connect_string = 'https://192.168.32.84:7777/'
+            connect_string =  'https://192.168.32.81/'
         }
 
     }, [selectedValue])

@@ -26,6 +26,7 @@ import { FAILURE_SOUND_PATH, SUCCESS_SOUND_PATH, successSound } from '../../../u
 import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableCheckBoxRedux from "../../../components/TableCheckBoxRedux";
 import Decimal from "decimal.js";
+import SimplePopper from "../../../components/Popper";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -590,12 +591,18 @@ const StockoutScreen = () => {
                         </Stack>
                         <Stack width={'40%'} justifyContent={'center'} spacing={2}>
                             <Grid container spacing={4}>
-                                <Grid item >
+                                <Grid item xs={3} display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid>
-                                <Grid item>
+                                <Grid item xs={3} display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
+                                </Grid>
+                                <Grid item xs={3} display={'flex'}>
+                                    <MyButton name={"Thẻ kho"} disabled={true} />
+                                </Grid>
+                                <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                                    <SimplePopper/>
                                 </Grid>
                             </Grid>
                             {/* tổng */}

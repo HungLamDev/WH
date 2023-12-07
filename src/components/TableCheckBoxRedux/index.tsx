@@ -107,7 +107,7 @@ const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; 
   return (
     <TableContainer sx={{ height: '100%' }}>
       <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
-        <TableHead>
+        <TableHead style={{zIndex:0}}>
           <TableRow>
             <TableCell padding="checkbox">
               <Checkbox
