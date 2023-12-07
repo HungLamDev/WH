@@ -30,7 +30,8 @@ import SimplePopper from "../../../components/Popper";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
-    const stockout = location.state;
+    const stockout = location.state && location.state.data;
+    const dataRY = location.state && location.state.dataRY;
     const { t } = useTranslation();
     const dispatch = useDispatch()
     //#region column header table
@@ -431,6 +432,7 @@ const StockoutScreen = () => {
         setModalCofirm(true)
         setQRCodeDelete(item.Barcode)
         setMaterial_Label_Serial(item.Material_Label_Serial)
+
     }
 
     const handleOK = () => {
@@ -602,7 +604,12 @@ const StockoutScreen = () => {
                                     <MyButton name={"Thẻ kho"} disabled={true} />
                                 </Grid>
                                 <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                                    <SimplePopper/>
+                                    {
+                                        stockout && (
+                                            <SimplePopper data={dataRY} />
+                                        )
+                                    }
+
                                 </Grid>
                             </Grid>
                             {/* tổng */}

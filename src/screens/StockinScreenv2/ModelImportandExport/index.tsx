@@ -22,6 +22,7 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
+import Decimal from 'decimal.js';
 //#endregion
 function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
     const dispatch = useDispatch()
@@ -110,7 +111,8 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     useEffect(() => {
         if (form !== 'stockout') {
-            setQtyRemain(Number(QTY) + Number(qtyout))
+            const result = new Decimal(QTY).plus(qtyout).toNumber();
+            setQtyRemain(result)
         }
     }, [qtyout])
     //#endregion
@@ -126,8 +128,8 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     const calculateRemainingQty = () => {
-        const remainingQty = QTY - qtyout;
-        return remainingQty >= 0 ? Number(remainingQty.toFixed(2)) : 0;
+        const remainingQty =new Decimal(QTY).minus(qtyout).toNumber();
+        return remainingQty >= 0 ? Number(remainingQty) : 0;
     };
 
     const calculateQtyOut = () => {
@@ -246,11 +248,12 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
             else {
                 setIsLoading(true)
                 setDisable(true)
+                const remainingQty =new Decimal(QTY).plus(qtyout).toNumber();
                 const url = connect_string + 'api/btn_Save_Partial'
                 const data = {
                     rbtImport: true,
                     rbtExport: false,
-                    txtQty_Input: Number(QTY) + Number(qtyout) >= Value_Total_Qty ? 0 : qtyout,
+                    txtQty_Input: remainingQty >= Value_Total_Qty ? 0 : qtyout,
                     Value_Barcode: Barcode,
                     txtQty_Remain: qtyRemain,
                     Value_Unit: Unit,
@@ -285,7 +288,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                             Material_Label_Serial: item.Material_Label_Serial,
                         };
                         setQTY(newItem.QTY)
-                        setValue_Total_Qty(value => Number(value) - Number(qtyout))
+                        setValue_Total_Qty(value => new Decimal(value).minus(qtyout).toNumber())
 
                         // dispatch(addItemArrayStockout(newItem))
                         setScanQR(Barcode)

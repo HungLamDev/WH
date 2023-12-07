@@ -177,7 +177,6 @@ const DeliveryScreen = () => {
   const [onFocus, setOnFocus] = useState(false)
   const [chxAll, setChxAll] = useState(false)
   const [isApi, setIsApi] = useState(true)
-
   const contentDetail = locate.state
   //#endregion
   
@@ -587,6 +586,7 @@ const DeliveryScreen = () => {
       }
       if (columnName === 'RY_Status1') {
         setIsApi(false)
+      
         const data = {
           Name_Column: "dcpContent",
           RY_Status: item.RY_Status2,
@@ -600,7 +600,7 @@ const DeliveryScreen = () => {
         }
         axios.post(url, data, config).then(response => {
           if (response.data.length > 0) {
-            navigate('/stock-out', { state: response.data });
+            navigate('/stock-out', { state: { data: response.data, dataRY: item }});
           }
         }).finally(()=>{
           setIsApi(true)
