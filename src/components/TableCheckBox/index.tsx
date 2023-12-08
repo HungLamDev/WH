@@ -210,7 +210,7 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                             sx={{
                               '& .MuiInputBase-input': {
                                   padding: 0,
-                                  width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 50}px`,
+                                  width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 40}px`,
                                   textAlign: 'center',
                                   fontSize: '17px',
                                   '@media screen and (max-width: 1200px)': {

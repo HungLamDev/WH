@@ -214,13 +214,12 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                         sx={{
                                                             '& .MuiInputBase-input': {
                                                                 padding: 0,
-                                                                width: `${item[key] !== undefined && !Number.isNaN(item[key].length * 1) && (item[key].length * 8)+35}px`,
+                                                                width: `${item[key] !== undefined && item[key] != null &&!Number.isNaN(item[key].length * 1) && (item[key].length * 8)+40}px`,
                                                                 // textAlign: 'center',
                                                                 fontSize: '17px',
                                                                 '@media screen and (max-width: 1200px)': {
                                                                     fontSize: '15px !important',
                                                                     textAlign: 'center',
-
                                                                 },
                                                             },
 
