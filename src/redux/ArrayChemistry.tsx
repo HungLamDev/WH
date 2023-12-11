@@ -57,9 +57,13 @@ const ArrayChemistry = createSlice({
     },
     clearChemistry: (state) => {
       state.items = [];
-    }
+    },
+    TextFieldChangeArrayChemistry: (state, action: PayloadAction<{ _id: number, columnName: string,value: any }>) => {
+      const { _id,columnName, value } = action.payload;
+      state.items[_id][columnName] = value;
+  },
   },
 });
-export const { editItem, copyValues, clearChemistry } = ArrayChemistry.actions;
+export const { editItem, copyValues, clearChemistry,TextFieldChangeArrayChemistry } = ArrayChemistry.actions;
 
 export default ArrayChemistry.reducer;

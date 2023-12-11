@@ -345,6 +345,7 @@
     "chxPrint_Date":"ပုံနှိပ်ရက်စွဲ",
     "lblChangeDateFail":"အပ်ဒိတ်ရက်စွဲသည် တစ်လအတွင်း ဖြစ်ရမည်။",
     "lblFindAgain":"ထပ်ရှာပါ။",
-    "chxPair":"တွဲ"
+    "chxPair":"တွဲ",
+    "lblNetworkError": "Mạng của bạn đang gặp sự cố"
 
 }

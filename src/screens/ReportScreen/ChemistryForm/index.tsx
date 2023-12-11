@@ -43,6 +43,7 @@ import QRScanner from "../../../components/QRScanner";
 import { saFactory_LHG } from "../../../utils/constants";
 import { successSound } from "../../../utils/pathsound";
 import { copyArrayAccountingCard } from "../../../redux/ArrayAccountingCard";
+import TableOriginEdit from "../../../components/TableOriginEdit";
 export interface Chemistry {
   _id: number;
   Order_No_In1: string;
@@ -1048,13 +1049,14 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
           />
         </Grid>
         <Grid sx={{ width: "86%", borderLeft: '1px solid' }} >
-          <TableOrigin
+          <TableOriginEdit
             columns={columns}
             rows={chemistryRow}
             handlerowClick={null}
             handleDoubleClick={handleRow2ClickSign}
             arrNotShowCell={["_id"]}
             border
+            arrEditCell={["Note_Account"]}
           />
         </Grid>
         {openmodal && (

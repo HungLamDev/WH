@@ -55,6 +55,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false)
+  const [errorModal, setErrorModal] = useState(false);
   const wareHouseName = getWareHouse() === null ? setWareHouse("No") : getWareHouse();
   const [selectedWareHouse, setSelectedWareHouse] = useState(
     wareHouseName ? wareHouseName : "No"
@@ -125,9 +126,7 @@ const LoginForm = () => {
         setOpen(true);
       }
     } catch (error) {
-      console.error('Lỗi khi gọi API: ', error);
-      // Xử lý lỗi ở đây nếu cần
-      setOpen(true);
+      setErrorModal(true);
     } finally {
       setIsLoading(false);
     }
@@ -197,6 +196,8 @@ const LoginForm = () => {
             </Button>
             {isLoading && <CircularProgress size={'25px'} color="info" />}
             {open && <ModalCofirm title={t("msgLoginIncorrect") as string} open={open} onClose={() => setOpen(false)} onPressOK={() => setOpen(false)} />}
+            {errorModal && <ModalCofirm title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
+         
           </Stack>
         </Paper>
       </form>

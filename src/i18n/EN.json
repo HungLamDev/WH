@@ -379,5 +379,7 @@
     "chxPrint_Date":"Print Date",
     "lblChangeDateFail":"The update date must be within the month",
     "lblFindAgain":"Find again",
-    "chxPair":"Pair"
+    "chxPair":"Pair",
+    "lblNetworkError": "Mạng của bạn đang gặp sự cố"
+
 }

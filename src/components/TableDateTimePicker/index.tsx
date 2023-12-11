@@ -14,7 +14,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { TextFieldChangeArrayRowDowns,DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
+import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
 const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
     const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
 
@@ -25,7 +25,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [selectedRow, setSelectedRow] = useState("");
     const [selectedColumn, setSelectedColumn] = useState("");
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         setSelected([])
     }, [rows])
@@ -102,20 +102,20 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     };
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
-         dispatch(TextFieldChangeArrayRowDowns({_id:rowInd,columnName:colName,value:value}))
+        dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }))
     };
 
     const handleDateTimePickerChange = (rowInd: number, colName: string, params: any) => {
 
         if (colName === 'ywsm_Production') {
-            dispatch(DateTimePickerChangeArrayRowDowns({_id:rowInd,columnName:colName,value:moment(params, "MMMM-YYYY").format("MMM-YYYY")}))
+            dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: moment(params, "MMMM-YYYY").format("MMM-YYYY") }))
             // rows[rowInd][colName] = moment(params, "MMMM-YYYY").format("MMM-YYYY");
         }
         else if (colName === 'ngay' || colName === 'CGDate_Date') {
-            dispatch(DateTimePickerChangeArrayRowDowns({_id:rowInd,columnName:colName,value:moment(params).format("YYYY-MM-DD")}))
+            dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: moment(params).format("YYYY-MM-DD") }))
 
             // rows[rowInd][colName] = moment(params).format("YYYY-MM-DD");
-           
+
         }
     };
     return (
@@ -205,7 +205,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                     item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}
                                                 }
                                             >
-                                                {isEditing && !isProductionCell  && selectedColumn== key  ?(
+                                                {isEditing && !isProductionCell && selectedColumn == key ? (
                                                     <TextField
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
@@ -214,7 +214,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                         sx={{
                                                             '& .MuiInputBase-input': {
                                                                 padding: 0,
-                                                                width: `${item[key] !== undefined && item[key] != null &&!Number.isNaN(item[key].length * 1) && (item[key].length * 8)+40}px`,
+                                                                width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
                                                                 // textAlign: 'center',
                                                                 fontSize: '17px',
                                                                 '@media screen and (max-width: 1200px)': {
@@ -263,7 +263,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                             }} />
                                                     </LocalizationProvider>
 
-                                                ) : isProductionCell && ( key === "ngay" || key === 'CGDate_Date')
+                                                ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date')
                                                     ?
                                                     (
                                                         <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
@@ -274,9 +274,9 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                                                 className="td-responesive"
                                                                 format={"YYYY-MM-DD"}
                                                                 // value={selectedDateArr[index]}
-                                                                defaultValue={ moment()}
+                                                                defaultValue={moment()}
                                                                 onChange={(params) => handleDateTimePickerChange(index, key, params)}
-                                                                views={['year','month','day']}
+                                                                views={['year', 'month', 'day']}
                                                                 slotProps={{
                                                                     toolbar: {
                                                                         hidden: true,

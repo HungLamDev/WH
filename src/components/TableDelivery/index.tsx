@@ -20,6 +20,11 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
   const [selected, setSelected] = useState<GridRowsProp>([])
   const [editingCellId, setEditingCellId] = useState<number | null>(null);
   const [selectedRow, setSelectedRow] = useState("");
+  const [selectedColumn, setSelectedColumn] = useState("");
+  const [selectedEdit, setSelectedEdit] = useState("");
+  const [keyDoubleClick, setKeyDoubleClick] = useState('')
+  const [focus, setFocus] = useState(true)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -50,7 +55,6 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
     listChx !== undefined ? listChx([]) : [];
   };
 
-
   const handleClick = (event: React.MouseEvent<unknown>, item: any) => {
     let newSelected: any[] = [];
 
@@ -67,73 +71,65 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
 
   const isSelected = (id: number) => selected.findIndex((item: any) => item._id === id) !== -1;
 
-  const [keyDoubleClick, setKeyDoubleClick] = useState('')
-  const [focus, setFocus] = useState(false)
+
 
   const handleFocus = (key: any) => {
     // || key === 'RY_Status1'
-    if (key === 'Material_No' ) {
-      setFocus(true)
-    }
-
+    setFocus(true)
   }
 
   const handleRowClick = (params: any, item: any) => {
     // || params === 'RY_Status1'
-    if (arrEditCell !== undefined && arrEditCell.includes(params) && (params === 'Material_No' ) ) {
-      if (editingCellId !== item._id) {
-        setEditingCellId(item._id);
-        if (focus === false) {
-          if (keyDoubleClick === item._id && typeof onDoubleClick === "function") {
-            onDoubleClick(params, item);
-            setKeyDoubleClick("");
-          }
-          else {
-            if (typeof handlerowClick === "function") {
-              handlerowClick(params, item);
-            }
-            setKeyDoubleClick(item._id);
-          }
+    if (params === 'Material_No' || params === 'Material_Name') {
+      if (focus === false) {
+        if (keyDoubleClick === item._id && typeof onDoubleClick === "function" && selectedColumn === params) {
+          onDoubleClick(params, item);
+          setKeyDoubleClick("");
+          setSelectedColumn("")
         }
-      }
-      else {
-        if (focus === false) {
-          if (keyDoubleClick === item._id && typeof onDoubleClick === "function") {
-            onDoubleClick(params, item);
-            setKeyDoubleClick("");
+        else {
+          if (typeof handlerowClick === "function") {
+            handlerowClick(params, item);
+            setSelectedColumn(params)
           }
-          else {
-            if (typeof handlerowClick === "function") {
-              handlerowClick(params, item);
-            }
-            setKeyDoubleClick(item._id);
-          }
+
+          setKeyDoubleClick(item._id);
         }
-      }
-    }
-    else if (arrEditCell !== undefined && arrEditCell.includes(params)) {
-      if (editingCellId !== item._id) {
-        setEditingCellId(item._id);
       }
     }
     else {
-      if (keyDoubleClick === item._id && typeof onDoubleClick === "function") {
+      if (keyDoubleClick === item._id && typeof onDoubleClick === "function" && selectedColumn === params) {
         onDoubleClick(params, item);
         setKeyDoubleClick("");
+        setSelectedColumn("")
       }
       else {
         if (typeof handlerowClick === "function") {
           handlerowClick(params, item);
+          setSelectedColumn(params)
         }
         setKeyDoubleClick(item._id);
       }
-      setEditingCellId(null);
     }
   };
 
-  const handleCellBlur = (event: React.FocusEvent<HTMLDivElement>, id: number) => {
+  const handleEditClick = (params: any, item: any) => {
+    if (arrEditCell !== undefined && arrEditCell.includes(params)) {
+      if (editingCellId !== item._id) {
+        setEditingCellId(item._id);
+        setSelectedEdit(params);
+      }
+    }
+    else {
+      setEditingCellId(null);
+      setSelectedEdit("");
+    }
+  }
 
+  const handleCellBlur = (event: React.FocusEvent<HTMLDivElement>, id: number) => {
     setEditingCellId(null);
+    setSelectedEdit("");
+
     setFocus(false)
   };
 
@@ -240,37 +236,47 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                       <TableCell
                         className="td-responesive"
                         key={i}
+                        onBlur={(event) => handleCellBlur(event, item._id)}
                         onClick={() => {
                           handleRowClick(key, item)
                           setSelectedRow(
                             item._id === selectedRow ? null : item._id
                           );
                         }}
-                        onBlur={(event) => handleCellBlur(event, item._id)}
-                        height={'35px'}
+                        height={'40px'}
+                        style={{paddingBottom:'15px', paddingTop:'15px'}}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
-                        {isEditing ? (
+                        {isEditing && selectedEdit == key ? (
                           <TextField
+                            autoFocus
                             defaultValue={item[key]}
                             onFocus={() => handleFocus(key)}
                             onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                             size="small"
                             sx={{
                               '& .MuiInputBase-input': {
-                                  padding: 0,
-                                  width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 40}px`,
+                                padding: 0,
+                                width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
+                                textAlign: 'center',
+                                fontSize: '16px',
+                                '@media screen and (max-width: 1200px)': {
+                                  fontSize: '15px !important',
                                   textAlign: 'center',
-                                  fontSize: '17px',
-                                  '@media screen and (max-width: 1200px)': {
-                                      fontSize: '15px !important',
-                                  },
+                                },
                               },
 
-                          }}
+                            }}
                           />
                         ) : (
-                          item[key]
+                          <span
+                            onClick={(event) => {
+                              (arrEditCell !== undefined && arrEditCell.includes(key)) && event.stopPropagation() // Ngăn chặn lan rộng sự kiện
+                              handleEditClick(key, item);
+                            }}
+                          >
+                            {item[key]}
+                          </span>
                         )}
                       </TableCell>
                     );

@@ -607,7 +607,7 @@ const StockoutScreen = () => {
                                     stockout && dataUser[0].factoryName === 'LVL' && (
                                         <>
                                             <Grid item xs={3} display={'flex'}>
-                                                <MyButton name={"Thẻ kho"} onClick={() => setOpenModal(true)} />
+                                                <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModal(true)} />
                                                 <ModalAccountingCard open={openModal} handleClose={() => setOpenModal(false)} data={stockout} />
                                             </Grid>
                                             <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
@@ -616,7 +616,6 @@ const StockoutScreen = () => {
                                         </>
                                     )
                                 }
-
                             </Grid>
                             {/* tổng */}
                             <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>
