@@ -23,7 +23,7 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
   const [selectedColumn, setSelectedColumn] = useState("");
   const [selectedEdit, setSelectedEdit] = useState("");
   const [keyDoubleClick, setKeyDoubleClick] = useState('')
-  const [focus, setFocus] = useState(true)
+  const [focus, setFocus] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -243,8 +243,8 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                             item._id === selectedRow ? null : item._id
                           );
                         }}
-                        height={'40px'}
-                        style={{paddingBottom:'15px', paddingTop:'15px'}}
+                        height={'35px'}
+                        style={{paddingBottom:'10px', paddingTop:'10px'}}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
                         {isEditing && selectedEdit == key ? (
