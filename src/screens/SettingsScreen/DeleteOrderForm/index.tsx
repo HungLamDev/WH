@@ -60,13 +60,21 @@ const DeleteOrder = () => {
 
         },
         {
-            field: "Print_Qty",
-            headerName: t("dcpPrint_QTY") as string,
+            field: "Stock_In_Out_Status",
+            headerName: t("dcpLabel_Status") as string,
             align: "center",
             headerAlign: 'center',
             width: 150,
 
         },
+        // {
+        //     field: "Print_Qty",
+        //     headerName: t("dcpPrint_QTY") as string,
+        //     align: "center",
+        //     headerAlign: 'center',
+        //     width: 150,
+
+        // },
         {
             field: "Print_Date",
             headerName: t("dcpPrint_Date") as string,
@@ -90,7 +98,7 @@ const DeleteOrder = () => {
         },
     ];
     //#endregion
-    
+
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     //#endregion
@@ -154,10 +162,18 @@ const DeleteOrder = () => {
         axios.post(url, data, config).then(response => {
             const arr = response.data.map((item: any, index: any) => ({
                 _id: index + 1,
-                ...item
+                Order_No: item.Order_No,
+                Material_No: item.Material_No,
+                Material_Name: item.Material_Name,
+                Qty: item.Qty,
+                Stock_In_Out_Status: item.Stock_In_Out_Status,
+                // Print_Qty: item.Print_Qty,
+                Print_Date: item.Print_Date,
+                User_Serial_Key: item.User_Serial_Key,
+                Barcode: item.Barcode
             }))
             setRows(arr)
-        }).finally(()=>{
+        }).finally(() => {
             setDisable(false)
         })
     }
@@ -165,7 +181,7 @@ const DeleteOrder = () => {
     const handleDelete = () => {
         setDisable(true)
         const url = connect_string + "api/Action_Delete_Label"
-        const listChx =[]
+        const listChx = []
         const count = listChecked.length;
         const trueValues = new Array(count).fill(true);
         listChx.push(...trueValues);
@@ -178,10 +194,10 @@ const DeleteOrder = () => {
             get_version: dataUser[0].WareHouse
 
         }
-        
+
         axios.post(url, data, config).then(response => {
             handleSearch()
-        }).finally(()=>{
+        }).finally(() => {
             setDisable(false)
         })
     }
@@ -199,22 +215,22 @@ const DeleteOrder = () => {
                             <Typography className="textsize">{t("lblNum_No")}</Typography>
                         </Grid>
                         <Grid item xs={2} display={'flex'}>
-                            <InputField value={orderNo} handle={handleorderNo} disable={disable}/>
+                            <InputField value={orderNo} handle={handleorderNo} disable={disable} />
                         </Grid>
                         <Grid item xs={1} display={'flex'} justifyContent={'start'} alignItems={'center'}>
                             <Typography className="textsize">{t("dcmMaterial_No")}</Typography>
                         </Grid>
                         <Grid item xs={2} display={'flex'}>
-                            <InputField value={materialNo} handle={handlematerialNo} disable={disable}/>
+                            <InputField value={materialNo} handle={handlematerialNo} disable={disable} />
                         </Grid>
                         <Grid item xs={1} display={'flex'} justifyContent={'start'} alignItems={'center'}>
                             <Typography className="textsize">{t("dcmQTY")}</Typography>
                         </Grid>
                         <Grid item xs={2} display={'flex'}>
-                            <InputField value={qty} handle={handleQty} disable={disable}/>
+                            <InputField value={qty} handle={handleQty} disable={disable} />
                         </Grid>
                         <Grid item  >
-                            <MyButton name={t('btnDelete')} onClick={handleDelete} disabled={disable}/>
+                            <MyButton name={t('btnDelete')} onClick={handleDelete} disabled={disable} />
                         </Grid>
                     </Grid>
                     <Grid container justifyContent={'center'}>
@@ -237,10 +253,10 @@ const DeleteOrder = () => {
                             <Typography className="textsize">{t("dcpBarcode")}</Typography>
                         </Grid>
                         <Grid item xs={2} display={'flex'}>
-                            <InputField value={qrCode} handle={handleQrCode} disable={disable}/>
+                            <InputField value={qrCode} handle={handleQrCode} disable={disable} />
                         </Grid>
                         <Grid item  >
-                            <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={disable}/>
+                            <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={disable} />
                         </Grid>
                     </Grid>
                 </Stack>

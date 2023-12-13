@@ -36,9 +36,16 @@ import ModalCofirm from "../../../components/ModalConfirm";
 import Formprint from "../../../components/Formprint";
 import FormprintChemistry from "../../../components/FormprintChemistry";
 import { styletext } from "../../StockinScreenv2/StockinForm";
+import TableChemistry from "../../../components/TableChemistry";
+import { clearArrayRowDowns, copyValues } from "../../../redux/ArrayRowDowns";
+import { copyValuesRowUps, clearArrayRowUps, removeItemByBarcodeRowUps, changeItemsByBarcodeArrayRowUps, addItemRowUps, changeItemsArrayRowUps } from "../../../redux/ArrayRowUps";
+import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByBarcodeArrayDeleteAndPrint } from "../../../redux/ArrayDeleteAndPrint";
+
 //#endregion
 const DataHistoryPrintScreen = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   //#region column header table
 
   const columnsUp: GridColDef[] = [
@@ -103,7 +110,7 @@ const DataHistoryPrintScreen = () => {
       headerClassName: "custom-header",
     },
     {
-      field: "Print_Date",
+      field: "ngay",
       headerName: t("dcpDate") as string, // Ngày
       width: 160,
       headerClassName: "custom-header",
@@ -111,6 +118,12 @@ const DataHistoryPrintScreen = () => {
     {
       field: "Production",
       headerName: t("dcpProduction") as string, // Ngày sản xuất
+      width: 160,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "Expired_Date",
+      headerName: t("dcmExpire_Date") as string, // Ngày hết hạn
       width: 160,
       headerClassName: "custom-header",
     },
@@ -165,13 +178,13 @@ const DataHistoryPrintScreen = () => {
       headerClassName: "custom-header",
     },
     {
-      field: "Print_QTY",
+      field: "qty_roll",
       headerName: t("dcpQty_ROLL") as string, // Số lượng cuộn
       width: 160,
       headerClassName: "custom-header",
     },
     {
-      field: "Arrival_Qty",
+      field: "Arrival_QTY",
       headerName: t("dcmArrival_QTY") as string, // Số lượng về
       width: 160,
       headerClassName: "custom-header",
@@ -201,19 +214,19 @@ const DataHistoryPrintScreen = () => {
       headerClassName: "custom-header",
     },
     {
-      field: "CGDate_Date",
+      field: "ngay",
       headerName: t("dcpDate") as string, // Ngày
       width: 160,
       headerClassName: "custom-header",
     },
     {
-      field: "ywsm_Production",
+      field: "ngaysx",
       headerName: t("dcpProduction") as string, // Ngày sản xuất
       width: 160,
       headerClassName: "custom-header",
     },
     {
-      field: "zsdh_Supplier_No",
+      field: "ngayhh",
       headerName: t("dcmExpire_Date") as string, // Ngày hết hạn
       width: 160,
       headerClassName: "custom-header",
@@ -232,14 +245,18 @@ const DataHistoryPrintScreen = () => {
     },
   ];
   //#endregion
-  
+
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
+  const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
+  const ArrayRowUps = useSelector((state: any) => state.ArrayRowUps.items);
+  const ArrayDeleteAndPrint = useSelector((state: any) => state.ArrayDeleteAndPrint.items);
+
   //#endregion
-  
+
   //#region Variable
-  const [rowDowns, setrowDowns] = useState<any[]>([]);
-  const [rowUps, setrowUps] = useState<any[]>([]);
+  // const [rowDowns, setrowDowns] = useState<any[]>([]);
+  // const [rowUps, setrowUps] = useState<any[]>([]);
   const [chxPrintRY, setChxPrintRY] = useState(false);
   const [open, setOpen] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -250,11 +267,13 @@ const DataHistoryPrintScreen = () => {
   const [chxRY, setChxRY] = useState(false);
   const [chxRePrint, setChxRePrint] = useState(false);
   const [chxResidual_supplies, setchxResidual_supplies] = useState(false);
-  const [listChx, setListChx] = useState<any[]>([]);
+  // const [listChx, setListChx] = useState<any[]>([]);
   const [openPrintReview, setOpenPrintReview] = useState(false);
   const [openCofirm, setOpenCofirm] = useState(false);
   const [confirmType, setCofirmType] = useState("");
-  const [date, setDate] = useState(moment().format("YYYY/MM/DD"));
+  const [date, setDate] = useState(moment().format("YYYY-MM-DD"));
+  const [isApi, setIsApi] = useState(true)
+
   //#endregion
 
   //#region Func OnChange Input
@@ -292,77 +311,88 @@ const DataHistoryPrintScreen = () => {
     setCofirmType(name)
     setOpenCofirm(true)
   }
+
   const handleCloseConfirm = () => {
     setCofirmType('')
     setOpenCofirm(false)
   }
 
   const handleDoubleClick = (colName: string, params: any) => {
-    const url = connect_string + "api/DoubleClick_Print_Chemistry"
-    const ngay = params.CGDate_Date.split("/")
-    const ngaysx = params.ywsm_Production.split("/")
-    const ngayhd = params.zsdh_Supplier_No.split("/")
-    const data = {
-      RowIndex: true,
-      dcmOrder_No: params.CGNO_Order_No,
-      dcmMaterial_No: params.CLBH_Material_No,
-      dcmMaterial_Type: params.cllb_Material_Type,
-      dcmColor: params.Color,
-      dcmUnit: params.dwbh_Units,
-      dcmQty_ROLL: params.Print_QTY,
-      dcmArrival_QTY: params.Arrival_Qty,
-      dcmQTY: params.QTY,
-      dcmRoll: params.Roll,
-      dcmSize: params.Size,
-      dcmMaterial: params.ywpm_Material,
-      dcmProduction: params.ywsm_Production,
-      dcmWork_Order: params.ZLBH_Work_Order,
-      dcmExpire_Date: params.zsdh_Supplier_No,
-      dcmSupplier: params.zsywjc_Supplier,
-      dcmDate: params.CGDate_Date,
-      User_Serial_Key: dataUser[0].UserId,
-      chxReprint: chxRePrint,
-      chxResidual_supplies: chxResidual_supplies,
-      chxRY: chxRY,
-      get_version: dataUser[0].WareHouse
-    }
-    axios.post(url, data, config).then(response => {
-      if (response.data.length > 0) {
-        const arr = response.data.map((item: any, index: any) => ({
-          _id: item.Barcode,
-          Supplier: item.Supplier,
-          Material_No: item.Material_No,
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          Size: item.Size,
-          Print_QTY: item.Print_QTY,
-          QTY: item.QTY,
-          dwbh_Units: item.dwbh_Units,
-          Order_No: item.Order_No,
-          Roll: item.Roll,
-          Print_Date: item.Print_Date,
-          Production: item.Production,
-          Expired_Date: item.Expired_Date,
-          Work_Order: item.Work_Order,
-          Material_Type: item.Material_Type,
-          Barcode: item.Barcode,
-        }))
-        // setrowUps(prevRowUps => [...prevRowUps, ...arr]);
-        const uniqueArr = arr.filter((item: any) => {
-          return !rowUps.some((row) => row.Barcode === item.Barcode);
-        });
+    if (isApi === true) {
+      setIsLoading(true);
+      setDisabled(true);
+      setIsApi(false)
+      const url = connect_string + "api/DoubleClick_Print_Chemistry"
 
-        setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
+      const data = {
+        RowIndex: true,
+        dcmOrder_No: params.CGNO_Order_No,
+        dcmMaterial_No: params.CLBH_Material_No,
+        dcmMaterial_Type: params.cllb_Material_Type,
+        dcmColor: params.Color,
+        dcmUnit: params.dwbh_Units,
+        dcmQty_ROLL: params.qty_roll,
+        dcmArrival_QTY: params.Arrival_QTY,
+        dcmQTY: params.QTY,
+        dcmRoll: params.Roll,
+        dcmSize: params.Size,
+        dcmMaterial: params.ywpm_Material,
+        dcmProduction: moment(params.ngaysx, 'DD/MM/YYYY', true).isValid() ? params.ngaysx : moment(params.ngaysx).format('DD/MM/YYYY'),
+        dcmWork_Order: params.ZLBH_Work_Order,
+        dcmExpire_Date: moment(params.ngayhh, 'DD/MM/YYYY', true).isValid() ? params.ngayhh : moment(params.ngayhh).format('DD/MM/YYYY'),
+        dcmSupplier: params.zsywjc_Supplier,
+        dcmDate: moment(params.ngay, 'DD/MM/YYYY', true).isValid() ? params.ngay : moment(params.ngay).format('DD/MM/YYYY'),
+        User_Serial_Key: dataUser[0].UserId,
+        chxReprint: chxRePrint,
+        chxResidual_supplies: chxResidual_supplies,
+        chxRY: chxRY,
+        get_version: dataUser[0].WareHouse
       }
-    }).finally(() => {
-      setIsLoading(false)
-      setOpen(false)
-    })
+      axios.post(url, data, config).then(response => {
+        if (response.data.length > 0) {
+          const arr = response.data.map((item: any, index: any) => ({
+            _id: item.Barcode,
+            Supplier: item.Supplier,
+            Material_No: item.Material_No,
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            Size: item.Size,
+            Print_QTY: item.Print_QTY,
+            QTY: item.QTY,
+            dwbh_Units: item.dwbh_Units,
+            Order_No: item.Order_No,
+            Roll: item.Roll,
+            Print_Date: item.Print_Date,
+            ngay: moment(item.Print_Date).format("DD/MM/YYYY"),
+            Production: item.Production,
+            Expired_Date: item.Expired_Date,
+            Work_Order: item.Work_Order,
+            Material_Type: item.Material_Type,
+            Barcode: item.Barcode,
+          }))
+          // setrowUps(prevRowUps => [...prevRowUps, ...arr]);
+          const uniqueArr = arr.filter((item: any) => {
+            return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
+          });
+
+          // setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
+          const arrTemp = [...ArrayRowUps, ...uniqueArr]
+          dispatch(copyValuesRowUps(arrTemp));
+        }
+      }).finally(() => {
+        setIsLoading(false);
+        setDisabled(false);
+        setIsApi(true)
+      })
+    }
 
   }
+
   const handleDelete = () => {
+    setIsLoading(true);
+    setDisabled(true);
     const url = connect_string + "api/Delete_Label_Print_Chemistry"
-    const arr = listChx.map((item: any) => item.Barcode)
+    const arr = ArrayDeleteAndPrint.map((item: any) => item.Barcode)
     const data = {
       dcpBarcode: arr,
       chxResidual_supplies: false,
@@ -373,55 +403,65 @@ const DataHistoryPrintScreen = () => {
     }
     axios.post(url, data, config).then(response => {
       if (response.data === true) {
-        const filteredArr1 = rowUps.filter((item1: any) => {
-          return !listChx.some((item2: any) => item1.Barcode === item2.Barcode);
+        const filteredArr1 = ArrayRowUps.filter((item1: any) => {
+          return !ArrayDeleteAndPrint.some((item2: any) => item1.Barcode === item2.Barcode);
         });
-        setrowUps(filteredArr1)
+        // setrowUps(filteredArr1)
+        dispatch(copyValuesRowUps(filteredArr1));
       }
       else {
         handleOpenConfirm('delete-error')
       }
     }).finally(() => {
       setIsLoading(false)
-      setOpen(false)
+      setDisabled(false)
     })
   }
+
   const handlePrint = async () => {
-    handleOpenConfirm('print-success')
-    if(await checkPermissionPrint(dataUser[0].UserId)){
-      if (listChx.length > 0) {
-        setOpen(true)
-        const url = connect_string + "api/Print_Chemistry_CLick"
-        const arr = listChx.map((item: any) => item.Barcode)
-        const data = {
-          User_Serial_Key: dataUser[0].UserId,
-          dcpBarcode: arr,
-          dcpCheck: true,
-          get_version: dataUser[0].WareHouse
-        }
-        axios.post(url, data, config).then(response => {
-          if (response.data === true) {
-            
-          }
-        }).finally(() => {
-          setIsLoading(false)
-          setOpen(false)
-        })
+    if (await checkPermissionPrint(dataUser[0].UserId)) {
+      if (ArrayDeleteAndPrint.length > 0) {
+        handleOpenConfirm('print')
       }
-      else{
+      else {
         handleOpenConfirm('error-data')
       }
-  
     }
-    else{
+    else {
       handleOpenConfirm('print-permission')
     }
-
-  
   }
+
+  const handlePrintOK = () => {
+    handleOpenConfirm('print-success')
+    setIsLoading(true);
+    setDisabled(true);
+
+    const url = connect_string + "api/Print_Chemistry_CLick"
+    const arr = ArrayDeleteAndPrint.map((item: any) => item.Barcode)
+    const data = {
+      User_Serial_Key: dataUser[0].UserId,
+      dcpBarcode: arr,
+      dcpCheck: true,
+      get_version: dataUser[0].WareHouse
+    }
+    axios.post(url, data, config).then(response => {
+      if (response.data === true) {
+
+      }
+      else {
+        handleOpenConfirm('print-erorr')
+      }
+    }).finally(() => {
+      setIsLoading(false);
+      setDisabled(false);
+    })
+  }
+
   const handleSearch = () => {
     setIsLoading(true);
     setDisabled(true);
+    dispatch(clearArrayRowDowns())
     const url = connect_string + "api/btnSearch_Print_Chemistry";
     const data = {
       chxRY: chxRY,
@@ -434,6 +474,7 @@ const DataHistoryPrintScreen = () => {
     axios
       .post(url, data, config)
       .then((response) => {
+        console.log(response.data)
         const arr = response.data.map((item: any, index: any) => ({
           _id: index,
           zsywjc_Supplier: item.zsywjc_Supplier,
@@ -441,28 +482,62 @@ const DataHistoryPrintScreen = () => {
           ywpm_Material: item.ywpm_Material,
           Color: item.Color,
           Size: item.Size,
-          Print_QTY: item.Print_QTY,
-          Arrival_Qty: item.Arrival_Qty,
+          qty_roll: item.Print_QTY,
+          Arrival_QTY: item.Arrival_Qty,
           QTY: item.QTY,
           dwbh_Units: item.dwbh_Units,
           CGNO_Order_No: item.CGNO_Order_No,
           Roll: item.Roll,
-          CGDate_Date: item.CGDate_Date,
-          ywsm_Production: item.ywsm_Production,
-          zsdh_Supplier_No: item.zsdh_Supplier_No,
+          ngay: item.CGDate_Date,
+          ngaysx: item.ywsm_Production,
+          ngayhh: item.zsdh_Supplier_No,
           ZLBH_Work_Order: item.ZLBH_Work_Order,
           cllb_Material_Type: item.cllb_Material_Type,
-          // Name_M: item.Name_M,
         }));
-        setrowDowns(arr);
+        dispatch(copyValues(arr))
+        // setrowDowns(arr);
       })
       .finally(() => {
         setIsLoading(false);
         setDisabled(false);
       });
   };
+
+  const handleClean = () => {
+    dispatch(clearArrayRowDowns())
+    dispatch(clearArrayRowUps())
+    dispatch(clearArrayDeleteAndPrint())
+  }
+
+  const handleOrderWordKeyDown = (event: any) => {
+    if (event.key === 'Enter' && chxPrintRY === true && ArrayDeleteAndPrint.length > 0) {
+      const listBarcode = ArrayDeleteAndPrint.map((item: any) => item.Barcode)
+      const dateChange = moment(date).format("YYYY-MM-DD")
+      const url = connect_string + "api/btn_Enter_Print_Ry_chemistry"
+      const data = {
+        chxReprint_RY: chxPrintRY,
+        list_barcode: listBarcode,
+        txtOrder_Word: workOrder,
+        USERID: dataUser[0].UserId,
+        dtpDate_Order: dateChange,
+        get_version: dataUser[0].WareHouse
+      }
+      axios.post(url, data, config).then(response => {
+        if (response.data === true) {
+          dispatch(changeItemsArrayRowUps({ barcodes: listBarcode, modifyDate: dateChange, Work_Order: workOrder }))
+        }
+        else{
+            handleOpenConfirm('changedatefail') 
+        }
+    }).finally(() => {
+        setIsLoading(false)
+        setDisabled(false)
+    })
+    }
+  }
+
   //#endregion
-  
+
   return (
     <FullScreenContainerWithNavBar
       sideBarDisable={true}
@@ -573,7 +648,7 @@ const DataHistoryPrintScreen = () => {
                 xs={(chxRY && !chxPrintRY) ? 7 : 5}
                 sx={{
 
-                  "& .css-ahj2mt-MuiTypography-root": {
+                  "& .MuiTypography-root": {
                     marginX: "10px",
                   },
                 }}
@@ -590,7 +665,7 @@ const DataHistoryPrintScreen = () => {
                   <InputField
                     label={t("dcmWork_Order") as string}
                     handle={handleWorkOrder}
-                    keydown=""
+                    keydown={handleOrderWordKeyDown}
                     value={workOrder}
                     type={"text"}
                     disable={disabled}
@@ -614,7 +689,9 @@ const DataHistoryPrintScreen = () => {
                   width="100%"
                 >
                   {chxPrintRY ? (
-                    <DatePickerField label="" onValueChange={date} />
+                    <DatePickerField label="" onValueChange={date} valueDate={(params: any) => {
+                      setDate(params);
+                    }} />
                   ) : (
                     ""
                   )}
@@ -622,7 +699,7 @@ const DataHistoryPrintScreen = () => {
               </Grid>
             </Grid>
             <Grid>
-              {(dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === "Administrator") &&
+              {(dataUser[0].TLLanguage === 'TW' || dataUser[0].UserRole === "Administrator") &&
 
                 <FormControlLabel
                   className="text"
@@ -651,39 +728,48 @@ const DataHistoryPrintScreen = () => {
             disabled={disabled}
             onClick={handleSearch}
           />
-          <MyButton name={t("btnClean")} disabled={disabled} />
+          <MyButton name={t("btnClean")} disabled={disabled} onClick={handleClean} />
           <MyButton name={t("btnDelete")} disabled={disabled} onClick={handleDelete} />
           <MyButton name={t("btnPrint")} disabled={disabled} onClick={handlePrint} />
           <MyButton name={t("btnPrivewPrint")} disabled={disabled} onClick={() => setOpenPrintReview(true)} />
-          {open && <CircularProgress size={"24px"} color="info" />}
-          {openPrintReview && <FormprintChemistry rows={listChx} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}
-          {open && <ModalCofirm onClose={() => setOpen(false)} open={open} title={t("msgCofirmPrint") as string} />}
+          {isloading && <CircularProgress size={"24px"} color="info" />}
+          {openPrintReview && <FormprintChemistry rows={ArrayDeleteAndPrint} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}
+          {isloading && <ModalCofirm onClose={() => setOpen(false)} open={open} title={t("msgCofirmPrint") as string} />}
           {confirmType === 'delete-error' && <ModalCofirm title={t("msgDeleteError") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
           {confirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
           {/* {confirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />} */}
           {confirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
+          {confirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
+          {confirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblChangeDateFail") as string} />}
+          {confirmType === 'print-error' && <ModalCofirm title={t("msgPrintErrror") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
         </Stack>
       </Box>
       <Stack overflow={"hidden"} sx={{ height: "100%" }}>
         <Stack sx={{ height: "50%" }}>
           <TableCheckBox
             columns={columnsUp}
-            rows={rowUps}
-            listChx={(params: any) => {
-              setListChx(params);
-            }}
+            rows={ArrayRowUps}
+            listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }}
             arrNotShowCell={["_id"]}
           />
         </Stack>
         <Stack sx={{ height: "50%" }}>
-          <TableCheckBox
+          <TableChemistry
             columns={columnsDown}
-            rows={rowDowns}
+            rows={ArrayRowDowns}
             onDoubleClick={handleDoubleClick}
             arrEditCell={[
-              "Print_QTY",
+              "Size",
+              "qty_roll",
               "Roll",
               "ywpm_Material",
+              "Arrival_QTY",
+              "ywsm_Production",
+              "ZLBH_Work_Order",
+              "ngay",
+              "Color",
+              "ngayhh",
+              "ngaysx"
             ]}
             arrNotShowCell={["_id"]}
           />

@@ -23,6 +23,7 @@ import QRScanner from "../../../components/QRScanner"
 import { Howl } from 'howler';
 import { FAILURE_SOUND_PATH, SUCCESS_SOUND_PATH, successSound } from '../../../utils/pathsound';
 import EnterShelves from "../EnterShelves"
+import ModalCofirm from "../../../components/ModalConfirm"
 //#endregion
 //#region style
 export const styletext = {
@@ -168,6 +169,8 @@ const Stockin = () => {
     const [mode, setMode] = useState(false)
     const [modalScan, setModalScan] = useState(false)
     const [isLoading, setisLoading] = useState(false)
+    const [openCofirm, setOpenCofirm] = useState(false)
+    const [cofirmType, setCofirmType] = useState('')
     //#endregion
    
     //#region Func OnChange Input
@@ -195,6 +198,18 @@ const Stockin = () => {
     //#endregion
    
     //#region Func Logic
+    const handleOpenConfirm = (confirmName: string) => {
+        setCofirmType(confirmName)
+        setOpenCofirm(true)
+    }
+
+    const handleCloseConfirm = () => {
+        setCofirmType('')
+        setOpenCofirm(false)
+        setShelve("")
+
+    }
+
     const handleOpen = (name: any) => {
         setModalType(name);
         setOpen(true);
@@ -321,6 +336,9 @@ const Stockin = () => {
                 checkRack(txtshelve)
                 setShelve('')
 
+            }
+            else {
+                handleOpenConfirm('materialOut')
             }
         }).finally(() => {
             setisLoading(false)
@@ -466,6 +484,8 @@ const Stockin = () => {
                     <ModalDeleteForm barcode={datadelete} open={open} onClose={handleClose} onPressOK={() => handlePressOK(datadelete)} />
                 )}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
+                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
+           
             </Stack>
 
         </FullScreenContainerWithNavBar>

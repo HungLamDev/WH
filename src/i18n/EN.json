@@ -380,6 +380,6 @@
     "lblChangeDateFail":"The update date must be within the month",
     "lblFindAgain":"Find again",
     "chxPair":"Pair",
-    "lblNetworkError": "Mạng của bạn đang gặp sự cố"
+    "lblNetworkError": "Your network is having problems"
 
 }

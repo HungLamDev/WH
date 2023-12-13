@@ -23,6 +23,7 @@ import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
 import Decimal from 'decimal.js';
+import { set } from 'lodash';
 //#endregion
 function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
     const dispatch = useDispatch()
@@ -173,6 +174,10 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 setValue_Total_Qty(response.data.Value_Total_Qty)
                 setScanQR('')
             }
+            else{
+                handleOpenConfirm('materialOut')
+                setScanQR('')
+            }
         }).finally(() => {
             setIsLoading(false)
             setDisable(false)
@@ -240,6 +245,9 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                         setScanQR(Barcode)
                         // handleOpenConfirm('ok')
                     }
+                    else{
+                        handleOpenConfirm('materialOut')
+                    }
                 }).finally(() => {
                     setIsLoading(false)
                     setDisable(false)
@@ -293,6 +301,9 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                         // dispatch(addItemArrayStockout(newItem))
                         setScanQR(Barcode)
                         // handleOpenConfirm('ok')
+                    }
+                    else{
+                        handleOpenConfirm('materialOut')
                     }
                 }).finally(() => {
                     setIsLoading(false)
@@ -463,6 +474,8 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'ok' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExportSuccess") as string} />}
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
+                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
+           
             </Box>
         </Modal >
     )

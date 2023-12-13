@@ -25,7 +25,7 @@ const Formprint = (props: {
         overflowY: 'scroll',
         overflowX: "hidden"
     };
-
+    console.log(rows)
     return (
         <>
         <Modal
@@ -78,7 +78,7 @@ const Formprint = (props: {
                                     </tr>
                                     <tr>
                                         <td className="border-right">Expire Date</td>
-                                        <td colSpan={4} className="text-center bold">{item.Expired_Date ? item.Expired_Date:''}</td>
+                                        <td colSpan={4} className="text-center bold">{item.Expired_Date ?item.Expired_Date:''}</td>
                                     </tr>
                                     <tr>
                                         <td className="border-right">T2 TLSP pass</td>
@@ -91,7 +91,7 @@ const Formprint = (props: {
                                     <tr style={{ borderTop: '2px solid black' }}>
                                         <td rowSpan={10} className="tdtitle bold " style={{ border: '2px solid black' }}><div className="title bold  text-center " style={{ marginTop: 'auto', marginBottom: 'auto' }}>T1 information</div></td>
                                         <td className="border-right">Date Received</td>
-                                        <td colSpan={4} className="bold text-center">{ item.ngay ? item.ngay : item.Print_Date}</td>
+                                        <td colSpan={4} className="bold text-center">{ item.ngay ? item.ngay : moment(item.Print_Date).format("DD/MM/YYYY")}</td>
                                     </tr>
                                     <tr >
                                         <td className="text-center border-right"></td>

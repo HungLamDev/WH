@@ -163,6 +163,8 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region Variable
+    const [openCofirm, setOpenCofirm] = useState(false)
+    const [cofirmType, setCofirmType] = useState('')
     const [open, setOpen] = useState(false)
     const [modalCofirm, setModalCofirm] = useState(false)
     const [qrcode, setQRCode] = useState('')
@@ -277,6 +279,17 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region Func Logic 
+    const handleOpenConfirm = (confirmName: string) => {
+        setCofirmType(confirmName)
+        setOpenCofirm(true)
+    }
+
+    const handleCloseConfirm = () => {
+        setCofirmType('')
+        setOpenCofirm(false)
+        setQRCode('')
+    }
+
     const handleScanClick = () => {
         setMode(true);
         setModalScan(true);
@@ -340,6 +353,9 @@ const StockoutScreen = () => {
                     dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
                     setQRCode('')
 
+                }
+                else {
+                    handleOpenConfirm('materialOut')
                 }
             }).finally(() => {
                 setDisable(false)
@@ -409,7 +425,9 @@ const StockoutScreen = () => {
 
                     // dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out + " | " + ArrayStockout.length))
                 }
-
+                else {
+                    handleOpenConfirm('materialOut')
+                }
             }).finally(() => {
                 setDisable(false)
                 setIsLoading(false)
@@ -612,7 +630,7 @@ const StockoutScreen = () => {
                                             </Grid>
                                             <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
                                                 <SimplePopper data={dataRY} />
-                                            </Grid> 
+                                            </Grid>
                                         </>
                                     )
                                 }
@@ -629,6 +647,8 @@ const StockoutScreen = () => {
                 <TableCheckBoxRedux chxColor={chcolor} listChx={handleRowSelectionModelChange} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
+                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
+
             </Stack>
         </FullScreenContainerWithNavBar>
 

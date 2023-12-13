@@ -36,7 +36,7 @@ interface ArrayRowUpsState {
 }
 
 const initialState: ArrayRowUpsState = {
-    items:  []
+    items: []
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -59,20 +59,35 @@ const ArrayRowUps = createSlice({
         },
         changeItemsByBarcodeArrayRowUps: (state, action: PayloadAction<{ barcodes: any[], modifyDate: any, Work_Order: any }>) => {
             const { barcodes, modifyDate, Work_Order } = action.payload;
-            
+
             barcodes.forEach(barcode => {
-              // Tìm phần tử có barcode tương ứng trong mảng
-              const itemIndex = state.items.findIndex(item => item.Barcode === barcode);
-          
-              if (itemIndex !== -1) {
-                // Nếu tìm thấy phần tử, thay đổi Modify_Date của nó thành giá trị được truyền vào
-                state.items[itemIndex].ngay = moment(modifyDate).format("YYYY-MM-DD");
-                state.items[itemIndex].Work_Order = Work_Order;
-              }
+                // Tìm phần tử có barcode tương ứng trong mảng
+                const itemIndex = state.items.findIndex(item => item.Barcode === barcode);
+
+                if (itemIndex !== -1) {
+                    // Nếu tìm thấy phần tử, thay đổi Modify_Date của nó thành giá trị được truyền vào
+                    state.items[itemIndex].ngay = moment(modifyDate).format("YYYY-MM-DD");
+                    state.items[itemIndex].Work_Order = Work_Order;
+                }
             });
-          },
+        },
+        changeItemsArrayRowUps: (state, action: PayloadAction<{ barcodes: any[] , modifyDate: any, Work_Order: any }>) => {
+            const { barcodes,modifyDate, Work_Order } = action.payload;
+
+            barcodes.forEach(barcode => {
+                // Tìm phần tử có barcode tương ứng trong mảng
+                const itemIndex = state.items.findIndex(item => item.Barcode === barcode);
+
+                if (itemIndex !== -1) {
+                    // Nếu tìm thấy phần tử, thay đổi Modify_Date của nó thành giá trị được truyền vào
+                    state.items[itemIndex].Print_Date = moment(modifyDate).format("YYYY-MM-DD");
+                    state.items[itemIndex].ngay = moment(modifyDate).format("DD/MM/YYYY");
+                    state.items[itemIndex].Work_Order = Work_Order;
+                }
+            });
+        },
     }
 })
-export const { addItemRowUps, copyValuesRowUps,removeItemByBarcodeRowUps,clearArrayRowUps,changeItemsByBarcodeArrayRowUps } = ArrayRowUps.actions;
+export const { addItemRowUps, copyValuesRowUps, removeItemByBarcodeRowUps, clearArrayRowUps, changeItemsByBarcodeArrayRowUps, changeItemsArrayRowUps } = ArrayRowUps.actions;
 
 export default ArrayRowUps.reducer;

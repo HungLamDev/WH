@@ -27,7 +27,7 @@ const LoginForm = () => {
       label: t('massWarehouse'),
     },
     {
-      value: 'Chemistry',
+      value: 'No',
       label: t('btnAccounting_Chemistry'),
     },
     {

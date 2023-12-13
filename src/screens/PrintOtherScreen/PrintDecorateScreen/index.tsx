@@ -13,19 +13,26 @@ import { GridColDef } from "@mui/x-data-grid";
 import moment, { Moment } from "moment";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {  config } from "../../../utils/api";
+import { config } from "../../../utils/api";
 import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { useTranslation } from "react-i18next";
 import TableCheckBox from "../../../components/TableCheckBox";
 import ModalCofirm from "../../../components/ModalConfirm";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Formprint from "../../../components/Formprint";
 import { styletext } from "../../StockinScreenv2/StockinForm";
+import TableDateTimePicker from "../../../components/TableDateTimePicker";
+import { clearArrayRowDowns, copyValues } from "../../../redux/ArrayRowDowns";
+import { copyValuesRowUps, clearArrayRowUps, removeItemByBarcodeRowUps, changeItemsByBarcodeArrayRowUps, addItemRowUps, changeItemsArrayRowUps } from "../../../redux/ArrayRowUps";
+import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByBarcodeArrayDeleteAndPrint } from "../../../redux/ArrayDeleteAndPrint";
+
 //#endregion
 const DataHistoryPrintScreen = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   //#region column header table
   const columnsUp: GridColDef[] = [
     {
@@ -208,6 +215,9 @@ const DataHistoryPrintScreen = () => {
 
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
+  const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
+  const ArrayRowUps = useSelector((state: any) => state.ArrayRowUps.items);
+  const ArrayDeleteAndPrint = useSelector((state: any) => state.ArrayDeleteAndPrint.items);
   //#endregion
 
   //#region Variable
@@ -225,6 +235,8 @@ const DataHistoryPrintScreen = () => {
   const [openPrintReview, setOpenPrintReview] = useState(false)
   const [openCofirm, setOpenCofirm] = useState(false)
   const [cofirmType, setCofirmType] = useState('')
+  const [isApi, setIsApi] = useState(true)
+
   //#endregion
 
   //#region Func OnChange Input
@@ -263,6 +275,9 @@ const DataHistoryPrintScreen = () => {
   const handleSearch = () => {
     setIsLoading(true)
     setDisabled(true)
+
+    dispatch(clearArrayRowDowns())
+
     const url = connect_string + "api/Search_Print_Cutting"
     const data = {
       chxRY: chxRY,
@@ -292,7 +307,8 @@ const DataHistoryPrintScreen = () => {
         ywsm_Production: item.ywsm_Production,
         zsdh_Supplier_No: item.zsdh_Supplier_No
       }))
-      setrowDowns(arr)
+      dispatch(copyValues(arr))
+      // setrowDowns(arr)
     }).finally(() => {
       setIsLoading(false)
       setDisabled(false)
@@ -300,66 +316,74 @@ const DataHistoryPrintScreen = () => {
   }
 
   const handleDoubleClick = (colName: string, params: any) => {
-    const url = connect_string + "api/Data_CellMouseDoubleClick_Print_Cutting"
-    const ngay = params.CGDate_Date.split("/")
-    const data = {
-      dcmOrder_No: params.CGNO_Order_No,
-      dcmMaterial_No: params.CLBH_Material_No,
-      dcmMaterial_Type: params.cllb_Material_Type,
-      dcmColor: params.Color,
-      dcmUnit: params.dwbh_Units,
-      dcmQty_ROLL: params.V_Total_Qty,
-      dcmArrival_QTY: params.Arrial_Qty,
-      dcmQTY: params.QTY,
-      dcmRoll: params.Roll,
-      dcmSize: params.Size,
-      dcmMaterial: params.ywpm_Material,
-      dcmProduction: params.ywsm_Production,
-      dcmWork_Order: params.ZLBH_Work_Order,
-      dcmSupplier_no: params.zsdh_Supplier_No,
-      dcmSupplier: params.zsywjc_Supplier,
-      dcmDate: ngay[2] + "/" + ngay[1] + "/" + ngay[0],
-      chxResidual_supplies: false,
-      chxRY: chxRY,
-      USERID: dataUser[0].UserId,
-      chxReprint: chxRePrint,
-      get_version: dataUser[0].WareHouse
-    }
-    axios.post(url, data, config).then(response => {
-      if (response.data.length > 0) {
-        const arr = response.data.map((item: any, index: any) => ({
-          _id: item.Barcode,
-          Supplier: item.Supplier,
-          Material_No: item.Material_No,
-          Material_Name: item.Material_Name,
-          Color: item.Color,
-          Size: item.Size,
-          Print_QTY: item.Print_QTY,
-          QTY: item.QTY,
-          dwbh_Units: item.dwbh_Units,
-          Order_No: item.Order_No,
-          Roll: item.Roll,
-          Print_Date: item.Print_Date,
-          Work_Order: item.Work_Order,
-          Material_Type: item.Material_Type,
-          Barcode: item.Barcode,
-        }))
-        const filteredDataInRowUps1 = rowUps.filter((oldItem) => {
-          return !arr.some((newItem: any) => {
-            return newItem.Barcode === oldItem.Barcode;
-          });
-        });
-        const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-        setrowUps(mergedDataInRowUps);
+    if (isApi === true) {
+      setIsLoading(true)
+      setDisabled(true)
+      setIsApi(false)
+      const url = connect_string + "api/Data_CellMouseDoubleClick_Print_Cutting"
+      const ngay = params.CGDate_Date.split("/")
+      const data = {
+        dcmOrder_No: params.CGNO_Order_No,
+        dcmMaterial_No: params.CLBH_Material_No,
+        dcmMaterial_Type: params.cllb_Material_Type,
+        dcmColor: params.Color,
+        dcmUnit: params.dwbh_Units,
+        dcmQty_ROLL: params.V_Total_Qty,
+        dcmArrival_QTY: params.Arrial_Qty,
+        dcmQTY: params.QTY,
+        dcmRoll: params.Roll,
+        dcmSize: params.Size,
+        dcmMaterial: params.ywpm_Material,
+        dcmProduction: params.ywsm_Production,
+        dcmWork_Order: params.ZLBH_Work_Order,
+        dcmSupplier_no: params.zsdh_Supplier_No,
+        dcmSupplier: params.zsywjc_Supplier,
+        dcmDate: moment(params.CGDate_Date, 'YYYY-MM-DD', true).isValid() ? moment(params.CGDate_Date).format('YYYY/MM/DD') : ngay[2] + "/" + ngay[1] + "/" + ngay[0],
+        chxRY: chxRY,
+        USERID: dataUser[0].UserId,
+        chxReprint: chxRePrint,
+        get_version: dataUser[0].WareHouse
       }
-    }).finally(() => {
-      setIsLoading(false)
-      setOpen(false)
-    })
+      axios.post(url, data, config).then(response => {
+        if (response.data.length > 0) {
+          const arr = response.data.map((item: any, index: any) => ({
+            _id: item.Barcode,
+            Supplier: item.Supplier,
+            Material_No: item.Material_No,
+            Material_Name: item.Material_Name,
+            Color: item.Color,
+            Size: item.Size,
+            Print_QTY: item.Print_QTY,
+            QTY: item.QTY,
+            dwbh_Units: item.dwbh_Units,
+            Order_No: item.Order_No,
+            Roll: item.Roll,
+            Print_Date: item.Print_Date,
+            Work_Order: item.Work_Order,
+            Material_Type: item.Material_Type,
+            Barcode: item.Barcode,
+          }))
+          const filteredDataInRowUps1 = rowUps.filter((oldItem) => {
+            return !arr.some((newItem: any) => {
+              return newItem.Barcode === oldItem.Barcode;
+            });
+          });
+          const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
+          setrowUps(mergedDataInRowUps);
+        }
+      }).finally(() => {
+        setIsLoading(false)
+        setOpen(false)
+        setDisabled(false)
+        setIsApi(true)
+      })
+    }
 
   }
 
   const handleDelete = () => {
+    setDisabled(true)
+    setIsLoading(true)
     const url = connect_string + "api/Delete_Print_Cutting"
     const arr = listChx.map((item: any) => item.Barcode)
     const data = {
@@ -389,28 +413,14 @@ const DataHistoryPrintScreen = () => {
     }).finally(() => {
       setIsLoading(false)
       setOpen(false)
+      setDisabled(false)
     })
   }
 
   const handlePrint = async () => {
-    handleOpenConfirm('print')
-    setOpen(false)
     if (await checkPermissionPrint(dataUser[0].UserId)) {
       if (listChx.length > 0) {
-        const url = connect_string + "api/btnPrint_Click_Print_Cutting"
-        const data = listChx.map((item: any) => ({
-          dcpBarcode: item.Barcode,
-          USERID: dataUser[0].UserId,
-          get_version: dataUser[0].WareHouse
-        }))
-        axios.post(url, data, config).then(response => {
-          if (response.data === true) {
-          
-          }
-          else {
-            handleOpenConfirm('print-erorr')
-          }
-        })
+        handleOpenConfirm('print')
       }
       else {
         handleOpenConfirm('error-data')
@@ -421,13 +431,36 @@ const DataHistoryPrintScreen = () => {
     }
   }
 
+  const handlePrintOK = () => {
+    handleOpenConfirm('print-success')
+    setIsLoading(true);
+    setDisabled(true);
+
+    const url = connect_string + "api/btnPrint_Click_Print_Cutting"
+    const data = listChx.map((item: any) => ({
+      dcpBarcode: item.Barcode,
+      USERID: dataUser[0].UserId,
+      get_version: dataUser[0].WareHouse
+    }))
+    axios.post(url, data, config).then(response => {
+      if (response.data === true) {
+
+      }
+      else {
+        handleOpenConfirm('print-erorr')
+      }
+    }).finally(() => {
+      setIsLoading(false);
+      setDisabled(false);
+    })
+  }
+
   const handlleRefresh = () => {
     setListChx([])
     setrowDowns([])
     setrowUps([])
-    setOrderNo('')
-    setMaterialNo('')
-    setWorkOrder('')
+    dispatch(clearArrayRowDowns())
+
   }
   //#endregion
 
@@ -509,13 +542,13 @@ const DataHistoryPrintScreen = () => {
           <MyButton name={t("btnSearch")} disabled={disabled} onClick={handleSearch} />
           <MyButton name={t("btnClean")} disabled={disabled} onClick={handlleRefresh} />
           <MyButton name={t("btnDelete")} disabled={disabled} onClick={handleDelete} />
-          <MyButton name={t("btnPrint")} disabled={disabled} onClick={() => setOpen(true)} />
+          <MyButton name={t("btnPrint")} disabled={disabled} onClick={handlePrint} />
           <MyButton name={t("btnPrivewPrint")} disabled={disabled} onClick={() => setOpenPrintReview(true)} />
         </Stack>
         {openPrintReview && <Formprint rows={listChx} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}
         {open && <ModalCofirm onPressOK={handlePrint} onClose={() => setOpen(false)} open={open} title={t("msgCofirmPrint") as string} />}
         {cofirmType === 'delete-error' && <ModalCofirm title={t("msgDeleteError") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
-        {/* {cofirmType === 'print' && <ModalCofirm title={t("msgPrintSuccess") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />} */}
+        {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
         {cofirmType === 'print-error' && <ModalCofirm title={t("msgPrintErrror") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
         {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
         {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
@@ -530,15 +563,19 @@ const DataHistoryPrintScreen = () => {
           />
         </Stack>
         <Stack sx={{ height: "50%" }}>
-          <TableCheckBox
+          <TableDateTimePicker
             columns={columnsDown}
-            rows={rowDowns}
+            rows={ArrayRowDowns}
             onDoubleClick={handleDoubleClick}
             arrEditCell={[
               "V_Total_Qty",
               "Roll",
               "ywpm_Material",
-              "Arrival_QTY",
+              "Arrial_Qty",
+              "Color",
+              "Size",
+              "ZLBH_Work_Order",
+              "CGDate_Date"
             ]}
             arrNotShowCell={["_id", "ywsm_Production", "zsdh_Supplier_No"]}
           />
