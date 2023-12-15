@@ -378,6 +378,7 @@
     "lblChangeDateFail":"更新日期必须在一个月内",
     "lblFindAgain":"再次寻找",
     "chxPair":"一对",
-    "lblNetworkError": "您的网络有问题"
+    "lblNetworkError": "您的网络有问题",
+    "lblCheck":"分割邮票前选择"
 
 }

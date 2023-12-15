@@ -26,10 +26,10 @@ const LoginForm = () => {
       value: 'No',
       label: t('massWarehouse'),
     },
-    {
-      value: 'No',
-      label: t('btnAccounting_Chemistry'),
-    },
+    // {
+    //   value: 'No',
+    //   label: t('btnAccounting_Chemistry'),
+    // },
     {
       value: 'Sample',
       label: t('btnAccounting_Sample'),
@@ -61,9 +61,11 @@ const LoginForm = () => {
     wareHouseName ? wareHouseName : "No"
   );
   const factoryName = getFactory() === null ? setFactory("LHG") : getFactory();
+
   //#endregion
 
   //#region Func Logic
+  
   const showBuilding = async () => {
 
     const url = connect_string + "api/show_Value_Buiding";

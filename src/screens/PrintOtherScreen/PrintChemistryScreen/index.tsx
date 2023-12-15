@@ -371,13 +371,21 @@ const DataHistoryPrintScreen = () => {
             Barcode: item.Barcode,
           }))
           // setrowUps(prevRowUps => [...prevRowUps, ...arr]);
-          const uniqueArr = arr.filter((item: any) => {
-            return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
+          // const uniqueArr = arr.filter((item: any) => {
+          //   return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
+          // });
+
+          const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
+            return !arr.some((newItem: any) => {
+              return newItem.Barcode === oldItem.Barcode;
+            });
           });
 
+          const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
+
           // setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
-          const arrTemp = [...ArrayRowUps, ...uniqueArr]
-          dispatch(copyValuesRowUps(arrTemp));
+          // const arrTemp = [...ArrayRowUps, ...uniqueArr]
+          dispatch(copyValuesRowUps(mergedDataInRowUps));
         }
       }).finally(() => {
         setIsLoading(false);

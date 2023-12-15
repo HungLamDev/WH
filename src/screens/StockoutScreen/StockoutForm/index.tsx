@@ -29,6 +29,7 @@ import Decimal from "decimal.js";
 import SimplePopper from "../../../components/Popper";
 import AccountingCardScreen from "../../ReportScreen/ChemistryForm";
 import { BiArrowBack } from "react-icons/bi";
+import TableStockOut from "../../../components/TableStockOut";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -188,6 +189,7 @@ const StockoutScreen = () => {
     const [stockoutDetailValue, setStockOutDetailValue] = useState(stockout && stockout[0].Value_Qty)
     const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
     const [openModal, setOpenModal] = useState(false)
+    const [listChx, setListChx] = useState([])
     const dataModal = {
         Value_Remain: stockout ? stockout[0].Value_Qty : "",
         chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
@@ -234,10 +236,17 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region useEffect
+    // useEffect(() => {
+
+    //     //    dispatch(congTotalQtyOut(ArrayStockout.length.toString()))
+       
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [ArrayStockout])
+
     useEffect(() => {
-        const arrBarcode = ArrayStockout.map((item: any) => item.Barcode)
-        const arrMaterial_No = ArrayStockout.map((item: any) => item.Material_No)
-        const arrColor = ArrayStockout.map((item: any) => item.Color)
+        const arrBarcode = listChx.map((item: any) => item.Barcode)
+        const arrMaterial_No = listChx.map((item: any) => item.Material_No)
+        const arrColor = listChx.map((item: any) => item.Color)
         if (stockout) {
             setContentDetail({
                 chxColor: chcolor,
@@ -248,20 +257,17 @@ const StockoutScreen = () => {
                 Delivery_Serial: stockout[0].Delivery_Serial,
                 list_Color: arrColor // mảng màu
             })
-            //    dispatch(congTotalQtyOut(ArrayStockout.length.toString()))
             if (stockout) {
-                const totalQty = ArrayStockout
+                const totalQty = listChx
                     .filter((item: any) => item.Material_No === stockout[0].Value_Material)
                     .reduce((accumulator: any, currentItem: any) => accumulator + currentItem.QTY, 0);
-
+    
                 const result = new Decimal(stockoutTemp).minus(totalQty).toNumber();
                 // setStockOutDetailValue(stockoutTemp - totalQty)
                 setStockOutDetailValue(result)
-
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ArrayStockout])
+    }, [listChx])
 
     useEffect(() => {
         if (stockout) {
@@ -504,9 +510,10 @@ const StockoutScreen = () => {
     }
 
     const handleRowSelectionModelChange = (params: any) => {
-        const selectedRowIds = params ? params.map((item: any) => parseInt(item._id.toString())) : [];
-        const selectedRows = ArrayStockout.filter((row: any) => selectedRowIds.includes(row._id));
-        dispatch(copyStockoutDetailChecked(selectedRows))
+        setListChx(params)
+        // const selectedRowIds = params ? params.map((item: any) => parseInt(item._id.toString())) : [];
+        // const selectedRows = ArrayStockout.filter((row: any) => selectedRowIds.includes(row._id));
+        // dispatch(copyStockoutDetailChecked(selectedRows))
     };
     //#endregion
 
@@ -644,7 +651,7 @@ const StockoutScreen = () => {
                 </Stack>
             </Box>
             <Stack sx={{ height: '100%', overflow: 'hidden' }}>
-                <TableCheckBoxRedux chxColor={chcolor} listChx={handleRowSelectionModelChange} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
+                <TableStockOut chxColor={chcolor} listChx={(params: any) => setListChx(params)} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}

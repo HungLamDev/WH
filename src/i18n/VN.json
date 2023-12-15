@@ -380,5 +380,6 @@
     "lblChangeDateFail":"Ngày cập nhật phải trong tháng",
     "lblFindAgain":"Tìm lại",
     "chxPair":"Đôi",
-    "lblNetworkError": "Mạng của bạn đang gặp sự cố"
+    "lblNetworkError": "Mạng của bạn đang gặp sự cố",
+    "lblCheck":"Chọn trước khi chia tem"
 }

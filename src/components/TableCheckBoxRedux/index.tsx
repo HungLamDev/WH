@@ -12,7 +12,20 @@ import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateColorArrayStockout } from "../../redux/ArrayStockout";
-const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string, dschx?: any[], chxColor?: boolean }) => {
+
+interface TableCheckBoxReduxProps {
+  columns: GridColDef[];
+  rows: GridRowsProp;
+  handlerowClick?: any,
+  onDoubleClick?: any,
+  arrEditCell?: string[],
+  listChx?: (rows: GridRowsProp) => void,
+  arrNotShowCell?: string[],
+  tableName?: string,
+  dschx?: any[],
+  chxColor?: boolean
+}
+const TableCheckBoxRedux = (props: TableCheckBoxReduxProps) => {
   const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, dschx, chxColor } = props;
 
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
@@ -21,6 +34,7 @@ const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; 
   const [editingCellId, setEditingCellId] = useState<number | null>(null);
   const [selectedRow, setSelectedRow] = useState("");
   const dispatch = useDispatch();
+
   useEffect(() => {
     setSelected([])
   }, [rows])
@@ -30,6 +44,7 @@ const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; 
       setSelected(dschx);
     }
   }, [dschx])
+
   useEffect(() => {
     if (tableName === 'delivery-material') {
       setSelected(MaterialTableChecked)
@@ -107,7 +122,7 @@ const TableCheckBoxRedux = (props: { columns: GridColDef[]; rows: GridRowsProp; 
   return (
     <TableContainer sx={{ height: '100%' }}>
       <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
-        <TableHead style={{zIndex:0}}>
+        <TableHead style={{ zIndex: 0 }}>
           <TableRow>
             <TableCell padding="checkbox">
               <Checkbox

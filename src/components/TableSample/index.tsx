@@ -12,11 +12,25 @@ import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
-const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
-    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
+
+interface TableSampleProps {
+    columns: GridColDef[];
+    rows: GridRowsProp;
+    handlerowClick?: any,
+    onDoubleClick?: any,
+    arrEditCell?: string[],
+    listChx?: (rows: GridRowsProp) => void,
+    arrNotShowCell?: string[],
+    tableName?: string,
+    dschx?: any[],
+    columnEdit?: any
+}
+
+const TableSample = (props: TableSampleProps) => {
+    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, dschx, columnEdit } = props;
 
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
     const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
@@ -24,12 +38,37 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
     const [selectedColumn, setSelectedColumn] = useState("");
+    const [selectAll, setSelectAll] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if (columnEdit !== "") {
+            arrEditCell?.push(columnEdit)
+        }
+    }, [columnEdit])
+    useEffect(() => {
         setSelected([])
+        const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;
+        handleSelectAllClick(event);
     }, [rows])
 
+
+    useEffect(() => {
+        if (dschx && dschx.length > 0) {
+            setSelected(dschx);
+        }
+        else {
+            setSelected([]);
+        }
+    }, [dschx])
+
+
+    useEffect(() => {
+        if (selectAll) {
+            setSelected(rows);
+            listChx !== undefined ? listChx(rows) : [];
+        }
+    }, [selectAll]);
 
     useEffect(() => {
         if (tableName === 'delivery-material') {
@@ -49,12 +88,14 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
         if (event.target.checked) {
             setSelected(rows);
             listChx !== undefined ? listChx(rows) : [];
+            setSelectAll(true); // Thêm dòng này
             return;
         }
         setSelected([]);
         listChx !== undefined ? listChx([]) : [];
-    };
+        setSelectAll(false); // Thêm dòng này
 
+    };
 
     const handleClick = (event: React.MouseEvent<unknown>, item: any) => {
         let newSelected: any[] = [];
@@ -208,7 +249,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                             >
                                                 {isEditing && !isProductionCell && selectedColumn == key ? (
                                                     <TextField
-                                                        
+
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                                                         size="small"
@@ -327,4 +368,4 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     );
 };
 
-export default TableDateTimePicker;
+export default TableSample;

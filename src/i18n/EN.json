@@ -380,6 +380,6 @@
     "lblChangeDateFail":"The update date must be within the month",
     "lblFindAgain":"Find again",
     "chxPair":"Pair",
-    "lblNetworkError": "Your network is having problems"
-
+    "lblNetworkError": "Your network is having problems",
+    "lblCheck":"Choose before dividing stamps"
 }
