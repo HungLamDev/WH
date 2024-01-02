@@ -1,7 +1,14 @@
 import { Stack, Box, Modal, Typography, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import '../../App.scss'
-function ModalCofirm({ title, open, onClose, onPressOK }: { title?: string, open?: any, onClose?: any, onPressOK?: any }) {
+interface ModalCofirmProps{
+    title?: string, 
+    open?: any, 
+    onClose?: any, 
+    onPressOK?: any
+}
+function ModalCofirm(props: ModalCofirmProps) {
+    const { title, open, onClose, onPressOK } = props
     const { t } = useTranslation();
     const style = {
         position: 'absolute',

@@ -24,6 +24,7 @@ import { Howl } from 'howler';
 import { FAILURE_SOUND_PATH, SUCCESS_SOUND_PATH, successSound } from '../../../utils/pathsound';
 import EnterShelves from "../EnterShelves"
 import ModalCofirm from "../../../components/ModalConfirm"
+import { it } from "date-fns/locale"
 //#endregion
 //#region style
 export const styletext = {
@@ -171,6 +172,7 @@ const Stockin = () => {
     const [isLoading, setisLoading] = useState(false)
     const [openCofirm, setOpenCofirm] = useState(false)
     const [cofirmType, setCofirmType] = useState('')
+    const [dataRow, setDataRow] = useState<any>({})
     //#endregion
    
     //#region Func OnChange Input
@@ -280,7 +282,8 @@ const Stockin = () => {
                 Work_Order: item.Work_Order,
                 User_Serial_Key: item.User_Serial_Key,
                 Total_QTY: item.Total_QTY,
-                Print_QTY: item.Print_QTY
+                Print_QTY: item.Print_QTY,
+                mau:item.mau
             }))
             setRows(result)
             setShelve('')
@@ -337,9 +340,9 @@ const Stockin = () => {
                 setShelve('')
 
             }
-            else {
-                handleOpenConfirm('materialOut')
-            }
+            // else {
+            //     handleOpenConfirm('materialOut')
+            // }
         }).finally(() => {
             setisLoading(false)
             setDisable(false)
@@ -386,6 +389,10 @@ const Stockin = () => {
         setOpen(false);
         setModalType('');
     }
+
+    const handleRowClick = (params: any, item: any) =>{
+        setDataRow(item)
+    }
     //#endregion
     
     return (
@@ -398,34 +405,40 @@ const Stockin = () => {
                 <Stack direction={'row'}>
                     <Stack width={'50%'}>
                         <Grid container justifyContent={'space-between'} alignItems={'center'}>
+                            {/* Check chế độ */}
                             <Grid item xs={12}>
                                 <FormGroup>
                                     <FormControlLabel sx={styletext} control={<Checkbox defaultChecked={false} onChange={handleChangeMode} />} label={t("gpbMode") as string} />
                                 </FormGroup>
                             </Grid>
                             <Grid container>
+                                {/* Check kệ */}
                                 <Grid item xs={4}>
                                     <FormGroup>
                                         <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} />} label={t("lblShelves") as string} />
                                     </FormGroup>
                                 </Grid>
+                                {/* Tên kệ */}
                                 <Grid item xs={2} display={'flex'} alignItems={'center'} justifyContent={'flex-start'}>
                                     <Typography className="textsizebtn" sx={{ color: 'aqua' }}>{txtshelve}</Typography>
                                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                                 </Grid>
-                                <Grid item xs={5} display={'flex'} alignItems={'center'}>
-                                    <FormGroup>
-                                        <Typography className="textsizemini">{t("lblQty_In") as string} {total}</Typography>
+                                {/* Tổng */}
+                                <Grid item xs={5} display={'flex'} alignItems={'center'} >
+                                    <FormGroup style={{ overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                        <Typography  className="textsizemini">{t("lblQty_In") as string} {total}</Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>
                             <Grid container display={'flex'}>
+                                {/* Quét */}
                                 <Grid item xs={6} display={'flex'}>
                                     <InputField focus={true} label={t("lblScan") as string + "\u2002"} handle={handleShelveChange} keydown={null} value={shelve} />
                                 </Grid>
+                                {/* SL Quét */}
                                 <Grid item xs={5} display={'flex'} alignItems={'center'}>
-                                    <FormGroup>
-                                        <Typography className="textsizemini" >{t("lblQty_Scan") as string} {valueScan}</Typography>
+                                    <FormGroup style={{ overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                        <Typography className="textsizemini" >{t("lblQty_Scan") as string} {valueScan} </Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>
@@ -433,12 +446,15 @@ const Stockin = () => {
                     </Stack>
                     <Stack width={'60%'} justifyContent={'center'} spacing={2}>
                         <Grid container >
+                            {/* Nhập kho ERP */}
                             <Grid item xs={4} className="btn-center">
                                 <MyButton name={t("btnEnter_Stock") + " ERP"} disabled={true} />
                             </Grid>
+                             {/* Xuất kho ERP */}
                             <Grid item xs={4} className="btn-center">
                                 <MyButton name={t("btnexportERP")} disabled={true} />
                             </Grid>
+                            {/* Nhập kệ ERP */}
                             <Grid item xs={4} className="btn-center">
                                 <MyButton name={t("btnrackERP")} onClick={() => handleOpen("enter-shelves")}/>
                                 {modalType === 'enter-shelves' && (
@@ -447,27 +463,32 @@ const Stockin = () => {
                             </Grid>
                         </Grid>
                         <Grid container>
+                            {/* Thông tin */}
                             <Grid item xs={2.4} className="btn-center">
                                 <MyButton name={t("btnInformation") as string} onClick={() => handleOpen("detail")} disabled={disable} />
                                 {modalType === 'detail' && (
                                     <Detail open={open} onClose={handleClose} rack={txtshelve} />
                                 )}
                             </Grid>
+                            {/* Thống kê */}
                             <Grid item xs={2.4} className="btn-center">
                                 <MyButton name={t("btnStatistical") as string} onClick={() => handleOpen("statistic")} disabled={disable} />
                                 {modalType === 'statistic' && (
-                                    <Statistics open={open} onClose={handleClose} />
+                                    <Statistics open={open} onClose={handleClose}  materialNo={dataRow && dataRow.Material_No}/>
                                 )}
                             </Grid>
+                            {/* Tồn kho */}
                             <Grid item xs={2.4} className="btn-center">
-                                <MyButton name={t("btnInventory") as string} onClick={() => navigate("/inventory", { state: "stock-in" })} disabled={disable} />
+                                <MyButton name={t("btnInventory_In") as string} onClick={() => navigate("/inventory-in")} disabled={disable} />
                             </Grid>
+                            {/* QC */}
                             <Grid item xs={2.4} className="btn-center">
                                 <MyButton name="QC" onClick={() => handleOpen("qc")} disabled={disable} />
                                 {modalType === 'qc' && (
                                     <QC open={open} onClose={handleClose} />
                                 )}
                             </Grid>
+                            {/* Nhập kho */}
                             <Grid item xs={2.4} className="btn-center">
                                 <MyButton name={t("btnEnter_Stock") as string} onClick={() => handleOpen("import-and-export")} disabled={disable} />
                                 {modalType === 'import-and-export' && (
@@ -479,10 +500,12 @@ const Stockin = () => {
                 </Stack>
             </Box>
             <Stack overflow={"hidden"} sx={{ height: '100%' }}>
-                <TableOrigin columns={columns} rows={rows} handlerowClick={null} handleDoubleClick={handleDoubleClick} arrNotShowCell={['_id']} />
+                <TableOrigin columns={columns} rows={rows} handlerowClick={handleRowClick} handleDoubleClick={handleDoubleClick} arrNotShowCell={['_id']} />
+                {/* Confirm đá vật tư ra khỏi kệ  */}
                 {modalType === 'delete' && (
                     <ModalDeleteForm barcode={datadelete} open={open} onClose={handleClose} onPressOK={() => handlePressOK(datadelete)} />
                 )}
+                {/* Máy ảnh */}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
            

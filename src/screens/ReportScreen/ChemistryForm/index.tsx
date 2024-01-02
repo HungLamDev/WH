@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar";
 import moment from "moment";
 import InputField from "../../../components/InputField";
@@ -22,7 +22,7 @@ import Statistics from "../../StockinScreenv2/StatisticsForm";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import axios from "axios";
-import { config } from "../../../utils/api";
+import { config, createConfig } from "../../../utils/api";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 
 import { useSelector } from "react-redux";
@@ -59,7 +59,7 @@ export interface Chemistry {
   Order_No_Out1: string;
 }
 //#endregion
-const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
+const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const { t } = useTranslation();
   const navigato = useNavigate();
   const dispatch = useDispatch();
@@ -157,6 +157,15 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
   //#endregion
 
   //#region Variable
+  //#region  Cancel request axios
+  const controllerRef = useRef(new AbortController());
+  const configNew = createConfig(controllerRef.current.signal);
+  // Func cancel Request
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+  };
+  //#endregion
+
   const [dtpFrom_Date, setDtpFrom_Date] = useState(
     currentDay.startOf("month").format("MM/DD/YYYY")
   );
@@ -167,7 +176,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
   const [chxOrder_No, setChxOrder_No] = useState(false);
   const [lblMaterialNo, setLblMaterialNo] = useState(true);
   const [openmodal, setOpenModal] = useState(false);
-  const [txtMaterial_No, setTxtMaterial_No] = useState( dataMaterialNo ? dataMaterialNo :  "");
+  const [txtMaterial_No, setTxtMaterial_No] = useState(dataMaterialNo ? dataMaterialNo : "");
   const [txtOrder_No, setTxtOrder_No] = useState("");
   const [rows, setRows] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
@@ -176,13 +185,16 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
   const [itemToProcess, setItemToProcess] = useState<any>();
   const [date, setDate] = useState(accountCardRow.Value_Date_Card);
   const [materialName, setMaterialName] = useState(accountCardRow.Value_Material_Name);
-  const [materialNo, setMaterialNo] = useState(accountCardRow.Value_Material_No );
+  const [materialNo, setMaterialNo] = useState(accountCardRow.Value_Material_No);
   const [unit, setUnit] = useState(accountCardRow.Value_Unit_Card);
   const [mess, setMess] = useState("");
   const [rowsExcel, setRowsExcel] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [modalScan, setModalScan] = useState(false)
+  const [modalUserCofirm, setModalUserCofirm] = useState(false)
+  const [dataUserNote, setDataUserNote] = useState<any>()
+
   //#endregion
 
   //#region useEffect
@@ -275,7 +287,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
       get_version: dataUser[0].WareHouse
     };
     axios
-      .post(url, data, config)
+      .post(url, data, configNew)
       .then((response) => {
         const arr = response.data.map((item: any, index: any) => ({
           _id: index + 1,
@@ -309,7 +321,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
 
     };
     axios
-      .post(url, data, config)
+      .post(url, data, configNew)
       .then((response) => {
         const arr: Chemistry[] = [];
         response.data.forEach((item: any, index: any) => {
@@ -350,7 +362,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
 
     };
     axios
-      .post(url, data, config)
+      .post(url, data, configNew)
       .then((response) => {
         const arr: Chemistry[] = [];
         response.data.forEach((item: any, index: any) => {
@@ -392,7 +404,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
 
   const handlerowClickMaterial = (params: any, item: any) => {
     setTxtMaterial_No(item.Material_No);
-    Material_Accounting_Card_Textchanged(item.Material_No);
+    // Material_Accounting_Card_Textchanged(item.Material_No);
   };
   const handleRow2ClickSign = (params: any, item: any) => {
     if (params === "Img_DF" && item.Qty_Redundant !== "" && dataUser[0].UserRole === 'Account') {
@@ -443,6 +455,80 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
         setLoading(false);
       });
     setOpenModal(false);
+  };
+
+  const handleUserCofirmNote = (colname: any, item: any) => {
+    if (colname === 'Note_Account') {
+      setDataUserNote(item)
+    }
+    setModalUserCofirm(true)
+  }
+
+  const handleAddNote = () => {
+    setModalUserCofirm(false)
+    const url = connect_string + "api/CellDoubleClick_Sign_Image";
+    const data = {
+      Delivery_Serial: "",
+      RowCount: rows.length,
+      Column_Name: "dcpNote_Account",
+      Article: dataUserNote.Article ? dataUserNote.Article : "",
+      Qty_Redundant: dataUserNote.Qty_Redundant,
+      Qty_Out: dataUserNote.Qty_Out,
+      User_Serial_Key: dataUser[0].UserId,
+      Date_Count: dataUserNote.Date_Count,
+      Material_No: dataUserNote.Material_No,
+      Note_Account: dataUserNote.Note_Account,
+      RowIndex_Sign_Account: dataUserNote._id,
+      Resual: true,
+      get_version: dataUser[0].WareHouse
+
+    };
+    axios
+      .post(url, data, config)
+      .then((response) => {
+        const data = response.data
+        // if (data.Qty_Redundant_result !== null &&  data.Qty_Out_result !== null && data.Note_Account !== null && data.Image_Sign !== null) {
+        //   console.log(response.data)
+        // }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleDeleteNote = () => {
+    setModalUserCofirm(false)
+    const url = connect_string + "api/CellDoubleClick_Sign_Image";
+    const data = {
+      Delivery_Serial: "",
+      RowCount: rows.length,
+      Column_Name: "dcpNote_Account",
+      Article: dataUserNote.Article ? dataUserNote.Article : "",
+      Qty_Redundant: dataUserNote.Qty_Redundant,
+      Qty_Out: dataUserNote.Qty_Out,
+      User_Serial_Key: dataUser[0].UserId,
+      Date_Count: dataUserNote.Date_Count,
+      Material_No: dataUserNote.Material_No,
+      Note_Account: dataUserNote.Note_Account,
+      RowIndex_Sign_Account: dataUserNote._id,
+      Resual: false,
+      get_version: dataUser[0].WareHouse
+
+    };
+    axios
+      .post(url, data, config)
+      .then((response) => {
+        if (response.data) {
+          const updatedRow = {
+            ...dataUserNote,
+            Note_Account: response.data.Note_Account,
+          };
+          dispatch(editItem(updatedRow));
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleRefresh = () => {
@@ -704,7 +790,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
     })
   };
   //#endregion
-  
+
   return (
     <FullScreenContainerWithNavBar
       sideBarDisable={true}
@@ -713,6 +799,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
       navigate="/"
       hidden={true}
       onShowScan={handleScanClick}
+      cancelRequest={cancelRequest}
     >
       <Box
         paddingX={1}
@@ -1054,6 +1141,7 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
             rows={chemistryRow}
             handlerowClick={null}
             handleDoubleClick={handleRow2ClickSign}
+            handleLongPress={handleUserCofirmNote}
             arrNotShowCell={["_id"]}
             border
             arrEditCell={["Note_Account"]}
@@ -1067,6 +1155,15 @@ const AccountingCardScreen = ({dataMaterialNo}: {dataMaterialNo?: any}) => {
             onPressOK={handleOK}
           />
         )}
+        {modalUserCofirm && (
+          <ModalCofirm
+            title={t("msgYouWantUpdate") as string}
+            open={modalUserCofirm}
+            onClose={handleDeleteNote}
+            onPressOK={handleAddNote}
+          />
+        )}
+
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
       </Stack>
     </FullScreenContainerWithNavBar>

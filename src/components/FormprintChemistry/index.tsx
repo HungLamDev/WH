@@ -25,7 +25,6 @@ const Formprint = (props: {
         overflowY: 'scroll',
         overflowX: "hidden"
     };
-    console.log(rows)
     return (
         <>
         <Modal

@@ -381,5 +381,7 @@
     "lblFindAgain":"Tìm lại",
     "chxPair":"Đôi",
     "lblNetworkError": "Mạng của bạn đang gặp sự cố",
-    "lblCheck":"Chọn trước khi chia tem"
+    "lblCheck":"Chọn trước khi chia tem",
+    "btnInventory_In":" Tồn Kho",
+    "lblReport_Inventory_In":"Danh Sách Tồn Kho"
 }

@@ -57,10 +57,13 @@ function ModalHistoryMaterial({ open, onClose, dataUpdate }: { open: any, onClos
             <Box sx={style}>
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                        {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
                             <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>
+                        {/* Title */}
                         <Typography variant="h6" component="h6" color={'lightblue'}>{dataUpdate[0] ? dataUpdate[0].Material_No: ""}</Typography>
+                        {/* Check */}
                         <FormGroup>
                             <FormControlLabel className="text" control={<Checkbox checked
                                 sx={{ color: 'white' }} />}

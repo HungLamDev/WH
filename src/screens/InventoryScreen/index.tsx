@@ -9,11 +9,11 @@ import MyButton from "../../components/MyButton";
 import './style.scss'
 import { GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { config } from "../../utils/api";
-import { connect_string } from "../LoginScreen/ChooseFactory"; 
+import { createConfig } from "../../utils/api";
+import { connect_string } from "../LoginScreen/ChooseFactory";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -94,13 +94,22 @@ const InventoryScreen = () => {
     },
   ];
   //#endregion
-  
+
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const ArrayInventory = useSelector((state: any) => state.ArrayInventory.deliverys);
   //#endregion
 
   //#region Variable
+  //#region  Cancel request axios
+  const controllerRef = useRef(new AbortController());
+  const configNew = createConfig(controllerRef.current.signal);
+  // Func cancel Request
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+  };
+  //#endregion
+
   const [isLoading, setIsLoading] = useState(false)
   const [rows, setRows] = useState<any[]>([]);
   const [chxMaterial_No, setchxMaterial_No] = useState(false)
@@ -112,8 +121,9 @@ const InventoryScreen = () => {
   const [txtValue_UserID, settxtValue_UserID] = useState('')
   const [disable, setDisable] = useState(false)
   const [modalScan, setModalScan] = useState(false)
+
   //#endregion
-  
+
   //#region Func OnChange Input
   const handlechxMaterial_No = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchxMaterial_No(event.target.checked);
@@ -153,14 +163,16 @@ const InventoryScreen = () => {
     }
   }, [chxMaterial_No])
 
-  useEffect(()=>{
-    if(txtScan !== null && txtScan.length >= 15 ){
+  useEffect(() => {
+    if (txtScan !== null && txtScan.length >= 15) {
       Search()
     }
-  },[txtScan])
+  }, [txtScan])
   //#endregion
- 
+
   //#region Func Logic
+
+
   const Search = () => {
     setIsLoading(true)
     setDisable(true)
@@ -179,7 +191,10 @@ const InventoryScreen = () => {
       get_version: dataUser[0].WareHouse,
       saFactory: dataUser[0].factoryName
     }
-    axios.post(url, data, config).then(response => {
+
+
+
+    axios.post(url, data, configNew,).then(response => {
       const arr = response.data.map((item: any, index: any) => ({
         _id: index + 1,
         Material_No: item.Material_No,
@@ -194,7 +209,7 @@ const InventoryScreen = () => {
       }))
       dispatch(copyArrayInventory(arr))
       setRows(arr)
-      if(arr.length > 0 ) {
+      if (arr.length > 0) {
         settxtScan('')
       }
     }).finally(() => {
@@ -315,7 +330,7 @@ const InventoryScreen = () => {
     });
   };
   //#endregion
- 
+
   const handleScanClick = () => {
     setModalScan(true);
   }
@@ -337,22 +352,30 @@ const InventoryScreen = () => {
     const data = {
       Barcode_Scan: barcode
     }
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       const arr = response.data;
       settxtScan(arr)
 
     })
   }
   //#endregion
- 
+
   return (
-    <FullScreenContainerWithNavBar hidden={true} sideBarDisable={true} onShowScan={handleScanClick} sideBarNavigate="" title={t("lblList_Delivery") as string} navigate={state === 'stock-in' ? "/stock-in" : "/"}>
+    <FullScreenContainerWithNavBar
+      hidden={true}
+      sideBarDisable={true}
+      onShowScan={handleScanClick}
+      sideBarNavigate=""
+      title={t("lblList_Delivery") as string}
+      navigate={state === 'stock-in' ? "/stock-in" : "/"}
+      cancelRequest={cancelRequest}>
       <Box
         paddingX={1}
         paddingBottom={1}
         className={"dark-bg-secondary border-bottom-white"}
       >
         <Grid container display={'flex'} justifyContent={'center'}>
+          {/* Vật tư */}
           <Grid item xs={2}>
             <FormControlLabel
               sx={styletext}
@@ -360,36 +383,43 @@ const InventoryScreen = () => {
               label={t("dcpMaterial_No_Show") as string}
             />
           </Grid>
-          <Grid item xs={2.5}>
+          {/* Ngày chốt tự động */}
+          <Grid item xs={2}>
             <FormControlLabel
               sx={styletext}
               control={<Checkbox defaultChecked={true} onChange={handlechxDate_Auto} value={chxDate_Auto} />}
               label={t("chxDate_Auto") as string}
             />
           </Grid>
+          {/* Check box kế ngày */}
           <Grid item xs={0.5}>
             <Checkbox defaultChecked={false} onChange={handlechxChose} value={chxChose} />
           </Grid>
+          {/* < */}
           <Grid item xs={0.5} display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <Box className="btn-date">
               <ArrowBackIosNewOutlinedIcon onClick={() => handleClick('-')} />
             </Box>
           </Grid>
+          {/* Chọn ngày */}
           <Grid item xs={1.5} display={'flex'} >
             <DatePickerField onValueChange={dtpDate} label="" valueDate={(params: any) => { setdtpDate(params) }} />
           </Grid>
+          {/* > */}
           <Grid item xs={0.5} display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <Box className="btn-date">
               <ArrowForwardIosOutlinedIcon onClick={() => handleClick('+')} />
             </Box>
           </Grid>
+          {/* Quét kệ, mã vật tư, qrcode */}
           <Grid item xs={1.5} display={'flex'}>
-            <InputField focus={true} label="" handle={handletxtScan} keydown={null} value={txtScan}  />
+            <InputField focus={true} label="" handle={handletxtScan} keydown={null} value={txtScan} />
           </Grid>
+          {/* Quét tên người dùng */}
           <Grid item xs={1} display={'flex'}>
             <InputField label="" handle={handletxtValue_UserID} keydown={null} value={txtValue_UserID} disable={disable} />
           </Grid>
-
+          {/* Check Pallet */}
           <Grid item display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <FormControlLabel
               sx={styletext}
@@ -398,18 +428,30 @@ const InventoryScreen = () => {
             />
             {isLoading && <CircularProgress size={'25px'} color="info" />}
           </Grid>
+          {/* kệ tổng
+          <Grid item display={'flex'} justifyContent={'center'} alignItems={'center'}>
+            <FormControlLabel
+              sx={styletext}
+              control={<Checkbox defaultChecked={false} onChange={handlechxPallet} value={chxPallet} />}
+              label="Kệ tổng"
+            />
+          </Grid> */}
         </Grid>
         <Grid container display={'flex'} justifyContent={'center'} marginTop={'10px'}>
+          {/* Tìm kiếm */}
           <Grid item xs={1.5}>
             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
           </Grid>
+          {/* Xuất excel */}
           <Grid item xs={1.5}>
             <MyButton name={t("btnExcel") as string} disabled={disable} onClick={exportToExcel} />
           </Grid>
         </Grid>
       </Box>
       <Stack overflow={"hidden"} sx={{ height: '100%' }}>
+        {/* Table */}
         <TableOrigin columns={columns} rows={ArrayInventory} />
+        {/* Máy ảnh */}
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
       </Stack>
     </FullScreenContainerWithNavBar>

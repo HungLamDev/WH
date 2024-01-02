@@ -381,5 +381,8 @@
     "lblFindAgain":"Find again",
     "chxPair":"Pair",
     "lblNetworkError": "Your network is having problems",
-    "lblCheck":"Choose before dividing stamps"
+    "lblCheck":"Choose before dividing stamps",
+    "btnInventory_In":"Inventory",
+    "lblReport_Inventory_In":"Inventory List"
+
 }

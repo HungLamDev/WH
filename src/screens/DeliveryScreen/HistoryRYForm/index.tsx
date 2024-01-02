@@ -237,51 +237,62 @@ const HistoryRY = ({ open, onClose }: { open?: any, onClose?: any }) => {
             <Box sx={style}>
                 <Stack height={'100%'} paddingBottom={'20px'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                        {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
                             <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>
+                        {/* Title */}
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblHistory_Infor") as string}</Typography>
+                        {/* Camera */}
                         <IconButton sx={{ marginLeft: '20px' }}  >
                             <CameraAltIcon onClick={handleScanClick} />
                         </IconButton>
                     </Stack>
                     <Stack height={'30%'} alignItems={'center'} >
                         <Grid container marginBottom={'10px'} justifyContent={'center'}>
+                            {/* Số phiếu */}
                             <Grid item xs={4.3} display={'flex'}>
                                 <InputField label={t("lblNum_No") as string} disable={disable} value={orderNo} handle={handleorderNo} />
                             </Grid>
+                            {/* Mã vật tư */}
                             <Grid item xs={4.5} display={'flex'}>
                                 <InputField label={t("dcmMaterial_No") as string} disable={disable} value={materialNo} handle={handlematerialNo} />
                             </Grid>
+                            {/* RY */}
                             <Grid item xs={3} display={'flex'}>
                                 <InputField label={t("lblRY") as string} disable={disable} value={ry} handle={handleRY} />
                             </Grid>
                         </Grid>
                         <Grid container >
-                            <Grid item xs={2} display={'flex'} alignItems={'center'} paddingLeft={'10px'}>
+                            {/* Từ ngày */}
+                            <Grid item lg={1.5} md={1.6} display={'flex'} alignItems={'center'} paddingLeft={'10px'}>
+                                <Typography className="textsize">{t("lblFromDate")}</Typography>
+                            </Grid>
+                            <Grid item lg={2.4} md={2.8} display={'flex'} paddingRight={'16px'}>
+                                <DatePickerField customClass="customDateTimePicker" valueDate={(params: any) => { getValueDate(params, 'dateStart') }} />
+                            </Grid>
+                            <Grid item lg={0.5} md={0} > </Grid>
+                            {/* Đến ngày */}
+                            <Grid item lg={1.4} md={1.6} display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                 <Typography className="textsize">{t("lblToDate")}</Typography>
                             </Grid>
-                            <Grid item xs={1.9} display={'flex'} paddingRight={'16px'}>
-                                <DatePickerField valueDate={(params: any) => { getValueDate(params, 'dateStart') }} />
+                            <Grid item lg={2.4} md={2.8} display={'flex'} paddingRight={'16px'}>
+                                <DatePickerField customClass="customDateTimePicker" valueDate={(params: any) => { getValueDate(params, 'dateEnd') }} />
                             </Grid>
-                            <Grid item xs={0.5} > </Grid>
-                            <Grid item xs={1.8} display={'flex'} justifyContent={'start'} alignItems={'center'}>
-                                <Typography className="textsize">{t("lblToDate")}</Typography>
-                            </Grid>
-                            <Grid item xs={2} display={'flex'} paddingRight={'16px'}>
-                                <DatePickerField valueDate={(params: any) => { getValueDate(params, 'dateEnd') }} />
-                            </Grid>
-
-                            <Grid item xs={1.5} display={'flex'} alignItems={'center'} justifyContent={'center'} paddingRight={'16px'}>
+                            {/* Loading */}
+                            <Grid item lg={1.6} md={1} display={'flex'} alignItems={'center'} justifyContent={'center'} paddingRight={'16px'}>
                                 {isLoading && <CircularProgress size={'24px'} color='info' />}
                             </Grid>
-                            <Grid item xs={2} display={'flex'} alignItems={'c'} justifyContent={'flex-end'} paddingRight={'16px'}>
+                            {/* Tìm kiếm */}
+                            <Grid item lg={2} md={2} display={'flex'} alignItems={'center'} justifyContent={'flex-end'} >
                                 <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={disable} />
                             </Grid>
                         </Grid>
+                        {/* Máy ảnh */}
                         {modalScan && <QRScanner onScan={handleScanCam} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                     </Stack>
                     <Stack overflow={"hidden"} sx={{ height: '100%' }}>
+                        {/* Bảng */}
                         <TableOrigin columns={columns} rows={rows} />
                     </Stack>
                 </Stack>

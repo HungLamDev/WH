@@ -10,7 +10,7 @@ import DatePickerField from "../../components/DatePickerField";
 import FullScreenContainerWithNavBar from "../../components/FullScreenContainerWithNavBar";
 import InputField from "../../components/InputField";
 import MyButton from "../../components/MyButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { copyValues, clearArrayRowDowns } from "../../redux/ArrayRowDowns";
@@ -19,7 +19,7 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 import { clearArrayRowDowntoUp } from "../../redux/ArrayRowDowntoUp";
 import { GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
-import { config } from "../../utils/api";
+import { config, createConfig } from "../../utils/api";
 import { checkPermissionPrint } from "../LoginScreen/ChooseFactory";
 import { connect_string } from "../LoginScreen/ChooseFactory";
 import CircularProgress from '@mui/material/CircularProgress';
@@ -179,7 +179,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "Color",
-            headerName: t("dcmColor") as string ,
+            headerName: t("dcmColor") as string,
             align: "center",
             headerAlign: 'center',
             width: 300,
@@ -252,7 +252,7 @@ const StampPrintScreen = () => {
         },
         {
             field: "ZLBH_Work_Order",
-            headerName: t("dcpWork_Order") as string ,
+            headerName: t("dcpWork_Order") as string,
             align: "center",
             width: 150,
             headerAlign: 'center'
@@ -282,6 +282,15 @@ const StampPrintScreen = () => {
     //#endregion
 
     //#region State
+    //#region  Cancel request axios
+    const controllerRef = useRef(new AbortController());
+    const configNew = createConfig(controllerRef.current.signal);
+    // Func cancel Request
+    const cancelRequest = () => {
+        controllerRef.current.abort();
+    };
+    //#endregion
+
     const [openCofirm, setOpenCofirm] = useState(false)
     const [cofirmType, setCofirmType] = useState('')
     const [open, setOpen] = useState(false)
@@ -416,9 +425,8 @@ const StampPrintScreen = () => {
 
         }
 
-
-        axios.post(url, data, config).then(response => {
-            const arr = response.data.map((item: any,index: any) => ({
+        axios.post(url, data, configNew).then(response => {
+            const arr = response.data.map((item: any, index: any) => ({
                 _id: index,
                 zsywjc_Supplier: item.zsywjc_Supplier,
                 CLBH_Material_No: item.CLBH_Material_No,
@@ -482,7 +490,7 @@ const StampPrintScreen = () => {
 
             }
 
-            axios.post(url1, data_stamp, config).then(response => {
+            axios.post(url1, data_stamp, configNew).then(response => {
                 setDataInRowUps(dataInRowUps1 => {
                     const newDataInRowUps = response.data.map((item: any, index: any) => {
                         return {
@@ -560,7 +568,7 @@ const StampPrintScreen = () => {
         const url = connect_string + 'api/Delete'
 
 
-        axios.post(url, objectArray, config).then(response => {
+        axios.post(url, objectArray, configNew).then(response => {
             if (response.data == true) {
                 ArrayDeleteAndPrint.map(async (params: any) => {
                     dispatch(removeItemByBarcodeRowUps(params.Barcode))
@@ -628,7 +636,7 @@ const StampPrintScreen = () => {
 
     const handleOrderWordKeyDown = (event: any) => {
 
-        if (event.key === 'Enter' && chxReprint_RY === true && ArrayDeleteAndPrint.length >0) {
+        if (event.key === 'Enter' && chxReprint_RY === true && ArrayDeleteAndPrint.length > 0) {
             setIsLoading(true)
             setDisable(true)
             const url = connect_string + "api/txtOrder_Word_KeyDown"
@@ -647,8 +655,8 @@ const StampPrintScreen = () => {
                     dispatch(changeItemsByBarcodeArrayRowUps({ barcodes: listBarcode, modifyDate: dateChange, Work_Order: workorder }))
                     setrowUps(ArrayRowUps)
                 }
-                else{
-                    handleOpenConfirm('changedatefail') 
+                else {
+                    handleOpenConfirm('changedatefail')
                 }
             }).finally(() => {
                 setIsLoading(false)
@@ -696,7 +704,12 @@ const StampPrintScreen = () => {
     //#endregion
 
     return (
-        <FullScreenContainerWithNavBar sideBarDisable={true} sideBarNavigate="" title={t("btnERP_Print") as string} navigate="/">
+        <FullScreenContainerWithNavBar
+            sideBarDisable={true}
+            sideBarNavigate=""
+            title={t("btnERP_Print") as string}
+            navigate="/"
+            cancelRequest={cancelRequest}>
             <Box
                 paddingX={1}
                 paddingBottom={1}
@@ -704,9 +717,11 @@ const StampPrintScreen = () => {
             >
                 <Stack direction={"row"}>
                     <Grid container alignItems={'center'}>
+                        {/* Số phiếu */}
                         <Grid item xs={5} display={'flex'}>
                             <InputField focus={true} label={t("dcmOrder_No") as string} handle={handleOrderNo} keydown={null} value={orderNo} disable={disable} />
                         </Grid>
+                        {/* Check RY */}
                         <Grid item xs={1} display={'flex'}>
                             <FormControlLabel
                                 sx={styletext}
@@ -714,6 +729,7 @@ const StampPrintScreen = () => {
                                 label={t("dcpDDBH") as string}
                             />
                         </Grid>
+                        {/* Mã vật tư */}
                         <Grid item xs={5} display={'flex'}>
                             <InputField label={t("dcpMaterial_No") as string} handle={handleMaterialNo} keydown={null} value={material_no} disable={disable} />
                         </Grid>
@@ -721,9 +737,11 @@ const StampPrintScreen = () => {
                 </Stack>
                 <Stack direction={"row"} alignItems={'center'}>
                     <Grid container alignItems={'center'} >
+                        {/* Đơn gia công */}
                         <Grid item xs={5} display={'flex'}>
                             <InputField label={t("lblOutsource") as string} handle={handleOutSource} keydown={null} value={outSource} disable={disable} />
                         </Grid>
+                        {/* Check In Lại */}
                         <Grid item xs={1}>
                             <FormControlLabel
                                 sx={styletext}
@@ -733,9 +751,11 @@ const StampPrintScreen = () => {
                         </Grid>
                         {chxReprint_RY ? (
                             <>
+                                {/* Lệnh */}
                                 <Grid item xs={3} display={'flex'}>
                                     <InputField label={t("dcpWork_Order") as string + "\u2002"} handle={handleWorkOrder} keydown={handleOrderWordKeyDown} value={workorder} disable={disable} />
                                 </Grid>
+                                {/* Ngày */}
                                 <Grid item xs={1.8} display={'flex'}>
                                     <DatePickerField onValueChange={date}
                                         valueDate={(params: any) => {
@@ -745,12 +765,14 @@ const StampPrintScreen = () => {
 
                             </>
                         ) : (
+                            // Lệnh
                             chxRY && <InputField label={t("dcpWork_Order") as string} handle={handleWorkOrder} keydown={null} value={workorder} disable={disable} />
                         )}
                     </Grid>
                 </Stack>
                 <Stack direction={"row"}>
                     <Grid container alignItems={'center'}>
+                        {/* Check tất cả */}
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
@@ -758,6 +780,7 @@ const StampPrintScreen = () => {
                                 label={t("chxAll") as string}
                             />
                         </Grid>
+                        {/* Check in vật tư bù */}
                         <Grid item xs={2}>
                             {(dataUser[0].TLLanguage === 'TW' || dataUser[0].UserRole === "Administrator") &&
                                 <FormControlLabel
@@ -767,6 +790,7 @@ const StampPrintScreen = () => {
                                 />
                             }
                         </Grid>
+                        {/* Check in lại RY */}
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
@@ -774,6 +798,7 @@ const StampPrintScreen = () => {
                                 label={t("chxReprint") + ' ' + t("chxRY") as string}
                             />
                         </Grid>
+                        {/* Check in chia lệnh */}
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
@@ -781,6 +806,7 @@ const StampPrintScreen = () => {
                                 label={t("chxPrint_RY") as string}
                             />
                         </Grid>
+                        {/* Check tất cả RY */}
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
@@ -791,11 +817,17 @@ const StampPrintScreen = () => {
                     </Grid>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={'center'}>
+                    {/* Tìm kiếm  */}
                     <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
+                    {/* Làm mới */}
                     <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={disable} />
+                    {/* Xóa */}
                     <MyButton name={t("btnDelete") as string} onClick={handleDelete} disabled={disable} />
+                    {/* In */}
                     <MyButton name={t("btnPrint") as string} onClick={handlePrint} disabled={disable} />
+                    {/* Xem trước */}
                     <MyButton name={t("btnPrivewPrint") as string} onClick={() => setOpen(true)} disabled={disable} />
+                    {/* Đăng ký */}
                     <MyButton name={t("btnRegister")} disabled={disable} onClick={() => navigate("/register-label")} />
                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                     {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}

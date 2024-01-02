@@ -66,7 +66,7 @@ const ChooseFactory = () => {
     const [selectedValue, setSelectedValue] = useState<FactoryName>(
         appFactory ? appFactory : "LHG"
     );
- 
+
     useEffect(() => {
         if (selectedValue === 'LVL') {
             connect_string = 'https://192.168.60.21:7777/'
@@ -77,10 +77,7 @@ const ChooseFactory = () => {
             // connect_string = 'https://192.168.32.84:7777/'
             connect_string =  'https://192.168.32.81/'
         }
-
     }, [selectedValue])
-
-
     //#endregion
 
     //#region Func Logic

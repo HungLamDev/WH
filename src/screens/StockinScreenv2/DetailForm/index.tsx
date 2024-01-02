@@ -281,34 +281,41 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
             <Box sx={style}>
                 <Stack height={'100%'}>
                     <Stack paddingTop={'15px'} height={'5%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                        {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
                             <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>
+                        {/* Title */}
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblMaterial_Infor") as string}</Typography>
+                        {/* Máy ảnh */}
                         <IconButton sx={{ marginLeft: '20px' }}  >
                             <CameraAltIcon onClick={handleScanClick} />
                         </IconButton>
                     </Stack>
                     <Stack direction={'row'} height={'40%'}>
                         <Stack sx={{ width: '50%', height: '100%' }} justifyContent={'space-evenly'} alignItems={'center'}>
+                            {/* Check tất cả */}
                             <FormGroup sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '22rem', justifyContent: 'space-between' }}>
                                 <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} onChange={handlechxAll} value={chxAll} />} label={t("chxAll") as string} />
                                 {isLoading && <><CircularProgress size={'20px'} color="info" sx={{ marginRight: '10px' }} /></>}
                             </FormGroup>
+                            {/* Chỗ hiện tên kệ */}
                             <Typography sx={{ marginRight: '20px', textAlign: 'end', width: '22rem', color: 'aqua' }}> {txtshelve ? txtshelve : rack}</Typography>
+                            {/* Tên vật tư */}
                             <InputField label={t("dcpMaterial_Name") as string} handle={handleMaterialName} keydown="" value={materialname} disable={false} />
-
+                            {/* Chi tiết kiện */}
                             <InputField label={t("dcpContent") as string} handle={handleContent} keydown="" value={conntent} disable={false} />
-
+                            {/* Số lượng */}
                             <InputField label={t("dcpQTY_Show") as string} handle={handleQTY} keydown="" value={qty} disable={false} />
                         </Stack>
                         <Stack sx={{ width: '50%', height: '100%' }} justifyContent={'space-evenly'} alignItems={'center'}>
+                            {/* Quét */}
                             <InputField label={t("gpbScan") as string} handle={handleQRcode} keydown="" value={qrcode} disable={false} />
-
+                            {/* Mã vật tư */}
                             <InputField label={t("dcpMaterial_No") as string} handle={handleMaterialNo} keydown="" value={materialno} disable={false} />
-
+                            {/* Cuộn */}
                             <InputField label={t("dcpRoll") as string} handle={handleRoll} keydown="" value={roll} disable={false} />
-
+                            {/* Đơn vị */}
                             <InputField label={t("dcpUnit") as string} handle={handleUnit} keydown="" value={unit} disable={false} />
                         </Stack>
                     </Stack>

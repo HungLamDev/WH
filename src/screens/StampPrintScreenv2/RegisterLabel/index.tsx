@@ -360,18 +360,23 @@ const RegisterLabel = () => {
                     sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
                 >
                     <Grid container spacing={1} width={'80%'} columnSpacing={2} >
+                        {/* Số phiếu */}
                         <Grid item xs={6} display={'flex'}>
                             <InputField customClass="customStack" focus={true} label={t("dcmOrder_No") as string} value={orderNo} handle={handleOrderNo} keydown={null} disable={disable} />
                         </Grid>
+                        {/* Đơn hàng đăng ký */}
                         <Grid item xs={6} display={'flex'}>
                             <InputField customClass="customStack" label={t("lblOrderNo_Register") as string} value={orderNoRegister} handle={handleOrderNoRegister} keydown={null} disable={disable} />
                         </Grid>
+                        {/* Mã vật tư */}
                         <Grid item xs={6} display={'flex'}>
                             <InputField customClass="customStack" label={t("dcpMaterial_No") as string} value={materialNo} handle={handleMaterialNo} keydown={null} disable={disable} />
                         </Grid>
+                        {/* RY */}
                         <Grid item xs={6} display={'flex'}>
                             <InputField customClass="customStack" label={t("lblRY") as string} value={ry} handle={handleRY} keydown={null} disable={disable} />
                         </Grid>
+                        {/* Check ngày in */}
                         <Grid item lg={2} md={2.3} >
                             <FormControlLabel
                                 sx={styletext}
@@ -379,6 +384,7 @@ const RegisterLabel = () => {
                                 label={t("chxPrint_Date")}
                             />
                         </Grid>
+                        {/* Chọn ngày in */}
                         <Grid item lg={2.6} md={3} display={'flex'} >
                             <DatePickerField
                                 valueDate={(params: any) => {
@@ -388,6 +394,7 @@ const RegisterLabel = () => {
                             />
                         </Grid>
                         <Grid item lg={1.4} md={0.7}></Grid>
+                        {/* Check ngày đăng ký */}
                         <Grid item lg={2} md={2.3}>
                             <FormControlLabel
                                 sx={styletext}
@@ -395,6 +402,7 @@ const RegisterLabel = () => {
                                 label={t("chxRegister_Date")}
                             />
                         </Grid>
+                        {/* Chọn ngày đăng ký */}
                         <Grid item lg={2.6} md={3} display={'flex'}>
                             <DatePickerField
                                 customClass="customDateTimePicker"
@@ -404,18 +412,23 @@ const RegisterLabel = () => {
                             />
                         </Grid>
                         <Grid item xs={3.5}></Grid>
+                        {/* Tìm kiếm */}
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
                         </Grid>
+                        {/* Làm mới */}
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("btnClean") as string} onClick={Refresh} disabled={disable} />
                         </Grid>
+                        {/* Đăng ký */}
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("btnRegister")} onClick={Register} disabled={disable} />
                         </Grid>
+                        {/* In */}
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("tsmPrint")} disabled={disable} onClick={handlePrint} />
                         </Grid>
+                        {/* Tìm lại */}
                         <Grid item xs={2} display={'flex'} alignItems={'center'}>
                             <FormControlLabel
                                 sx={styletext}

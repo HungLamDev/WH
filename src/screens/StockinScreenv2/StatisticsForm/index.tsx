@@ -180,7 +180,8 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     Roll: item.Roll,
                     User_Serial_Key: item.User_Serial_Key,
                     Value_Total_Qty: item.Value_Total_Qty,
-                    Total_QTY: item.Total_QTY
+                    Total_QTY: item.Total_QTY,
+                    mau:item.mau
                 }))
                 setValue_Material(reponse.data[reponse.data.length - 1].Material_No)
                 setValue_Total_Num(reponse.data[reponse.data.length - 1].Value_Total_Num)

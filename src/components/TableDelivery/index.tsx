@@ -1,19 +1,21 @@
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-  Checkbox,
-  TextField,
-} from "@mui/material";
+import { TableContainer, Table, TableHead, TableRow, TableBody, TableCell, Checkbox, TextField, } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateContent, updateMaterialName, updateMaterialNo } from "../../redux/ArrayDelivery";
 
-const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
+interface TableDeliveryProps {
+  columns: GridColDef[];
+  rows: GridRowsProp;
+  handlerowClick?: any,
+  onDoubleClick?: any,
+  arrEditCell?: string[],
+  listChx?: (rows: GridRowsProp) => void,
+  arrNotShowCell?: string[],
+  tableName?: string
+}
+
+const TableDelivery = (props: TableDeliveryProps) => {
   const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
   const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
@@ -244,7 +246,7 @@ const TableDelivery = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                           );
                         }}
                         height={'35px'}
-                        style={{paddingBottom:'10px', paddingTop:'10px'}}
+                        style={{ paddingBottom: '10px', paddingTop: '10px' }}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
                         {isEditing && selectedEdit == key ? (

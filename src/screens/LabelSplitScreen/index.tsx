@@ -495,9 +495,11 @@ const LabelSplit = () => {
             >
                 <Stack direction={"row"}>
                     <Grid container alignItems={'center'}>
+                        {/* Mã QR */}
                         <Grid item xs={5} display={'flex'}>
                             <InputField label={t("dcpBarcode") as string} value={qrcode} handle={handleQrCodeChange} keydown={null} disable={disable} />
                         </Grid>
+                        {/* Check tất cả */}
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
@@ -509,10 +511,15 @@ const LabelSplit = () => {
                     </Grid>
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={'center'} marginTop={'20px'}>
+                    {/* Tìm kiếm */}
                     <MyButton name={t("btnSearch") as string} onClick={handleSearch} disabled={disable} />
+                    {/* Làm mới */}
                     <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={disable} />
+                    {/* Xóa */}
                     <MyButton name={t("btnDelete") as string} disabled={disable} onClick={handleDelete} />
+                    {/* In */}
                     <MyButton name={t("btnPrint") as string} disabled={disable} onClick={handlePrint} />
+                    {/* Xem trước */}
                     <MyButton name={t("btnPrivewPrint") as string} disabled={disable} onClick={() => setOpen(true)} />
                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                 </Stack>

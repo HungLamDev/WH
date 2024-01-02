@@ -30,6 +30,7 @@ import SimplePopper from "../../../components/Popper";
 import AccountingCardScreen from "../../ReportScreen/ChemistryForm";
 import { BiArrowBack } from "react-icons/bi";
 import TableStockOut from "../../../components/TableStockOut";
+import FormConfirmMaterial from "../../../components/FormConfirmMaterial";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -190,6 +191,8 @@ const StockoutScreen = () => {
     const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
     const [openModal, setOpenModal] = useState(false)
     const [listChx, setListChx] = useState([])
+    const [title, setTitle] = useState<any>('')
+
     const dataModal = {
         Value_Remain: stockout ? stockout[0].Value_Qty : "",
         chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
@@ -278,13 +281,42 @@ const StockoutScreen = () => {
 
     useEffect(() => {
         if (qrcode.length === 15 || qrcode.length === 16) {
-            handleOutAll(qrcode)
+            checkMaterial(qrcode).then(result => {
+                if((result === "Pass" && result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") || result ==="Done_Insert"){
+                    handleOutAll(qrcode)
+                }
+                else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode"){
+                    handleOpenConfirm('confirm-Material')
+                }
+            })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrcode])
     //#endregion
 
     //#region Func Logic 
+    const onPressOK = (params: any) =>{
+        if(params !== ""){
+            const url = connect_string + "api/Confirm_QC_Check_Fail"
+            const data = {
+                user_id: dataUser[0].UserId,
+                Barcode: qrcode,
+                Conntent_Input: params
+            }
+            axios.post(url,data,config).then(response => {
+                if(response.data === true){
+                    handleCloseConfirm()
+                    handleOutAll(qrcode)
+                }
+                else{
+                    handleOpenConfirm('network-error');
+                }
+            }).catch(()=>{
+                handleOpenConfirm('network-error');
+            })
+        }
+    }
+    
     const handleOpenConfirm = (confirmName: string) => {
         setCofirmType(confirmName)
         setOpenCofirm(true)
@@ -318,6 +350,28 @@ const StockoutScreen = () => {
         }
     }
 
+    function checkMaterial(barcode: string): Promise<any> {
+      
+        const url = connect_string + "api/QC_Check_Marterial";
+        const data = {
+            user_id: dataUser[0].UserId,
+            Barcode: barcode
+        };
+    
+        return new Promise((resolve, reject) => {
+            axios.post(url, data, config)
+                .then(response => {
+                    resolve(response.data); // Trả về dữ liệu từ response
+                    setTitle(response.data)
+                })
+                .catch(error => {
+                   
+                    handleOpenConfirm('network-error');
+                    reject(error); // Reject với lỗi nếu có lỗi xảy ra
+                })
+        });
+    }
+
     const handleOutAll = (barcode: string) => {
         setDisable(true)
         setIsLoading(true)
@@ -327,7 +381,6 @@ const StockoutScreen = () => {
                 txtScan: barcode,
                 User_Serial_Key: dataUser[0].UserId,
                 get_version: dataUser[0].WareHouse
-
             }
             const url = connect_string + 'api/getData_TextChange_Stock_Out'
             axios.post(url, data, config).then(response => {
@@ -358,11 +411,10 @@ const StockoutScreen = () => {
                     // setValueTotal(response.data.Value_Total)
                     dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
                     setQRCode('')
-
                 }
-                else {
-                    handleOpenConfirm('materialOut')
-                }
+                // else {
+                //     handleOpenConfirm('materialOut')
+                // }
             }).finally(() => {
                 setDisable(false)
                 setIsLoading(false)
@@ -390,7 +442,6 @@ const StockoutScreen = () => {
                 rbtColor_H: chcolor === true && value === 'H' ? true : false,
                 rbtColor_O: chcolor === true && value === 'O' ? true : false,
                 get_version: dataUser[0].WareHouse
-
             }
             axios.post(url, data, config).then(response => {
                 if (response.data.Barcode !== null) {
@@ -531,6 +582,7 @@ const StockoutScreen = () => {
                                 <Grid container>
                                     <Grid container>
                                         <Grid container >
+                                            {/* Check chế độ */}
                                             <Grid item xs={stockout ? 4 : 6}>
                                                 <FormControlLabel
                                                     sx={styletext}
@@ -538,18 +590,18 @@ const StockoutScreen = () => {
                                                     label={t("gpbMode")}
                                                 />
                                             </Grid>
+                                              {/* Check màu nếu trong giao hàng */}
                                             {
                                                 stockout &&
                                                 <Grid item xs={4}>
-
                                                     <FormControlLabel
                                                         sx={styletext}
                                                         control={<Checkbox defaultChecked={false} onChange={handleColor} />}
                                                         label={t("dcmColor")}
                                                     />
-
                                                 </Grid>
                                             }
+                                            {/* Check tìm kiếm */}
                                             <Grid item xs={stockout ? 4 : 6}>
                                                 <FormControlLabel
                                                     sx={styletext}
@@ -561,6 +613,7 @@ const StockoutScreen = () => {
                                     </Grid>
                                     <Grid container>
                                         <Grid container>
+                                            {/* Nhiều */}
                                             <Grid item xs={4}>
                                                 <FormControlLabel sx={styletext} value="much" control={<Radio defaultChecked />} label={t("robBatch")} />
                                             </Grid>
@@ -591,6 +644,7 @@ const StockoutScreen = () => {
                                         </Grid>
                                     </Grid>
                                     <Grid container>
+                                        {/* Quét QR */}
                                         <Grid item xs={12} display={'flex'} flexDirection={'row'}>
                                             <InputField focus={true} label={t("gpbScan") as string} handle={handleQRcode} value={qrcode} />
                                             {isLoading && <CircularProgress size={'25px'} color="info" />}
@@ -601,16 +655,19 @@ const StockoutScreen = () => {
                             <Stack width={'30%'} >
                                 <Grid container rowSpacing={2} >
                                     <Grid item xs={12} justifyContent={'flex-end'} display={'flex'} paddingLeft={'5px'}>
+                                        {/* Nhập mã vật tư */}
                                         {search &&
                                             <InputField handle={handleTxtMaterialNo} label="" keydown={handleSearchMaterialNo} value={txtMaterialNo} disable={disable} />
                                         }
                                     </Grid>
                                     <Grid item xs={12} justifyContent={'flex-end'} display={'flex'} paddingRight={'16px'}>
+                                        {/* Từ ngày */}
                                         {search &&
                                             <DatePickerField label={''} valueDate={(params: any) => { getValueDate(params, 'dateStart') }} />
                                         }
                                     </Grid>
                                     <Grid item xs={12} justifyContent={'flex-end'} display={'flex'} paddingRight={'16px'}>
+                                         {/* Đến ngày */}
                                         {search &&
                                             <DatePickerField label={''} valueDate={(params: any) => { getValueDate(params, 'dateEnd') }} />
                                         }
@@ -621,20 +678,25 @@ const StockoutScreen = () => {
                         </Stack>
                         <Stack width={'40%'} justifyContent={'center'} spacing={2}>
                             <Grid container spacing={4}>
+                                {/* Nhập ERP */}
                                 <Grid item xs={3} display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid>
+                                {/* Xuất chi tiết */}
                                 <Grid item xs={3} display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
+                                {/* Đối với LVL */}
                                 {
                                     stockout && dataUser[0].factoryName === 'LVL' && (
                                         <>
+                                            {/* Thẻ kho */}
                                             <Grid item xs={3} display={'flex'}>
                                                 <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModal(true)} />
                                                 <ModalAccountingCard open={openModal} handleClose={() => setOpenModal(false)} data={stockout} />
                                             </Grid>
+                                            {/* Lệnh */}
                                             <Grid item display={'flex'} alignItems={'center'} justifyContent={'center'}>
                                                 <SimplePopper data={dataRY} />
                                             </Grid>
@@ -654,8 +716,9 @@ const StockoutScreen = () => {
                 <TableStockOut chxColor={chcolor} listChx={(params: any) => setListChx(params)} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
-                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-
+                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}            
+                {cofirmType === 'confirm-Material' && <FormConfirmMaterial title={title} open={openCofirm} onClose={handleCloseConfirm} onPressOK={ onPressOK} />}
+                {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}
             </Stack>
         </FullScreenContainerWithNavBar>
 

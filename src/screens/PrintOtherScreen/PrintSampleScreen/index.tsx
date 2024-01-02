@@ -15,10 +15,10 @@ import MyButton from "../../../components/MyButton";
 // import "./style.scss";
 import { GridColDef } from "@mui/x-data-grid";
 import moment, { Moment } from "moment";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { config } from "../../../utils/api";
+import { config, createConfig } from "../../../utils/api";
 import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
@@ -247,6 +247,15 @@ const DataHistoryPrintScreen = () => {
   //#endregion
 
   //#region Variable
+  //#region  Cancel request axios
+  const controllerRef = useRef(new AbortController());
+  const configNew = createConfig(controllerRef.current.signal);
+  // Func cancel Request
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+  };
+  //#endregion
+
   const [open, setOpen] = useState(false)
   const [openPrintReview, setOpenPrintReview] = useState(false)
   const [isloading, setIsLoading] = useState(false)
@@ -276,10 +285,10 @@ const DataHistoryPrintScreen = () => {
 
   const handlechxSize = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChxSize(event.target.checked);
-    if(event.target.checked === true){
+    if (event.target.checked === true) {
       setColumnEdit('Size')
     }
-    else{
+    else {
       setColumnEdit('')
     }
   };
@@ -290,10 +299,10 @@ const DataHistoryPrintScreen = () => {
 
   const handleChxChange_Material = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChxChange_Material(event.target.checked);
-    if(event.target.checked === true){
+    if (event.target.checked === true) {
       setColumnEdit('CLBH_Material_No')
     }
-    else{
+    else {
       setColumnEdit('')
     }
   };
@@ -348,73 +357,75 @@ const DataHistoryPrintScreen = () => {
   }
 
   const handleSearch = () => {
-    setOpen(true)
-    setIsLoading(true)
-    setListChxOrder([])
-    setListChxDown([])
-    dispatch(clearArrayRowDowns())
+    if (txtOrderNo !== "" || txtMaterial_No !== "" || txtInvoid_No !== "" || txtOutsource !== "") {
+      setOpen(true)
+      setIsLoading(true)
+      setListChxOrder([])
+      setListChxDown([])
+      dispatch(clearArrayRowDowns())
 
-    const url = connect_string + "api/Search_Data_Print_Sample"
-    const data = {
-      txtInvoid_No: txtInvoid_No,
-      txtOutsource: txtOutsource,
-      txtOrderNo: txtOrderNo,
-      txtMaterial_No: txtMaterial_No,
-      RFID_ini: "",
-      chxSize: chxSize,
-      chxResidual_supplies: chxResidual_supplies,
-      chxChange_Material: chxChange_Material,
-      chxRY: false,
-      chxAll_Outsourt: chxAll_Outsource,
-      chxReprint: chxReprint,
-      get_version: dataUser[0].WareHouse
+      const url = connect_string + "api/Search_Data_Print_Sample"
+      const data = {
+        txtInvoid_No: txtInvoid_No,
+        txtOutsource: txtOutsource,
+        txtOrderNo: txtOrderNo,
+        txtMaterial_No: txtMaterial_No,
+        RFID_ini: "",
+        chxSize: chxSize,
+        chxResidual_supplies: chxResidual_supplies,
+        chxChange_Material: chxChange_Material,
+        chxRY: false,
+        chxAll_Outsourt: chxAll_Outsource,
+        chxReprint: chxReprint,
+        get_version: dataUser[0].WareHouse
 
-    }
-    axios.post(url, data, config).then(response => {
-      const arr = response.data.map((item: any, index: any) => ({
-        _id: index,
-        CLBH_Material_No: item.CLBH_Material_No,
-        ywpm_Material: item.ywpm_Material,
-        Color: item.Color,
-        Size: item.Size,
-        Print_QTY: item.Print_QTY,
-        Arrial_Qty: item.Arrial_Qty,
-        QTY: item.QTY,
-        dwbh_Units: item.dwbh_Units,
-        CGNO_Order_No: item.CGNO_Order_No,
-        Roll: item.Roll,
-        CGDate_Date: item.CGDate_Date,
-        nhasx: item.ywsm_Production,
-        ZLBH_Work_Order: item.ZLBH_Work_Order,
-        cllb_Material_Type: item.cllb_Material_Type,
-        zsdh_Supplier_No: item.zsdh_Supplier_No,
-        zsywjc_Supplier: item.zsywjc_Supplier,
-        Name_M: item.Name_M
+      }
+      axios.post(url, data, configNew).then(response => {
+        const arr = response.data.map((item: any, index: any) => ({
+          _id: index,
+          CLBH_Material_No: item.CLBH_Material_No,
+          ywpm_Material: item.ywpm_Material,
+          Color: item.Color,
+          Size: item.Size,
+          Print_QTY: item.Print_QTY,
+          Arrial_Qty: item.Arrial_Qty,
+          QTY: item.QTY,
+          dwbh_Units: item.dwbh_Units,
+          CGNO_Order_No: item.CGNO_Order_No,
+          Roll: item.Roll,
+          CGDate_Date: item.CGDate_Date,
+          nhasx: item.ywsm_Production,
+          ZLBH_Work_Order: item.ZLBH_Work_Order,
+          cllb_Material_Type: item.cllb_Material_Type,
+          zsdh_Supplier_No: item.zsdh_Supplier_No,
+          zsywjc_Supplier: item.zsywjc_Supplier,
+          Name_M: item.Name_M
+        })
+        )
+        const arrfillter: any[] = [];
+
+        response.data.forEach((item: any, index: any) => {
+          if (!arrfillter.some(obj => obj.CGNO_Order_No === item.CGNO_Order_No)) {
+            arrfillter.push({
+              _id: index,
+              CGNO_Order_No: item.CGNO_Order_No
+            });
+          }
+        });
+        dispatch(copyValues(arr))
+        setrowOrderNo(arrfillter)
+        // setrowDowns(arr)
+      }).finally(() => {
+        setIsLoading(false)
+        setOpen(false)
       })
-      )
-      const arrfillter: any[] = [];
-
-      response.data.forEach((item: any, index: any) => {
-        if (!arrfillter.some(obj => obj.CGNO_Order_No === item.CGNO_Order_No)) {
-          arrfillter.push({
-            _id: index,
-            CGNO_Order_No: item.CGNO_Order_No
-          });
-        }
-      });
-      dispatch(copyValues(arr))
-      setrowOrderNo(arrfillter)
-      // setrowDowns(arr)
-    }).finally(() => {
-      setIsLoading(false)
-      setOpen(false)
-    })
+    }
   }
 
   const handleDoubleClick = (colname: string, item: any) => {
     // && listChxDown.includes(item)
-    
-    if (listChxDown ) {
+
+    if (listChxDown) {
       setOpen(true)
       setIsLoading(true)
       const url = connect_string + "api/DoubleClick_Data_Print_Sample"
@@ -454,7 +465,7 @@ const DataHistoryPrintScreen = () => {
         get_version: dataUser[0].WareHouse
 
       }
-      axios.post(url, data, config).then(response => {
+      axios.post(url, data, configNew).then(response => {
         if (response.data.length > 0) {
           const arr = response.data.map((item: any, index: any) => ({
             _id: item.Barcode,
@@ -510,7 +521,7 @@ const DataHistoryPrintScreen = () => {
       get_version: dataUser[0].WareHouse
     }))
 
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       if (response.data === true) {
         const filteredArr1 = ArrayRowUps.filter((item1: any) => {
           return !ArrayDeleteAndPrint.some((item2: any) => item1.Barcode === item2.Barcode);
@@ -587,6 +598,7 @@ const DataHistoryPrintScreen = () => {
       sideBarNavigate=""
       title={t("frmPrint_Sample") as string}
       navigate={"/"}
+      cancelRequest={cancelRequest}
     >
       <Box
         paddingX={1}

@@ -24,7 +24,7 @@ const MaterialDetailForm = () => {
     const [userName, setUserName] = useState('')
     const [avatar, setAvatar] = useState('')
     //#endregion
-   
+
     //#region useEffect
     useEffect(() => {
         getListMaterial()
@@ -37,7 +37,7 @@ const MaterialDetailForm = () => {
     const data = {
         rack: state.Rack_Total
     }
-   
+
     const getListMaterial = () => {
         setIsLoading(true)
         axios.post(url, data, config).then(response => {
@@ -80,20 +80,23 @@ const MaterialDetailForm = () => {
                 paddingBottom={1}
                 className={"dark-bg-secondary border-bottom-white"}
             >
+                {/* Tên kệ */}
                 <Typography variant="h4">{state.Rack_Total}</Typography>
                 {
                     (avatar !== null || userName !== '') &&
-                        (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '200px', height: '90px', position: 'absolute', right: 30, top: 10, background: '#2f3b52' }}>
-                                <img
-                                    src={"data:image/jpeg;base64," + avatar}
-                                    alt=""
-                                    height={"75px"}
-                                    width={"80px"}
-                                />
-                                <Typography variant="body2" fontWeight={600}>{userName}</Typography>
-                            </Box>
-                        )
+                    (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '200px', height: '90px', position: 'absolute', right: 30, top: 10, background: '#2f3b52' }}>
+                            {/* Anhr user */}
+                            <img
+                                src={"data:image/jpeg;base64," + avatar}
+                                alt=""
+                                height={"75px"}
+                                width={"80px"}
+                            />
+                            {/* Tên user */}
+                            <Typography variant="body2" fontWeight={600}>{userName}</Typography>
+                        </Box>
+                    )
                 }
 
             </Box>
@@ -106,17 +109,17 @@ const MaterialDetailForm = () => {
             >
 
                 {Object.entries(rackDataDict).map(([rack, items]) => (
-                    <div key={rack}  style={{marginLeft:'10px'}}>
+                    <div key={rack} style={{ marginLeft: '10px' }}>
                         {/* <h2 style={{ cursor: 'pointer', color: 'darkorange' }} onClick={() => handleClickRack(rack)}>{rack}</h2> */}
                         <table  >
                             <thead >
                                 <tr >
-                                    <th style={{ cursor: 'pointer', color: 'darkorange', fontSize:'30px' }} onClick={() => handleClickRack(rack)}>{rack}</th>
+                                    <th style={{ cursor: 'pointer', color: 'darkorange', fontSize: '30px' }} onClick={() => handleClickRack(rack)}>{rack}</th>
                                 </tr>
                             </thead>
                             <tbody >
                                 {items.map((item: any) => (
-                                    <tr  key={item.Material_Name + item.Material_No + item.Color}>
+                                    <tr key={item.Material_Name + item.Material_No + item.Color}>
                                         <MaterialDetail item={item} />
                                     </tr>
                                 ))}

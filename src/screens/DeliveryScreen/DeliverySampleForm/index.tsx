@@ -1,5 +1,5 @@
 //#region import
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { IconButton, Box, Stack, Typography, Divider, Grid, Checkbox, FormControlLabel, FormGroup, TextField, Button, Autocomplete, Modal, MenuItem } from "@mui/material";
 import { GridColDef } from '@mui/x-data-grid';
 import axios from "axios";
@@ -14,7 +14,7 @@ import { BsListCheck } from "react-icons/bs";
 import moment from 'moment';
 import { currentDay } from '../../../utils/date';
 import TableCheckBox from '../../../components/TableCheckBox';
-import { config } from '../../../utils/api';
+import { createConfig, config } from '../../../utils/api';
 import { connect_string } from '../../LoginScreen/ChooseFactory';
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
@@ -206,8 +206,16 @@ const DeliverySampleScreen = () => {
     const ArrayDeliverySampleRight = useSelector((state: any) => state.ArrayDeliverySampleRight.deliverys);
     const MaterialTable = useSelector((state: any) => state.MaterialTable.items);
     //#endregion
-    
+
     //#region Variable
+    //#region  Cancel request axios
+    const controllerRef = useRef(new AbortController());
+    const configNew = createConfig(controllerRef.current.signal);
+    // Func cancel Request
+    const cancelRequest = () => {
+        controllerRef.current.abort();
+    };
+    //#endregion
     const [openDateFrom, setOpenDateFrom] = useState(moment().add('day', -3).format("YYYY/MM/DD"));
     const [openDateTo, setOpenDateTo] = useState(currentDay);
     const [updateDateFrom, setUpdateDateFrom] = useState(currentDay);
@@ -234,7 +242,7 @@ const DeliverySampleScreen = () => {
     const [listChx, setListChx] = useState([])
     const contentDetail = locate.state
     //#endregion
-   
+
     //#region Func OnChange Input
     const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLocation(event.target.value);
@@ -390,7 +398,7 @@ const DeliverySampleScreen = () => {
             get_version: dataUser[0].WareHouse
         }
 
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
             const array = response.data.map((item: any, index: any) => ({
                 _id: index + 1,
                 Date_Start: item.Date_Start,
@@ -492,7 +500,7 @@ const DeliverySampleScreen = () => {
             }
         })
     }
-  
+
     const handleOpen = (name: string) => {
         setModalType(name)
         setOpen(true);
@@ -520,7 +528,7 @@ const DeliverySampleScreen = () => {
                 User_Serial_Key: dataUser[0].UserId,
                 get_version: dataUser[0].WareHouse
             }
-            axios.post(url, data, config).then(response => {
+            axios.post(url, data, configNew).then(response => {
                 const arr = response.data.map((item: any, index: any) => ({
                     _id: index,
                     ...item
@@ -557,7 +565,7 @@ const DeliverySampleScreen = () => {
                 Num_No: item.Num_No,
                 get_version: dataUser[0].WareHouse
             }
-            axios.post(url, data, config).then(response => {
+            axios.post(url, data, configNew).then(response => {
                 dispatch(doublelickOrderNo({ orderNo: item.Num_No, RY: item.RY, newStatus: response.data }))
             })
         }
@@ -581,7 +589,7 @@ const DeliverySampleScreen = () => {
                     Delivery_Serial: item.Delivery_Serial,
                     get_version: dataUser[0].WareHouse
                 }
-                axios.post(url, data, config).then(response => {
+                axios.post(url, data, configNew).then(response => {
                     dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
                 })
             }
@@ -604,7 +612,7 @@ const DeliverySampleScreen = () => {
                     Delivery_Serial: item.Delivery_Serial,
                     get_version: dataUser[0].WareHouse
                 }
-                axios.post(url, data, config).then(response => {
+                axios.post(url, data, configNew).then(response => {
                     dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
                 })
             }
@@ -620,7 +628,7 @@ const DeliverySampleScreen = () => {
                 Qty: item.RY_Status,
                 get_version: dataUser[0].WareHouse
             }
-            axios.post(url, data, config).then(response => {
+            axios.post(url, data, configNew).then(response => {
 
                 navigate('/stock-out', { state: response.data });
             })
@@ -632,7 +640,7 @@ const DeliverySampleScreen = () => {
         setDataUpdate({ params: params, dgvcount: ArrayDelivery.length })
     }
     //#endregion
-    
+
     return (
         <FullScreenContainerWithNavBar sideBarDisable={true} sideBarNavigate='' title={t("lblData_Material_Delivery")} navigate="/">
             <Box

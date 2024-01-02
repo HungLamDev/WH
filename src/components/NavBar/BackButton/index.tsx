@@ -8,7 +8,16 @@ import { clearArrayDeleteAndPrint } from "../../../redux/ArrayDeleteAndPrint";
 import { clearArrayRowDowntoUp } from "../../../redux/ArrayRowDowntoUp";
 import { clearItemsMaterialTableChecked } from "../../../redux/MaterialTableChecked";
 import { clearItemsMaterialTable } from "../../../redux/array";
-const BackButton = ({ navigate, state }: { navigate: string, state?: any }) => {
+import axios, { CancelToken } from 'axios';
+
+interface BackButtonProps{
+  navigate: string, 
+  state?: any ,
+  cancelRequest?: any 
+}
+
+const BackButton = (props: BackButtonProps) => {
+  const { navigate, state , cancelRequest} = props
   const nag = useNavigate()
   const dispatch = useDispatch()
   const ArrayRowUps = useSelector((state: any) => state.ArrayRowUps.items);
@@ -17,6 +26,7 @@ const BackButton = ({ navigate, state }: { navigate: string, state?: any }) => {
   const ArrayDeleteAndPrint = useSelector((state: any) => state.ArrayDeleteAndPrint.items);
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
   const MaterialTable = useSelector((state: any) => state.MaterialTable.items);
+
   const back = () => {
     if (
       ArrayRowUps.length != 0 ||
@@ -32,8 +42,8 @@ const BackButton = ({ navigate, state }: { navigate: string, state?: any }) => {
         dispatch(clearItemsMaterialTableChecked())
         dispatch(clearItemsMaterialTable())
     }
-
     nag(navigate, { state: state })
+    cancelRequest()
   }
 
   return (

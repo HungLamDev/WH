@@ -15,7 +15,18 @@ export const config = {
         'Content-Type': 'application/json'
     }
 };
+const defaultConfig = {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+};
 
+export const createConfig = (signal: any) => {
+    return {
+        ...defaultConfig,
+        signal: signal
+    };
+};
 // export const checkPermissionPrint = async (UserId: string) => {
 //     const url = connect_string + 'api/check_print_name';
 //     const data = {
@@ -25,6 +36,6 @@ export const config = {
 //         const response = await axios.post(url, data, config);
 //         return response.data;
 //     } catch (error) {
-//         return false; 
+//         return false;
 //     }
 // };

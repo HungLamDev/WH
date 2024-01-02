@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { includes } from "lodash";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { TextFieldChangeArrayChemistry } from "../../redux/ArrayChemistry";
 interface TableOriginEditProps {
@@ -9,6 +9,7 @@ interface TableOriginEditProps {
   rows: any;
   handlerowClick?: any;
   handleDoubleClick?: any;
+  handleLongPress?: any;
   arrNotShowCell?: string[];
   border?: boolean;
   color?: boolean;
@@ -16,11 +17,31 @@ interface TableOriginEditProps {
 }
 
 const TableOriginEdit = (props: TableOriginEditProps) => {
-  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color, arrEditCell } = props;
+  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color, arrEditCell, handleLongPress } = props;
   const [keyDoubleClick, setKeyDoubleClick] = useState("");
   const [selectedRow, setSelectedRow] = useState("");
   const [editingCellId, setEditingCellId] = useState<number | null>(null);
+  const [longPress, setLongPress] = useState<boolean>(false);
+  const timeoutRef = useRef<number | null>(null);
   const dispatch = useDispatch();
+
+
+  const handleTouchStart = (key: any, item:any) => {
+    timeoutRef.current = setTimeout(() => {
+      setLongPress(true);
+      handleLongPress(key, item)
+    }, 1000); 
+  };
+
+  const handleTouchEnd = () => {
+    if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+    }
+    // if (!longPress) {
+    //     console.log('Short press');
+    // }
+    setLongPress(false);
+};
 
   const handleRowClick = (params: any, item: any) => {
     if (arrEditCell !== undefined && arrEditCell.includes(params)) {
@@ -127,8 +148,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                   }
                   const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                   const oneRow = rows.length === 1;
-                  const manyRow = rows.length > 1; 
-
+                  const manyRow = rows.length > 1;
                   return (
                     <TableCell
                       key={key}
@@ -156,12 +176,15 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                               height="20px"
                             />
                           )
-                          : isEditing && (manyRow && item._id !== rows.length -2) || (oneRow && item._id !== rows.length -1)
+                          : isEditing && ( item["Qty_Redundant"] && item["Qty_Redundant"] !== "") && (manyRow && item._id !== rows.length - 2) || (oneRow && item._id !== rows.length - 1)
                             ?
                             (
                               <TextField
                                 defaultValue={item[key]}
                                 onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
+                                onTouchStart={() => handleTouchStart(key, item)}
+                                onTouchEnd={handleTouchEnd}
+                                onTouchCancel={handleTouchEnd}
                                 size="small"
                                 autoFocus
                                 sx={{

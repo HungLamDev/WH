@@ -11,7 +11,7 @@ import { useState } from "react";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { includes } from "lodash";
 
-const TableOrigin = (props: {
+interface TableOriginProps{
   columns: GridColDef[];
   rows: any;
   handlerowClick?: any;
@@ -19,7 +19,9 @@ const TableOrigin = (props: {
   arrNotShowCell?: string[];
   border?: boolean;
   color?: boolean;
-}) => {
+}
+
+const TableOrigin = (props: TableOriginProps) => {
   const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color } = props;
 
   const [keyDoubleClick, setKeyDoubleClick] = useState("");
@@ -38,7 +40,6 @@ const TableOrigin = (props: {
       }
     }
   };
-
   return (
     <TableContainer sx={{ height: "100%" }}>
       <Table size={"small"} stickyHeader>
@@ -97,7 +98,7 @@ const TableOrigin = (props: {
                   }
                   else if ((item.Stamp_Caculator && item.Stamp_Caculator !== "0") || (item.Stamp_Caculator && item.Stamp_Caculator !== 0)) {
                     textColor = "orange";
-                  } else if (item.Order_No_Out1) {
+                  } else if (item.Order_No_Out1 ) {
                     const str = item.Order_No_Out1.split('(');
                     if (str[0] === '0') {
                       textColor = "orangered";
@@ -113,6 +114,9 @@ const TableOrigin = (props: {
                   }
                   else if (item.Material_Name && item.Material_Name.trim().includes('(BU)')) {
                     textColor = "aqua";
+                  }
+                  else if (item.mau && item.mau !== null) {
+                    textColor = "darkorange";
                   }
                   return (
                     <TableCell

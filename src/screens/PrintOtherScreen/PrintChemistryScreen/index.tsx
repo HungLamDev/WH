@@ -18,10 +18,10 @@ import MyButton from "../../../components/MyButton";
 import MyTable3 from "../../../components/MyTable3";
 import { GridColDef } from "@mui/x-data-grid";
 import moment, { Moment } from "moment";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { config } from "../../../utils/api";
+import { config, createConfig } from "../../../utils/api";
 import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
@@ -257,6 +257,15 @@ const DataHistoryPrintScreen = () => {
   //#region Variable
   // const [rowDowns, setrowDowns] = useState<any[]>([]);
   // const [rowUps, setrowUps] = useState<any[]>([]);
+   //#region  Cancel request axios
+   const controllerRef = useRef(new AbortController());
+   const configNew = createConfig(controllerRef.current.signal);
+   // Func cancel Request
+   const cancelRequest = () => {
+     controllerRef.current.abort();
+   };
+   //#endregion
+ 
   const [chxPrintRY, setChxPrintRY] = useState(false);
   const [open, setOpen] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -348,7 +357,7 @@ const DataHistoryPrintScreen = () => {
         chxRY: chxRY,
         get_version: dataUser[0].WareHouse
       }
-      axios.post(url, data, config).then(response => {
+      axios.post(url, data, configNew).then(response => {
         if (response.data.length > 0) {
           const arr = response.data.map((item: any, index: any) => ({
             _id: item.Barcode,
@@ -409,7 +418,7 @@ const DataHistoryPrintScreen = () => {
       dcpCheck: true,
       get_version: dataUser[0].WareHouse
     }
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       if (response.data === true) {
         const filteredArr1 = ArrayRowUps.filter((item1: any) => {
           return !ArrayDeleteAndPrint.some((item2: any) => item1.Barcode === item2.Barcode);
@@ -480,9 +489,8 @@ const DataHistoryPrintScreen = () => {
       get_version: dataUser[0].WareHouse
     };
     axios
-      .post(url, data, config)
+      .post(url, data, configNew)
       .then((response) => {
-        console.log(response.data)
         const arr = response.data.map((item: any, index: any) => ({
           _id: index,
           zsywjc_Supplier: item.zsywjc_Supplier,
@@ -552,6 +560,7 @@ const DataHistoryPrintScreen = () => {
       sideBarNavigate=""
       title={t("lblSM_Print_Chemistry") as string}
       navigate={"/"}
+      cancelRequest={cancelRequest}
     >
       <Box
         paddingX={1}

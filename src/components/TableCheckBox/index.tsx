@@ -12,8 +12,20 @@ import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string, dschx?: any[] }) => {
-  const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick,dschx  } = props;
+interface TableCheckBoxProps {
+  columns: GridColDef[];
+  rows: GridRowsProp;
+  handlerowClick?: any,
+  onDoubleClick?: any,
+  arrEditCell?: string[],
+  listChx?: (rows: GridRowsProp) => void,
+  arrNotShowCell?: string[],
+  tableName?: string,
+  dschx?: any[]
+}
+
+const TableCheckBox = (props: TableCheckBoxProps) => {
+  const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, dschx } = props;
 
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
   const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
@@ -40,13 +52,13 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
       listChx !== undefined ? listChx(rows) : [];
     }
   }, [selectAll]);
-  
+
   useEffect(() => {
-    if (tableName === 'delivery-material'){
+    if (tableName === 'delivery-material') {
       setSelected(MaterialTableChecked)
-      
+
     }
-    if( tableName === "stockout-detail"){
+    if (tableName === "stockout-detail") {
       setSelected(StockoutDetailChecked)
     }
     // else {
@@ -167,13 +179,13 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                     item._id === selectedRow ? "#415a77" : "inherit",
                   cursor: "pointer",
                 }}
-              
+
               >
                 <TableCell padding="checkbox">
                   <Checkbox
                     onClick={(event) => {
                       handleClick(event, item)
-                     
+
                     }
                     }
                     role="checkbox"
@@ -192,7 +204,8 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                       <TableCell
                         className="td-responesive"
                         key={i}
-                        onClick={() =>{ handleRowClick(key, item)
+                        onClick={() => {
+                          handleRowClick(key, item)
                           setSelectedRow(
                             item._id === selectedRow ? null : item._id
                           );
@@ -209,15 +222,15 @@ const TableCheckBox = (props: { columns: GridColDef[]; rows: GridRowsProp; handl
                             size="small"
                             sx={{
                               '& .MuiInputBase-input': {
-                                  padding: 0,
-                                  width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 40}px`,
-                                  textAlign: 'center',
-                                  fontSize: '17px',
-                                  '@media screen and (max-width: 1200px)': {
-                                      fontSize: '15px !important',
-                                  },
+                                padding: 0,
+                                width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 10) + 40}px`,
+                                textAlign: 'center',
+                                fontSize: '17px',
+                                '@media screen and (max-width: 1200px)': {
+                                  fontSize: '15px !important',
+                                },
                               },
-                          }}
+                            }}
                           />
                         ) : (
                           item[key]

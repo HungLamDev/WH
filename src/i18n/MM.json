@@ -347,5 +347,8 @@
     "lblFindAgain":"ထပ်ရှာပါ။",
     "chxPair":"တွဲ",
     "lblNetworkError": "သင့်ကွန်ရက်တွင် ပြဿနာများရှိနေပါသည်။",
-    "lblCheck":"တံဆိပ်ခေါင်းမခွဲခင် ရွေးပါ။"
+    "lblCheck":"တံဆိပ်ခေါင်းမခွဲခင် ရွေးပါ။",
+    "btnInventory_In":"စာရင်း",
+    "lblReport_Inventory_In":"စာရင်းဇယား"
+
 }

@@ -50,6 +50,7 @@ import MaterialDetailForm from "./screens/Inventory Statistics/MaterialDetailFor
 import PermissionPrintScreen from "./screens/SettingsScreen/PrintPermissionForm";
 import CheckData from "./screens/DeliveryScreen/CheckData";
 import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
+import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
@@ -140,6 +141,7 @@ function App() {
           <Route path={"/permission-print"} element={<PermissionPrintScreen />}></Route>
           <Route path={"/check-data"} element={<CheckData />}></Route>
           <Route path={"/register-label"} element={<RegisterLabel />}></Route>
+          <Route path={"/inventory-in"} element={<InventoryIn />}></Route>
         </Route>
         <Route path={"/login"} element={<LoginScreen />} />
         <Route path={"/*"} element={<ErrorScreen />} />

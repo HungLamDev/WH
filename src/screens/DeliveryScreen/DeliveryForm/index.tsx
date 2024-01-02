@@ -14,7 +14,7 @@ import { BsListCheck } from "react-icons/bs";
 import moment from 'moment';
 import { currentDay } from '../../../utils/date';
 import TableCheckBox from '../../../components/TableCheckBox';
-import { connect_string } from '../../LoginScreen/ChooseFactory'; 
+import { connect_string } from '../../LoginScreen/ChooseFactory';
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress/CircularProgress';
 import { addItemMaterialTable, removeItemMaterialTable, clearItemsMaterialTable } from '../../../redux/array';
@@ -35,13 +35,14 @@ import ModalLocation from '../ModalLocation';
 import { successSound } from '../../../utils/pathsound';
 import { clearArrayStockout } from '../../../redux/ArrayStockout';
 import TableCheckBoxRedux from '../../../components/TableCheckBoxRedux';
+import { createConfig, config } from '../../../utils/api';
 //#endregion
 
 const DeliveryScreen = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   //#region  Style
   const style = {
     position: 'absolute',
@@ -144,6 +145,13 @@ const DeliveryScreen = () => {
   //#endregion
 
   //#region Variable
+  //#region  Cancel request axios
+  const controllerRef = useRef(new AbortController());
+  const configNew = createConfig(controllerRef.current.signal);
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+  };
+  //#endregion
   const [openDateFrom, setOpenDateFrom] = useState(moment().add('day', -3).format("YYYY/MM/DD"));
   const [openDateTo, setOpenDateTo] = useState(currentDay);
   const [updateDateFrom, setUpdateDateFrom] = useState(currentDay);
@@ -179,7 +187,7 @@ const DeliveryScreen = () => {
   const [isApi, setIsApi] = useState(true)
   const contentDetail = locate.state
   //#endregion
-  
+
   //#region Func OnChange Input
   const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocation(event.target.value);
@@ -215,7 +223,7 @@ const DeliveryScreen = () => {
   const handleOrderNoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOrderNo(event.target.value);
   };
-  
+
   //#endregion
 
   //#region useEffect
@@ -248,7 +256,7 @@ const DeliveryScreen = () => {
         setMaterialName(response.data[0].txtMaterial_Name);
         setColor(response.data[0].txtColor);
         //Set list for row modal
-        const dataArray = response.data[0].txtAccept_No.split(', ').map((item:any) => item.replace(/^,|,$/g, '')).filter((item:any) => item !== '')
+        const dataArray = response.data[0].txtAccept_No.split(', ').map((item: any) => item.replace(/^,|,$/g, '')).filter((item: any) => item !== '')
         let rowtemp = null;
         const newRows = dataArray.map((item: any, index: number) => {
           rowtemp = { _id: index, Material_No: item }
@@ -294,15 +302,11 @@ const DeliveryScreen = () => {
     setChecked(!checked);
   };
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
 
   const handleDelivery = () => {
     setIsLoading(true)
     setDisable(true)
+    setOnFocus(false)
     const url = connect_string + "api/btnEntern_Delivery1"
     const data = {
       chxOffset: chxOffset,
@@ -377,7 +381,7 @@ const DeliveryScreen = () => {
       saFactory: dataUser[0].factoryName
     }
 
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       const array = response.data.map((item: any, index: any) => ({
         _id: index,
         // Date_Start: item.Date_Start,
@@ -434,7 +438,7 @@ const DeliveryScreen = () => {
   })
 
   const handleDoubleClick = (columnName: any, item: any) => {
-    if(isApi === true){
+    if (isApi === true) {
       const url = connect_string + 'api/GetData_CellDoubleClick_Delivery'
       if (columnName === 'Material_No') {
         setIsApi(false)
@@ -445,7 +449,7 @@ const DeliveryScreen = () => {
           User_Serial_Key: dataUser[0].UserId,
           get_version: dataUser[0].WareHouse
         }
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
           if (response.data.length > 0) {
             const arr = response.data.map((item: any, index: any) => ({
               _id: index,
@@ -453,7 +457,7 @@ const DeliveryScreen = () => {
             }))
             setHistoryMaterial(arr)
           }
-        }).finally(()=>{
+        }).finally(() => {
           setIsApi(true)
         })
         handleOpen('history-material')
@@ -476,7 +480,7 @@ const DeliveryScreen = () => {
           dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
           get_version: dataUser[0].WareHouse
         }
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
           const array = response.data.map((item: any, index: any) => ({
             _id: index,
             Date_Start: item.Date_Start,
@@ -493,16 +497,16 @@ const DeliveryScreen = () => {
             User_Serial_Key: item.User_Serial_Key,
             Delivery_Serial: item.Delivery_Serial
           }));
-  
+
           dispatch(copyArrayDelivery(array))
           setRows(array);
-  
+
         }).finally(() => {
           setIsLoading(false)
           setDisable(false)
           setIsApi(true)
         })
-  
+
       }
       if (columnName === 'Num_No') {
         setIsApi(false)
@@ -514,13 +518,13 @@ const DeliveryScreen = () => {
           Delivery_Serial: item.Delivery_Serial,
           Num_No: item.Num_No,
           get_version: dataUser[0].WareHouse
-  
+
         }
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
           if (response.data.length > 0) {
             dispatch(doublelickOrderNo({ orderNo: item.Num_No, RY: item.RY, newStatus: response.data }))
           }
-        }).finally(()=>{
+        }).finally(() => {
           setIsApi(true)
         })
       }
@@ -544,13 +548,13 @@ const DeliveryScreen = () => {
             Num_No: item.Num_No,
             Delivery_Serial: item.Delivery_Serial,
             get_version: dataUser[0].WareHouse
-  
+
           }
-          axios.post(url, data, config).then(response => {
+          axios.post(url, data, configNew).then(response => {
             if (response.data.length > 0) {
               dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
             }
-          }).finally(()=>{
+          }).finally(() => {
             setIsApi(true)
           })
         }
@@ -573,20 +577,20 @@ const DeliveryScreen = () => {
             Num_No: item.Num_No,
             Delivery_Serial: item.Delivery_Serial,
             get_version: dataUser[0].WareHouse
-  
+
           }
-          axios.post(url, data, config).then(response => {
+          axios.post(url, data, configNew).then(response => {
             if (response.data.length > 0) {
               dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
             }
-          }).finally(()=>{
+          }).finally(() => {
             setIsApi(true)
           })
         }
       }
       if (columnName === 'RY_Status1') {
         setIsApi(false)
-      
+
         const data = {
           Name_Column: "dcpContent",
           RY_Status: item.RY_Status2,
@@ -596,19 +600,19 @@ const DeliveryScreen = () => {
           Qty: item.RY_Status,
           get_version: dataUser[0].WareHouse,
           Delivery_Serial: item.Delivery_Serial
-  
+
         }
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
           if (response.data.length > 0) {
-            navigate('/stock-out', { state: { data: response.data, dataRY: item }});
+            navigate('/stock-out', { state: { data: response.data, dataRY: item } });
           }
-        }).finally(()=>{
+        }).finally(() => {
           setIsApi(true)
         })
-  
+
       }
       if (columnName === 'Count_Stock_Qty') {
-        
+
         const data = {
           Count_dgv: ArrayDelivery.length,
           Name_Column: "dcpQty_Redundant",
@@ -620,7 +624,7 @@ const DeliveryScreen = () => {
           Color: item.Color,
           Material_Name: item.Material_Name,
           User_Serial_Key: item.User_Serial_Key
-  
+
         }
         setMaterialChange(data)
         handleOpen('change-materialNo')
@@ -637,7 +641,7 @@ const DeliveryScreen = () => {
           Color: item.Color,
           Material_Name: item.Material_Name,
           User_Serial_Key: item.User_Serial_Key
-  
+
         }
         setMaterialNameChange(data)
         handleOpen('change-materialName')
@@ -656,7 +660,7 @@ const DeliveryScreen = () => {
           Material_Name: item.Material_Name,
           User_Serial_Key: item.User_Serial_Key
         }
-        axios.post(url, data, config).then(response => {
+        axios.post(url, data, configNew).then(response => {
           if (response.data.length > 0) {
             const valueListArray = response.data[0].Value_List_Material_No.split(',');
             const arr = valueListArray.map((item: any, index: any) => ({
@@ -664,17 +668,17 @@ const DeliveryScreen = () => {
               Location: item
             }))
             setDataModalLocation(arr)
-  
+
           }
-        }).finally(()=>{
+        }).finally(() => {
           setIsApi(true)
         })
         setMaterialNoLocation(item.Material_No)
         handleOpen('modal-location')
-  
+
       }
     }
-   
+
   }
 
   const handleRowClick = (colName: any, params: any) => {
@@ -814,7 +818,7 @@ const DeliveryScreen = () => {
 
   const handleOKUpdateMaterialNo = () => {
     const url = connect_string + 'api/GetData_CellDoubleClick_Delivery'
-    axios.post(url, materialChange, config).then(response => {
+    axios.post(url, materialChange, configNew).then(response => {
       if (response.data.length > 0) {
         setOpen(false)
       }
@@ -823,16 +827,23 @@ const DeliveryScreen = () => {
 
   const handleOKUpdateMaterialName = () => {
     const url = connect_string + 'api/GetData_CellDoubleClick_Delivery'
-    axios.post(url, materialNameChange, config).then(response => {
+    axios.post(url, materialNameChange, configNew).then(response => {
       if (response.data.length > 0) {
         setOpen(false)
       }
     })
   }
   //#endregion
- 
+
   return (
-    <FullScreenContainerWithNavBar hidden={true} sideBarDisable={true} onShowScan={handleScanClick} sideBarNavigate='' title={t("lblData_Material_Delivery")} navigate="/">
+    <FullScreenContainerWithNavBar
+      hidden={true}
+      sideBarDisable={true}
+      onShowScan={handleScanClick}
+      sideBarNavigate=''
+      title={t("lblData_Material_Delivery")}
+      navigate="/"
+      cancelRequest={cancelRequest}>
       <Box
         paddingX={1}
         paddingBottom={1}
@@ -842,6 +853,7 @@ const DeliveryScreen = () => {
           <Stack width={'50%'}>
             <Grid container>
               <Grid container justifyContent={'center'}>
+                {/* Check đơn gia công */}
                 <Grid item xs={1}>
                   <FormGroup>
                     <FormControlLabel className="text" control={<Checkbox
@@ -849,14 +861,17 @@ const DeliveryScreen = () => {
                       onChange={handleChange} label={undefined} />
                   </FormGroup>
                 </Grid>
+                {/* Text box đơn gia công */}
                 <Grid item display={'flex'} xs={9}>
                   <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
                 </Grid>
+                {/* Check load lại dữ liệu */}
                 <Grid item xs={1}>
                   <FormGroup>
                     <FormControlLabel className="text" sx={styletext} control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxLoad_Data} onChange={handleChxLoadData} />} label={undefined} />
                   </FormGroup>
                 </Grid>
+                {/* Nút cộng phiếu */}
                 <Grid item xs={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   <IconButton disabled={disable}>
                     <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"} onClick={handleDelivery} />
@@ -867,21 +882,23 @@ const DeliveryScreen = () => {
                 <Grid item xs={1}  >
                   {/* {isLoading && <CircularProgress size={'25px'} color="info" />} */}
                 </Grid>
+                {/* Tên vật tư */}
                 <Grid item xs={9} display={'flex'} >
                   <InputField disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
                 </Grid>
-
               </Grid>
               <Grid container columnSpacing={1} alignItems={'center'} marginTop={'4px'}>
                 <Grid item xs={1}>
 
                 </Grid>
+                {/* Ngày mở phiếu từ */}
                 <Grid item xs={3.1} display={'flex'}>
                   <span className='textsize'>{t('lblOpen_Date')}</span>
                 </Grid>
                 <Grid item xs={2.8} display={'flex'}>
                   <DatePickerField valueDate={(param: any) => handleDateChange('openDateFrom', param)} onValueChange={openDateFrom} />
                 </Grid>
+                {/* Ngày mở phiếu đến */}
                 <Grid item xs={2.8} display={'flex'}>
                   <DatePickerField valueDate={(param: any) => handleDateChange('openDateTo', param)} />
                 </Grid>
@@ -894,12 +911,15 @@ const DeliveryScreen = () => {
           <Stack width={'50%'}>
             <Grid container>
               <Grid container >
+                {/* Địa điểm */}
                 <Grid item xs={4} display={'flex'}>
                   <InputField disable={disable} value={location} handle={handleLocationChange} />
                 </Grid>
+                {/* Mã vật tư đc chọn */}
                 <Grid item xs={6} display={'flex'}>
                   <InputField disable={disable} value={acceptNo} handle={handleAcceptNo} />
                 </Grid>
+                {/* Check list mã vật tư */}
                 <Grid item xs={2} display={'flex'}>
                   <IconButton disabled={disable} className={'sidebar-toggle-button'} onClick={() => handleOpen('list-material')}>
                     <BsListCheck />
@@ -907,9 +927,9 @@ const DeliveryScreen = () => {
                 </Grid>
               </Grid>
               <Grid container display={'flex'} alignItems={'center'}>
+                {/* Danh sách nhà cung ứng */}
                 <Grid item xs={4} paddingRight={'16px'}>
                   {checked && (
-
                     <Autocomplete
                       value={valueAutocomplete}
                       onChange={(event: any, newValue: string | null) => {
@@ -951,20 +971,24 @@ const DeliveryScreen = () => {
                     />
                   )}
                 </Grid>
+                {/* Màu */}
                 <Grid item xs={6} display={'flex'}>
                   <InputField value={color} disable={disable} />
                 </Grid>
               </Grid>
               <Grid container columnSpacing={1} alignItems={'center'} marginTop={'4px'}>
+                {/* Ngày cập nhật từ */}
                 <Grid item xs={4.1} display={'flex'}>
                   <span className='textsize'>{t('dcmModify_Date')}</span>
                 </Grid>
                 <Grid item xs={2.8} display={'flex'}>
                   <DatePickerField valueDate={(param: any) => handleDateChange('updateDateFrom', param)} />
                 </Grid>
+                {/* Ngày cập nhật đến */}
                 <Grid item xs={2.8} display={'flex'}>
                   <DatePickerField valueDate={(param: any) => handleDateChange('updateDateTo', param)} />
                 </Grid>
+                {/* Check kệ */}
                 <Grid item xs={2}>
                   <FormGroup>
                     <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxRack} onChange={handleChxRack} />} label={t("dcpShelves")} />
@@ -975,29 +999,46 @@ const DeliveryScreen = () => {
           </Stack>
         </Stack>
         <Stack marginTop={'10px'} width={'100%'} direction={'row'} spacing={1} justifyContent={'center'}>
+          {/* Check tất cả */}
           <FormGroup >
             <FormControlLabel className="text" sx={styletext} control={<Checkbox value={chxAll} onChange={handleChxAll}
               sx={{ color: 'white' }} />}
               label={t('chxAll')} />
           </FormGroup>
+          {/* Tìm kiếm */}
           <MyButton name={t('btnSearch')} onClick={handleSearch} disabled={disable} />
+          {/* Xuất excel */}
           <MyButton name={t('btnExcel')} disabled={disable} onClick={exportToExcel} />
+          {/* Cập nhật */}
           <MyButton name={t('btnUpdate_Delivery')} onClick={() => handleOpen('update')} disabled={disable} />
+          {/* Làm mới */}
           <MyButton name={t('btnClean')} onClick={handleReset} disabled={disable} />
+          {/* Lịch sử */}
           <MyButton name={t('btnHistory')} onClick={() => handleOpen('history-ry')} disabled={disable} />
+          {/* Thống kê */}
           <MyButton name={t('btnStatistical')} onClick={() => handleOpen('statistic')} disabled={disable} />
+          {/* Kiểm tra */}
           <MyButton name={t('lblCheckData')} onClick={() => navigate("/check-data")} disabled={disable} />
+          {/* Check phiếu bù */}
           <FormGroup>
             <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxOffset} onChange={handleChxOffSet} />} label={t('chxOffset')} />
           </FormGroup>
         </Stack>
+        {/* Modal  khi click double vào mã vật tư*/}
         {modalType === 'history-material' && <ModalHistoryMaterial open={open} onClose={handleClose} dataUpdate={historyMaterial} />}
+        {/* Modal  khi click double vào ry*/}
         {modalType === 'modal-location' && <ModalLocation open={open} onClose={handleClose} dataUpdate={dataModalLocation} materialNo={materialNoLocation} dtpFrom_Date={updateDateFrom} dtpTo_Date={updateDateTo} dtpFrom_Open={openDateFrom} dtpTo_Open={openDateTo} />}
+        {/* Modal confirm khi sửa đổi mã vật tư*/}
         {modalType === 'change-materialNo' && <ModalCofirm onPressOK={handleOKUpdateMaterialNo} open={open} onClose={handleClose} title={t("msgYouWantUpdate") as string} />}
+        {/* Modal confirm khi sửa đổi tên vật tư*/}
         {modalType === 'change-materialName' && <ModalCofirm onPressOK={handleOKUpdateMaterialName} open={open} onClose={handleClose} title={t("msgYouWantUpdate") as string} />}
+        {/* Modal lịch sử*/}
         {modalType === 'history-ry' && <HistoryRY open={open} onClose={handleClose} />}
+        {/* Modal thống kê*/}
         {modalType === 'statistic' && (<Statistics open={open} onClose={handleClose} materialNo={dataStatistic} />)}
+        {/* Modal cập nhật*/}
         {modalType === 'update' && (<UpdateModalForm dataUpdate={dataUpdate} open={open} onClose={handleClose} />)}
+        {/* Modal chọn danh sách mã vật tư */}
         {modalType === 'list-material' && (
           <Modal
             open={open}
@@ -1014,11 +1055,12 @@ const DeliveryScreen = () => {
                 listChx={handleRowSelectionModelChange} />
             </Box>
           </Modal>
-        )
-        }
+        )}
+        {/* Máy ảnh */}
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
       </Box>
       <Stack overflow={"hidden"} sx={{ height: '100%' }}>
+        {/* Bảng */}
         <TableDelivery columns={columns} rows={ArrayDelivery} arrNotShowCell={['_id']} onDoubleClick={handleDoubleClick} handlerowClick={handleRowClick} arrEditCell={['Material_No', 'Material_Name']} />
       </Stack>
     </FullScreenContainerWithNavBar>

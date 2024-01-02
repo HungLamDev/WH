@@ -18,10 +18,10 @@ import MyButton from "../../../components/MyButton";
 import MyTable3 from "../../../components/MyTable3";
 import { GridColDef } from "@mui/x-data-grid";
 import moment, { Moment } from "moment";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { config } from "../../../utils/api";
+import { config, createConfig } from "../../../utils/api";
 import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 
@@ -246,6 +246,15 @@ const DataHistoryPrintScreen = () => {
   //#endregion
 
   //#region Variable
+   //#region  Cancel request axios
+   const controllerRef = useRef(new AbortController());
+   const configNew = createConfig(controllerRef.current.signal);
+   // Func cancel Request
+   const cancelRequest = () => {
+     controllerRef.current.abort();
+   };
+   //#endregion
+ 
   const [disabled, setDisabled] = useState(false)
   const [rowDowns, setrowDowns] = useState<any[]>([]);
   const [rowUps, setrowUps] = useState<any[]>([]);
@@ -355,7 +364,7 @@ const DataHistoryPrintScreen = () => {
       txtMaterial_No: materialNo,
       get_version: dataUser[0].WareHouse
     }
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       const item = {
         zsywjc_Supplier: response.data.zsywjc_Supplier,
         CLBH_Material_No: response.data.CLBH_Material_No,
@@ -407,7 +416,7 @@ const DataHistoryPrintScreen = () => {
       User_Serial_Key: dataUser[0].UserId,
       get_version: dataUser[0].WareHouse
     }
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       const arr = response.data.map((item: any, index: any) => ({
         _id: item.Barcode,
         Supplier: item.Supplier,
@@ -456,7 +465,7 @@ const DataHistoryPrintScreen = () => {
       get_version: dataUser[0].WareHouse
 
     }
-    axios.post(url, data, config).then(response => {
+    axios.post(url, data, configNew).then(response => {
       if (response.data === true) {
         const filteredArr1 = rowUps.filter((item1: any) => {
           return !listChx.some((item2: any) => item1.Barcode === item2.Barcode);
@@ -518,6 +527,7 @@ const DataHistoryPrintScreen = () => {
       sideBarNavigate=""
       title={t("frmPrint_Inventory") as string}
       navigate={"/"}
+      cancelRequest={cancelRequest}
     >
       <Box
         paddingX={1}

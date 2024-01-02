@@ -92,6 +92,8 @@ const Menu = () => {
   //#endregion
 
   //#region List Data
+
+  // Danh sách chức năng
   const menuList: { title: string; icon: string; path: string, modal: boolean, modalName: string, disabled?: boolean }[] = [
     {
       title: t("btnStock_In") as string,
@@ -185,6 +187,7 @@ const Menu = () => {
     },
   ];
 
+  // Danh sách thẻ kho
   const list: { title: string; icon: string; path: string, vWareHouse: string }[] = [
     {
       title: t("btnAccounting_Chemistry") as string,
@@ -226,6 +229,7 @@ const Menu = () => {
     },
   ];
 
+  // Danh sách ngôn ngữ
   const myArray: ILanguageItem[] = [
     {
       language: t("btnEnglish"),
@@ -249,6 +253,7 @@ const Menu = () => {
     },
   ];
 
+  // Danh sách cài đặt
   const listSettings: { title: string; icon: string; path: string }[] = [
     {
       title: t("lblDelete_Order") as string,
@@ -272,6 +277,7 @@ const Menu = () => {
     },
   ];
 
+  // Danh sách in khác
   const listPrintOther: { title: string; icon: string; path: string, disabled?: boolean }[] = [
     {
       title: t("btnPrint_Chemistry") as string,
@@ -305,6 +311,7 @@ const Menu = () => {
       path: "/history-print",
     },
   ];
+
   //#endregion
 
   //#region useEffect
@@ -354,6 +361,7 @@ const Menu = () => {
       margin={"0 auto"}
 
     >
+      {/* Menu */}
       <Grid container spacing={14} >
         {menuList.map(({ title, icon, path, modal, modalName, disabled }, index: number) => {
           return (
@@ -382,24 +390,35 @@ const Menu = () => {
           );
         })}
       </Grid>
+      {/* Thông tin user */}
       <Box sx={{ position: 'absolute', top: 10, right: -100, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid', padding: '5px', borderRadius: '20px' }}>
+        {/* icon user */}
         <AccountCircleIcon fontSize="large" />
         <Stack marginLeft={'10px'} marginRight={'20px'}>
+          {/* Tên người dùng */}
           <Typography>{dataUser[0].UserName}</Typography>
           <Box display={'flex'} justifyContent={'space-between'}>
+            {/* Số thẻ */}
             <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
             {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
           </Box>
         </Stack>
+        {/* Nút logout */}
         <LogoutIcon sx={{ color: 'white', cursor: 'pointer' }} onClick={() => window.location.reload()} />
       </Box>
 
       <Typography variant="caption" sx={{ position: 'absolute', bottom: 1, color: 'white', opacity: 0.5, textAlign: 'center' }}> Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
+      {/* Modal danh sách thẻ kho */}
       {modalName === 'listAccounting_Card' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={list} />}
+      {/* Modal danh sách ngôn ngữ */}
       {modalName === 'languages' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={myArray} />}
+      {/* Modal danh sách cài đặt */}
       {modalName === 'settings' && dataUser[0].UserRole === 'Administrator' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={listSettings} />}
+      {/* Modal đổi mật khẩu */}
       {modalName === 'change-password' && <ChangePassword open={open} onClose={() => setOpen(false)} />}
+      {/* Modal danh sách in khác */}
       {modalName === 'print_other' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={listPrintOther} />}
+      {/* Chiếc xe chạy */}
       {!showPage && (
         <div className="loading-overlay">
           <img src={!showPage ? Load : ''} style={{ width: 500 }} />

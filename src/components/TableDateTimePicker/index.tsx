@@ -15,7 +15,19 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
-const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
+
+interface TableDateTimePickerProps {
+    columns: GridColDef[];
+    rows: GridRowsProp;
+    handlerowClick?: any,
+    onDoubleClick?: any,
+    arrEditCell?: string[],
+    listChx?: (rows: GridRowsProp) => void,
+    arrNotShowCell?: string[],
+    tableName?: string
+}
+
+const TableDateTimePicker = (props: TableDateTimePickerProps) => {
     const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
 
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
@@ -25,6 +37,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     const [selectedRow, setSelectedRow] = useState("");
     const [selectedColumn, setSelectedColumn] = useState("");
     const dispatch = useDispatch();
+    const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
 
     useEffect(() => {
         setSelected([])
@@ -80,6 +93,16 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                 setEditingCellId(item._id);
                 setSelectedColumn(params);
             }
+            if (params !== 'Arrival_QTY') {
+                const column_target = item
+                if (column_target) {
+                    const qty_roll = Number(column_target.qty_roll);    
+                    const Arrival_QTY = Number(column_target.Arrival_QTY);
+                    if (!isNaN(Arrival_QTY) && (qty_roll > Arrival_QTY + 0.9)) {
+                        dispatch(TextFieldChangeArrayRowDowns({ _id: column_target._id, columnName: 'qty_roll', value: String(Arrival_QTY) }));
+                    }
+                }
+            }
         }
         else {
             if (keyDoubleClick === item._id && typeof onDoubleClick === "function") {
@@ -98,16 +121,17 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
     };
 
     const handleCellBlur = (event: React.FocusEvent<HTMLDivElement>, id: number) => {
-
         setEditingCellId(null);
     };
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
-        dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }))
+        dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }));
+      
+       
     };
+    
 
     const handleDateTimePickerChange = (rowInd: number, colName: string, params: any) => {
-
         if (colName === 'ywsm_Production') {
             dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: moment(params, "MMMM-YYYY").format("MMM-YYYY") }))
             // rows[rowInd][colName] = moment(params, "MMMM-YYYY").format("MMM-YYYY");
@@ -208,7 +232,7 @@ const TableDateTimePicker = (props: { columns: GridColDef[]; rows: GridRowsProp;
                                             >
                                                 {isEditing && !isProductionCell && selectedColumn == key ? (
                                                     <TextField
-                                                        
+
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                                                         size="small"

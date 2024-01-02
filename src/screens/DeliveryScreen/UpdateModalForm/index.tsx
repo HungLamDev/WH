@@ -95,8 +95,8 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
   //#endregion
 
   //#region  useEffect
-  
-  const loadData = () =>{
+
+  const loadData = () => {
     const keys = Object.keys(dataUpdate);
     if (dataUpdate && keys.length !== 0) {
       const url = connect_string + "api/btn_Update_Click_Delivery"
@@ -169,7 +169,7 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
     }
   }
 
-  const updateTrangThaiByMaVatTu = (materialNo: string, ry: string, ry_status: string,Data_Material_Delivery_Serial: string ) => {
+  const updateTrangThaiByMaVatTu = (materialNo: string, ry: string, ry_status: string, Data_Material_Delivery_Serial: string) => {
     const updatedRows = rows.map((row: any) => {
       if (row.Data_Material_Delivery_Serial === Data_Material_Delivery_Serial && row.Material_No === materialNo && row.RY === ry && ry_status === 'In') {
         return { ...row, RY_Status: "Out" };
@@ -251,18 +251,25 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
       <Box sx={style}>
         <Stack height={'100%'}>
           <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+            {/* Nút back */}
             <IconButton className={'back-button'} onClick={onClose}>
               <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
             </IconButton>
+            {/* Tittle */}
             <Typography variant="h4" component="h4" color={'white'}>{t("lblMaterial_Infor") as string}</Typography>
+            {/* Nút xóa */}
             <HighlightOffIcon onClick={deleteRy} className="icon-wrapper" sx={{ color: 'white', width: '45px', height: '60px' }} />
           </Stack>
           <Stack overflow={"hidden"} height={'90%'} >
+            {/* Bảng */}
             <TableCheckBox columns={columns} rows={rows} arrEditCell={['Qty']} onDoubleClick={handleDoubleClick} handlerowClick={handleRowClick} />
           </Stack>
         </Stack>
-        {open && <ModalCofirm onPressOK={handleOk} open={openModal} onClose={() => setOpenModal(false)} title="Bạn có thực sự muốn cập nhật lệnh này ?" />}
+        {/* Modal cofirm */}
+        {open && <ModalCofirm onPressOK={handleOk} open={openModal} onClose={() => setOpenModal(false)} title={t("msgYouWantUpdate") as string} />}
+        {/* Modal cofirm success*/}
         {cofirmType === 'success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgUpdateSuccesful") as string} />}
+        {/* Modal cofirm error*/}
         {cofirmType === 'error' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblUpdateNotSuccess") as string} />}
       </Box>
     </Modal>

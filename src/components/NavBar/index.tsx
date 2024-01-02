@@ -3,7 +3,20 @@ import SideBarToggleButton from "./SideBarToggleButton";
 import { Stack, Typography, Box, Divider, IconButton } from "@mui/material";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import "./style.scss";
-const NavBar = ({ title, navigate, sideBarDisable, sideBarNavigate, state, onShowScan, hidden }: { title?: string, navigate: string, sideBarDisable: boolean, sideBarNavigate: string, state?: any, onShowScan?:any, hidden?: any }) => {
+
+interface NavBarProps {
+  title?: string,
+  navigate: string,
+  sideBarDisable: boolean,
+  sideBarNavigate: string,
+  state?: any,
+  onShowScan?: any,
+  hidden?: any,
+  cancelRequest?: any
+}
+
+const NavBar = (props: NavBarProps) => {
+  const { title, navigate, sideBarDisable, sideBarNavigate, state, onShowScan, hidden, cancelRequest } = props
   return (
     <Stack
       direction={"row"}
@@ -13,13 +26,13 @@ const NavBar = ({ title, navigate, sideBarDisable, sideBarNavigate, state, onSho
       paddingBottom={1}
     >
       <Box position={"relative"} width={"100%"}>
-        <BackButton navigate={navigate} state={state} />
+        <BackButton navigate={navigate} state={state} cancelRequest={cancelRequest} />
         <SideBarToggleButton sideBarDisable={sideBarDisable} sideBarNavigate={sideBarNavigate} />
         <Stack alignItems={"center"}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant={"h4"} sx={{whiteSpace:'pre', textAlign:'center'}}>{title}</Typography>
-            <IconButton sx={{ marginLeft:'20px' }}  >
-              <CameraAltIcon sx={{  display: !hidden ? 'none' : 'block' }} onClick={onShowScan} />
+            <Typography variant={"h4"} sx={{ whiteSpace: 'pre', textAlign: 'center' }}>{title}</Typography>
+            <IconButton sx={{ marginLeft: '20px' }}  >
+              <CameraAltIcon sx={{ display: !hidden ? 'none' : 'block' }} onClick={onShowScan} />
             </IconButton>
           </Box>
           <Divider

@@ -15,7 +15,19 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
-const TableChemistry= (props: { columns: GridColDef[]; rows: GridRowsProp; handlerowClick?: any, onDoubleClick?: any, arrEditCell?: string[], listChx?: (rows: GridRowsProp) => void, arrNotShowCell?: string[], tableName?: string }) => {
+
+interface TableChemistryProps{
+    columns: GridColDef[]; 
+    rows: GridRowsProp;
+     handlerowClick?: any, 
+     onDoubleClick?: any, 
+     arrEditCell?: string[], 
+     listChx?: (rows: GridRowsProp) => void, 
+     arrNotShowCell?: string[], 
+     tableName?: string 
+}
+
+const TableChemistry= (props: TableChemistryProps) => {
     const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
 
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);

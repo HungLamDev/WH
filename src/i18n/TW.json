@@ -379,6 +379,8 @@
     "lblFindAgain":"再次寻找",
     "chxPair":"一对",
     "lblNetworkError": "您的网络有问题",
-    "lblCheck":"分割邮票前选择"
+    "lblCheck":"分割邮票前选择",
+    "btnInventory_In":"存货",
+    "lblReport_Inventory_In":"库存清单"
 
 }
