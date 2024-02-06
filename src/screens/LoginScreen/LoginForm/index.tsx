@@ -65,7 +65,7 @@ const LoginForm = () => {
   //#endregion
 
   //#region Func Logic
-  
+
   const showBuilding = async () => {
 
     const url = connect_string + "api/show_Value_Buiding";
@@ -104,7 +104,7 @@ const LoginForm = () => {
       User_Id: username,
       pass: md5(password).toUpperCase(),
     };
-  
+
     setIsLoading(true);
     try {
       const response = await axios.post(url, dataUser, config);
@@ -119,7 +119,7 @@ const LoginForm = () => {
               WareHouse: selectedWareHouse,
               factoryName: factoryName,
               building: buildingData,
-              TLLanguage:response.data[0]['TLLanguage'] // Sử dụng dữ liệu từ showBuilding ở đây
+              TLLanguage: response.data[0]['TLLanguage'] // Sử dụng dữ liệu từ showBuilding ở đây
             }
           ])
         );
@@ -133,7 +133,7 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   }
-  
+
   //#endregion
 
   return (
@@ -151,7 +151,10 @@ const LoginForm = () => {
             spacing={5}
           >
             <TextField
-              sx={{ width: '90%' }}
+              sx={{
+                width: '90%'
+
+              }}
               label={t("lblUser_Name")}
               variant="outlined"
               autoComplete="off"
@@ -193,13 +196,17 @@ const LoginForm = () => {
                 </MenuItem>
               ))}
             </TextField>
-            <Button variant={"contained"} fullWidth type={"submit"}>
+            <Button
+              style={{background:'#FDE767', fontWeight:'600'}}
+              variant={"contained"}
+              fullWidth type={"submit"}
+            >
               {t("btnLogin")}
             </Button>
             {isLoading && <CircularProgress size={'25px'} color="info" />}
             {open && <ModalCofirm title={t("msgLoginIncorrect") as string} open={open} onClose={() => setOpen(false)} onPressOK={() => setOpen(false)} />}
             {errorModal && <ModalCofirm title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
-         
+
           </Stack>
         </Paper>
       </form>

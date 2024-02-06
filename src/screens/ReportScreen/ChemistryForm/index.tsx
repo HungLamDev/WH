@@ -1,5 +1,6 @@
 //#region import
 import {
+  Backdrop,
   Box,
   Checkbox,
   CircularProgress,
@@ -7,6 +8,7 @@ import {
   Grid,
   Stack,
   Typography,
+  makeStyles,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar";
@@ -40,7 +42,6 @@ import { getWareHouse } from "../../../utils/localStorage";
 import * as ExcelJS from "exceljs";
 import { styletext } from "../../StockinScreenv2/StockinForm";
 import QRScanner from "../../../components/QRScanner";
-import { saFactory_LHG } from "../../../utils/constants";
 import { successSound } from "../../../utils/pathsound";
 import { copyArrayAccountingCard } from "../../../redux/ArrayAccountingCard";
 import TableOriginEdit from "../../../components/TableOriginEdit";
@@ -153,7 +154,6 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const chemistryRow = useSelector((state: any) => state.ArrayChemistry.items);
   const accountCardRow = useSelector((state: any) => state.ArrayAccountingCard.items);
-
   //#endregion
 
   //#region Variable
@@ -173,6 +173,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     currentDay.endOf("month").format("MM/DD/YYYY")
   );
   const [chxChemistry, setChxChemistry] = useState(false);
+  const [chxTotalOrder, setChxTotalOrder] = useState(false);
+  const [chxRY, setChxRY] = useState(false);
   const [chxOrder_No, setChxOrder_No] = useState(false);
   const [lblMaterialNo, setLblMaterialNo] = useState(true);
   const [openmodal, setOpenModal] = useState(false);
@@ -194,7 +196,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const [modalScan, setModalScan] = useState(false)
   const [modalUserCofirm, setModalUserCofirm] = useState(false)
   const [dataUserNote, setDataUserNote] = useState<any>()
-
+  const [isApi, setIsApi] = useState(true)
   //#endregion
 
   //#region useEffect
@@ -282,7 +284,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
-      saFactory: saFactory_LHG,
+      saFactory: dataUser[0].factoryName,
       Rack: "",
       get_version: dataUser[0].WareHouse
     };
@@ -315,17 +317,17 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
-      saFactory: saFactory_LHG,
+      saFactory: dataUser[0].factoryName,
       Barcode: "",
-      get_version: dataUser[0].WareHouse
-
+      get_version: dataUser[0].WareHouse,
+      chxTotal_Order: chxTotalOrder,
+      chxRy: chxRY
     };
     axios
       .post(url, data, configNew)
       .then((response) => {
         const arr: Chemistry[] = [];
         response.data.forEach((item: any, index: any) => {
-
           arr.push({
             _id: index,
             ...item,
@@ -342,6 +344,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   };
   //Select chemistry form Material_No
   const Material_Accounting_Card_Textchanged = (material_no: string) => {
+    setIsApi(false)
     dispatch(clearChemistry());
     setLoading(true);
     setDisable(true)
@@ -357,9 +360,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
-      saFactory: saFactory_LHG,
-      get_version: dataUser[0].WareHouse
-
+      saFactory: dataUser[0].factoryName,
+      get_version: dataUser[0].WareHouse,
+      chxRy: chxRY
     };
     axios
       .post(url, data, configNew)
@@ -395,6 +398,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           setDate(array[array.length - 1].Value_Date_Card);
         });
         dispatch(copyValues(arrWithoutLastRow));
+        setIsApi(true)
       })
       .finally(() => {
         setLoading(false);
@@ -403,7 +407,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   };
 
   const handlerowClickMaterial = (params: any, item: any) => {
-    setTxtMaterial_No(item.Material_No);
+    if (isApi === true) {
+      setTxtMaterial_No(item.Material_No);
+    }
     // Material_Accounting_Card_Textchanged(item.Material_No);
   };
   const handleRow2ClickSign = (params: any, item: any) => {
@@ -437,7 +443,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       Note_Account: itemToProcess.Note_Account,
       RowIndex_Sign_Account: itemToProcess._id,
       Resual: status,
-      get_version: dataUser[0].WareHouse
+      get_version: dataUser[0].WareHouse,
+      dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
+      dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
 
     };
     axios
@@ -449,6 +457,16 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             Img_DF: response.data.Image_Sign,
           };
           dispatch(editItem(updatedRow));
+          const updatedRowsMaterial: any = rowsMaterial.map((item: any) => {
+            if (item.Material_No === txtMaterial_No && item.Num.includes('*')) {
+              return { ...item, Num: item.Num.replace('*', '') };
+            }
+            else if (item.Material_No === txtMaterial_No && !item.Num.includes('*')) {
+              return { ...item, Num: item.Num + "*" };
+            }
+            return item
+          });
+          setRowsMaterial(updatedRowsMaterial)
         }
       })
       .finally(() => {
@@ -558,7 +576,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
         dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
         lblMaterialNo: lblMaterialNo,
-        saFactory: saFactory_LHG,
+        saFactory: dataUser[0].factoryName,
         Rack: "",
         get_version: dataUser[0].WareHouse
 
@@ -808,6 +826,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       >
         <Grid container alignItems={"center"} justifyContent={"center"}>
           <Grid item display={"flex"}>
+            {/* Ngày */}
             <Box className="textsize">
               {" "}
               {t("dcmDate") as string}: {date}
@@ -817,6 +836,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         {/*Thông tin vật tư gồm '{t("lblMaterial_Name") as string}', '{t("lblMaterial_No") as string}','{t("lblUnit") as string}'*/}
         <Grid container alignItems={"center"} justifyContent={"center"} width={"100%"}>
           <Grid item display={"flex"} sx={{ width: "50%", paddingX: "5px" }}>
+            {/* Tên vật tư */}
             <Box sx={{ width: "100%" }}>
               <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%" }}>
                 {t("lblMaterial_Name") as string}:{" "}
@@ -825,12 +845,14 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             </Box>
           </Grid>
           <Grid item display={"flex"} sx={{ width: "25%", paddingX: "5px" }}>
+            {/* Mã vật tư ở trên */}
             <Box className="textsize" >
               {t("lblMaterial_No") as string}:{" "}
               <span style={{ color: "yellow" }}>{materialNo}</span>
             </Box>
           </Grid>
           <Grid item display={"flex"} sx={{ width: "10%", paddingX: "5px" }}>
+            {/* Đơn vị */}
             <Box className="textsize" >
               {t("lblUnit") as string}:{" "}
               <span style={{ color: "yellow" }}>{unit}</span>
@@ -845,6 +867,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           justifyContent={"center"}
         >
           <Grid item xs={2} textAlign={"right"}>
+            {/* Check mã vật tư */}
             <FormControlLabel
               sx={styletext}
               control={
@@ -867,6 +890,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               justifyContent={"center"}
               display={"flex"}
             >
+              {/* Input mã vật tư */}
               <InputField
                 customClass="customStack1"
                 handle={handleChangeTxtMaterialNo}
@@ -878,6 +902,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             </Box>
           </Grid>
           <Grid item xs={2} justifyContent={"center"} textAlign={"right"}>
+            {/* Check số phiếu */}
             <FormControlLabel
               sx={styletext}
               control={
@@ -893,6 +918,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             />
           </Grid>
           <Grid item xs={3} justifyContent={"center"} display={"flex"}>
+            {/* Input số phiếu */}
             <InputField
               customClass="customStack1"
               handle={handleChangeTxtOrderNo}
@@ -903,6 +929,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             />
           </Grid>
           <Grid item xs={2}>
+            {/* Check hóa chất */}
             <FormControlLabel
               sx={styletext}
               control={
@@ -925,6 +952,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           spacing={0.5}
           justifyContent={"center"}
         >
+          <Grid item xs={1}></Grid>
           <Grid
             item
             xs={1}
@@ -1037,7 +1065,22 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               <ArrowForwardIosOutlinedIcon />
             </Box>
           </Grid>
-          <Grid item xs={1}></Grid>
+          <Grid item xs={2}>
+            {/* Check tổng đơn */}
+            <FormControlLabel
+              sx={styletext}
+              control={
+                <Checkbox
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setChxTotalOrder(event.target.checked)
+                  }
+                  defaultChecked={false}
+                  value={chxTotalOrder}
+                />
+              }
+              label={"Tổng đơn"}
+            />
+          </Grid>
         </Grid>
         {/* Các button */}
         <Grid
@@ -1047,7 +1090,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           // display={}
           justifyContent={"center"}
         >
-          <Grid item xs={1.5}></Grid>
+          <Grid item xs={1.5} display={"flex"} alignItems={"center"} >
+            {loading ? loading : disable && (<CircularProgress size={'25px'} color="info" />)}
+          </Grid>
           <Grid
             item
             xs={1.5}
@@ -1055,9 +1100,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             justifyContent={"center"}
             sx={{ paddingTop: "5px" }}
           >
-
             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={loading ? loading : disable} />
-
           </Grid>
           <Grid
             item
@@ -1116,8 +1159,21 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               />
             )}
           </Grid>
-          <Grid item xs={1.5} display={"flex"} alignItems={"center"} >
-            {loading ? loading : disable && (<CircularProgress size={'25px'} color="info" />)}
+          <Grid item xs={1} style={{marginLeft:'8px'}}>
+            {/* Check tổng đơn */}
+            <FormControlLabel
+              sx={styletext}
+              control={
+                <Checkbox
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setChxRY(event.target.checked)
+                  }
+                  defaultChecked={false}
+                  value={chxRY}
+                />
+              }
+              label={"RY"}
+            />
           </Grid>
         </Grid>
       </Box>
@@ -1125,7 +1181,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       {/* Bảng show */}
 
       <Stack overflow={"hidden"} direction="row" sx={{ height: "100%" }}>
-        <Grid sx={{ width: "14%" }}>
+        <Grid container sx={{ width: "14%" }}>
           <TableOrigin
             columns={columnsMaterial}
             rows={rowsMaterial}

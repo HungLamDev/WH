@@ -36,6 +36,7 @@ import { successSound } from '../../../utils/pathsound';
 import { clearArrayStockout } from '../../../redux/ArrayStockout';
 import TableCheckBoxRedux from '../../../components/TableCheckBoxRedux';
 import { createConfig, config } from '../../../utils/api';
+import { ModalAccountingCard } from '../../StockoutScreen/StockoutForm';
 //#endregion
 
 const DeliveryScreen = () => {
@@ -153,9 +154,9 @@ const DeliveryScreen = () => {
   };
   //#endregion
   const [openDateFrom, setOpenDateFrom] = useState(moment().add('day', -3).format("YYYY/MM/DD"));
-  const [openDateTo, setOpenDateTo] = useState(currentDay);
-  const [updateDateFrom, setUpdateDateFrom] = useState(currentDay);
-  const [updateDateTo, setUpdateDateTo] = useState(currentDay);
+  const [openDateTo, setOpenDateTo] = useState(moment());
+  const [updateDateFrom, setUpdateDateFrom] = useState(moment());
+  const [updateDateTo, setUpdateDateTo] = useState(moment());
   const rows_modal: any[] = [];
   const [rowsModal, setRowsModal] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
@@ -185,6 +186,8 @@ const DeliveryScreen = () => {
   const [onFocus, setOnFocus] = useState(false)
   const [chxAll, setChxAll] = useState(false)
   const [isApi, setIsApi] = useState(true)
+  const [openModalAccounting, setOpenModalAccounting] = useState(false)
+  const [datalAccounting, setDataAccounting] = useState<any[]>([])
   const contentDetail = locate.state
   //#endregion
 
@@ -195,6 +198,7 @@ const DeliveryScreen = () => {
 
   const handleAcceptNo = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAcceptNo(event.target.value);
+
   };
 
   const handleChxOffSet = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -270,6 +274,26 @@ const DeliveryScreen = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderNo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+       
+         if (acceptNo.length >= 15 ) {
+          const text = await handleShowMaterialFromBarcode(acceptNo);
+          if(text !== null){
+            setAcceptNo(text);
+          }
+        }
+      } finally {
+        setIsLoading(false)
+      }
+    };
+  
+    fetchData(); // Call the async function immediately
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [acceptNo]);
   //#endregion
 
   //#region Func Logic
@@ -682,8 +706,12 @@ const DeliveryScreen = () => {
   }
 
   const handleRowClick = (colName: any, params: any) => {
+    const data = {
+      Value_Material: params.Material_No
+    }
     setDataUpdate({ params: params, dgvcount: ArrayDelivery.length })
     setDataStatistic(params.Material_No)
+    setDataAccounting([data])
   }
 
   const exportToExcel = () => {
@@ -833,6 +861,23 @@ const DeliveryScreen = () => {
       }
     })
   }
+
+  const handleShowMaterialFromBarcode = async (barcode: any) => {
+    setIsLoading(true);
+    const url = connect_string + "api/Get_Show_Total_Infor";
+    const data = {
+      BarCode: barcode
+    };
+
+    try {
+      const response = await axios.post(url, data, config);
+      setIsLoading(false);
+      return response.data.Material_No;
+    } finally {
+      setIsLoading(false);
+      // Handle error if needed
+    }
+  };
   //#endregion
 
   return (
@@ -1019,6 +1064,9 @@ const DeliveryScreen = () => {
           <MyButton name={t('btnStatistical')} onClick={() => handleOpen('statistic')} disabled={disable} />
           {/* Kiểm tra */}
           <MyButton name={t('lblCheckData')} onClick={() => navigate("/check-data")} disabled={disable} />
+          {/* Thẻ kho */}
+          <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
+          <ModalAccountingCard open={openModalAccounting} handleClose={() => setOpenModalAccounting(false)} data={datalAccounting[0]?.Value_Material ? datalAccounting : null} />
           {/* Check phiếu bù */}
           <FormGroup>
             <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxOffset} onChange={handleChxOffSet} />} label={t('chxOffset')} />

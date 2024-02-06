@@ -5,13 +5,15 @@ import {
   TableRow,
   TableBody,
   TableCell,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import { orange } from "@mui/material/colors";
 import { useState } from "react";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { includes } from "lodash";
 
-interface TableOriginProps{
+interface TableOriginProps {
   columns: GridColDef[];
   rows: any;
   handlerowClick?: any;
@@ -42,7 +44,7 @@ const TableOrigin = (props: TableOriginProps) => {
   };
   return (
     <TableContainer sx={{ height: "100%" }}>
-      <Table size={"small"} stickyHeader>
+      <Table size={"small"} stickyHeader >
         <TableHead>
           <TableRow>
             {columns.map((item: any, index: number) => {
@@ -82,7 +84,7 @@ const TableOrigin = (props: TableOriginProps) => {
                   backgroundColor:
                     item._id === selectedRow ? "#415a77" : "inherit",
                   cursor: "pointer",
-                  height:'35px'
+                  height: '35px'
                 }}
               >
                 {columns.map((column: GridColDef, i: number) => {
@@ -98,7 +100,7 @@ const TableOrigin = (props: TableOriginProps) => {
                   }
                   else if ((item.Stamp_Caculator && item.Stamp_Caculator !== "0") || (item.Stamp_Caculator && item.Stamp_Caculator !== 0)) {
                     textColor = "orange";
-                  } else if (item.Order_No_Out1 ) {
+                  } else if (item.Order_No_Out1) {
                     const str = item.Order_No_Out1.split('(');
                     if (str[0] === '0') {
                       textColor = "orangered";
@@ -152,6 +154,7 @@ const TableOrigin = (props: TableOriginProps) => {
         </TableBody>
       </Table>
     </TableContainer>
+
   );
 };
 

@@ -9,7 +9,7 @@ import {
     TextField,
 } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import { useState, useEffect } from "react";
@@ -257,7 +257,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                         monthAndYear: "MM/YYYY",
                                                     }}>
 
-                                                        <DateTimePicker
+                                                        <DesktopDateTimePicker
                                                             className="td-responesive"
                                                             format={"MMMM YYYY"}
                                                             // value={selectedDateArr[index]}
@@ -296,7 +296,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                             monthAndYear: "MM/YYYY",
                                                         }}>
 
-                                                            <DateTimePicker
+                                                            <DesktopDateTimePicker
                                                                 className="td-responesive"
                                                                 format={"YYYY-MM-DD"}
                                                                 // value={selectedDateArr[index]}

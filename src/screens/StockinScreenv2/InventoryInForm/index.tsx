@@ -1,5 +1,5 @@
 //#region Import
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar"
 import { useTranslation } from "react-i18next";
 import { Autocomplete, Box, CircularProgress, FormControlLabel, Grid, Stack, TextField, Typography } from "@mui/material";
@@ -11,10 +11,74 @@ import { successSound } from "../../../utils/pathsound";
 import InputField from "../../../components/InputField";
 import * as ExcelJS from "exceljs";
 import moment from "moment";
+import { GridColDef } from "@mui/x-data-grid";
+import { connect_string } from "../../LoginScreen/ChooseFactory";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { config } from "../../../utils/api";
 
 //#endregion
 const InventoryIn = () => {
     const { t } = useTranslation();
+
+    //#region column header table
+    const columns: GridColDef[] = [
+        {
+            field: 'Order_No',
+            headerName: t("dcmOrder_No") as string,
+            width: 160,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'Material_No',
+            headerName: t("dcmMaterial_No") as string,
+            width: 150,
+            editable: true,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'Rack',
+            headerName: t("dcpRack") as string,
+            width: 160,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'QTY',
+            headerName: t("dcmQTY") as string,
+            width: 300,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'Material_Name',
+            headerName: t("dcmMaterial_Name") as string,
+            width: 160,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'Supplier',
+            headerName: t("dcpSupplier") as string,
+            width: 160,
+            headerClassName: 'custom-header'
+        },
+        {
+            field: 'Count_Roll',
+            headerName: t("dcmRoll") as string,
+            width: 160,
+            headerClassName: 'custom-header'
+        },
+    ];
+    //#endregion
+
+    //#region useSelector
+    const dataUser = useSelector((state: any) => state.UserLogin.user);
+    //#endregion
+
+    //#region useEffect 
+    useEffect(() => {
+        handleLoadRack()
+    }, [])
+    //#endregion
+
     //#region Variable
     const [modalScan, setModalScan] = useState(false)
     const [rack, setRack] = useState('')
@@ -23,7 +87,7 @@ const InventoryIn = () => {
     const [supplierNo, setSupplierNo] = useState('')
     const [listRack, setListRack] = useState([])
     const [disable, setDisable] = useState(false)
-
+    const [listMaterial, setListMaterial] = useState([])
     //#endregion
 
     //#region Func OnChange Input
@@ -42,11 +106,43 @@ const InventoryIn = () => {
     //#endregion
 
     //#region Func Logic
+    const handleSearch = () => {
+        if (rack !== "" || orderNo !== "" || materialNo !== "" || supplierNo !== "") {
+            const url = connect_string + "api/Search_Inventory_In"
+            const data = {
+                cboRack_ID: rack,
+                txtOrderNo: orderNo,
+                txtMaterial_No: materialNo,
+                txtSupplier: supplierNo,
+                version: dataUser[0].WareHouse
+            }
+            axios.post(url, data, config).then(response => {
+                const arr = response.data.map((item: any, index: any) => ({
+                    Order_No: item.Order_No,
+                    Material_No: item.Material_No,
+                    Rack: item.Rack,
+                    QTY: item.QTY,
+                    Material_Name: item.Material_Name,
+                    Supplier: item.Supplier,
+                    Count_Roll: item.Count_Roll
+                }))
+                setListMaterial(arr)
+            })
+        }
+    }
+
     const handleRefresh = () => {
         setRack('')
         setOrderNo('')
         setMaterialNo('')
         setSupplierNo('')
+    }
+
+    const handleLoadRack = () => {
+        const url = connect_string + 'api/Load_Rack_Inventory_In'
+        axios.post(url).then((response) => {
+            setListRack(response.data)
+        })
     }
     //#region Excel
     const exportToExcel = () => {
@@ -69,26 +165,19 @@ const InventoryIn = () => {
                 t("dcpSupplier"),
                 t("dcmRoll"),
             ],
-            // ...rows.map((row, i) => {
-            //     tong = tong + row.QTY;
-            //     return [
-            //         i + 1,
-            //         row.Rack,
-            //         row.Order_No,
-            //         "",
-            //         row.Material_No,
-            //         row.Work_Order,
-            //         row.QTY,
-            //         row.Material_Name,
-            //         row.Supplier,
-            //         row.Color,
-            //         row.Size,
-            //         row.Production,
-            //         row.Supplier_No,
-            //         row.User_Serial_Key,
-            //         row.Roll,
-            //     ];
-            // }),
+            ...listMaterial.map((row: any, i) => {
+                tong = tong + row.QTY;
+                return [
+                    i + 1,
+                    row.Order_No,
+                    row.Material_No,
+                    row.Rack,
+                    row.QTY,
+                    row.Material_Name,
+                    row.Supplier,
+                    row.Count_Roll
+                ];
+            }),
         ];
         // Gán giá trị cho các ô dựa trên dữ liệu
         data.forEach((row, rowIndex) => {
@@ -100,8 +189,8 @@ const InventoryIn = () => {
                     vertical: "middle",
                     horizontal: "center",
                 };
-                cell.font= {
-                    family:2
+                cell.font = {
+                    family: 2
                 }
                 if (rowIndex > 3) {
                     cell.border = {
@@ -111,8 +200,8 @@ const InventoryIn = () => {
                         right: { style: "thin" },
                     };
                     if (rowIndex === 4) {
-                        cell.font={
-                            bold:true
+                        cell.font = {
+                            bold: true
                         }
                         // Tính toán độ rộng của cell dựa trên độ dài của giá trị trong cell
                         const cellLength = String(cellValue).length;
@@ -182,7 +271,6 @@ const InventoryIn = () => {
         });
     };
     //#endregion
-
     //#endregion
     return (
         <FullScreenContainerWithNavBar hidden={false} sideBarDisable={true} sideBarNavigate="" title={t("lblReport_Inventory_In") as string} navigate={"/stock-in"}>
@@ -255,7 +343,7 @@ const InventoryIn = () => {
                 <Stack>
                     <Grid container display={'flex'} justifyContent={'center'} marginTop={'10px'}>
                         <Grid item xs={1.5}>
-                            <MyButton name={t("btnSearch") as string} disabled={disable} />
+                            <MyButton name={t("btnSearch") as string} disabled={disable} onClick={handleSearch} />
                         </Grid>
                         <Grid item xs={1.5}>
                             <MyButton name={t("btnExcel") as string} onClick={exportToExcel} disabled={disable} />
@@ -267,7 +355,7 @@ const InventoryIn = () => {
                 </Stack>
             </Box>
             <Stack overflow={"hidden"} sx={{ height: '100%' }}>
-                <TableOrigin columns={[]} rows={[]} />
+                <TableOrigin columns={columns} rows={listMaterial} />
             </Stack>
         </FullScreenContainerWithNavBar>
     )

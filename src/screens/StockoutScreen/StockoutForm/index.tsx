@@ -242,7 +242,7 @@ const StockoutScreen = () => {
     // useEffect(() => {
 
     //     //    dispatch(congTotalQtyOut(ArrayStockout.length.toString()))
-       
+
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [ArrayStockout])
 
@@ -263,8 +263,11 @@ const StockoutScreen = () => {
             if (stockout) {
                 const totalQty = listChx
                     .filter((item: any) => item.Material_No === stockout[0].Value_Material)
-                    .reduce((accumulator: any, currentItem: any) => accumulator + currentItem.QTY, 0);
-    
+                    .reduce((accumulator: any, currentItem: any) => {
+                        // Chuyển đổi currentItem.QTY sang Decimal trước khi cộng vào accumulator
+                        return accumulator.plus(new Decimal(currentItem.QTY));
+                    }, new Decimal(0)); // Khởi tạo accumulator với giá trị Decimal 0
+
                 const result = new Decimal(stockoutTemp).minus(totalQty).toNumber();
                 // setStockOutDetailValue(stockoutTemp - totalQty)
                 setStockOutDetailValue(result)
@@ -280,43 +283,51 @@ const StockoutScreen = () => {
     }, [])
 
     useEffect(() => {
+        //#region Nhập cải thiện
+        // if (qrcode.length === 15 || qrcode.length === 16) {
+        //     checkMaterial(qrcode).then(result => {
+        //         if ((result === "Pass" && result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") || result === "Done_Insert") {
+        //             handleOutAll(qrcode)
+        //         }
+        //         else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") {
+        //             handleOpenConfirm('confirm-Material')
+        //         }
+        //     })
+        // }
+        //#endregion
+
+        //Bản cũ
         if (qrcode.length === 15 || qrcode.length === 16) {
-            checkMaterial(qrcode).then(result => {
-                if((result === "Pass" && result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") || result ==="Done_Insert"){
-                    handleOutAll(qrcode)
-                }
-                else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode"){
-                    handleOpenConfirm('confirm-Material')
-                }
-            })
+           handleOutAll(qrcode)
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrcode])
     //#endregion
 
     //#region Func Logic 
-    const onPressOK = (params: any) =>{
-        if(params !== ""){
+    const onPressOK = (params: any) => {
+        if (params !== "") {
             const url = connect_string + "api/Confirm_QC_Check_Fail"
             const data = {
                 user_id: dataUser[0].UserId,
                 Barcode: qrcode,
                 Conntent_Input: params
             }
-            axios.post(url,data,config).then(response => {
-                if(response.data === true){
+            axios.post(url, data, config).then(response => {
+                if (response.data === true) {
                     handleCloseConfirm()
                     handleOutAll(qrcode)
                 }
-                else{
+                else {
                     handleOpenConfirm('network-error');
                 }
-            }).catch(()=>{
+            }).catch(() => {
                 handleOpenConfirm('network-error');
             })
         }
     }
-    
+
     const handleOpenConfirm = (confirmName: string) => {
         setCofirmType(confirmName)
         setOpenCofirm(true)
@@ -351,13 +362,13 @@ const StockoutScreen = () => {
     }
 
     function checkMaterial(barcode: string): Promise<any> {
-      
+
         const url = connect_string + "api/QC_Check_Marterial";
         const data = {
             user_id: dataUser[0].UserId,
             Barcode: barcode
         };
-    
+
         return new Promise((resolve, reject) => {
             axios.post(url, data, config)
                 .then(response => {
@@ -365,7 +376,7 @@ const StockoutScreen = () => {
                     setTitle(response.data)
                 })
                 .catch(error => {
-                   
+
                     handleOpenConfirm('network-error');
                     reject(error); // Reject với lỗi nếu có lỗi xảy ra
                 })
@@ -590,7 +601,7 @@ const StockoutScreen = () => {
                                                     label={t("gpbMode")}
                                                 />
                                             </Grid>
-                                              {/* Check màu nếu trong giao hàng */}
+                                            {/* Check màu nếu trong giao hàng */}
                                             {
                                                 stockout &&
                                                 <Grid item xs={4}>
@@ -667,7 +678,7 @@ const StockoutScreen = () => {
                                         }
                                     </Grid>
                                     <Grid item xs={12} justifyContent={'flex-end'} display={'flex'} paddingRight={'16px'}>
-                                         {/* Đến ngày */}
+                                        {/* Đến ngày */}
                                         {search &&
                                             <DatePickerField label={''} valueDate={(params: any) => { getValueDate(params, 'dateEnd') }} />
                                         }
@@ -705,7 +716,9 @@ const StockoutScreen = () => {
                                 }
                             </Grid>
                             {/* tổng */}
-                            <Typography className="textsize">{t("lblQty_In")} {stockout ? stockoutDetailValue : valuetotal}</Typography>
+                            <Typography className="textsize">{t("lblQty_In")}
+                                {stockout ? stockoutDetailValue : valuetotal}
+                            </Typography>
                             {/* tổng xuất */}
                             <Typography className="textsize">{t("lblQty_Out")} {TotalQtyOut}</Typography>
                         </Stack>
@@ -716,8 +729,8 @@ const StockoutScreen = () => {
                 <TableStockOut chxColor={chcolor} listChx={(params: any) => setListChx(params)} tableName="stockout-detail" columns={columns} rows={ArrayStockout} onDoubleClick={handleDoubleClick} handlerowClick={RowClick} arrNotShowCell={arrnotshow} />
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
-                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}            
-                {cofirmType === 'confirm-Material' && <FormConfirmMaterial title={title} open={openCofirm} onClose={handleCloseConfirm} onPressOK={ onPressOK} />}
+                {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
+                {cofirmType === 'confirm-Material' && <FormConfirmMaterial title={title} open={openCofirm} onClose={handleCloseConfirm} onPressOK={onPressOK} />}
                 {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}
             </Stack>
         </FullScreenContainerWithNavBar>
@@ -726,7 +739,7 @@ const StockoutScreen = () => {
 };
 
 
-const ModalAccountingCard = ({ open, handleClose, data }: { open: any, handleClose: any, data: any }) => {
+export const ModalAccountingCard = ({ open, handleClose, data }: { open: any, handleClose: any, data: any }) => {
     const style = {
         position: 'absolute',
         top: '50%',

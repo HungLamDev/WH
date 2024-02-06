@@ -192,25 +192,25 @@ const InventoryScreen = () => {
       saFactory: dataUser[0].factoryName
     }
 
-
-
     axios.post(url, data, configNew,).then(response => {
-      const arr = response.data.map((item: any, index: any) => ({
-        _id: index + 1,
-        Material_No: item.Material_No,
-        Rack: item.Rack,
-        Material_Name: item.Distinct_String,
-        Total_Qty: item.Total_Qty,
-        Stamp_Qty_ERP: item.Stamp_Qty_ERP,
-        Stamp_Caculator: item.Stamp_Caculator,
-        Unit: item.Unit,
-        Content: item.Content,
-        Count_Roll: item.Count_Roll
-      }))
-      dispatch(copyArrayInventory(arr))
-      setRows(arr)
-      if (arr.length > 0) {
-        settxtScan('')
+      if (response.data[0].Material_No !== '') {
+        const arr = response.data.map((item: any, index: any) => ({
+          _id: index + 1,
+          Material_No: item.Material_No,
+          Rack: item.Rack,
+          Material_Name: item.Distinct_String,
+          Total_Qty: item.Total_Qty,
+          Stamp_Qty_ERP: item.Stamp_Qty_ERP,
+          Stamp_Caculator: item.Stamp_Caculator,
+          Unit: item.Unit,
+          Content: item.Content,
+          Count_Roll: item.Count_Roll
+        }))
+        dispatch(copyArrayInventory(arr))
+        setRows(arr)
+        if (arr.length > 0) {
+          settxtScan('')
+        }
       }
     }).finally(() => {
       setIsLoading(false)

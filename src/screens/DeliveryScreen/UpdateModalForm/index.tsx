@@ -12,6 +12,7 @@ import { connect_string } from "../../LoginScreen/ChooseFactory";
 import axios from "axios";
 import TableCheckBox from "../../../components/TableCheckBox";
 import ModalCofirm from "../../../components/ModalConfirm";
+import InputField from "../../../components/InputField";
 //#endregion
 function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: any, dataUpdate: any }) {
   const { t } = useTranslation();
@@ -87,6 +88,7 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
 
   //#region Variable
   const [rows, setRows] = useState<any[]>([])
+  const [rowsTemp, setRowsTemp] = useState<any[]>([])
   const [openModal, setOpenModal] = useState(false)
   const [ryUpdate, setRYUpdate] = useState<any>({})
   const [item, setItem] = useState<any>({})
@@ -116,6 +118,7 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
           ...item
         }))
         setRows(arr)
+        setRowsTemp(arr)
       })
 
     }
@@ -239,6 +242,12 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
   const handleRowClick = (colName: string, item: any) => {
     setItem(item)
   }
+
+  // const handleSearch = (event: any) => {
+  //   const valueRY = event.target.value;
+  //   const rowFilter = rowsTemp.filter((item: any) => item.RY.toLowerCase().indexOf(valueRY) !== -1);
+  //   setRows(rowFilter);
+  // };
   //#endregion
 
   return (
@@ -262,6 +271,7 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
           </Stack>
           <Stack overflow={"hidden"} height={'90%'} >
             {/* Bảng */}
+            {/* <InputField label={"Tìm kiếm"} handle={(event: any) => handleSearch(event)} keydown={null} /> */}
             <TableCheckBox columns={columns} rows={rows} arrEditCell={['Qty']} onDoubleClick={handleDoubleClick} handlerowClick={handleRowClick} />
           </Stack>
         </Stack>

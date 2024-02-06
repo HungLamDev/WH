@@ -107,21 +107,28 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     //#region useEffect
     useEffect(() => {
+        //#region Nhập cải thiện
+        // if (scanqr.length === 15 || scanqr.length === 16) {
+        //     if (form === 'stockout') {
+        //         checkMaterial(scanqr).then(result => {
+        //             if ((result === "Pass" && result !== "K ") || result === "Done_Insert") {
+        //                 ScanQR()
+        //             }
+        //             else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") {
+        //                 handleOpenConfirm('confirm-Material')
+        //             }
+        //         })
+        //     }
+        //     else {
+        //         ScanQR()
+        //     }
+        // }
+        //#endregion
+        // Bản cũ
         if (scanqr.length === 15 || scanqr.length === 16) {
-            if(form === 'stockout'){
-                checkMaterial(scanqr).then(result => {
-                    if((result === "Pass" && result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode")|| result ==="Done_Insert"){
-                        ScanQR()
-                    }
-                    else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode"){
-                        handleOpenConfirm('confirm-Material')
-                    }
-                })
-            }
-            else{
-                ScanQR()
-            }
+            ScanQR()
         }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scanqr])
 
@@ -134,31 +141,31 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#endregion
 
     //#region Func Logic
-    const onPressOK = (params: any) =>{
-        if(params !== ""){
-            if(params !== ""){
+    const onPressOK = (params: any) => {
+        if (params !== "") {
+            if (params !== "") {
                 const url = connect_string + "api/Confirm_QC_Check_Fail"
                 const data = {
                     user_id: dataUser[0].UserId,
                     Barcode: scanqr,
                     Conntent_Input: params
                 }
-                axios.post(url,data,config).then(response => {
-                    if(response.data === true){
+                axios.post(url, data, config).then(response => {
+                    if (response.data === true) {
                         handleCloseConfirm()
                         ScanQR()
                     }
-                    else{
+                    else {
                         handleOpenConfirm('network-error');
                     }
-                }).catch(()=>{
+                }).catch(() => {
                     handleOpenConfirm('network-error');
                 })
             }
-            
+
         }
     }
-    const onPressCancel = () =>{
+    const onPressCancel = () => {
         handleCloseConfirm()
         setScanQR('')
         setBarcode('')
@@ -179,7 +186,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     const calculateRemainingQty = () => {
-        const remainingQty =new Decimal(QTY).minus(qtyout).toNumber();
+        const remainingQty = new Decimal(QTY).minus(qtyout).toNumber();
         return remainingQty >= 0 ? Number(remainingQty) : 0;
     };
 
@@ -294,7 +301,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                         setScanQR(Barcode)
                         // handleOpenConfirm('ok')
                     }
-                    else{
+                    else {
                         handleOpenConfirm('materialOut')
                     }
                 }).finally(() => {
@@ -305,7 +312,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
             else {
                 setIsLoading(true)
                 setDisable(true)
-                const remainingQty =new Decimal(QTY).plus(qtyout).toNumber();
+                const remainingQty = new Decimal(QTY).plus(qtyout).toNumber();
                 const url = connect_string + 'api/btn_Save_Partial'
                 const data = {
                     rbtImport: true,
@@ -351,7 +358,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                         setScanQR(Barcode)
                         // handleOpenConfirm('ok')
                     }
-                    else{
+                    else {
                         handleOpenConfirm('materialOut')
                     }
                 }).finally(() => {
@@ -381,13 +388,13 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     function checkMaterial(barcode: string): Promise<any> {
-      
+
         const url = connect_string + "api/QC_Check_Marterial";
         const data = {
             user_id: dataUser[0].UserId,
             Barcode: barcode
         };
-    
+
         return new Promise((resolve, reject) => {
             axios.post(url, data, config)
                 .then(response => {
@@ -395,7 +402,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     setTitle(response.data)
                 })
                 .catch(error => {
-                   
+
                     handleOpenConfirm('network-error');
                     reject(error); // Reject với lỗi nếu có lỗi xảy ra
                 })
@@ -413,7 +420,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
             <Box sx={style}>
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                       {/* Nút back */}
+                        {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
                             <BiArrowBack className="icon-wrapper" sx={{ color: 'white' }} />
                         </IconButton>

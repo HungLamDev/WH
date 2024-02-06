@@ -70,12 +70,13 @@ const ChooseFactory = () => {
     useEffect(() => {
         if (selectedValue === 'LVL') {
             connect_string = 'https://192.168.60.21:7777/'
-            // connect_string =  'https://192.168.32.81/'
+            //  connect_string =  'https://192.168.32.81/'
         }
         else if (selectedValue === 'LHG') {
-            // connect_string = 'https://192.168.30.100:7777/'
+            connect_string = 'https://192.168.30.100:7777/'
             // connect_string = 'https://192.168.32.84:7777/'
-            connect_string =  'https://192.168.32.81/'
+            // connect_string = 'https://192.168.32.81/'
+
         }
     }, [selectedValue])
     //#endregion

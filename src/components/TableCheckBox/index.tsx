@@ -216,6 +216,7 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
                       >
                         {isEditing ? (
                           <TextField
+                            autoFocus
                             className="td-responesive"
                             defaultValue={item[key]}
                             onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
