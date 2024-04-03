@@ -67,42 +67,42 @@ const DeliveryScreen = () => {
     {
       field: "Date_Start",
       headerName: t("dcmDate") as string,
-      width: 150,
+      width: 100,
     },
     {
       field: "Num_No",
       headerName: t("dcpNum_No") as string,
-      width: 150,
+      width: 120,
     },
     {
       field: "Material_No",
       headerName: t("dcmMaterial_No") as string,
-      width: 150,
+      width: 110,
     },
     {
       field: "Count_Stock_Qty",
       headerName: t("dcpInventory") as string,
-      width: 150,
+      width: 100,
     },
     {
       field: "Material_Name",
       headerName: t("dcmMaterial_Name") as string,
-      width: 250,
+      width: 150,
     },
     {
       field: "Color",
       headerName: t("dcmColor") as string,
-      width: 150,
+      width: 120,
     },
     {
       field: "RY_Status",
       headerName: t("dcmQTY") as string,
-      width: 150,
+      width: 100,
     },
     {
       field: "RY",
       headerName: t("chxRY") as string,
-      width: 400,
+      width: 270,
     },
     {
       field: "Rack",
@@ -112,7 +112,7 @@ const DeliveryScreen = () => {
     {
       field: "RY_Status1",
       headerName: t("dcpContent") as string,
-      width: 200,
+      width: 150,
     },
     {
       field: "RY_Status2",

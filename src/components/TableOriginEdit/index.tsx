@@ -154,7 +154,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                       key={key}
                       align="left"
                       className="td-responesive"
-                      sx={{ color: textColor }}
+                      sx={{ color: textColor, textAlign: key === "Img_DF" ? "center" : 'left' }}
                       onClick={() => {
                         handleRowClick(key, item);
                         setSelectedRow(
@@ -173,7 +173,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                             <img
                               src={"data:image/jpeg;base64," + item[key]}
                               alt=""
-                              height="20px"
+                              height="50px"
                             />
                           )
                           : isEditing && ( item["Qty_Redundant"] && item["Qty_Redundant"] !== "") && (manyRow && item._id !== rows.length - 2) || (oneRow && item._id !== rows.length - 1)

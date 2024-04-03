@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Load from "../../../src/assets/load.gif";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { getAppLang, setAppLang, setWareHouse } from "../../utils/localStorage";
+import { getAppLang, setAppLang, setWareHouse, setWareHouseAcount } from "../../utils/localStorage";
 import { LanguageName } from "../../screens/LoginScreen/ChooseLanguage/type";
 import { useState } from "react";
 import './style.scss'
@@ -67,7 +67,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
     }
 
     const handleClickWareHouse = (wareHouse: string) => {
-        setWareHouse(wareHouse)
+        setWareHouseAcount(wareHouse)
     }
 
     // api lưu log check point

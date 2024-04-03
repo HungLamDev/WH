@@ -193,7 +193,7 @@ const InventoryScreen = () => {
     }
 
     axios.post(url, data, configNew,).then(response => {
-      if (response.data[0].Material_No !== '') {
+      if ( response.data.length === 0 || response.data[0].Material_No !== '') {
         const arr = response.data.map((item: any, index: any) => ({
           _id: index + 1,
           Material_No: item.Material_No,

@@ -15,6 +15,7 @@ import moment from "moment";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
+import Decimal from "decimal.js";
 
 interface TableDateTimePickerProps {
     columns: GridColDef[];
@@ -96,9 +97,10 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
             if (params !== 'Arrival_QTY') {
                 const column_target = item
                 if (column_target) {
-                    const qty_roll = Number(column_target.qty_roll);    
-                    const Arrival_QTY = Number(column_target.Arrival_QTY);
-                    if (!isNaN(Arrival_QTY) && (qty_roll > Arrival_QTY + 0.9)) {
+                    const qty_roll = new Decimal(column_target.qty_roll);    
+                    const Arrival_QTY = new Decimal(column_target.Arrival_QTY);
+                    const result = new Decimal(Arrival_QTY).plus(0.9).toNumber();
+                    if (!isNaN(Arrival_QTY.toNumber()) && (qty_roll.toNumber() > result)) {
                         dispatch(TextFieldChangeArrayRowDowns({ _id: column_target._id, columnName: 'qty_roll', value: String(Arrival_QTY) }));
                     }
                 }
@@ -126,7 +128,6 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
         dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }));
-      
        
     };
     

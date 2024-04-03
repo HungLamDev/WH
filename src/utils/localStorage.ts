@@ -34,3 +34,16 @@ export const clearFactory = (): void => {
 export const getFactory = (): any | null => {
   return localStorage.getItem("Factory") as any;
 };
+
+
+// chọn kho kế toán
+
+export const setWareHouseAcount = (name: string): void => {
+  localStorage.setItem("WareHouseAcount", name);
+};
+export const clearWareHouseAcount = (): void => {
+  localStorage.removeItem("WareHouseAcount");
+};
+export const getWareHouseAcount = (): any | null => {
+  return localStorage.getItem("WareHouseAcount") as any;
+};

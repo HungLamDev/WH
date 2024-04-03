@@ -165,10 +165,10 @@ const TableDelivery = (props: TableDeliveryProps) => {
 
   return (
     <TableContainer sx={{ height: '100%' }}>
-      <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
-        <TableHead>
+      <Table size={"small"} sx={{ width: '100%', tableLayout: 'fixed' }} stickyHeader>
+        <TableHead >
           <TableRow>
-            <TableCell padding="checkbox">
+            <TableCell padding="checkbox" sx={{ width: '50px !important' }}>
               <Checkbox
                 indeterminate={
                   selected.length > 0 && selected.length < rows.length
@@ -187,6 +187,7 @@ const TableDelivery = (props: TableDeliveryProps) => {
                   sx={{
                     whiteSpace: "nowrap",
                     color: "orange",
+                    width: item.width,
                   }}
                 >
                   {item.headerName}
@@ -199,8 +200,12 @@ const TableDelivery = (props: TableDeliveryProps) => {
           sx={{
             overflow: "scroll",
             "& td": {
-              whiteSpace: "pre",
-              padding: 0.5
+              whiteSpace: "pre-wrap",
+              padding: 0,
+              margin: 0,
+              wordWrap: 'break-word',
+              // overflow: 'hidden',
+              // textOverflow: 'ellipsis'
             },
           }}
         >
@@ -246,11 +251,17 @@ const TableDelivery = (props: TableDeliveryProps) => {
                           );
                         }}
                         height={'35px'}
-                        style={{ paddingBottom: '10px', paddingTop: '10px' }}
+                        style={{
+                          paddingBottom: '10px',
+                          paddingTop: '10px',
+                         
+                          textAlign: 'center',
+                        }}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
                         {isEditing && selectedEdit == key ? (
                           <TextField
+                            multiline
                             autoFocus
                             defaultValue={item[key]}
                             onFocus={() => handleFocus(key)}
@@ -259,7 +270,9 @@ const TableDelivery = (props: TableDeliveryProps) => {
                             sx={{
                               '& .MuiInputBase-input': {
                                 padding: 0,
-                                width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
+                                // width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
+                                width: column.width,
+
                                 textAlign: 'center',
                                 fontSize: '16px',
                                 '@media screen and (max-width: 1200px)': {

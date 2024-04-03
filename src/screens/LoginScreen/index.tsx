@@ -11,16 +11,16 @@ import { useEffect } from "react";
 export const year = new Date().getFullYear()
 const LoginScreen = () => {
 
-  useEffect(() => {
-    const container = document.querySelector('#login-screen');
+  // useEffect(() => {
+  //   const container = document.querySelector('#login-screen');
 
-    if (container instanceof Element) {
-      const fireworks = new Fireworks(container, { autoresize: true });
-      fireworks.start();
-    } else {
-      console.error('Container element not found!');
-    }
-  }, []); // Empty dependency array means this effect runs once after the initial render
+  //   if (container instanceof Element) {
+  //     const fireworks = new Fireworks(container, { autoresize: true });
+  //     fireworks.start();
+  //   } else {
+  //     console.error('Container element not found!');
+  //   }
+  // }, []); // Empty dependency array means this effect runs once after the initial render
 
 
   const { t } = useTranslation();

@@ -102,3 +102,17 @@ html {
     font-size: 17px !important;
   }
 }
+
+
+
+::-webkit-scrollbar{
+  width: 12px;
+  background: white;
+  // border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb{
+  width: 12px;
+  background: #577084;
+  border-radius: 5px;
+}
