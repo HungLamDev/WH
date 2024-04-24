@@ -21,10 +21,10 @@ html {
     position: relative;
   }
   .App {
-    height: 100vh;
-    width: 100vw;
-    max-height: 100vh;
-    max-width: 100vw;
+    height: 100dvh;
+    width: 100dvw;
+    max-height: 100dvh;
+    max-width: 100dvw;
     .top-menu {
       background: variables.$background-color-secondary;
     }
@@ -66,21 +66,31 @@ html {
   padding-top: 0.5rem !important;
 }
 
-@media screen  and (orientation: portrait ) {
-  body {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: '100%';
-    overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
-}
+// @media screen  and (orientation: portrait ) {
+//   body {
+//     transform: rotate(-90deg);
+//     transform-origin: left top;
+//     width: '100%';
+//     overflow-x: hidden;
+//     position: absolute;
+//     top: 100%;
+//     left: 0;
+//   }
+// }
 
 .textsize {
   @media screen and (max-width: 1200px) {
     font-size: 15px !important;
+  }
+}
+
+.textsize-960px {
+  @media screen and (min-width: 790px) {
+    font-size: 17px !important;
+  }
+
+  @media screen and (min-width: 960px) {
+    font-size: 19px !important;
   }
 }
 
@@ -107,7 +117,7 @@ html {
 
 ::-webkit-scrollbar{
   width: 12px;
-  background: white;
+  background: transparent;
   // border-radius: 5px;
 }
 
@@ -116,3 +126,8 @@ html {
   background: #577084;
   border-radius: 5px;
 }
+
+// ::selection {
+//   background-color: #182f42; /* Màu nền của văn bản được chọn */
+//   color: white; /* Màu chữ của văn bản được chọn */
+// }

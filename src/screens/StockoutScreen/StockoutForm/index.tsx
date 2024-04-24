@@ -688,13 +688,13 @@ const StockoutScreen = () => {
 
                         </Stack>
                         <Stack width={'40%'} justifyContent={'center'} spacing={2}>
-                            <Grid container spacing={4}>
+                            <Grid container gap={2}>
                                 {/* Nhập ERP */}
-                                <Grid item xs={3} display={'flex'}>
+                                <Grid item  display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid>
                                 {/* Xuất chi tiết */}
-                                <Grid item xs={3} display={'flex'}>
+                                <Grid item display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
@@ -716,11 +716,11 @@ const StockoutScreen = () => {
                                 }
                             </Grid>
                             {/* tổng */}
-                            <Typography className="textsize">{t("lblQty_In")}
+                            <Typography className="textsize">{t("lblQty_In")+ " "}
                                 {stockout ? stockoutDetailValue : valuetotal}
                             </Typography>
                             {/* tổng xuất */}
-                            <Typography className="textsize">{t("lblQty_Out")} {TotalQtyOut}</Typography>
+                            <Typography className="textsize">{t("lblQty_Out") +" "} {TotalQtyOut}</Typography>
                         </Stack>
                     </Box>
                 </Stack>
@@ -765,7 +765,7 @@ export const ModalAccountingCard = ({ open, handleClose, data }: { open: any, ha
                     background: '#2f3b52'
                 }}>
                     <IconButton className={'back-button'} onClick={handleClose}>
-                        <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                        <BiArrowBack className=" icon-wrapper" />
                     </IconButton>
                 </Box>
                 <AccountingCardScreen dataMaterialNo={data && data[0].Value_Material} />

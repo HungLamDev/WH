@@ -280,63 +280,73 @@ const InventoryIn = () => {
                 className={"dark-bg-secondary border-bottom-white"}
             >
                 <Stack alignItems={'center'}>
-                    <Grid spacing={1} container display={'flex'} justifyContent={'center'} width={'60%'}  >
+                    <Grid spacing={1} container display={'flex'} justifyContent={'flex-end'} width={'60%'}  >
+                        {/* Số phiếu */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <InputField value={orderNo} handle={handleChangeOrderNo} disable={disable} focus={true} label={t("dcmOrder_No") as string} keydown={null} />
+                            <Box className="input-type-container ">
+                                <InputField value={orderNo} handle={handleChangeOrderNo} disable={disable} focus={true} label={t("dcmOrder_No") as string} keydown={null} />
+                            </Box>
                         </Grid>
+                        {/* Nhà cung ứng */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <InputField value={supplierNo} handle={handleChangeSupplierNo} disable={disable} focus={true} label={t("dcpSupplier") as string} keydown={null} />
+                            <Box className="input-type-container ">
+                                <InputField value={supplierNo} handle={handleChangeSupplierNo} disable={disable} focus={true} label={t("dcpSupplier") as string} keydown={null} />
+                            </Box>
                         </Grid>
+                        {/* Mã vật tư */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <InputField value={materialNo} handle={handleChangeMaterialNo} disable={disable} focus={true} label={t("dcmMaterial_No") as string} keydown={null} />
+                            <Box className="input-type-container ">
+                                <InputField value={materialNo} handle={handleChangeMaterialNo} disable={disable} focus={true} label={t("dcmMaterial_No") as string} keydown={null} />
+                            </Box>
                         </Grid>
-                        <Grid item lg={2} md={1.5} display={'flex'} justifyContent={'start'}>
-                            <Typography className="textsize">{t("dcmRack_ID")}</Typography>
-                        </Grid>
-                        <Grid item lg={3.8} md={4.2} display={'flex'} justifyContent={'center'}>
-                            <Autocomplete
-                                value={rack}
-                                onChange={(event: any, newValue: string | null) => {
-                                    handleChangeRack(newValue);
-                                }}
-                                className="dark-bg-primary"
-                                disablePortal
-                                options={listRack}
-                                disabled={disable}
-                                id="combo-box-demo"
-                                sx={{
-                                    borderRadius: "50px",
-                                    border: "1px solid",
-                                    width: '100%',
-                                    paddingLeft: '16px',
-                                    "& .MuiInputBase-root": {
-                                        height: "2rem",
-                                    },
-
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        className="dark-bg-primary"
-                                        sx={{
-                                            borderRadius: "50px",
-                                            color: "white",
+                        {/* Mã kệ */}
+                        <Grid item xs={6} display={'flex'}  >
+                            <Box className="input-type-container" sx={{display:'flex', width:'100%'}} alignItems={'center'}>
+                                <Typography sx={{flex: 1}} className="textsize" id="rack">{t("dcmRack_ID")}</Typography>
+                                <Autocomplete
+                                    value={rack}
+                                    onChange={(event: any, newValue: string | null) => {
+                                        handleChangeRack(newValue);
+                                    }}
+                                    className="dark-bg-primary"
+                                    disablePortal
+                                    options={listRack}
+                                    disabled={disable}
+                                    id="combo-box-demo"
+                                    sx={{
+                                        borderRadius: "50px",
+                                        border: "1px solid",
+                                        paddingLeft: '16px',
+                                        width:'80%',
+                                        "& .MuiInputBase-root": {
                                             height: "2rem",
-                                            "& fieldset": {
-                                                borderColor: "white",
-                                                border: "none"
-                                            },
-                                            "& .MuiInputBase-input": {
-                                                paddingTop: "0 !important",
-                                                paddingBottom: "20px !important",
-                                                paddingLeft: "5px !important"
-                                            }
-                                        }}
-                                    />
-                                )}
-                            />
+                                        },
+
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            className="dark-bg-primary"
+                                            sx={{
+                                                borderRadius: "50px",
+                                                color: "white",
+                                                height: "2rem",
+                                                "& fieldset": {
+                                                    borderColor: "white",
+                                                    border: "none"
+                                                },
+                                                "& .MuiInputBase-input": {
+                                                    paddingTop: "0 !important",
+                                                    paddingBottom: "20px !important",
+                                                    paddingLeft: "5px !important"
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Box>
                         </Grid>
-                        <Grid item lg={0.2} md={0.3} display={'flex'} ></Grid>
+                        {/* <Grid item lg={0.2} md={0.3} display={'flex'} ></Grid> */}
                         {/* {isLoading && <CircularProgress size={'25px'} color="info" />} */}
                     </Grid>
                 </Stack>

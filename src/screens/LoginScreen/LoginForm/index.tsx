@@ -227,14 +227,14 @@ const LoginForm = () => {
               ))}
             </TextField>
             <Button
-             //style={{background:'#FDE767', fontWeight:'600'}}
+             style={{fontWeight:'600', color:'black'}}
               variant={"contained"}
               fullWidth type={"submit"}
+              startIcon={isLoading && <CircularProgress size={'25px'} color="info" />}
             >
               {t("btnLogin")}
             </Button>
             
-            {isLoading && <CircularProgress size={'25px'} color="info" />}
             {open && <ModalCofirm title={t("msgLoginIncorrect") as string} open={open} onClose={() => setOpen(false)} onPressOK={() => setOpen(false)} />}
             {errorModal && <ModalCofirm title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
 

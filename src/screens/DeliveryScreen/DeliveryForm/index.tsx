@@ -279,10 +279,10 @@ const DeliveryScreen = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-       
-         if (acceptNo.length >= 15 ) {
+
+        if (acceptNo.length >= 15) {
           const text = await handleShowMaterialFromBarcode(acceptNo);
-          if(text !== null){
+          if (text !== null) {
             setAcceptNo(text);
           }
         }
@@ -290,7 +290,7 @@ const DeliveryScreen = () => {
         setIsLoading(false)
       }
     };
-  
+
     fetchData(); // Call the async function immediately
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acceptNo]);
@@ -907,8 +907,8 @@ const DeliveryScreen = () => {
                   </FormGroup>
                 </Grid>
                 {/* Text box đơn gia công */}
-                <Grid item display={'flex'} xs={9}>
-                  <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
+                <Grid item display={'flex'} xs={9} className='order-no'>
+                    <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
                 </Grid>
                 {/* Check load lại dữ liệu */}
                 <Grid item xs={1}>
@@ -928,7 +928,7 @@ const DeliveryScreen = () => {
                   {/* {isLoading && <CircularProgress size={'25px'} color="info" />} */}
                 </Grid>
                 {/* Tên vật tư */}
-                <Grid item xs={9} display={'flex'} >
+                <Grid item xs={9} display={'flex'} className='order-no'>
                   <InputField disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
                 </Grid>
               </Grid>

@@ -52,6 +52,7 @@ import CheckData from "./screens/DeliveryScreen/CheckData";
 import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
 import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
+import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
   if (!authenticate) {
@@ -90,26 +91,26 @@ function App() {
 
 
 
-  useEffect(() => {
-    function checkOrientation() {
-      if (!window.matchMedia("(orientation: landscape)").matches) {
-        alert("Vui lòng xoay màn hình sang chế độ ngang để xem trang web.");
-        screen.orientation.lock("landscape").catch(function (error: any) {
-          // console.error("Không thể khóa hướng màn hình:", error);
-        });
-      }
-    }
+  // useEffect(() => {
+  //   function checkOrientation() {
+  //     if (!window.matchMedia("(orientation: landscape)").matches) {
+  //       alert("Vui lòng xoay màn hình sang chế độ ngang để xem trang web.");
+  //       screen.orientation.lock("landscape").catch(function (error: any) {
+  //         // console.error("Không thể khóa hướng màn hình:", error);
+  //       });
+  //     }
+  //   }
 
-    checkOrientation();
+  //   checkOrientation();
 
-    window.addEventListener("orientationchange", checkOrientation);
+  //   window.addEventListener("orientationchange", checkOrientation);
 
-    return () => {
-      // Xóa bỏ event listener khi component bị unmount
-      window.removeEventListener("orientationchange", checkOrientation);
-    };
+  //   return () => {
+  //     // Xóa bỏ event listener khi component bị unmount
+  //     window.removeEventListener("orientationchange", checkOrientation);
+  //   };
 
-  }, []);
+  // }, []);
 
   return (
 
@@ -133,6 +134,7 @@ function App() {
           <Route path={"/decorate-print"} element={<PrintDecorateScreen />}></Route>
           <Route path={"/chemistry-print"} element={<PrintChemistryScreen />}></Route>
           <Route path={"/sample-print"} element={<PrintSampleScreen />}></Route>
+          <Route path={"/foc-print"} element={<PrintFOC />}></Route>
           <Route path={"/inventory-print"} element={<PrintInventoryScreen />}></Route>
           <Route path={"/shelve-code"} element={<PrintShelveCode />}></Route>
           <Route path={"/delivery-sample"} element={<DeliverySampleScreen />}></Route>

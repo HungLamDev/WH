@@ -32,8 +32,10 @@ const LoginScreen = () => {
         </div>
       </div>
       <div className={"blur-backdrop"}></div>
-      <ChooseLanguage />
-      <ChooseFactory />
+      <div className="chooseContainer">
+        <ChooseFactory />
+        <ChooseLanguage />
+      </div>
       <LoginForm />
       <Typography variant="caption" sx={{
         position: 'absolute',

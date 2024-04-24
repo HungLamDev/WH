@@ -98,6 +98,8 @@ const InventoryScreen = () => {
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const ArrayInventory = useSelector((state: any) => state.ArrayInventory.deliverys);
+  const dataFOC = useSelector((state: any) => state.FOC.foc);
+
   //#endregion
 
   //#region Variable
@@ -188,7 +190,7 @@ const InventoryScreen = () => {
       txtValue_UserID: txtValue_UserID,
       clsLanguage: "1",
       User_Serial_Key: dataUser[0].UserId,
-      get_version: dataUser[0].WareHouse,
+      get_version:  dataFOC === true ? "FOC" : dataUser[0].WareHouse,
       saFactory: dataUser[0].factoryName
     }
 
@@ -374,9 +376,9 @@ const InventoryScreen = () => {
         paddingBottom={1}
         className={"dark-bg-secondary border-bottom-white"}
       >
-        <Grid container display={'flex'} justifyContent={'center'}>
+        <Grid container display={'flex'} justifyContent={'center'} >
           {/* Vật tư */}
-          <Grid item xs={2}>
+          <Grid item >
             <FormControlLabel
               sx={styletext}
               control={<Checkbox onChange={handlechxMaterial_No} defaultChecked={false} value={chxMaterial_No} />}
@@ -437,13 +439,13 @@ const InventoryScreen = () => {
             />
           </Grid> */}
         </Grid>
-        <Grid container display={'flex'} justifyContent={'center'} marginTop={'10px'}>
+        <Grid container display={'flex'} justifyContent={'center'} marginTop={'10px'} gap={5}>
           {/* Tìm kiếm */}
-          <Grid item xs={1.5}>
+          <Grid item>
             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
           </Grid>
           {/* Xuất excel */}
-          <Grid item xs={1.5}>
+          <Grid item>
             <MyButton name={t("btnExcel") as string} disabled={disable} onClick={exportToExcel} />
           </Grid>
         </Grid>

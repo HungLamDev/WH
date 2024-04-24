@@ -102,7 +102,7 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
         setUnit(event.target.value);
     };
     //#endregion
-   
+
     //#region column header table
     const columns: GridColDef[] = [
         {
@@ -150,7 +150,7 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
         },
     ];
     //#endregion
-   
+
     //#region useEffect
     useEffect(() => {
         hanldeSendRack()
@@ -270,7 +270,7 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
         }
     }
     //#endregion
-   
+
     return (
         <Modal
             open={open}
@@ -279,11 +279,11 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
-                <Stack height={'100%'}>
+                <Stack height={'100%'} >
                     <Stack paddingTop={'15px'} height={'5%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         {/* Title */}
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblMaterial_Infor") as string}</Typography>
@@ -292,39 +292,54 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
                             <CameraAltIcon onClick={handleScanClick} />
                         </IconButton>
                     </Stack>
-                    <Stack direction={'row'} height={'40%'}>
-                        <Stack sx={{ width: '50%', height: '100%' }} justifyContent={'space-evenly'} alignItems={'center'}>
+                    <Stack direction={'row'} height={'45%'} justifyContent={'center'} gap={10}>
+                        <Stack sx={{ width: '40%', height: '100%' }} justifyContent={'space-evenly'} alignItems={'flex-end'}>
                             {/* Check tất cả */}
-                            <FormGroup sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '22rem', justifyContent: 'space-between' }}>
-                                <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} onChange={handlechxAll} value={chxAll} />} label={t("chxAll") as string} />
-                                {isLoading && <><CircularProgress size={'20px'} color="info" sx={{ marginRight: '10px' }} /></>}
-                            </FormGroup>
+                            <Box sx={{display:'flex', justifyContent:'flex-start', width:'100%', paddingLeft:'10px'}}>
+                                <FormGroup sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} onChange={handlechxAll} value={chxAll} />} label={t("chxAll") as string} />
+                                    {isLoading && <><CircularProgress size={'20px'} color="info" sx={{ marginRight: '10px' }} /></>}
+                                </FormGroup>
+                            </Box>
                             {/* Chỗ hiện tên kệ */}
-                            <Typography sx={{ marginRight: '20px', textAlign: 'end', width: '22rem', color: 'aqua' }}> {txtshelve ? txtshelve : rack}</Typography>
+                            <Typography sx={{ marginRight: '20px', textAlign: 'end',  color: 'aqua' }}> {txtshelve ? txtshelve : rack}</Typography>
                             {/* Tên vật tư */}
-                            <InputField label={t("dcpMaterial_Name") as string} handle={handleMaterialName} keydown="" value={materialname} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpMaterial_Name") as string} handle={handleMaterialName} keydown="" value={materialname} disable={false} />
+                            </Box>
                             {/* Chi tiết kiện */}
-                            <InputField label={t("dcpContent") as string} handle={handleContent} keydown="" value={conntent} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpContent") as string} handle={handleContent} keydown="" value={conntent} disable={false} />
+                            </Box>
                             {/* Số lượng */}
-                            <InputField label={t("dcpQTY_Show") as string} handle={handleQTY} keydown="" value={qty} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpQTY_Show") as string} handle={handleQTY} keydown="" value={qty} disable={false} />
+                            </Box>
                         </Stack>
-                        <Stack sx={{ width: '50%', height: '100%' }} justifyContent={'space-evenly'} alignItems={'center'}>
+                        <Stack sx={{ width: '40%', height: '100%', paddingRight: '10px' }} justifyContent={'space-evenly'} alignItems={'flex-end'}>
                             {/* Quét */}
-                            <InputField label={t("gpbScan") as string} handle={handleQRcode} keydown="" value={qrcode} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("gpbScan") as string} handle={handleQRcode} keydown="" value={qrcode} disable={false} />
+                            </Box>
                             {/* Mã vật tư */}
-                            <InputField label={t("dcpMaterial_No") as string} handle={handleMaterialNo} keydown="" value={materialno} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpMaterial_No") as string} handle={handleMaterialNo} keydown="" value={materialno} disable={false} />
+                            </Box>
                             {/* Cuộn */}
-                            <InputField label={t("dcpRoll") as string} handle={handleRoll} keydown="" value={roll} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpRoll") as string} handle={handleRoll} keydown="" value={roll} disable={false} />
+                            </Box>
                             {/* Đơn vị */}
-                            <InputField label={t("dcpUnit") as string} handle={handleUnit} keydown="" value={unit} disable={false} />
+                            <Box className="input-type-container">
+                                <InputField label={t("dcpUnit") as string} handle={handleUnit} keydown="" value={unit} disable={false} />
+                            </Box>
                         </Stack>
                     </Stack>
-                    <Stack height={'55%'} overflow={"hidden"}>
+                    <Stack height={'50%'} overflow={"hidden"}>
                         <TableOrigin handlerowClick={handleRowClick} columns={columns} rows={rows} arrNotShowCell={['_id']} />
                     </Stack>
                     {modalScan && <QRScanner onScan={handleScanCam} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 </Stack>
-
             </Box>
         </Modal >
     )

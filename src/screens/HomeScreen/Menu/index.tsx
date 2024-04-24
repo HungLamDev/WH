@@ -27,6 +27,7 @@ import inblaIcon from "../../../assets/inbla.png";
 import lsinIcon from "../../../assets/lsin.png";
 import intonIcon from "../../../assets/inton.png";
 import qrcanIcon from "../../../assets/qrcan.png";
+import focIcon from "../../../assets/FOC.png";
 import permissionPrintIcon from "../../../assets/permission-print.png";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -53,6 +54,7 @@ const Menu = () => {
   const IconWrapper = (props: any) => {
     return (
       <Button
+        
         sx={{
           width: "fit-content",
           height: "fit-content",
@@ -278,7 +280,7 @@ const Menu = () => {
   ];
 
   // Danh sách in khác
-  const listPrintOther: { title: string; icon: string; path: string, disabled?: boolean }[] = [
+  const listPrintOther: { title: string; icon: string; path: string, disabled?: boolean, hidden?: boolean }[] = [
     {
       title: t("btnPrint_Chemistry") as string,
       icon: chemistryIcon,
@@ -304,6 +306,12 @@ const Menu = () => {
       title: t("btnPrint_Decorate") as string,
       icon: decorateIcon,
       path: "/decorate-print",
+    },
+    {
+      title: t("btnPrint_FOC") as string,
+      icon: focIcon,
+      path: "/foc-print",
+      hidden: dataUser[0].factoryName === "LHG" ? false : true
     },
     {
       title: t("btnData_History_Print") as string,
@@ -353,16 +361,47 @@ const Menu = () => {
 
   return (
     <Stack
-      className={`fit-screen`}
+      className={"menuContainer"}
       justifyContent={"center"}
       alignItems={"center"}
-      width={"70%"}
-      height={"100vh"}
+      // height={"100vh"}
       margin={"0 auto"}
 
     >
+      {/* Thông tin user */}
+      <div style={{
+        width: '100%',
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        paddingRight: '50px',
+        paddingTop: ' 10px'
+      }}>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          border: '1px solid',
+          padding: '5px',
+          borderRadius: '20px',
+        }}>
+          {/* icon user */}
+          <AccountCircleIcon fontSize="large" />
+          <Stack marginLeft={'10px'} marginRight={'20px'}>
+            {/* Tên người dùng */}
+            <Typography>{dataUser[0].UserName}</Typography>
+            <Box display={'flex'} justifyContent={'space-between'}>
+              {/* Số thẻ */}
+              <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
+              {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
+            </Box>
+          </Stack>
+          {/* Nút logout */}
+          <LogoutIcon sx={{ color: 'white', cursor: 'pointer' }} onClick={() => window.location.reload()} />
+        </Box>
+      </div>
       {/* Menu */}
-      <Grid container spacing={14} >
+      <Grid container width={'75%'} flex={8} display={'flex'} alignItems={'center'}  columns={{xs: 12}}>
         {menuList.map(({ title, icon, path, modal, modalName, disabled }, index: number) => {
           return (
             <GridItem item key={index}>
@@ -384,30 +423,14 @@ const Menu = () => {
                 >
                   <img src={icon} alt={title} className="hover-effect" />
                 </IconWrapper>
-                <Typography whiteSpace={"pre"}>{t(title)}</Typography>
+                <Typography sx={{fontSize:'15px'}} className="textsize-960px" whiteSpace={"pre"}>{t(title)}</Typography>
               </Stack>
             </GridItem>
           );
         })}
       </Grid>
-      {/* Thông tin user */}
-      <Box sx={{ position: 'absolute', top: 10, right: -100, display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid', padding: '5px', borderRadius: '20px' }}>
-        {/* icon user */}
-        <AccountCircleIcon fontSize="large" />
-        <Stack marginLeft={'10px'} marginRight={'20px'}>
-          {/* Tên người dùng */}
-          <Typography>{dataUser[0].UserName}</Typography>
-          <Box display={'flex'} justifyContent={'space-between'}>
-            {/* Số thẻ */}
-            <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
-            {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
-          </Box>
-        </Stack>
-        {/* Nút logout */}
-        <LogoutIcon sx={{ color: 'white', cursor: 'pointer' }} onClick={() => window.location.reload()} />
-      </Box>
 
-      <Typography variant="caption" sx={{ position: 'absolute', bottom: 1, color: 'white', opacity: 0.5, textAlign: 'center' }}> Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
+      <Typography variant="caption" sx={{ flex: 1, color: 'white', opacity: 0.5, textAlign: 'center', alignItems: 'flex-end', display: 'flex' }}> Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
       {/* Modal danh sách thẻ kho */}
       {modalName === 'listAccounting_Card' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={list} />}
       {/* Modal danh sách ngôn ngữ */}

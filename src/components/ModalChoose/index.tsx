@@ -124,13 +124,11 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
             aria-describedby="modal-modal-description"
         >
             <Box sx={style} >
-                <Grid container justifyContent={'center'} alignItems={'center'} height={'100%'}>
-                    {array.map(({ title, icon, path, language, value, vWareHouse, disabled }: any, index: number) => {
+                <Grid container justifyContent={'center'} alignItems={'center'} height={'100%'} flexWrap={'nowrap'}>
+                    {array.map(({ title, icon, path, language, value, vWareHouse, disabled, hidden }: any, index: number) => {
                         return (
-                            <GridItem sx={index !== 0 ? { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' }, borderLeft: '1px solid white' } : { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' } }} item key={index}>
+                            <GridItem style={{display: hidden ? 'none' : 'flex'}} sx={index !== 0 ? { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' }, borderLeft: '1px solid white' } : { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' } }} item key={index}>
                                 <Stack
-
-
                                     width={'100%'}
                                     borderRadius={"24px"}
                                     justifyContent={"center"}
@@ -145,7 +143,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                         }}
                                         disabled={disabled ? disabled : false}
                                     >
-                                        <img src={icon} alt={title} />
+                                        <img style={{width:'64px'}} src={icon} alt={title} />
                                     </IconWrapper>
                                     <Typography
                                         marginTop={'5px'}

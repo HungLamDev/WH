@@ -304,7 +304,7 @@ const ListStockin = () => {
         });
     };
     //#endregion
-    
+
     const handleScanClick = () => {
 
         setModalScan(true);
@@ -333,7 +333,7 @@ const ListStockin = () => {
         })
     }
     //#endregion
-    
+
     return (
         <FullScreenContainerWithNavBar hidden={true} onShowScan={handleScanClick} navigate="/stock-in" sideBarDisable={true} sideBarNavigate="" title={t("lblReport_Stock_In") as string}>
             <Box
@@ -344,14 +344,20 @@ const ListStockin = () => {
                 <Stack height={'100%'}>
                     <Stack height={'65%'}>
                         <Grid container display={'flex'} justifyContent={'center'} alignItems={'center'} rowSpacing={2}>
-                            <Grid item xs={5}>
-                                <InputField disable={disable} handle={handleOrderNoChange} value={orderNo} label={t("lblOrderNo") as string} />
+                            <Grid item xs={5} display={'flex'}>
+                                <Box className="input-type-container">
+                                    <InputField disable={disable} handle={handleOrderNoChange} value={orderNo} label={t("lblOrderNo") as string} />
+                                </Box>
                             </Grid>
-                            <Grid item xs={5} marginLeft={'10px'}>
-                                <InputField disable={disable} handle={handleSupplierChange} value={supplier} label={t("lblSupplier") as string} />
+                            <Grid item xs={5} marginLeft={'10px'} display={'flex'}>
+                                <Box className="input-type-container">
+                                    <InputField disable={disable} handle={handleSupplierChange} value={supplier} label={t("lblSupplier") as string} />
+                                </Box>
                             </Grid>
                             <Grid item xs={5} display={'flex'} alignItems={'center'}>
-                                <InputField disable={disable} handle={handleMaterialNoChange} value={materialNo} label={t("dcmMaterial_No") as string} />
+                                <Box className="input-type-container">
+                                    <InputField disable={disable} handle={handleMaterialNoChange} value={materialNo} label={t("dcmMaterial_No") as string} />
+                                </Box>
                                 {isLoading && <CircularProgress size={'25px'} color="info" />}
                             </Grid>
                             <Grid item xs={2.5} display={'flex'} paddingLeft={'10px'}>

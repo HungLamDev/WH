@@ -154,6 +154,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const chemistryRow = useSelector((state: any) => state.ArrayChemistry.items);
   const accountCardRow = useSelector((state: any) => state.ArrayAccountingCard.items);
+  const dataFOC = useSelector((state: any) => state.FOC.foc);
+
   //#endregion
 
   //#region Variable
@@ -281,13 +283,13 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
     const data = {
       User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse:  getWareHouseAcount(),
+      V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
       Rack: "",
-      get_version:  getWareHouseAcount(),
+      get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
     };
     axios
       .post(url, data, configNew)
@@ -313,14 +315,14 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       txtMaterial_No: txtMaterial_No,
       txtOrder_No: txtOrder_No,
       User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse:  getWareHouseAcount(),
+      V_Warehouse: dataFOC === true ? "FOC" :  getWareHouseAcount(),
       chxChemistry: chxChemistry,
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
       Barcode: "",
-      get_version:  getWareHouseAcount(),
+      get_version: dataFOC === true ? "FOC" :  getWareHouseAcount(),
       chxTotal_Order: chxTotalOrder,
       chxRy: chxRY
     };
@@ -356,13 +358,13 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       txtMaterial_No: material_no,
       txtOrder_No: txtOrder_No,
       User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse:  getWareHouseAcount(),
+      V_Warehouse: dataFOC === true ? "FOC" :  getWareHouseAcount(),
       chxChemistry: chxChemistry,
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
-      get_version:  getWareHouseAcount(),
+      get_version: dataFOC === true ? "FOC" :  getWareHouseAcount(),
       chxRy: chxRY,
       chxTotal_Order: chxTotalOrder
     };
@@ -501,7 +503,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       Note_Account: dataUserNote.Note_Account,
       RowIndex_Sign_Account: dataUserNote._id,
       Resual: true,
-      get_version:  getWareHouseAcount()
+      get_version: getWareHouseAcount()
 
     };
     axios
@@ -608,13 +610,13 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
       const data = {
         User_Serial_Key: txtOrder_No,
-        V_Warehouse: getWareHouse(),
+        V_Warehouse:  dataFOC === true ? "FOC" : getWareHouse(),
         dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
         dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
         lblMaterialNo: lblMaterialNo,
         saFactory: dataUser[0].factoryName,
         Rack: "",
-        get_version: dataUser[0].WareHouse,
+        get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
         User_Login: getWareHouseAcount()
 
       };
@@ -857,12 +859,12 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       cancelRequest={cancelRequest}
     >
       <Box
-        paddingX={1}
+        paddingX={0.5}
         paddingBottom={1}
         className={"dark-bg-secondary border-bottom-white"}
       >
         <Stack>
-          <Stack>
+          <Stack >
             <Grid container alignItems={"center"} justifyContent={"center"}>
               <Grid item display={"flex"}>
                 {/* Ngày */}
@@ -873,231 +875,178 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               </Grid>
             </Grid>
           </Stack>
-          <Stack direction={'row'} >
-            <Stack flex={1} >
-              {/* Tên vật tư */}
-              <Box sx={{ width: "100%", }}>
+          <Stack  >
+            <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
+              <Box flex={1} textAlign={'center'}>
                 <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center' }}>
                   {t("lblMaterial_Name") as string}:{" "}
                   <span style={{ color: "yellow" }}>{materialName}</span>
                 </Typography>
               </Box>
-              <Grid container >
-                <Grid container justifyContent={"center"}>
-                  {/* Check mã vật tư */}
-                  <Grid item style={{ display: 'flex' }} xs={3}>
-                    <FormControlLabel
-                      sx={styletext}
-                      control={
-                        <Checkbox
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setLblMaterialNo(e.target.checked)
-                          }
-                          defaultChecked={true}
-                          value={lblMaterialNo}
-                        />
-                      }
-                      label={t("lblMaterial_No") as string}
-                    />
-                  </Grid>
-                  {/* Input mã vật tư */}
-                  <Grid item xs={5} style={{ display: 'flex' }}>
-                    <InputField
-                      customClass="customStack1"
-                      handle={handleChangeTxtMaterialNo}
-                      keydown={null}
-                      value={txtMaterial_No}
-                      type={"text"}
-                      disable={loading}
-                    />
-                  </Grid>
-                  <Grid item xs={3} style={{ display: 'flex', justifyContent: 'center' }}>
-                    {/* <FormControlLabel
-                      sx={styletext}
-                      control={
-                        <Checkbox
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setLblMaterialNo(e.target.checked)
-                          }
-                          defaultChecked={true}
-                          value={lblMaterialNo}
-                        />
-                      }
-                      label={t("dcpRack") as string}
-                    /> */}
-                  </Grid>
-                </Grid>
-                <Grid container justifyContent={"center"}>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                  >
-                    <Typography className="textsize">{t("lblFrom") as string}</Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    onClick={() => handleClickDateFrom("-")}
-                  >
-                    <Stack display={"flex"} className="btn-date">
-                      <ArrowBackIosNewOutlinedIcon display={"flex"} />
-                    </Stack>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={6}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                  >
-
-                    <DatePickerField
-                      customClass="customDateTime"
-                      readonly={true}
-                      onValueChange={dtpFrom_Date}
-                      valueDate={(params: any) => {
-                        setDtpTo_Date(params);
-                      }}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    onClick={() => handleClickDateFrom("+")}
-                  >
-                    <Stack display={"flex"} className="btn-date">
-                      <ArrowForwardIosOutlinedIcon display={"flex"} />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                </Grid>
-              </Grid>
-            </Stack>
-            <Stack flex={1} >
-              {/* Mã vật tư ở trên */}
-              <Box className="textsize" >
+              <Box flex={1} textAlign={'center'}>
                 <Typography className="textsize" style={{ textAlign: 'center' }} >
                   {t("lblMaterial_No") as string}:{" "}
                   <span style={{ color: "yellow" }}>{materialNo}</span>
                 </Typography>
               </Box>
-              <Grid container >
-                <Grid container justifyContent={"center"}>
-                  {/* Check mã vật tư */}
-                  <Grid item style={{ display: 'flex' }} xs={3}>
-                    <FormControlLabel
-                      sx={styletext}
-                      control={
-                        <Checkbox
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setChxOrder_No(e.target.checked)
-                          }
-                          defaultChecked={false}
-                          value={chxOrder_No}
-                        />
-                      }
-                      label={t("dcmOrder_No") as string}
-                    />
-                  </Grid>
-                  {/* Input mã vật tư */}
-                  <Grid item xs={5} style={{ display: 'flex' }}>
-                    <InputField
-                      customClass="customStack1"
-                      handle={handleChangeTxtOrderNo}
-                      keydown={handleSearchUserID}
-                      value={txtOrder_No}
-                      type={"text"}
-                      disable={loading}
-                    />
-                  </Grid>
-                  <Grid item xs={2} style={{ display: 'flex', justifyContent: 'center' }}>
-                  </Grid>
-                </Grid>
-                <Grid container justifyContent={"center"}>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                  >
-                    <Typography className="textsize">{t("lblTo") as string}</Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    onClick={() => handleClickDateTo("-")}
-                  >
-                    <Box className="btn-date">
-                      <ArrowBackIosNewOutlinedIcon />
-                    </Box>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={6}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                  >
-
-                    <DatePickerField
-                      customClass="customDateTime"
-                      readonly={loading}
-                      onValueChange={dtpTo_Date}
-                      valueDate={(params: any) => {
-                        setDtpTo_Date(params);
-                      }}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    display={"flex"}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                    onClick={() => handleClickDateTo("+")}
-                  >
-                    <Box className="btn-date">
-                      <ArrowForwardIosOutlinedIcon />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Grid>
+              <Box className="textsize" flex={1} textAlign={'center'}>
+                {t("lblUnit") as string}:{" "}
+                <span style={{ color: "yellow" }}>{unit}</span>
+              </Box>
             </Stack>
-            <Stack direction={'row'} flex={0.5} >
-              <Stack flex={0.75}>
-                {/* Đơn vị */}
-                <Box className="textsize" >
-                  {t("lblUnit") as string}:{" "}
-                  <span style={{ color: "yellow" }}>{unit}</span>
+            <Stack direction={'row'} >
+              <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'}>
+                {/* Check mã vật tư */}
+                <Box className="flex-center">
+                  <FormControlLabel
+                    sx={styletext}
+                    control={
+                      <Checkbox
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setLblMaterialNo(e.target.checked)
+                        }
+                        defaultChecked={true}
+                        value={lblMaterialNo}
+                      />
+                    }
+                    label={t("lblMaterial_No") as string}
+                  />
                 </Box>
+                {/* Input mã vật tư */}
+                <Box className="dateTimeContainer flex-center" >
+                  <InputField
+                    customClass="customStack1"
+                    handle={handleChangeTxtMaterialNo}
+                    keydown={null}
+                    value={txtMaterial_No}
+                    type={"text"}
+                    disable={loading}
+                  />
+                </Box>
+              </Stack>
+              
+              <Box flexBasis={'7%'}></Box>
+              <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'}>
+                {/* Check số phiếu */}
+                <Box className="flex-center">
+                  <FormControlLabel
+                    sx={styletext}
+                    control={
+                      <Checkbox
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setChxOrder_No(e.target.checked)
+                        }
+                        defaultChecked={false}
+                        value={chxOrder_No}
+                      />
+                    }
+                    label={t("dcmOrder_No") as string}
+                  />
+                </Box>
+
+                {/* Input số phiêú */}
+                <Box className="dateTimeContainer flex-center">
+                  <InputField
+                    customClass="customStack1"
+                    handle={handleChangeTxtOrderNo}
+                    keydown={handleSearchUserID}
+                    value={txtOrder_No}
+                    type={"text"}
+                    disable={loading}
+                  />
+                </Box>
+              </Stack>
+              <Box flexBasis={'7%'}></Box>
+              <Stack direction={'row'} flexBasis={'20%'}>
+
                 {/* Check hóa chất */}
-                <FormControlLabel
-                  sx={styletext}
-                  control={
-                    <Checkbox
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        setChxChemistry(event.target.checked)
-                      }
-                      defaultChecked={false}
-                      value={chxChemistry}
-                    />
-                  }
-                  label={t("chxChemistry") as string}
-                />
-                {/* Check tổng đơn */}
+                <Box  >
+                  <FormControlLabel
+                    sx={styletext}
+                    control={
+                      <Checkbox
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setChxChemistry(event.target.checked)
+                        }
+                        defaultChecked={false}
+                        value={chxChemistry}
+                      />
+                    }
+                    label={t("chxChemistry") as string}
+                  />
+                </Box>
+                {/* Check ry */}
+                <Box>
+                  <FormControlLabel
+                    sx={styletext}
+                    control={
+                      <Checkbox
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setChxRY(event.target.checked)
+                        }
+                        defaultChecked={false}
+                        value={chxRY}
+                      />
+                    }
+                    label={"RY"}
+                  />
+                </Box>
+              </Stack>
+            </Stack>
+            <Stack direction={'row'}>
+              <Stack direction={'row'} gap={1} flexBasis={'40%'} justifyContent={'center'} alignItems={'center'}>
+                {/* Từ */}
+                <Box className="flex-center">
+                  <Typography className="textsize">{t("lblFrom") as string}</Typography>
+                </Box>
+                {/* Mũi tên < từ */}
+                <Stack display={"flex"} className="btn-date">
+                  <ArrowBackIosNewOutlinedIcon display={"flex"}  sx={{ width: '25px' }} />
+                </Stack>
+                {/* Date time từ */}
+                <Box className="dateTimeContainer flex-center">
+                  <DatePickerField
+                    customClass="customDateTime"
+                    readonly={true}
+                    onValueChange={dtpFrom_Date}
+                    valueDate={(params: any) => {
+                      setDtpTo_Date(params);
+                    }}
+                  />
+                </Box>
+                {/* Mũi tên > từ */}
+                <Stack display={"flex"} className="btn-date ">
+                  <ArrowForwardIosOutlinedIcon display={"flex"}  sx={{ width: '25px' }} />
+                </Stack>
+              </Stack>
+
+              <Stack direction={'row'} gap={1} justifyContent={'center'} flexBasis={'40%'} alignItems={'center'}>
+                {/* Đến */}
+                <Box className="flex-center">
+                  <Typography className="textsize">{t("lblTo") as string}</Typography>
+                </Box>
+                {/* Mũi tên < đến */}
+                <Box className="btn-date">
+                  <ArrowBackIosNewOutlinedIcon  sx={{ width: '25px' }} />
+                </Box>
+                {/* Date time đến */}
+                <Box className="dateTimeContainer flex-center">
+                  <DatePickerField
+                    customClass="customDateTime"
+                    readonly={loading}
+                    onValueChange={dtpTo_Date}
+                    valueDate={(params: any) => {
+                      setDtpTo_Date(params);
+                    }}
+                  />
+                </Box>
+                {/* Mũi tên > đến */}
+                <Box className="btn-date">
+                  <ArrowForwardIosOutlinedIcon  sx={{ width: '25px' }} />
+                </Box>
+              </Stack>
+              {/* Check tổng đơn */}
+              <Box flexBasis={'20%'}>
                 <FormControlLabel
                   sx={styletext}
                   control={
@@ -1111,58 +1060,46 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   }
                   label={"Tổng đơn"}
                 />
-              </Stack>
-              <Stack flex={0.25}>
-                <span className="textsize" style={{ color: "yellow" }}>&nbsp;</span>
-                {/* Check ry */}
-                <FormControlLabel
-                  sx={styletext}
-                  control={
-                    <Checkbox
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        setChxRY(event.target.checked)
-                      }
-                      defaultChecked={false}
-                      value={chxRY}
-                    />
-                  }
-                  label={"RY"}
-                />
-              </Stack>
+              </Box>
             </Stack>
           </Stack>
-          <Stack>
+          {/* Danh sách nút */}
+          <Stack >
             <Grid
               container
               alignItems={"center"}
               // spacing={4}
               // display={}
               justifyContent={"center"}
+              gap={5}
+              flexWrap={'nowrap'}
             >
-              <Grid item xs={1.5} display={"flex"} alignItems={"center"} >
+              {/* Loading */}
+              <Grid item xs={1.5} display={"flex"} alignItems={"center"} justifyContent={'flex-end'} >
                 {loading ? loading : disable && (<CircularProgress size={'25px'} color="info" />)}
               </Grid>
+              {/* Nút tìm kiếm */}
               <Grid
                 item
-                xs={1.5}
+
                 alignItems={"center"}
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
               >
                 <MyButton name={t("btnSearch") as string} onClick={Search} disabled={loading ? loading : disable} />
               </Grid>
+              {/* Xuất excel */}
               <Grid
                 item
-                xs={1.5}
                 alignItems={"center"}
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
               >
                 <MyButton name={t("btnExcel") as string} disabled={loading ? loading : disable} onClick={exportToExcel} />
               </Grid>
+              {/* Làm mới */}
               <Grid
                 item
-                xs={1.5}
                 alignItems={"center"}
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
@@ -1173,9 +1110,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   onClick={handleRefresh}
                 />
               </Grid>
+              {/* Kiểm kê */}
               <Grid
                 item
-                xs={1.5}
                 alignItems={"center"}
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
@@ -1188,9 +1125,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   }}
                 />
               </Grid>
+              {/* Thống kê */}
               <Grid
                 item
-                xs={1.5}
                 alignItems={"center"}
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
@@ -1208,13 +1145,14 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   />
                 )}
               </Grid>
+              <Grid item xs={1.5} display={"flex"} alignItems={"center"} >
+              </Grid>
             </Grid>
           </Stack>
         </Stack>
       </Box>
 
       {/* Bảng show */}
-
       <Stack overflow={"hidden"} direction="row" sx={{ height: "100%" }}>
         <Grid container sx={{ width: "14%" }}>
           <TableOrigin

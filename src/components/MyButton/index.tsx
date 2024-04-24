@@ -23,7 +23,7 @@ const MyButton = (props: ButtonProps & { name: string }) => {
         height: "2.5rem",
         "@media screen and (max-width: 1200px)": {
           fontSize: "12px",
-          width: "6.5rem",
+          width: "6.0rem",
         },
         "&:focus": { background: "#757575" },
       }}

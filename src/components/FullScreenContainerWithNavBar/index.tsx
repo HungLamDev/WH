@@ -28,8 +28,8 @@ const FullScreenContainerWithNavBar = (props: FullScreenContainerWithNavBarProps
   } = props
 
   return (
-    <Box className={"fit-screen dark-bg-primary"}>
-      <Stack style={{ height: '100vh' }}>
+    <Box className={"fit-screen dark-bg-primary"} >
+      <Stack style={{ height: '100dvh' }}>
         <NavBar
           state={state}
           title={title}

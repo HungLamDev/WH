@@ -5,7 +5,8 @@
   background: url("../../assets/app-bg.jpg") no-repeat;
   background-size: cover;
   @media (max-width: 1350px) {
-    background-size: contain;
-    background-repeat: round;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }

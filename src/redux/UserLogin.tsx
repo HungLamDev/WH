@@ -19,7 +19,7 @@ const UserLogin = createSlice({
         },
         clearUser: (state) => {
             state.user = [];
-        }
+        },
     }
 });
 

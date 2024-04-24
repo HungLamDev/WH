@@ -349,6 +349,10 @@
     "lblNetworkError": "သင့်ကွန်ရက်တွင် ပြဿနာများရှိနေပါသည်။",
     "lblCheck":"တံဆိပ်ခေါင်းမခွဲခင် ရွေးပါ။",
     "btnInventory_In":"စာရင်း",
-    "lblReport_Inventory_In":"စာရင်းဇယား"
+    "lblReport_Inventory_In":"စာရင်းဇယား",
+    "chxTranscoding": "Transcoding",
+    "btnPrint_FOC": "ပုံနှိပ် FOC",
+    "btnAccounting_FOC": "ဂိုဒေါင် FOC",
+    "lblPrint_FOC": "ပုံနှိပ် FOC"
 
 }

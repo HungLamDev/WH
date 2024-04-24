@@ -1,21 +1,45 @@
 @use "/src/variables";
 
-.display-center{
+.display-center {
     justify-content: center;
     align-items: center;
 }
 
-.text{
+.text {
     color: white;
     font-size: 16px !important;
 }
 
-.text-field{
+.text-field {
     border: 2px solid white !important;
     border-radius: 4 !important;
     color: 'white' !important;
 }
 
-.margin-input{
+.margin-input {
     margin-bottom: 2 !important;
+}
+
+.input-type-container {
+    .input-field-container {
+        width: 100% !important;
+        // justify-content: flex-start !important;
+        #rack {
+            @media screen and (max-width: 960px) {
+
+                width: 100px;
+            }
+        }
+    }
+
+}
+
+.order-no {
+    .input-field-container {
+        p {
+            @media screen and (max-width: 960px) {
+                width: 100px;
+            }
+        }
+    }
 }

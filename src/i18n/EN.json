@@ -383,6 +383,10 @@
     "lblNetworkError": "Your network is having problems",
     "lblCheck":"Choose before dividing stamps",
     "btnInventory_In":"Inventory",
-    "lblReport_Inventory_In":"Inventory List"
+    "lblReport_Inventory_In":"Inventory List",
+    "chxTranscoding": "Transcoding",
+    "btnPrint_FOC": "Print FOC",
+    "btnAccounting_FOC": "FOC Warehouse",
+    "lblPrint_FOC": "Print FOC"
 
 }

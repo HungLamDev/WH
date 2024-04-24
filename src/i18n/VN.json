@@ -383,5 +383,9 @@
     "lblNetworkError": "Mạng của bạn đang gặp sự cố",
     "lblCheck":"Chọn trước khi chia tem",
     "btnInventory_In":" Tồn Kho",
-    "lblReport_Inventory_In":"Danh Sách Tồn Kho"
+    "lblReport_Inventory_In":"Danh Sách Tồn Kho",
+    "chxTranscoding": "Chuyển mã",
+    "btnPrint_FOC": "In FOC",
+    "btnAccounting_FOC": "Kho FOC",
+    "lblPrint_FOC": "In Hàng FOC"
 }

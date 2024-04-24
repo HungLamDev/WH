@@ -16,6 +16,7 @@ import ArrayDeliverySampleLeft from './ArrayDeliverySampleLeft';
 import ArrayDeliverySampleRight from './ArrayDeliverySampleRight';
 import ArrayInventory from './ArrayInventory';
 import ArrayAccountingCard from './ArrayAccountingCard';
+import FOC from './FOC';
 const store = configureStore({
   reducer: {
     MaterialTable,
@@ -34,7 +35,8 @@ const store = configureStore({
     ArrayDeliverySampleLeft,
     ArrayDeliverySampleRight,
     ArrayInventory,
-    ArrayAccountingCard
+    ArrayAccountingCard,
+    FOC
   }
 });
 

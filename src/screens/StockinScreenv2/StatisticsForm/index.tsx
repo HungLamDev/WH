@@ -110,6 +110,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
 
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
+    const dataFOC = useSelector((state: any) => state.FOC.foc);
     //#endregion
 
     //#region Variable
@@ -155,7 +156,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     txtScan: txtscan,
                     dgvStock_Cout: arrayRowDowns.length,
                     Check_Exit_Scan: false,
-                    get_version: dataUser[0].WareHouse
+                    get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
                 }
             } else {
                 data = {
@@ -163,7 +164,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     txtScan: txtscan,
                     dgvStock_Cout: arrayRowDowns.length,
                     Check_Exit_Scan: true,
-                    get_version: dataUser[0].WareHouse
+                    get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
                 }
             }
             axios.post(url, data, config).then(reponse => {
@@ -266,7 +267,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className=" icon-wrapper"  />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblReport_Deviations") as string}</Typography>
                         <IconButton sx={{ marginLeft: '20px' }}  >

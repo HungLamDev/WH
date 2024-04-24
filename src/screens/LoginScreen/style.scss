@@ -1,14 +1,18 @@
 @use "../../variables";
+
 #login-screen {
   width: 100%;
   height: 100%;
   background: url("../../assets/app-bg.jpg") no-repeat;
   background-size: cover;
   overflow: hidden;
+
   @media (max-width: 1350px) {
-    background-size: contain;
-    background-repeat: round;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
   }
+
   //
   //& .blur-backdrop {
   //  position: absolute;
@@ -30,6 +34,7 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.19);
   }
 }
+
 .marquee-container {
   width: 100%;
   overflow: hidden;
@@ -46,15 +51,28 @@
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-20%);
   }
 }
 
-.choose-factory {
+// .choose-factory {
+//   position: absolute;
+//   top: 1.5rem;
+//   right: 11rem;
+// }
+
+.chooseContainer {
   position: absolute;
-  top: 1.5rem;
-  right: 11rem;
+  display: flex;
+  width: 100%;
+  padding-right: 10px;
+  gap: 20px;
+  justify-content: flex-end;
 }
 
+@media screen and (max-width: 930px) {
+  
 
+}

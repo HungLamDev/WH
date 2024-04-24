@@ -670,7 +670,7 @@ const DataHistoryPrintScreen = () => {
                 sx={{ width: "100%", display: "flex", ...styletext }}
                 className="text"
                 control={<Checkbox sx={{ color: "white" }} value={chxChange_Material} onChange={handleChxChange_Material} />}
-                label={"Chuyển mã"}
+                label={t("chxTranscoding")}
               />
             </Grid>
             <Grid item display={'flex'} xs={2}>
