@@ -190,7 +190,7 @@ const Menu = () => {
   ];
 
   // Danh sách thẻ kho
-  const list: { title: string; icon: string; path: string, vWareHouse: string }[] = [
+  const list: { title: string; icon: string; path: string, vWareHouse: string, hidden?:boolean }[] = [
     {
       title: t("btnAccounting_Chemistry") as string,
       icon: chemistryIcon,
@@ -222,6 +222,13 @@ const Menu = () => {
       path: "/accounting-card",
       vWareHouse: "Decorate"
 
+    },
+    {
+      title: t("btnAccounting_FOC") as string,
+      icon: focIcon,
+      path: "/accounting-card",
+      vWareHouse: "FOC",
+      hidden: dataUser[0].factoryName === "LHG" ? false : true
     },
     {
       title: t("btnAccounting_Card") as string,

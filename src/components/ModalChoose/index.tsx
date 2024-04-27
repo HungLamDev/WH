@@ -8,12 +8,13 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Load from "../../../src/assets/load.gif";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getAppLang, setAppLang, setWareHouse, setWareHouseAcount } from "../../utils/localStorage";
 import { LanguageName } from "../../screens/LoginScreen/ChooseLanguage/type";
 import { useState } from "react";
 import './style.scss'
 import { connect_string } from "../../screens/LoginScreen/ChooseFactory";
+import { addFOC } from "../../redux/FOC";
 const GridItem = (props: any) => {
     return (
         <Grid
@@ -46,7 +47,8 @@ const style = {
 };
 const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open: any, onClose: any, setShowState?: (value: boolean) => void; }) => {
     const dataUser = useSelector((state: any) => state.UserLogin.user);
-
+    
+    const dispatch = useDispatch()
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { i18n } = useTranslation();
@@ -67,7 +69,13 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
     }
 
     const handleClickWareHouse = (wareHouse: string) => {
-        setWareHouseAcount(wareHouse)
+        if(wareHouse !== 'FOC'){
+            setWareHouseAcount(wareHouse)
+            dispatch(addFOC(false))
+        }
+        else{
+            dispatch(addFOC(true))
+        }
     }
 
     // api lưu log check point
