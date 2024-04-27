@@ -122,7 +122,7 @@ const DeliveryScreen = () => {
     {
       field: "User_Serial_Key",
       headerName: "",
-      width: 50,
+      width: 80,
     },
   ];
   const columns_modal = [

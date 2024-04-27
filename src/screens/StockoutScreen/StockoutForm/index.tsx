@@ -162,6 +162,7 @@ const StockoutScreen = () => {
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     const ArrayStockout = useSelector((state: any) => state.ArrayStockout.items);
     const TotalQtyOut = useSelector((state: any) => state.TotalQtyOut.items);
+    const dataFOC = useSelector((state: any) => state.FOC.foc);
     //#endregion
 
     //#region Variable
@@ -386,12 +387,13 @@ const StockoutScreen = () => {
     const handleOutAll = (barcode: string) => {
         setDisable(true)
         setIsLoading(true)
+        // Xuất ngoài
         if (!stockout) {
             const data = {
-                Version_ini: dataUser[0].WareHouse,
+                Version_ini:  dataFOC === true ? "FOC" : dataUser[0].WareHouse,
                 txtScan: barcode,
                 User_Serial_Key: dataUser[0].UserId,
-                get_version: dataUser[0].WareHouse
+                get_version:  dataFOC === true ? "FOC" : dataUser[0].WareHouse
             }
             const url = connect_string + 'api/getData_TextChange_Stock_Out'
             axios.post(url, data, config).then(response => {
@@ -432,6 +434,7 @@ const StockoutScreen = () => {
             })
 
         }
+        // Xuất giao hàng
         else {
             const url = connect_string + 'api/getData_TextChange_Stock_Out_Detail'
             const data = {

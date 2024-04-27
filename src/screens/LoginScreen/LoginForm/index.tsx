@@ -227,7 +227,7 @@ const LoginForm = () => {
               ))}
             </TextField>
             <Button
-             style={{fontWeight:'600', color:'black'}}
+             style={{fontWeight:'500', color:'black'}}
               variant={"contained"}
               fullWidth type={"submit"}
               startIcon={isLoading && <CircularProgress size={'25px'} color="info" />}

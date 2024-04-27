@@ -52,6 +52,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
+    const dataFOC = useSelector((state: any) => state.FOC.foc);
     //#endregion
 
     //#region Variable
@@ -244,6 +245,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     const SavePartial = async () => {
         if (await checkPermissionPrint(dataUser[0].UserId)) {
+            // Xuất tách tem
             if (form === 'stockout') {
                 setIsLoading(true)
                 setDisable(true)
@@ -259,7 +261,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     User_Serial_Key: dataUser[0].UserId,
                     chxAll: chxAll,
                     chxpair: chxpair,
-                    get_version: dataUser[0].WareHouse,
+                    get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
                     Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
                     chxColor: dataColor.chxColor,
                     rbtColor_A: dataColor.rbtColor_A,
@@ -309,6 +311,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     setDisable(false)
                 })
             }
+            // Nhập số lượng trong tem
             else {
                 setIsLoading(true)
                 setDisable(true)
@@ -422,7 +425,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className="icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className="icon-wrapper"  />
                         </IconButton>
                         {/* Title */}
                         <Typography variant="h5" component="h5" color={'white'}>{t('frmData_Warehousing')}</Typography>
