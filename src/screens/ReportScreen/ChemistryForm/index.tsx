@@ -258,6 +258,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     }
     setDtpFrom_Date(moment(newDate).format("MM/DD/YYYY"));
   };
+  
   const handleClickDateTo = (name: string) => {
     let newDate = moment(dtpTo_Date, "MM/DD/YYYY");
     if (name === "-") {
@@ -315,14 +316,14 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       txtMaterial_No: txtMaterial_No,
       txtOrder_No: txtOrder_No,
       User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse: dataFOC === true ? "FOC" :  getWareHouseAcount(),
+      V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
       chxChemistry: chxChemistry,
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
       Barcode: "",
-      get_version: dataFOC === true ? "FOC" :  getWareHouseAcount(),
+      get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
       chxTotal_Order: chxTotalOrder,
       chxRy: chxRY
     };
@@ -358,13 +359,13 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       txtMaterial_No: material_no,
       txtOrder_No: txtOrder_No,
       User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse: dataFOC === true ? "FOC" :  getWareHouseAcount(),
+      V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
       chxChemistry: chxChemistry,
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
-      get_version: dataFOC === true ? "FOC" :  getWareHouseAcount(),
+      get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
       chxRy: chxRY,
       chxTotal_Order: chxTotalOrder
     };
@@ -610,7 +611,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
       const data = {
         User_Serial_Key: txtOrder_No,
-        V_Warehouse:  dataFOC === true ? "FOC" : getWareHouse(),
+        V_Warehouse: dataFOC === true ? "FOC" : getWareHouse(),
         dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
         dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
         lblMaterialNo: lblMaterialNo,
@@ -924,7 +925,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   />
                 </Box>
               </Stack>
-              
+
               <Box flexBasis={'7%'}></Box>
               <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'}>
                 {/* Check số phiếu */}
@@ -1000,8 +1001,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   <Typography className="textsize">{t("lblFrom") as string}</Typography>
                 </Box>
                 {/* Mũi tên < từ */}
-                <Stack display={"flex"} className="btn-date">
-                  <ArrowBackIosNewOutlinedIcon display={"flex"}  sx={{ width: '25px' }} />
+                <Stack display={"flex"} className="btn-date" onClick={() => handleClickDateFrom("-")}>
+                  <ArrowBackIosNewOutlinedIcon display={"flex"} sx={{ width: '25px' }} />
                 </Stack>
                 {/* Date time từ */}
                 <Box className="dateTimeContainer flex-center">
@@ -1015,8 +1016,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   />
                 </Box>
                 {/* Mũi tên > từ */}
-                <Stack display={"flex"} className="btn-date ">
-                  <ArrowForwardIosOutlinedIcon display={"flex"}  sx={{ width: '25px' }} />
+                <Stack display={"flex"} className="btn-date " onClick={() => handleClickDateFrom("+")}>
+                  <ArrowForwardIosOutlinedIcon display={"flex"} sx={{ width: '25px' }} />
                 </Stack>
               </Stack>
 
@@ -1026,8 +1027,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   <Typography className="textsize">{t("lblTo") as string}</Typography>
                 </Box>
                 {/* Mũi tên < đến */}
-                <Box className="btn-date">
-                  <ArrowBackIosNewOutlinedIcon  sx={{ width: '25px' }} />
+                <Box className="btn-date" onClick={() => handleClickDateTo("-")}>
+                  <ArrowBackIosNewOutlinedIcon sx={{ width: '25px' }} />
                 </Box>
                 {/* Date time đến */}
                 <Box className="dateTimeContainer flex-center">
@@ -1041,8 +1042,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   />
                 </Box>
                 {/* Mũi tên > đến */}
-                <Box className="btn-date">
-                  <ArrowForwardIosOutlinedIcon  sx={{ width: '25px' }} />
+                <Box className="btn-date" onClick={() => handleClickDateTo("+")}>
+                  <ArrowForwardIosOutlinedIcon sx={{ width: '25px' }} />
                 </Box>
               </Stack>
               {/* Check tổng đơn */}

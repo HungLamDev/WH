@@ -387,6 +387,6 @@
     "chxTranscoding": "Transcoding",
     "btnPrint_FOC": "Print FOC",
     "btnAccounting_FOC": "FOC Warehouse",
-    "lblPrint_FOC": "Print FOC"
-
+    "lblPrint_FOC": "Print FOC",
+    "msgNoPrintLabel": "There is no warehouse date yet so stamps cannot be printed"
 }

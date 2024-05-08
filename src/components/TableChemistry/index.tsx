@@ -9,29 +9,31 @@ import {
     TextField,
 } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DateTimePicker, DesktopDateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
 
-interface TableChemistryProps{
-    columns: GridColDef[]; 
+interface TableChemistryProps {
+    columns: GridColDef[];
     rows: GridRowsProp;
-     handlerowClick?: any, 
-     onDoubleClick?: any, 
-     arrEditCell?: string[], 
-     listChx?: (rows: GridRowsProp) => void, 
-     arrNotShowCell?: string[], 
-     tableName?: string 
+    handlerowClick?: any,
+    onDoubleClick?: any,
+    arrEditCell?: string[],
+    listChx?: (rows: GridRowsProp) => void,
+    arrNotShowCell?: string[],
+    tableName?: string
 }
 
-const TableChemistry= (props: TableChemistryProps) => {
+const TableChemistry = (props: TableChemistryProps) => {
     const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
 
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
     const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
+    const dataUser = useSelector((state: any) => state.UserLogin.user);
+
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
@@ -199,7 +201,7 @@ const TableChemistry= (props: TableChemistryProps) => {
                                 {Object.keys(item).map((key, i) => {
                                     const column = columns.find((col) => col.field === key);
                                     if (column) {
-                                        const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date' || key === 'ngayhh'|| key=== 'ngaysx';
+                                        const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date' || key === 'ngayhh' || key === 'ngaysx';
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                                         return (
                                             <TableCell
@@ -275,7 +277,7 @@ const TableChemistry= (props: TableChemistryProps) => {
                                                             }} />
                                                     </LocalizationProvider>
 
-                                                ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date'|| key === 'ngayhh' || key=== 'ngaysx')
+                                                ) : isProductionCell && (key === 'CGDate_Date' || key === 'ngayhh' || key === 'ngaysx')
                                                     ?
                                                     (
                                                         <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
@@ -286,7 +288,7 @@ const TableChemistry= (props: TableChemistryProps) => {
                                                                 className="td-responesive"
                                                                 format={"YYYY-MM-DD"}
                                                                 // value={selectedDateArr[index]}
-                                                                defaultValue={  key === 'ngayhh' ? moment().add(1,'year'): moment()}
+                                                                defaultValue={key === 'ngayhh' ? moment().add(1, 'year') : moment()}
                                                                 onChange={(params) => handleDateTimePickerChange(index, key, params)}
                                                                 views={['year', 'month', 'day']}
                                                                 slotProps={{
@@ -315,10 +317,52 @@ const TableChemistry= (props: TableChemistryProps) => {
                                                         </LocalizationProvider>
                                                     )
                                                     :
+                                                    isProductionCell && (key === "ngay") ?
+                                                        (
+                                                            <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
+                                                                monthAndYear: "MM/YYYY",
+                                                            }}>
 
-                                                    (
-                                                        item[key]
-                                                    )
+                                                                <DesktopDateTimePicker
+                                                                    className="td-responesive"
+                                                                    format={"YYYY-MM-DD"}
+                                                                    readOnly={dataUser[0].factoryName === 'LVL' ? true : false}
+                                                                    // value={selectedDateArr[index]}
+                                                                    value={moment(item[key])}
+                                                                    onChange={(params) => handleDateTimePickerChange(index, key, params)}
+                                                                    views={['year', 'month', 'day']}
+                                                                    slotProps={{
+                                                                        toolbar: {
+                                                                            hidden: true,
+                                                                        },
+                                                                        textField: {
+                                                                            inputProps: {
+                                                                                sx: {
+                                                                                    height: "0.5rem",
+                                                                                    textAlign: "center",
+                                                                                },
+                                                                            },
+
+                                                                        },
+                                                                    }}
+                                                                    sx={{
+                                                                        width: '180px',
+                                                                        '& .MuiInputBase-input': {
+                                                                            fontSize: '15px',
+                                                                            '@media screen and (max-width: 1200px)': {
+                                                                                fontSize: '15px !important',
+                                                                            },
+                                                                        },
+                                                                    }} />
+                                                            </LocalizationProvider>
+                                                        )
+                                                        :
+                                                        isProductionCell && (key === "ngay") && (moment(item["ngay"]).format("YYYY-MM-DD") === "1975-04-30") ?
+                                                            (<div>Chưa có ngày nhập kho</div>)
+                                                            :
+                                                            (
+                                                                item[key]
+                                                            )
                                                 }
                                             </TableCell>
                                         );

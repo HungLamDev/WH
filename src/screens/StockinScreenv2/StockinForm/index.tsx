@@ -210,7 +210,9 @@ const Stockin = () => {
 
 
     useEffect(() => {
-        getDatgetDataStorage(txtshelve)
+        if(txtshelve !== ""){
+            getDatgetDataStorage(txtshelve)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checkFOC]);
     //#endregion

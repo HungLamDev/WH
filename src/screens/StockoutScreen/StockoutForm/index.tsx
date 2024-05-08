@@ -585,7 +585,7 @@ const StockoutScreen = () => {
     return (
         <FullScreenContainerWithNavBar hidden={true} state={contentDetail} sideBarDisable={false} onShowScan={handleScanClick} sideBarNavigate="/list-stockout" title={t("lblStock_Out")} navigate={stockout ? "/delivery" : "/"}>
             <Box
-                paddingX={1}
+                // paddingX={1}
                 paddingBottom={1}
                 className={"dark-bg-secondary border-bottom-white"}
             >
@@ -690,8 +690,8 @@ const StockoutScreen = () => {
                             </Stack>
 
                         </Stack>
-                        <Stack width={'40%'} justifyContent={'center'} spacing={2}>
-                            <Grid container gap={2}>
+                        <Stack width={'40%'} justifyContent={'center'} spacing={2} >
+                            <Grid container gap={0.5} flexWrap={'nowrap'}>
                                 {/* Nhập ERP */}
                                 <Grid item  display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />

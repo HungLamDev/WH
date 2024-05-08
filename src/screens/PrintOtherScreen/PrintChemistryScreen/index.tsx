@@ -328,79 +328,84 @@ const DataHistoryPrintScreen = () => {
 
   const handleDoubleClick = (colName: string, params: any) => {
     if (isApi === true) {
-      setIsLoading(true);
-      setDisabled(true);
-      setIsApi(false)
-      const url = connect_string + "api/DoubleClick_Print_Chemistry"
-
-      const data = {
-        RowIndex: true,
-        dcmOrder_No: params.CGNO_Order_No,
-        dcmMaterial_No: params.CLBH_Material_No,
-        dcmMaterial_Type: params.cllb_Material_Type,
-        dcmColor: params.Color,
-        dcmUnit: params.dwbh_Units,
-        dcmQty_ROLL: params.qty_roll,
-        dcmArrival_QTY: params.Arrival_QTY,
-        dcmQTY: params.QTY,
-        dcmRoll: params.Roll,
-        dcmSize: params.Size,
-        dcmMaterial: params.ywpm_Material,
-        dcmProduction: moment(params.ngaysx, 'DD/MM/YYYY', true).isValid() ? params.ngaysx : moment(params.ngaysx).format('DD/MM/YYYY'),
-        dcmWork_Order: params.ZLBH_Work_Order,
-        dcmExpire_Date: moment(params.ngayhh, 'DD/MM/YYYY', true).isValid() ? params.ngayhh : moment(params.ngayhh).format('DD/MM/YYYY'),
-        dcmSupplier: params.zsywjc_Supplier,
-        dcmDate: moment(params.ngay, 'DD/MM/YYYY', true).isValid() ? params.ngay : moment(params.ngay).format('DD/MM/YYYY'),
-        User_Serial_Key: dataUser[0].UserId,
-        chxReprint: chxRePrint,
-        chxResidual_supplies: chxResidual_supplies,
-        chxRY: chxRY,
-        get_version: dataUser[0].WareHouse
-      }
-      axios.post(url, data, configNew).then(response => {
-        if (response.data.length > 0) {
-          const arr = response.data.map((item: any, index: any) => ({
-            _id: item.Barcode,
-            Supplier: item.Supplier,
-            Material_No: item.Material_No,
-            Material_Name: item.Material_Name,
-            Color: item.Color,
-            Size: item.Size,
-            Print_QTY: item.Print_QTY,
-            QTY: item.QTY,
-            dwbh_Units: item.dwbh_Units,
-            Order_No: item.Order_No,
-            Roll: item.Roll,
-            Print_Date: item.Print_Date,
-            ngay: moment(item.Print_Date).format("DD/MM/YYYY"),
-            Production: item.Production,
-            Expired_Date: item.Expired_Date,
-            Work_Order: item.Work_Order,
-            Material_Type: item.Material_Type,
-            Barcode: item.Barcode,
-          }))
-          // setrowUps(prevRowUps => [...prevRowUps, ...arr]);
-          // const uniqueArr = arr.filter((item: any) => {
-          //   return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
-          // });
-
-          const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
-            return !arr.some((newItem: any) => {
-              return newItem.Barcode === oldItem.Barcode;
-            });
-          });
-
-          const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-
-          // setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
-          // const arrTemp = [...ArrayRowUps, ...uniqueArr]
-          dispatch(copyValuesRowUps(mergedDataInRowUps));
+      if (params.ngay !== "1975-04-30") {
+        setIsLoading(true);
+        setDisabled(true);
+        setIsApi(false)
+        const url = connect_string + "api/DoubleClick_Print_Chemistry"
+  
+        const data = {
+          RowIndex: true,
+          dcmOrder_No: params.CGNO_Order_No,
+          dcmMaterial_No: params.CLBH_Material_No,
+          dcmMaterial_Type: params.cllb_Material_Type,
+          dcmColor: params.Color,
+          dcmUnit: params.dwbh_Units,
+          dcmQty_ROLL: params.qty_roll,
+          dcmArrival_QTY: params.Arrival_QTY,
+          dcmQTY: params.QTY,
+          dcmRoll: params.Roll,
+          dcmSize: params.Size,
+          dcmMaterial: params.ywpm_Material,
+          dcmProduction: moment(params.ngaysx, 'DD/MM/YYYY', true).isValid() ? params.ngaysx : moment(params.ngaysx).format('DD/MM/YYYY'),
+          dcmWork_Order: params.ZLBH_Work_Order,
+          dcmExpire_Date: moment(params.ngayhh, 'DD/MM/YYYY', true).isValid() ? params.ngayhh : moment(params.ngayhh).format('DD/MM/YYYY'),
+          dcmSupplier: params.zsywjc_Supplier,
+          dcmDate: moment(params.ngay, 'DD/MM/YYYY', true).isValid() ? params.ngay : moment(params.ngay).format('DD/MM/YYYY'),
+          User_Serial_Key: dataUser[0].UserId,
+          chxReprint: chxRePrint,
+          chxResidual_supplies: chxResidual_supplies,
+          chxRY: chxRY,
+          get_version: dataUser[0].WareHouse
         }
-      }).finally(() => {
-        setIsLoading(false);
-        setDisabled(false);
-        setIsApi(true)
-      })
+        axios.post(url, data, configNew).then(response => {
+          if (response.data.length > 0) {
+            const arr = response.data.map((item: any, index: any) => ({
+              _id: item.Barcode,
+              Supplier: item.Supplier,
+              Material_No: item.Material_No,
+              Material_Name: item.Material_Name,
+              Color: item.Color,
+              Size: item.Size,
+              Print_QTY: item.Print_QTY,
+              QTY: item.QTY,
+              dwbh_Units: item.dwbh_Units,
+              Order_No: item.Order_No,
+              Roll: item.Roll,
+              Print_Date: item.Print_Date,
+              ngay: moment(item.Print_Date).format("DD/MM/YYYY"),
+              Production: item.Production,
+              Expired_Date: item.Expired_Date,
+              Work_Order: item.Work_Order,
+              Material_Type: item.Material_Type,
+              Barcode: item.Barcode,
+            }))
+            // setrowUps(prevRowUps => [...prevRowUps, ...arr]);
+            // const uniqueArr = arr.filter((item: any) => {
+            //   return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
+            // });
+  
+            const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
+              return !arr.some((newItem: any) => {
+                return newItem.Barcode === oldItem.Barcode;
+              });
+            });
+  
+            const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
+  
+            // setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
+            // const arrTemp = [...ArrayRowUps, ...uniqueArr]
+            dispatch(copyValuesRowUps(mergedDataInRowUps));
+          }
+        }).finally(() => {
+          setIsLoading(false);
+          setDisabled(false);
+          setIsApi(true)
+        })
+      }
+      else{
+        handleOpenConfirm('no-data')
+      }
     }
 
   }
@@ -486,7 +491,8 @@ const DataHistoryPrintScreen = () => {
       txtMaterial_No: materialNo,
       txtOrder_Word: workOrder,
       txtOutsource: "",
-      get_version: dataUser[0].WareHouse
+      get_version: dataUser[0].WareHouse,
+      get_Factory: dataUser[0].factoryName
     };
     axios
       .post(url, data, configNew)
@@ -576,6 +582,7 @@ const DataHistoryPrintScreen = () => {
             flexDirection="column"
             alignItems={"start"}
           >
+            {/* Số phiếu */}
             <Grid>
               <InputField
                 focus={true}
@@ -587,6 +594,7 @@ const DataHistoryPrintScreen = () => {
                 disable={disabled}
               />
             </Grid>
+            {/* Mã vật tư */}
             <Grid>
               <InputField
                 label={t("dcmMaterial_No") as string}
@@ -598,6 +606,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Stack width={"auto"} spacing={6} direction={"row"}>
+              {/* Check tất cả */}
               <Grid>
                 <FormControlLabel
                   sx={styletext}
@@ -607,6 +616,7 @@ const DataHistoryPrintScreen = () => {
                   label={t("chxAll")}
                 />
               </Grid>
+              {/* Check RY */}
               <Grid>
                 <FormControlLabel
                   sx={styletext}
@@ -624,6 +634,7 @@ const DataHistoryPrintScreen = () => {
             </Stack>
           </Stack>
           <Stack width={"auto"} justifyContent={"center"} spacing={0} >
+            {/* Check In lại */}
             <Grid>
               <FormControlLabel
                 className="text"
@@ -640,6 +651,7 @@ const DataHistoryPrintScreen = () => {
             </Grid>
 
             <Grid container>
+              {/* Check In lại RY */}
               <Grid
                 item
                 xs={chxPrintRY || chxRY ? 3 : 12}
@@ -650,6 +662,7 @@ const DataHistoryPrintScreen = () => {
                   className="text"
                   control={
                     <Checkbox
+                      disabled={dataUser[0].factoryName === "LVL" ? true : false}
                       sx={{ color: "white" }}
                       checked={chxPrintRY}
                       onChange={handleChxPrintRY}
@@ -679,6 +692,7 @@ const DataHistoryPrintScreen = () => {
                   alignItems={"left"}
                   width="100%"
                 >
+                  {/* Lệnh */}
                   <InputField
                     label={t("dcmWork_Order") as string}
                     handle={handleWorkOrder}
@@ -717,7 +731,7 @@ const DataHistoryPrintScreen = () => {
             </Grid>
             <Grid>
               {(dataUser[0].TLLanguage === 'TW' || dataUser[0].UserRole === "Administrator") &&
-
+                // In vật tư bù
                 <FormControlLabel
                   className="text"
                   control={
@@ -759,6 +773,7 @@ const DataHistoryPrintScreen = () => {
           {confirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
           {confirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblChangeDateFail") as string} />}
           {confirmType === 'print-error' && <ModalCofirm title={t("msgPrintErrror") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
+          {confirmType === 'no-data' && <ModalCofirm title={"Chưa có ngày nhập kho không thể in tem"} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />}
         </Stack>
       </Box>
       <Stack overflow={"hidden"} sx={{ height: "100%" }}>

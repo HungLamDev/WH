@@ -39,6 +39,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
     const [selectedColumn, setSelectedColumn] = useState("");
     const dispatch = useDispatch();
     const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
+    const dataUser = useSelector((state: any) => state.UserLogin.user);
 
     useEffect(() => {
         setSelected([])
@@ -97,7 +98,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
             if (params !== 'Arrival_QTY') {
                 const column_target = item
                 if (column_target) {
-                    const qty_roll = new Decimal(column_target.qty_roll);    
+                    const qty_roll = new Decimal(column_target.qty_roll);
                     const Arrival_QTY = new Decimal(column_target.Arrival_QTY);
                     const result = new Decimal(Arrival_QTY).plus(0.9).toNumber();
                     if (!isNaN(Arrival_QTY.toNumber()) && (qty_roll.toNumber() > result)) {
@@ -128,9 +129,9 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
         dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }));
-       
+
     };
-    
+
 
     const handleDateTimePickerChange = (rowInd: number, colName: string, params: any) => {
         if (colName === 'ywsm_Production') {
@@ -231,79 +232,41 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                     item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}
                                                 }
                                             >
-                                                {isEditing && !isProductionCell && selectedColumn == key ? (
-                                                    <TextField
+                                                {
+                                                    isEditing && !isProductionCell && selectedColumn == key ? (
+                                                        <TextField
 
-                                                        defaultValue={item[key]}
-                                                        onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
-                                                        size="small"
-                                                        autoFocus
-                                                        sx={{
-                                                            '& .MuiInputBase-input': {
-                                                                padding: 0,
-                                                                width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
-                                                                // textAlign: 'center',
-                                                                fontSize: '17px',
-                                                                '@media screen and (max-width: 1200px)': {
-                                                                    fontSize: '15px !important',
-                                                                    textAlign: 'center',
-                                                                },
-                                                            },
-
-                                                        }}
-                                                    />
-                                                ) : isProductionCell && key === "ywsm_Production" ? (
-
-                                                    <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
-                                                        monthAndYear: "MM/YYYY",
-                                                    }}>
-
-                                                        <DesktopDateTimePicker
-                                                            className="td-responesive"
-                                                            format={"MMMM YYYY"}
-                                                            // value={selectedDateArr[index]}
-                                                            // defaultValue={key === "ngay" ? moment() : null}
-                                                            onChange={(params) => handleDateTimePickerChange(index, key, params)}
-                                                            views={['month', 'year']}
-                                                            slotProps={{
-                                                                toolbar: {
-                                                                    hidden: true,
-                                                                },
-                                                                textField: {
-                                                                    inputProps: {
-                                                                        sx: {
-                                                                            height: "0.5rem",
-                                                                            textAlign: "center",
-                                                                        },
-                                                                    },
-
-                                                                },
-                                                            }}
+                                                            defaultValue={item[key]}
+                                                            onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
+                                                            size="small"
+                                                            autoFocus
                                                             sx={{
-                                                                width: '180px',
                                                                 '& .MuiInputBase-input': {
-                                                                    fontSize: '15px',
+                                                                    padding: 0,
+                                                                    width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
+                                                                    // textAlign: 'center',
+                                                                    fontSize: '17px',
                                                                     '@media screen and (max-width: 1200px)': {
                                                                         fontSize: '15px !important',
+                                                                        textAlign: 'center',
                                                                     },
                                                                 },
-                                                            }} />
-                                                    </LocalizationProvider>
 
-                                                ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date')
-                                                    ?
-                                                    (
+                                                            }}
+                                                        />
+                                                    ) : isProductionCell && key === "ywsm_Production" ? (
+
                                                         <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
                                                             monthAndYear: "MM/YYYY",
                                                         }}>
 
                                                             <DesktopDateTimePicker
                                                                 className="td-responesive"
-                                                                format={"YYYY-MM-DD"}
+                                                                format={"MMMM YYYY"}
                                                                 // value={selectedDateArr[index]}
-                                                                defaultValue={moment()}
+                                                                // defaultValue={key === "ngay" ? moment() : null}
                                                                 onChange={(params) => handleDateTimePickerChange(index, key, params)}
-                                                                views={['year', 'month', 'day']}
+                                                                views={['month', 'year']}
                                                                 slotProps={{
                                                                     toolbar: {
                                                                         hidden: true,
@@ -328,12 +291,55 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                                     },
                                                                 }} />
                                                         </LocalizationProvider>
-                                                    )
-                                                    :
 
-                                                    (
-                                                        item[key]
-                                                    )
+                                                    ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date') && (moment(item["ngay"]).format("YYYY-MM-DD") !== "1975-04-30")
+                                                        ?
+                                                        (
+                                                            <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
+                                                                monthAndYear: "MM/YYYY",
+                                                            }}>
+
+                                                                <DesktopDateTimePicker
+                                                                    className="td-responesive"
+                                                                    format={"YYYY-MM-DD"}
+                                                                    readOnly={dataUser[0].factoryName === 'LVL' ? true : false}
+                                                                    // value={selectedDateArr[index]}
+                                                                    value={moment(item[key])}
+                                                                    onChange={(params) => handleDateTimePickerChange(index, key, params)}
+                                                                    views={['year', 'month', 'day']}
+                                                                    slotProps={{
+                                                                        toolbar: {
+                                                                            hidden: true,
+                                                                        },
+                                                                        textField: {
+                                                                            inputProps: {
+                                                                                sx: {
+                                                                                    height: "0.5rem",
+                                                                                    textAlign: "center",
+                                                                                },
+                                                                            },
+
+                                                                        },
+                                                                    }}
+                                                                    sx={{
+                                                                        width: '180px',
+                                                                        '& .MuiInputBase-input': {
+                                                                            fontSize: '15px',
+                                                                            '@media screen and (max-width: 1200px)': {
+                                                                                fontSize: '15px !important',
+                                                                            },
+                                                                        },
+                                                                    }} />
+                                                            </LocalizationProvider>
+                                                        )
+                                                        :
+                                                        (key === "ngay" || key === 'CGDate_Date') && (moment(item["ngay"]).format("YYYY-MM-DD") === "1975-04-30")
+                                                            ?
+                                                            (<div>Chưa có ngày nhập kho</div>)
+                                                            :
+                                                            (
+                                                                item[key]
+                                                            )
                                                 }
                                             </TableCell>
                                         );

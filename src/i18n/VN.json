@@ -387,5 +387,6 @@
     "chxTranscoding": "Chuyển mã",
     "btnPrint_FOC": "In FOC",
     "btnAccounting_FOC": "Kho FOC",
-    "lblPrint_FOC": "In Hàng FOC"
+    "lblPrint_FOC": "In Hàng FOC",
+    "msgNoPrintLabel": "Chưa có ngày nhập kho không thể in tem"
 }
