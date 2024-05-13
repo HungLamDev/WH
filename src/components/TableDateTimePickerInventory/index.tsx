@@ -16,10 +16,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldChangeArrayRowDowns, DateTimePickerChangeArrayRowDowns } from "../../redux/ArrayRowDowns";
 import Decimal from "decimal.js";
-import axios from "axios";
-import { connect_string } from "../../screens/LoginScreen/ChooseFactory";
 
-interface TableDateTimePickerProps {
+interface TableDateTimePickerInventoryProps {
     columns: GridColDef[];
     rows: GridRowsProp;
     handlerowClick?: any,
@@ -27,12 +25,12 @@ interface TableDateTimePickerProps {
     arrEditCell?: string[],
     listChx?: (rows: GridRowsProp) => void,
     arrNotShowCell?: string[],
-    tableName?: string,
-    checkOrderNo?:boolean
+    tableName?: string
 }
 
-const TableDateTimePicker = (props: TableDateTimePickerProps) => {
-    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, checkOrderNo } = props;
+const TableDateTimePickerInventory = (props: TableDateTimePickerInventoryProps) => {
+    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
+
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
     const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
     const [selected, setSelected] = useState<GridRowsProp>([])
@@ -61,20 +59,6 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
         // }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [MaterialTableChecked, StockoutDetailChecked])
-
-    const handleOnChangeArrivalQty = (rowInd: number, colName: string, value: string, dataRow: any) => {
-        const url = connect_string + "api/text_change_qty_print"
-        const data =
-        {
-            MaterialNo: dataRow?.CLBH_Material_No,
-            OrderNo: dataRow?.CGNO_Order_No,
-            Qty: value,
-        }
-        axios.post(url, data).then((res: any) => {
-            dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: 'ngay', value: moment(res.data).format("YYYY-MM-DD") }))
-        })
-
-    }
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -143,16 +127,12 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
         setEditingCellId(null);
     };
 
-    const handleOnBlurTextField = (rowInd: number, colName: string, value: string, dataRow: any) => {
-        if (colName === "Arrival_QTY" && checkOrderNo === true && dataUser[0].factoryName === "LVL") {
-            handleOnChangeArrivalQty(rowInd, colName, value, dataRow)
-        }
-
-    }
-
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
         dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }));
+        console.log(rowInd)
+        console.log(colName)
     };
+
 
     const handleDateTimePickerChange = (rowInd: number, colName: string, params: any) => {
         if (colName === 'ywsm_Production') {
@@ -259,7 +239,6 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
 
                                                             defaultValue={item[key]}
                                                             onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
-                                                            onBlur={(event) => handleOnBlurTextField(index, key, event.target.value, item)}
                                                             size="small"
                                                             autoFocus
                                                             sx={{
@@ -314,7 +293,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                                 }} />
                                                         </LocalizationProvider>
 
-                                                    ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date') && (moment(item["ngay"]).format("YYYY-MM-DD") !== "1975-04-30") && (moment(item["ngay"]).format("YYYY-MM-DD") !== "1945-02-09")
+                                                    ) : isProductionCell && (key === "ngay" || key === 'CGDate_Date') && (moment(item["ngay"]).format("YYYY-MM-DD") !== "1975-04-30")
                                                         ?
                                                         (
                                                             <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
@@ -324,9 +303,9 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                                 <DesktopDateTimePicker
                                                                     className="td-responesive"
                                                                     format={"YYYY-MM-DD"}
-                                                                    readOnly={dataUser[0].factoryName === 'LVL' && dataUser[0].UserRole !== "Manager" ? true : false}
+                                                                    // readOnly={dataUser[0].factoryName === 'LVL' && dataUser[0].UserRole !== "Manager" ? true : false}
                                                                     // value={selectedDateArr[index]}
-                                                                    value={moment(item[key])}
+                                                                    value={moment()}
                                                                     onChange={(params) => handleDateTimePickerChange(index, key, params)}
                                                                     views={['year', 'month', 'day']}
                                                                     slotProps={{
@@ -358,12 +337,10 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                         (key === "ngay" || key === 'CGDate_Date') && (moment(item["ngay"]).format("YYYY-MM-DD") === "1975-04-30")
                                                             ?
                                                             (<div>Chưa có ngày nhập kho</div>)
-                                                            : (key === "ngay" || key === 'CGDate_Date') && (item["ngay"] === "1945-02-09")
-                                                                ? (<div>Kiểm tra lại số lượng về</div>)
-                                                                :
-                                                                (
-                                                                    item[key]
-                                                                )
+                                                            :
+                                                            (
+                                                                item[key]
+                                                            )
                                                 }
                                             </TableCell>
                                         );
@@ -382,4 +359,4 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
     );
 };
 
-export default TableDateTimePicker;
+export default TableDateTimePickerInventory;

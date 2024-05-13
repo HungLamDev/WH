@@ -39,6 +39,7 @@ import { styletext } from "../../StockinScreenv2/StockinForm";
 import TableDateTimePicker from "../../../components/TableDateTimePicker";
 import { copyValues, clearArrayRowDowns } from "../../../redux/ArrayRowDowns";
 import { copyValuesRowUps, clearArrayRowUps } from "../../../redux/ArrayRowUps";
+import TableDateTimePickerInventory from "../../../components/TableDateTimePickerInventory";
 
 //#endregion
 const DataHistoryPrintScreen = () => {
@@ -659,7 +660,7 @@ const DataHistoryPrintScreen = () => {
           />
         </Stack>
         <Stack direction="row" sx={{ height: "50%" }}>
-          <TableDateTimePicker
+          <TableDateTimePickerInventory
             columns={columnsDown}
             rows={ArrayRowDowns}
             onDoubleClick={handleDoubleClick}

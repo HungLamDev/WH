@@ -328,7 +328,7 @@ const DataHistoryPrintScreen = () => {
 
   const handleDoubleClick = (colName: string, params: any) => {
     if (isApi === true) {
-      if (params.ngay !== "1975-04-30") {
+      if ((params.ngay !== "1975-04-30") && (params.ngay !== "1945-02-09")) {
         setIsLoading(true);
         setDisabled(true);
         setIsApi(false)

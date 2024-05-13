@@ -457,7 +457,7 @@ const StampPrintScreen = () => {
 
     const handleDoubleClick = (name: any, params: any) => {
         if (isApi === true) {
-            if (params.ngay !== "1975-04-30") {
+            if ((params.ngay !== "1975-04-30") && (params.ngay !== "1945-02-09")) {
                 const date_temp = params.ngay.toString().replaceAll("/", "-").split('-')
                 const ngay = date_temp[0] + '-' + date_temp[1] + '-' + date_temp[2]
                 setIsApi(false)
@@ -850,7 +850,7 @@ const StampPrintScreen = () => {
                     <TableCheckBox columns={columnsUp} rows={ArrayRowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
                 <Stack sx={{ height: '50%' }} >
-                    <TableDateTimePicker columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
+                    <TableDateTimePicker checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>
