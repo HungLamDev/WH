@@ -306,6 +306,7 @@ const StampPrintScreen = () => {
     const [chxPrint_RY, setchxPrint_RY] = useState(false)
     const [chxReprint, setchxReprint] = useState(false)
     const [chxReprint_RY, setchxReprint_RY] = useState(false)
+    const [chxTotal_RY, setchxTotal_RY] = useState(false)
     const [date, setDate] = useState(moment().format("YYYY-MM-DD"))
     const [dataInRowUps, setDataInRowUps] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(false);
@@ -356,6 +357,10 @@ const StampPrintScreen = () => {
 
     const handlechxReprint_RY = (event: React.ChangeEvent<HTMLInputElement>) => {
         setchxReprint_RY(event.target.checked);
+    };
+
+    const handlechxTotal_RY = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setchxTotal_RY(event.target.checked);
     };
 
     //#endregion
@@ -798,7 +803,7 @@ const StampPrintScreen = () => {
                         <Grid item xs={2}>
                             <FormControlLabel
                                 sx={styletext}
-                                control={<Checkbox disabled={dataUser[0].factoryName === "LVL" ? true : false}  defaultChecked={false} onChange={handlechxReprint_RY} />}
+                                control={<Checkbox disabled={dataUser[0].factoryName === "LVL" ? true : false} defaultChecked={false} onChange={handlechxReprint_RY} />}
                                 label={t("chxReprint") + ' ' + t("chxRY") as string}
                             />
                         </Grid>
@@ -817,6 +822,19 @@ const StampPrintScreen = () => {
                                 control={<Checkbox defaultChecked={false} onChange={handlechxPrint_All_RY} />}
                                 label={t("chxAll") + ' ' + t("chxRY") as string}
                             />
+                        </Grid>
+                        {/* Check tổng RY */}
+                        <Grid item xs={2}>
+                            {
+                                dataUser[0].factoryName === "LVL" &&
+                                (
+                                    <FormControlLabel
+                                        sx={styletext}
+                                        control={<Checkbox defaultChecked={false} onChange={handlechxTotal_RY} />}
+                                        label={t("checkTotalRy") as string}
+                                    />
+                                )
+                            }
                         </Grid>
                     </Grid>
                 </Stack>
@@ -840,7 +858,7 @@ const StampPrintScreen = () => {
                     {cofirmType === 'error-data' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgChooseStamp") as string} />}
                     {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                     {cofirmType === 'changedatefail' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblChangeDateFail") as string} />}
-                    {cofirmType === 'no-date' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={ t("msgNoPrintLabel") as string} />}
+                    {cofirmType === 'no-date' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgNoPrintLabel") as string} />}
 
                 </Stack>
                 {open && <Formprint open={open} onClose={() => setOpen(false)} rows={ArrayDeleteAndPrint} />}
@@ -850,7 +868,7 @@ const StampPrintScreen = () => {
                     <TableCheckBox columns={columnsUp} rows={ArrayRowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
                 <Stack sx={{ height: '50%' }} >
-                    <TableDateTimePicker checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
+                    <TableDateTimePicker checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>

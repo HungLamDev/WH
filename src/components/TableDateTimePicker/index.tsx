@@ -29,10 +29,11 @@ interface TableDateTimePickerProps {
     arrNotShowCell?: string[],
     tableName?: string,
     checkOrderNo?:boolean
+    checkOther?:boolean
 }
 
 const TableDateTimePicker = (props: TableDateTimePickerProps) => {
-    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, checkOrderNo } = props;
+    const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, checkOrderNo, checkOther } = props;
     const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
     const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
     const [selected, setSelected] = useState<GridRowsProp>([])
@@ -42,7 +43,6 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
     const dispatch = useDispatch();
     const ArrayRowDowns = useSelector((state: any) => state.ArrayRowDowns.items);
     const dataUser = useSelector((state: any) => state.UserLogin.user);
-
     useEffect(() => {
         setSelected([])
     }, [rows])
@@ -144,7 +144,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
     };
 
     const handleOnBlurTextField = (rowInd: number, colName: string, value: string, dataRow: any) => {
-        if (colName === "Arrival_QTY" && checkOrderNo === true && dataUser[0].factoryName === "LVL") {
+        if (colName === "Arrival_QTY" && checkOrderNo === true && dataUser[0].factoryName === "LVL" && dataUser[0].UserRole !== "Manager" && checkOther == false) {
             handleOnChangeArrivalQty(rowInd, colName, value, dataRow)
         }
 
@@ -324,7 +324,7 @@ const TableDateTimePicker = (props: TableDateTimePickerProps) => {
                                                                 <DesktopDateTimePicker
                                                                     className="td-responesive"
                                                                     format={"YYYY-MM-DD"}
-                                                                    readOnly={dataUser[0].factoryName === 'LVL' && dataUser[0].UserRole !== "Manager" ? true : false}
+                                                                    readOnly={(dataUser[0].factoryName === 'LVL' && dataUser[0].UserRole !== "Manager" && checkOther === false)  ? true : false}
                                                                     // value={selectedDateArr[index]}
                                                                     value={moment(item[key])}
                                                                     onChange={(params) => handleDateTimePickerChange(index, key, params)}

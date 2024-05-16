@@ -354,5 +354,6 @@
     "btnPrint_FOC": "ပုံနှိပ် FOC",
     "btnAccounting_FOC": "ဂိုဒေါင် FOC",
     "lblPrint_FOC": "ပုံနှိပ် FOC",
-    "msgNoPrintLabel": "ဂိုဒေါင်တွင် ရက်စွဲမရှိသေးသောကြောင့် တံဆိပ်ခေါင်းများကို ရိုက်နှိပ်၍မရပါ။"
+    "msgNoPrintLabel": "ဂိုဒေါင်တွင် ရက်စွဲမရှိသေးသောကြောင့် တံဆိပ်ခေါင်းများကို ရိုက်နှိပ်၍မရပါ။",
+    "checkTotalRy": "Total RY"
 }

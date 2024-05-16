@@ -386,5 +386,6 @@
     "btnPrint_FOC": "打印 FOC",
     "btnAccounting_FOC": "仓 FOC",
     "lblPrint_FOC": "打印 FOC",
-    "msgNoPrintLabel": "尚无入库日期，因此无法打印邮票"
+    "msgNoPrintLabel": "尚无入库日期，因此无法打印邮票",
+    "checkTotalRy": "全部的"
 }
