@@ -389,5 +389,7 @@
     "btnAccounting_FOC": "FOC Warehouse",
     "lblPrint_FOC": "Print FOC",
     "msgNoPrintLabel": "There is no warehouse date yet so stamps cannot be printed",
-    "checkTotalRy": "Total RY"
+    "checkTotalRy": "Total RY",
+    "chxSetupFOC": "Set FOC mode",
+    "chxTotalOrder": "Total order"
 }

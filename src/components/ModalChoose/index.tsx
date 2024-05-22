@@ -15,9 +15,10 @@ import { useState } from "react";
 import './style.scss'
 import { connect_string } from "../../screens/LoginScreen/ChooseFactory";
 import { addFOC } from "../../redux/FOC";
+
 const GridItem = (props: any) => {
     return (
-        <Grid
+        <div
             {...props}
             item xs={2}
             padding={'10px'}
@@ -26,8 +27,12 @@ const GridItem = (props: any) => {
             height={'100%'}
             display={'flex'}
             justifyContent={'center'}
+            flexDirection={'column'}
+            alignItems={'center'}
+            gap={'5px'}
+            sx={{ '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' } }}
         >
-        </Grid>
+        </div>
     );
 };
 const style = {
@@ -35,7 +40,8 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    height: '30%',
+    padding: '10px',
+    // height: '30%',
     width: '85%',
     bgcolor: '#1c2538',
     border: '2px solid white',
@@ -47,7 +53,7 @@ const style = {
 };
 const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open: any, onClose: any, setShowState?: (value: boolean) => void; }) => {
     const dataUser = useSelector((state: any) => state.UserLogin.user);
-    
+
     const dispatch = useDispatch()
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -57,7 +63,6 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
     const [selectedValue, setSelectedValue] = useState<LanguageName>(
         appLang ? appLang : "VN"
     );
-
 
     const handleClickItem = (lng: LanguageName) => {
         i18n.changeLanguage(lng)
@@ -69,11 +74,11 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
     }
 
     const handleClickWareHouse = (wareHouse: string) => {
-        if(wareHouse !== 'FOC'){
+        if (wareHouse !== 'FOC') {
             setWareHouseAcount(wareHouse)
             dispatch(addFOC(false))
         }
-        else{
+        else {
             dispatch(addFOC(true))
         }
     }
@@ -132,16 +137,58 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
             aria-describedby="modal-modal-description"
         >
             <Box sx={style} >
-                <Grid container justifyContent={'center'} alignItems={'center'} height={'100%'} flexWrap={'nowrap'}>
+                {/* <Grid container flexWrap={'nowrap'} alignContent={'center'} justifyContent={'center'} >
                     {array.map(({ title, icon, path, language, value, vWareHouse, disabled, hidden }: any, index: number) => {
                         return (
-                            <GridItem style={{display: hidden ? 'none' : 'flex'}} sx={index !== 0 ? { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' }, borderLeft: '1px solid white' } : { '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' } }} item key={index}>
-                                <Stack
-                                    width={'100%'}
-                                    borderRadius={"24px"}
-                                    justifyContent={"center"}
-                                    alignItems={"center"}
+                            <GridItem style={{ display: hidden ? 'none' : 'flex', }} sx={{ '&:hover': { backgroundColor: '#7F8487', cursor: 'pointer', borderRadius: '20px' } }} item key={index}>
+                                <IconWrapper
+                                    onClick={() => {
+                                        {
+                                            path && !vWareHouse ? handleNavigate(path, title) : path && vWareHouse ? [handleNavigate(path, title), handleClickWareHouse(vWareHouse)] :
+                                                handleClickItem(value);
+                                        }
+                                    }}
+                                    disabled={disabled ? disabled : false}
                                 >
+                                    <img style={{ width: '64px' }} src={icon} alt={title} />
+                                </IconWrapper>
+                                <Typography
+                                    marginTop={'5px'}
+                                    whiteSpace={"normal"}
+                                    style={{
+                                        width: '100%',
+
+                                    }}
+                                >
+                                    {title ? t(title) : language}
+                                </Typography>
+                            </GridItem>
+                        );
+                    })}
+                </Grid> */}
+                <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center', width: '100%' }}>
+                    {array.map(({ title, icon, path, language, value, vWareHouse, disabled, hidden }: any, index: number) => {
+                        return (
+                            <div style={{
+                                display: hidden ? 'none' : 'flex',
+                                width: '100%',
+                            }}
+                                key={index}
+                                className="item-choose"
+                            >
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    padding: '10px',
+                                    textAlign: "center",
+                                    color: "white",
+                                    height: '100%',
+                                    // justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    flex: 1
+
+                                }}>
                                     <IconWrapper
                                         onClick={() => {
                                             {
@@ -151,7 +198,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                         }}
                                         disabled={disabled ? disabled : false}
                                     >
-                                        <img style={{width:'64px'}} src={icon} alt={title} />
+                                        <img style={{ width: '64px' }} src={icon} alt={title} />
                                     </IconWrapper>
                                     <Typography
                                         marginTop={'5px'}
@@ -163,12 +210,17 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                     >
                                         {title ? t(title) : language}
                                     </Typography>
-
-                                </Stack>
-                            </GridItem>
+                                </div>
+                                <div style={{ height: '100%' }}>
+                                    {
+                                        index !== (array.length - 1) &&
+                                        < hr style={{ height: '100%' }} />
+                                    }
+                                </div>
+                            </div>
                         );
                     })}
-                </Grid>
+                </div>
 
             </Box>
         </Modal>

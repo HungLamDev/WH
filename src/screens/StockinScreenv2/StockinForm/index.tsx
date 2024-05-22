@@ -444,7 +444,7 @@ const Stockin = () => {
                                     <Grid item xs={4}>
                                         {
                                             checkFOC &&
-                                            <Typography className="textsizemini" sx={{ color: '#DD5746' }}>Thiết lặp chế độ FOC</Typography>
+                                            <Typography className="textsizemini" sx={{ color: '#DD5746' }}>{t("chxSetupFOC")}</Typography>
                                         }
                                     </Grid>
                                 </>

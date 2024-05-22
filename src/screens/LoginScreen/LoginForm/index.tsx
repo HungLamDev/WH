@@ -230,7 +230,7 @@ const LoginForm = () => {
              style={{fontWeight:'500', color:'black'}}
               variant={"contained"}
               fullWidth type={"submit"}
-              startIcon={isLoading && <CircularProgress size={'25px'} color="info" />}
+              startIcon={isLoading && <CircularProgress size={'25px'} color="inherit" />}
             >
               {t("btnLogin")}
             </Button>

@@ -389,5 +389,7 @@
     "btnAccounting_FOC": "Kho FOC",
     "lblPrint_FOC": "In Hàng FOC",
     "msgNoPrintLabel": "Chưa có ngày nhập kho không thể in tem",
-    "checkTotalRy": "Tổng RY"
+    "checkTotalRy": "Tổng RY",
+    "chxSetupFOC": "Thiết lặp chế độ FOC",
+    "chxTotalOrder": "Tổng đơn"
 }

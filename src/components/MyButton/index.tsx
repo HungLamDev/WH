@@ -1,4 +1,5 @@
 import { Button, ButtonProps } from "@mui/material";
+import { getAppLang } from "../../utils/localStorage";
 
 const MyButton = (props: ButtonProps & { name: string }) => {
   function handleClick(event: any): void {
@@ -7,6 +8,7 @@ const MyButton = (props: ButtonProps & { name: string }) => {
   function handleMouseDown(event: any): void {
     event.preventDefault();
   }
+  const language = getAppLang();
   return (
     <Button
       onClick={handleClick}
@@ -21,8 +23,9 @@ const MyButton = (props: ButtonProps & { name: string }) => {
         textTransform: "none",
         width: "7rem",
         height: "2.5rem",
+        fontSize: language === "MM" ? "12px" : "14px",
         "@media screen and (max-width: 1200px)": {
-          fontSize: "12px",
+          fontSize: language === "MM" ? "11px" : "12px",
           width: "6.0rem",
         },
         "&:focus": { background: "#757575" },

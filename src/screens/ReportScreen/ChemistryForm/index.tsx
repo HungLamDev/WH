@@ -1059,7 +1059,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                       value={chxTotalOrder}
                     />
                   }
-                  label={"Tổng đơn"}
+                  label={t("chxTotalOrder")}
                 />
               </Box>
             </Stack>

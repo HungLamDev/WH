@@ -3,7 +3,7 @@
     "lblCheckData":"ဒေတာစစ်ဆေးပါ။",
     "lblUpdateNotSuccess": "အပ်ဒိတ် မအောင်မြင်ပါ။",
     "lblPrintName": "ပုံနှိပ်အမည်",
-    "lblPrint": "ပရင်တာခွင့်ပြုချက်များကို ဗဟိုချုပ်ကိုင်မှုလျှော့ချပါ။",
+    "lblPrint": "ပုံနှိပ်ခြင်းခွင့်ပြုချက်များ",
     "lblPrintPermission": "သင့်တွင် ပုံနှိပ်ခွင့်မရှိပါ။",
     "lblTracking": "ပစ္စည်းခြေရာခံခြင်း။",
     "lblTracking_Board": "ပါဝင်ပစ္စည်းများ ခြေရာခံဘုတ်အဖွဲ့",
@@ -28,7 +28,7 @@
     "btnDelivery": "ပေးပို့ခြင်း။",
     "btnEnglish": "အဂၤလိပ္ဘာသာ",
     "btnEnter_Shelves": "စင်ပေါ်ကို ဝင်ပါ။",
-    "btnEnter_Stock": "",
+    "btnEnter_Stock": "ဂိုဒေါင်ထဲဝင်ပါ။",
     "btnERP_Print": "ပုံနှိပ်တံဆိပ်",
     "btnExcel": "Excel",
     "btnExit": "ထြက္ျခင္း",
@@ -355,5 +355,11 @@
     "btnAccounting_FOC": "ဂိုဒေါင် FOC",
     "lblPrint_FOC": "ပုံနှိပ် FOC",
     "msgNoPrintLabel": "ဂိုဒေါင်တွင် ရက်စွဲမရှိသေးသောကြောင့် တံဆိပ်ခေါင်းများကို ရိုက်နှိပ်၍မရပါ။",
-    "checkTotalRy": "Total RY"
+    "checkTotalRy": "Total RY",
+    "dcpRack": "တစ်ပွဲ",
+    "chxSetupFOC": "FOC မုဒ်ကို သတ်မှတ်ပါ။",
+    "btnSave":"သိမ်းဆည်းပါ။",
+    "btnDelete":"ဖျက်ပါ။",
+    "lblMaterial_No":"ပစ္စည်းနံပါတ်",
+    "chxTotalOrder": "စုစုပေါင်းအမိန့်"
 }

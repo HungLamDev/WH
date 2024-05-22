@@ -54,7 +54,7 @@ const Menu = () => {
   const IconWrapper = (props: any) => {
     return (
       <Button
-        
+
         sx={{
           width: "fit-content",
           height: "fit-content",
@@ -75,7 +75,7 @@ const Menu = () => {
 
   const GridItem = (props: any) => {
     return (
-      <Grid {...props} item xs={2} textAlign={"center"} color={"white"}></Grid>
+      <Grid {...props} item xs={2} textAlign={"center"} color={"white"} display={"flex"} direction={'column'} alignItems={'center'} gap={'10px'}></Grid>
     );
   };
   //#endregion
@@ -190,7 +190,7 @@ const Menu = () => {
   ];
 
   // Danh sách thẻ kho
-  const list: { title: string; icon: string; path: string, vWareHouse: string, hidden?:boolean }[] = [
+  const list: { title: string; icon: string; path: string, vWareHouse: string, hidden?: boolean }[] = [
     {
       title: t("btnAccounting_Chemistry") as string,
       icon: chemistryIcon,
@@ -373,6 +373,7 @@ const Menu = () => {
       alignItems={"center"}
       // height={"100vh"}
       margin={"0 auto"}
+      rowGap={'30px'}
 
     >
       {/* Thông tin user */}
@@ -382,7 +383,7 @@ const Menu = () => {
         display: 'flex',
         justifyContent: 'flex-end',
         paddingRight: '50px',
-        paddingTop: ' 10px'
+        paddingTop: ' 10px',
       }}>
         <Box sx={{
           display: 'flex',
@@ -408,31 +409,25 @@ const Menu = () => {
         </Box>
       </div>
       {/* Menu */}
-      <Grid container width={'75%'} flex={8} display={'flex'} alignItems={'center'}  columns={{xs: 12}}>
+      <Grid container width={'80%'} flex={8} display={'flex'}  alignContent={'center'} gap={'70px 0px'}>
         {menuList.map(({ title, icon, path, modal, modalName, disabled }, index: number) => {
           return (
-            <GridItem item key={index}>
-              <Stack
-                justifyContent={"center"}
-                alignItems={"center"}
-                spacing={1}
+            <Grid item display={'flex'} flexDirection={'column'} textAlign={'center'} xs={2} alignItems={'center'} gap={'10px'} >
+              <IconWrapper
+                disabled={disabled ? disabled : false}
+                onClick={() => {
+                  if (modal) {
+                    handleOpen(modalName)
+                  }
+                  else {
+                    handleNavigate(path, title);
+                  }
+                }}
               >
-                <IconWrapper
-                  disabled={disabled ? disabled : false}
-                  onClick={() => {
-                    if (modal) {
-                      handleOpen(modalName)
-                    }
-                    else {
-                      handleNavigate(path, title);
-                    }
-                  }}
-                >
-                  <img src={icon} alt={title} className="hover-effect" />
-                </IconWrapper>
-                <Typography sx={{fontSize:'15px'}} className="textsize-960px" whiteSpace={"pre"}>{t(title)}</Typography>
-              </Stack>
-            </GridItem>
+                <img src={icon} alt={title} className="hover-effect" />
+              </IconWrapper>
+              <Typography sx={{ fontSize: '15px' }} className="textsize-960px" >{t(title)}</Typography>
+            </Grid>
           );
         })}
       </Grid>

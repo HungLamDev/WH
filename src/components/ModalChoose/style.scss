@@ -1,5 +1,9 @@
-
 .fade-out {
     opacity: 0;
     transition: opacity 0.5s;
+}
+
+.item-choose:hover {
+    background-color: #7F8487;
+    border-radius: 20px
 }

@@ -31,7 +31,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
         "@media screen and (max-width: 1200px)": {
             width: "40%",
         },
-        height: '100%',
+        height: '90%',
         bgcolor: '#1c2538',
         border: '2px solid white',
         borderRadius: 3,
@@ -114,7 +114,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
     return (
         <Modal
             open={open}
-            // onClose={onClose}
+            onClose={onClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
@@ -122,7 +122,7 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
                 <Stack height={'100%'} paddingBottom={'20px'}>
                     <Stack height={'15%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className=" icon-wrapper"  />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("btnChangepassword") as string}</Typography>
                         <Typography></Typography>
