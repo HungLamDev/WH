@@ -401,6 +401,8 @@ const Stockin = () => {
                         }))
                         setRows(arr)
                     });
+                    getTotalRack(txtshelve)
+
                 }
             })
 

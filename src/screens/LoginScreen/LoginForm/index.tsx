@@ -110,7 +110,7 @@ const LoginForm = () => {
 
     const dataUserBoss = {
       User_Id: username,
-      pass:password,
+      pass: password,
     };
 
     setIsLoading(true);
@@ -153,7 +153,7 @@ const LoginForm = () => {
           setIsLoading(false);
           handleFulfilled();
         }
-        else{
+        else {
           setOpen(true);
           setIsLoading(false);
         }
@@ -161,7 +161,7 @@ const LoginForm = () => {
     } catch (error) {
       setErrorModal(true);
       setIsLoading(false);
-    } 
+    }
   }
 
   //#endregion
@@ -183,7 +183,6 @@ const LoginForm = () => {
             <TextField
               sx={{
                 width: '90%'
-
               }}
               label={t("lblUser_Name")}
               variant="outlined"
@@ -227,17 +226,16 @@ const LoginForm = () => {
               ))}
             </TextField>
             <Button
-             style={{fontWeight:'500', color:'black'}}
+              style={{ fontWeight: '600', color: 'black', width: '90%' }}
               variant={"contained"}
               fullWidth type={"submit"}
               startIcon={isLoading && <CircularProgress size={'25px'} color="inherit" />}
             >
               {t("btnLogin")}
             </Button>
-            
+
             {open && <ModalCofirm title={t("msgLoginIncorrect") as string} open={open} onClose={() => setOpen(false)} onPressOK={() => setOpen(false)} />}
             {errorModal && <ModalCofirm title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
-
           </Stack>
         </Paper>
       </form>

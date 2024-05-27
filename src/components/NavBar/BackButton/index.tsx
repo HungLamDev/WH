@@ -43,7 +43,9 @@ const BackButton = (props: BackButtonProps) => {
         dispatch(clearItemsMaterialTable())
     }
     nag(navigate, { state: state })
-    cancelRequest()
+    if( typeof cancelRequest === "function"){
+      cancelRequest()
+    }
   }
 
   return (
