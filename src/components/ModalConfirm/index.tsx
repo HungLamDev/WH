@@ -16,7 +16,7 @@ function ModalCofirm(props: ModalCofirmProps) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: '40%',
-        height: '20%',
+        // height: '30%',
         bgcolor: '#1c2538',
         border: '2px solid white',
         borderRadius: 3,
@@ -30,7 +30,7 @@ function ModalCofirm(props: ModalCofirmProps) {
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
-                <Stack direction={'column'} height={'100%'} >
+                <Stack direction={'column'} height={'100%'} gap={2}>
                     <Stack height={'50%'}  justifyContent={'center'}>
                         <Typography className='textsizebtn' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
                     </Stack>

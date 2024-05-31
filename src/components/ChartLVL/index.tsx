@@ -48,8 +48,6 @@ const ChartLVL = ({ listRack, wareHouse }: { listRack: any, wareHouse: any }) =>
                     </div>
                 </div>
 
-
-
             </div>
 
         )

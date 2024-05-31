@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from "@mui/material";
 import { getAppLang } from "../../utils/localStorage";
 
-const MyButton = (props: ButtonProps & { name: string }) => {
+const MyButton = (props: ButtonProps & { name: string, whiteSpace?: string }) => {
   function handleClick(event: any): void {
     event.preventDefault();
   }
@@ -15,6 +15,7 @@ const MyButton = (props: ButtonProps & { name: string }) => {
       onMouseDown={handleMouseDown}
       sx={{
         background: "#757575",
+        whiteSpace: props.whiteSpace || "",
         color: "white",
         borderRadius: "50px",
         lineHeight: "normal",

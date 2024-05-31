@@ -1,0 +1,19 @@
+.display-center {
+    display: flex !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+}
+
+.text-color {
+    color: #FF8911;
+}
+
+.text-hidden {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-wrap {
+    white-space: nowrap;
+    width: 100%;
+}

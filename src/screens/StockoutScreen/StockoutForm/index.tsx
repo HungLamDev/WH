@@ -277,6 +277,7 @@ const StockoutScreen = () => {
     }, [listChx])
 
     useEffect(() => {
+
         if (stockout) {
             dispatch(clearArrayStockout())
             dispatch(clearTotalQtyOut())
@@ -285,22 +286,24 @@ const StockoutScreen = () => {
 
     useEffect(() => {
         //#region Nhập cải thiện
-        // if (qrcode.length === 15 || qrcode.length === 16) {
-        //     checkMaterial(qrcode).then(result => {
-        //         if ((result === "Pass" && result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") || result === "Done_Insert") {
-        //             handleOutAll(qrcode)
-        //         }
-        //         else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") {
-        //             handleOpenConfirm('confirm-Material')
-        //         }
-        //     })
-        // }
+        if (qrcode.length >= 15) {
+            checkMaterial(qrcode).then(result => {
+               
+                if (result == true) {
+                    handleOpenConfirm('notify-reject-material')
+                }
+                else(
+                    handleOutAll(qrcode)
+                )
+            })
+        }
+        
         //#endregion
 
         //Bản cũ
-        if (qrcode.length === 15 || qrcode.length === 16) {
-           handleOutAll(qrcode)
-        }
+        // if (qrcode.length === 15 || qrcode.length === 16) {
+        //     handleOutAll(qrcode)
+        // }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrcode])
@@ -371,15 +374,19 @@ const StockoutScreen = () => {
         };
 
         return new Promise((resolve, reject) => {
+            setIsLoading(true)
             axios.post(url, data, config)
                 .then(response => {
                     resolve(response.data); // Trả về dữ liệu từ response
                     setTitle(response.data)
+                    setIsLoading(false)
                 })
                 .catch(error => {
 
                     handleOpenConfirm('network-error');
                     reject(error); // Reject với lỗi nếu có lỗi xảy ra
+                    setIsLoading(false)
+
                 })
         });
     }
@@ -390,10 +397,10 @@ const StockoutScreen = () => {
         // Xuất ngoài
         if (!stockout) {
             const data = {
-                Version_ini:  dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+                Version_ini: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
                 txtScan: barcode,
                 User_Serial_Key: dataUser[0].UserId,
-                get_version:  dataFOC === true ? "FOC" : dataUser[0].WareHouse
+                get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
             }
             const url = connect_string + 'api/getData_TextChange_Stock_Out'
             axios.post(url, data, config).then(response => {
@@ -693,8 +700,12 @@ const StockoutScreen = () => {
                         <Stack width={'40%'} justifyContent={'center'} spacing={2} >
                             <Grid container gap={0.5} flexWrap={'nowrap'}>
                                 {/* Nhập ERP */}
-                                <Grid item  display={'flex'}>
+                                {/* <Grid item display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />
+                                </Grid> */}
+                                {/* ICMWH */}
+                                <Grid item display={'flex'}>
+                                    <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
                                 </Grid>
                                 {/* Xuất chi tiết */}
                                 <Grid item display={'flex'}>
@@ -719,11 +730,11 @@ const StockoutScreen = () => {
                                 }
                             </Grid>
                             {/* tổng */}
-                            <Typography className="textsize">{t("lblQty_In")+ " "}
+                            <Typography className="textsize">{t("lblQty_In") + " "}
                                 {stockout ? stockoutDetailValue : valuetotal}
                             </Typography>
                             {/* tổng xuất */}
-                            <Typography className="textsize">{t("lblQty_Out") +" "} {TotalQtyOut}</Typography>
+                            <Typography className="textsize">{t("lblQty_Out") + " "} {TotalQtyOut}</Typography>
                         </Stack>
                     </Box>
                 </Stack>
@@ -733,7 +744,8 @@ const StockoutScreen = () => {
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'confirm-Material' && <FormConfirmMaterial title={title} open={openCofirm} onClose={handleCloseConfirm} onPressOK={onPressOK} />}
+                {cofirmType === 'notify-reject-material' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}
                 {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}
             </Stack>
         </FullScreenContainerWithNavBar>

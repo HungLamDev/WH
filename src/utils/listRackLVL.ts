@@ -124,6 +124,30 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
+    Rack_Total: "D147",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "D146",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "D145",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "D144",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
     Rack_Total: "D143",
   },
   {
@@ -136,19 +160,13 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D140",
-  },
-  {
-    width: "100%",
-    height: "100%",
-    Sum_Total: "0",
     Rack_Total: "D141",
   },
   {
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D138",
+    Rack_Total: "D140",
   },
   {
     width: "100%",
@@ -160,7 +178,7 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D136",
+    Rack_Total: "D138",
   },
   {
     width: "100%",
@@ -172,7 +190,7 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D134",
+    Rack_Total: "D136",
   },
   {
     width: "100%",
@@ -184,7 +202,7 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D132",
+    Rack_Total: "D134",
   },
   {
     width: "100%",
@@ -196,7 +214,7 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D130",
+    Rack_Total: "D132",
   },
   {
     width: "100%",
@@ -208,7 +226,7 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D128",
+    Rack_Total: "D130",
   },
   {
     width: "100%",
@@ -220,8 +238,9 @@ export const ListB1_F1 = [
     width: "100%",
     height: "100%",
     Sum_Total: "0",
-    Rack_Total: "D127",
-  },{
+    Rack_Total: "D128",
+  },
+  {
     width: "100%",
     height: "100%",
     Sum_Total: "0",
@@ -239,6 +258,25 @@ export const ListB1_F1 = [
     Sum_Total: "0",
     Rack_Total: "Pallet",
   },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "Pallet",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "Pallet",
+  },
+  {
+    width: "100%",
+    height: "100%",
+    Sum_Total: "0",
+    Rack_Total: "Pallet",
+  },
+ 
 ]
 
 

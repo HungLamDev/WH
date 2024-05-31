@@ -109,26 +109,26 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#region useEffect
     useEffect(() => {
         //#region Nhập cải thiện
-        // if (scanqr.length === 15 || scanqr.length === 16) {
-        //     if (form === 'stockout') {
-        //         checkMaterial(scanqr).then(result => {
-        //             if ((result === "Pass" && result !== "K ") || result === "Done_Insert") {
-        //                 ScanQR()
-        //             }
-        //             else if (result !== "Không Tìm Thấy Mã Vật Tư Từ Barcode") {
-        //                 handleOpenConfirm('confirm-Material')
-        //             }
-        //         })
-        //     }
-        //     else {
-        //         ScanQR()
-        //     }
-        // }
+        if (scanqr.length >= 15) {
+            if (form === 'stockout') {
+                checkMaterial(scanqr).then(result => {
+                    if (result == true) {
+                        handleOpenConfirm('notify-reject-material')
+                    }
+                    else (
+                        ScanQR()
+                    )
+                })
+            }
+            else {
+                ScanQR()
+            }
+        }
         //#endregion
         // Bản cũ
-        if (scanqr.length === 15 || scanqr.length === 16) {
-            ScanQR()
-        }
+        // if (scanqr.length === 15 || scanqr.length === 16) {
+        //     ScanQR()
+        // }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scanqr])
@@ -425,14 +425,15 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className="icon-wrapper"  />
+                            <BiArrowBack className="icon-wrapper" />
                         </IconButton>
                         {/* Title */}
                         <Typography variant="h5" component="h5" color={'white'}>{t('frmData_Warehousing')}</Typography>
                         {/* Camera */}
                         <IconButton sx={{ marginLeft: '20px' }}  >
                             <CameraAltIcon onClick={handleScanClick} />
-                        </IconButton>                    </Stack>
+                        </IconButton>
+                    </Stack>
                     <Stack height={'90%'} direction={'row'}>
                         <Stack width={'45%'}>
                             <Grid container height={'90%'} alignItems={'center'}>
@@ -578,8 +579,8 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'confirm-Material' && <FormConfirmMaterial title={title} open={openCofirm} onClose={onPressCancel} onPressOK={onPressOK} />}
-            </Box>
+                {cofirmType === 'notify-reject-material' && <ModalCofirm onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}            </Box>
         </Modal >
     )
 }
