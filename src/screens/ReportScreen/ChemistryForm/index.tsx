@@ -45,6 +45,7 @@ import QRScanner from "../../../components/QRScanner";
 import { successSound } from "../../../utils/pathsound";
 import { copyArrayAccountingCard } from "../../../redux/ArrayAccountingCard";
 import TableOriginEdit from "../../../components/TableOriginEdit";
+import TableVirtual from "../../../components/TableVirtual";
 export interface Chemistry {
   _id: number;
   Order_No_In1: string;
@@ -1155,7 +1156,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
 
       {/* Bảng show */}
       <Stack overflow={"hidden"} direction="row" sx={{ height: "100%" }}>
-        <Grid container sx={{ width: "14%" }}>
+        <Grid container sx={{ width: "14%", borderRight: '1px solid white' }}>
           <TableOrigin
             columns={columnsMaterial}
             rows={rowsMaterial}
@@ -1165,7 +1166,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             border
           />
         </Grid>
-        <Grid sx={{ width: "86%", borderLeft: '1px solid' }} >
+        <Grid sx={{ width: "86%", borderLeft: '1px solid white' }} >
           <TableOriginEdit
             columns={columns}
             rows={chemistryRow}
