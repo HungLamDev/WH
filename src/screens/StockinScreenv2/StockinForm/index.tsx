@@ -201,7 +201,7 @@ const Stockin = () => {
         if (shelve.length === 15 || shelve.length === 16) {
             saveDataInOut()
         }
-        if (shelve.length > 4 && shelve.length < 15) {
+        if (shelve.length > 1 && shelve.length < 15) {
             checkRack(shelve)
         }
 
@@ -430,7 +430,7 @@ const Stockin = () => {
                             {/* Check chế độ */}
                             <Grid item xs={6}>
                                 <FormGroup>
-                                    <FormControlLabel sx={styletext} control={<Checkbox defaultChecked={false} onChange={handleChangeMode} />} label={t("gpbMode") as string} />
+                                    <FormControlLabel sx={styletext} control={<Checkbox  defaultChecked={false} onChange={handleChangeMode} />} label={t("gpbMode") as string} />
                                 </FormGroup>
                             </Grid>
                             {/* Check FOC */}
@@ -439,7 +439,7 @@ const Stockin = () => {
                                 <>
                                     <Grid item xs={2}>
                                         <FormGroup>
-                                            <FormControlLabel sx={styletext} control={<Checkbox checked={dataFOC} onChange={handleChangeModeFOC} />} label={"FOC"} />
+                                            <FormControlLabel sx={styletext} control={<Checkbox  checked={dataFOC} onChange={handleChangeModeFOC} />} label={"FOC"} />
                                         </FormGroup>
                                     </Grid>
 
@@ -466,7 +466,7 @@ const Stockin = () => {
                                 {/* Tổng */}
                                 <Grid item xs={5} display={'flex'} alignItems={'center'} >
                                     <FormGroup style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        <Typography className="textsizemini">{t("lblQty_In") as string} {total}</Typography>
+                                        <Typography className="textsize">{t("lblQty_In") as string} {total}</Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>
@@ -478,7 +478,7 @@ const Stockin = () => {
                                 {/* SL Quét */}
                                 <Grid item xs={5} display={'flex'} alignItems={'center'}>
                                     <FormGroup style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        <Typography className="textsizemini" >{t("lblQty_Scan") as string} {valueScan} </Typography>
+                                        <Typography className="textsize" >{t("lblQty_Scan") as string} {valueScan} </Typography>
                                     </FormGroup>
                                 </Grid>
                             </Grid>

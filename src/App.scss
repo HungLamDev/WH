@@ -82,6 +82,10 @@ html {
   @media screen and (max-width: 1200px) {
     font-size: 15px !important;
   }
+
+  @media screen and (max-width: 700px) {
+    font-size: 12px !important;
+  }
 }
 
 .textsize-960px {
@@ -103,6 +107,11 @@ html {
 .td-responesive{
   @media screen and (max-width: 1200px) {
     font-size: 15px !important;
+    text-align: center !important;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 13px !important;
     text-align: center !important;
   }
 }

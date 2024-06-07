@@ -44,7 +44,10 @@ const LoginScreen = () => {
         //opacity: 0.5,
         fontWeight: '700',
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        "@media screen and (max-height: 450px)": {
+          display: 'none'
+        },
       }}> Powered by IT-Software LHG<br /> © {year} LACTY CO II.,LTD. All rights reserved. </Typography>
     </section>
   );

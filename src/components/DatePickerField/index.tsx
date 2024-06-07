@@ -21,7 +21,7 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly, customClas
     <HorizontalStack
       direction={"row"}
       justifyContent={"space-between"}
-      className={`input-field-container ${customClass}` }
+      className={`input-field-container ${customClass}`}
     >
       <Typography className="textsize">{label}</Typography>
       <LocalizationProvider
@@ -54,11 +54,14 @@ const DatePickerField = ({ label, valueDate, onValueChange, readonly, customClas
                   '@media screen and (max-width: 1200px)': {
                     fontSize: '14px !important',
                   },
+                  '@media screen and (max-width: 900px)': {
+                    height: "1.5rem",
+                  },
                 },
               },
               sx: {
                 "& fieldset": { border: "none!important" },
-                
+
               },
             },
             toolbar: {

@@ -16,6 +16,7 @@ const InputField = ({ label, value, handle, keydown, type, disable, customClass,
       alignItems={"center"}
       justifyContent={'space-between'}
       marginRight={2}
+      gap={'5px'}
       className={`input-field-container ${customClass}`}
     >
       <Typography className="textsize">{label}</Typography>
@@ -38,13 +39,14 @@ const InputField = ({ label, value, handle, keydown, type, disable, customClass,
             borderRadius: "50px",
             color: "white",
             height: "2rem",
+            
             "& fieldset": { borderColor: "white" },
 
             // '& .MuiInputBase-input': {
 
-            //   '@media screen and (max-width: 1000px)': {
-            //     fontSize: '14px !important',
-            //   },
+            '@media screen and (max-width: 900px)': {
+              height: "1.5rem",
+            },
             // },
           },
         }}

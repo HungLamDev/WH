@@ -103,49 +103,49 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     {
       field: "Arr_Material",
       headerName: t("dcpRemak_RY") as string,
-      width: 150,
+      width: 200,
       headerClassName: "custom-header",
     },
     {
       field: "Order_No_Out1",
       headerName: t("dcpArticle") as string,
-      width: 200,
+      width: 50,
       headerClassName: "custom-header",
     },
     {
       field: "Date_Out",
       headerName: t("dcmDate") as string,
-      width: 160,
+      width: 80,
       headerClassName: "custom-header",
     },
     {
       field: "Order_No_In3",
       headerName: t("dcpImport") as string,
-      width: 160,
+      width: 100,
       headerClassName: "custom-header",
     },
     {
       field: "Qty_Out",
       headerName: t("dcpExport") as string,
-      width: 160,
+      width: 100,
       headerClassName: "custom-header",
     },
     {
       field: "Qty_Redundant",
       headerName: t("dcpInventory") as string,
-      width: 160,
+      width: 100,
       headerClassName: "custom-header",
     },
     {
       field: "Img_DF",
       headerName: t("dcpSign_Account") as string,
-      width: 200,
+      width: 150,
       headerClassName: "custom-header",
     },
     {
       field: "Note_Account",
       headerName: t("dcpNote_Account") as string,
-      width: 400,
+      width: 200,
       headerClassName: "custom-header",
     },
   ];
@@ -1167,7 +1167,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           />
         </Grid>
         <Grid sx={{ width: "86%", borderLeft: '1px solid white' }} >
-          <TableOriginEdit
+          <TableVirtual
             columns={columns}
             rows={chemistryRow}
             handlerowClick={null}

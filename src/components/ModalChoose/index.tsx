@@ -198,7 +198,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                         }}
                                         disabled={disabled ? disabled : false}
                                     >
-                                        <img style={{ width: '64px' }} src={icon} alt={title} />
+                                        <img className="hover-effect"  src={icon} alt={title} />
                                     </IconWrapper>
                                     <Typography
                                         marginTop={'5px'}
@@ -207,6 +207,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                             width: '100%',
 
                                         }}
+                                        sx={{ fontSize: '15px' }} className="textsize-960px"
                                     >
                                         {title ? t(title) : language}
                                     </Typography>

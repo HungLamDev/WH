@@ -1,5 +1,4 @@
-
-.menuContainer{
+.menuContainer {
     height: 100%;
 }
 
@@ -14,9 +13,22 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0, 0.8); /* Màu nền lớp phủ */
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Màu nền lớp phủ */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999; /* Đảm bảo lớp phủ hiển thị phía trên các yếu tố khác */
-  }
+    z-index: 999;
+    /* Đảm bảo lớp phủ hiển thị phía trên các yếu tố khác */
+}
+
+.hover-effect {
+    @media screen and (max-height: 500px) {
+        width: 48px;
+    }
+
+    @media screen and (max-height: 450px) {
+        width: 32px;
+    }
+
+}

@@ -75,7 +75,7 @@ const ChooseFactory = () => {
         else if (selectedValue === 'LHG') {
             connect_string = 'https://192.168.30.100:7777/'
             // connect_string = 'https://192.168.32.84:7777/'
-            //connect_string = 'https://192.168.32.81/'
+           // connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LYM') {
             connect_string = 'https://192.168.55.7:7777/'
@@ -97,7 +97,7 @@ const ChooseFactory = () => {
     return (
         <Box className={"choose-factory"}>
             <FormControl>
-                <Select size="medium" value={selectedValue}>
+                <Select size="medium" value={selectedValue} sx={{minWidth: '8.2rem'}}>
                     {myArray.map(({ factoryName, icon, value }, index: number) => {
                         return (
                             <MenuItem

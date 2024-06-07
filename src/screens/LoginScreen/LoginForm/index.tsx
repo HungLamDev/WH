@@ -167,18 +167,25 @@ const LoginForm = () => {
   //#endregion
 
   return (
-    <Box >
+    <Box>
       <form onSubmit={handleSubmit} >
         <Paper
           className={"my-login-form"}
           sx={{
             p: 5,
+            zIndex: 10
           }}
         >
           <Stack
             justifyContent={"center"}
             alignItems={"center"}
-            spacing={5}
+            // spacing={5}
+            gap={5}
+            sx={{
+              "@media screen and (max-width: 1000px)": {
+                gap: 2
+              },
+            }}
           >
             <TextField
               sx={{

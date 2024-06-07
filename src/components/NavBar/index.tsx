@@ -30,7 +30,7 @@ const NavBar = (props: NavBarProps) => {
         <SideBarToggleButton sideBarDisable={sideBarDisable} sideBarNavigate={sideBarNavigate} />
         <Stack alignItems={"center"}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant={"h4"} sx={{ whiteSpace: 'pre', textAlign: 'center' }}>{title}</Typography>
+            <Typography className="titleNavbar" sx={{ whiteSpace: 'pre', textAlign: 'center' }}>{title}</Typography>
             <IconButton sx={{ marginLeft: '20px' }}  >
               <CameraAltIcon sx={{ display: !hidden ? 'none' : 'block' }} onClick={onShowScan} />
             </IconButton>

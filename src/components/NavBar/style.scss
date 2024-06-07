@@ -5,10 +5,19 @@
     transform: translateY(-50%);
     left: 1dvw;
   }
+
   .sidebar-toggle-button {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     right: 1dvw;
+  }
+
+  .titleNavbar {
+    font-size: 2.0rem;
+
+    @media screen and (max-width: 800px) {
+      font-size: 1.5rem;
+    }
   }
 }

@@ -667,7 +667,7 @@ const StockoutScreen = () => {
                                     <Grid container>
                                         {/* Quét QR */}
                                         <Grid item xs={12} display={'flex'} flexDirection={'row'}>
-                                            <InputField focus={true} label={t("gpbScan") as string} handle={handleQRcode} value={qrcode} />
+                                            <InputField focus={true} label={t("gpbScan") as string } handle={handleQRcode} value={qrcode} />
                                             {isLoading && <CircularProgress size={'25px'} color="info" />}
                                         </Grid>
                                     </Grid>

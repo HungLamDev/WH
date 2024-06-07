@@ -373,7 +373,6 @@ const Menu = () => {
       alignItems={"center"}
       // height={"100vh"}
       margin={"0 auto"}
-      rowGap={'30px'}
 
     >
       {/* Thông tin user */}
@@ -409,7 +408,19 @@ const Menu = () => {
         </Box>
       </div>
       {/* Menu */}
-      <Grid container width={'80%'} flex={8} display={'flex'}  alignContent={'center'} gap={'70px 0px'}>
+      <Grid
+        container
+        width={'80%'}
+        flex={8}
+        display={'flex'}
+        alignContent={'center'}
+        gap={'70px 0px'}
+        sx={{
+          "@media screen and (max-height: 400px)": {
+            gap: '15px 0px'
+          },
+        }}
+      >
         {menuList.map(({ title, icon, path, modal, modalName, disabled }, index: number) => {
           return (
             <Grid item display={'flex'} flexDirection={'column'} textAlign={'center'} xs={2} alignItems={'center'} gap={'10px'} >

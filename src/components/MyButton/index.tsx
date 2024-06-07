@@ -29,6 +29,20 @@ const MyButton = (props: ButtonProps & { name: string, whiteSpace?: string }) =>
           fontSize: language === "MM" ? "11px" : "12px",
           width: "6.0rem",
         },
+        "@media screen and (max-width: 885px)": {
+          fontSize: language === "MM" ? "12px" : "11px",
+          width: "5.5rem",
+        },
+        "@media screen and (max-width: 670px)": {
+          fontSize: language === "MM" ? "11px" : "10px",
+          width: "5.0rem",
+        },
+
+        "@media screen and (max-width: 620px)": {
+          fontSize: language === "MM" ? "7px" : "8px",
+          width: "5.0rem",
+        },
+
         "&:focus": { background: "#757575" },
       }}
       variant={"contained"}

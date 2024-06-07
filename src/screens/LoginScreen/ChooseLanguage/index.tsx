@@ -70,7 +70,7 @@ const ChooseLanguage = () => {
   return (
     <Box className={"choose-language"}>
       <FormControl>
-        <Select size="medium" value={selectedValue}>
+        <Select size="medium" value={selectedValue} sx={{minWidth: '8.2rem'}}>
           {myArray.map(({ language, icon, value }, index: number) => {
             return (
               <MenuItem

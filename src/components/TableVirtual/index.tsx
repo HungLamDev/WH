@@ -96,9 +96,10 @@ function TableVirtual(props: TableVirtualProps) {
         }
     };
 
-    // const datas = useMemo(() => {
-    //     return rows
-    // }, []);
+    const datas = useMemo(() => {
+        return rows
+    }, []);
+
     const VirtuosoTableComponents: TableComponents<any> = {
         Table: (props) => (
             <Table {...props} sx={{ borderCollapse: 'separate' }} />
@@ -106,7 +107,7 @@ function TableVirtual(props: TableVirtualProps) {
         TableHead,
         TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
         TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-            <TableBody {...props} ref={ref} sx={styles}/>
+            <TableBody {...props} ref={ref} sx={styles} />
         )),
     };
 
@@ -128,6 +129,7 @@ function TableVirtual(props: TableVirtualProps) {
                                         whiteSpace: "nowrap",
                                         color: "orange",
                                         border: border ? " 1px solid white" : "",
+                                        minWidth: item.width
                                     }}
                                 >
                                     {item.headerName}
@@ -183,6 +185,11 @@ function TableVirtual(props: TableVirtualProps) {
                                     );
                                 }}
                                 onBlur={(event) => handleCellBlur(event, item._id)}
+                                sx={{
+                                    backgroundColor:
+                                        item._id === selectedRow ? "#415a77" : "inherit",
+                                    cursor: "pointer",
+                                }}
                             >
                                 {
                                     key === "Arr_Material" && item["Arr_Material"] === null && (item["RY"])
