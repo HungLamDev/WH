@@ -1,7 +1,7 @@
 //#region import
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar"
 import { useNavigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Box, Stack, Grid, FormGroup, FormControlLabel, Checkbox, Typography } from "@mui/material"
 import { GridColDef } from "@mui/x-data-grid"
 import InputField from "../../../components/InputField"
@@ -25,6 +25,7 @@ import { FAILURE_SOUND_PATH, SUCCESS_SOUND_PATH, successSound } from '../../../u
 import EnterShelves from "../EnterShelves"
 import ModalCofirm from "../../../components/ModalConfirm"
 import { addFOC } from "../../../redux/FOC"
+import { debounce } from "../../../utils/debounce"
 //#endregion
 //#region style
 export const styletext = {
@@ -183,6 +184,7 @@ const Stockin = () => {
     //#region Func OnChange Input
     const handleShelveChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setShelve(event.target.value)
+        debouncedOnChangeShelve(event.target.value, txtshelve)
     };
 
     const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,20 +199,31 @@ const Stockin = () => {
     //#endregion
 
     //#region useEffect
-    useEffect(() => {
-        if (shelve.length === 15 || shelve.length === 16) {
-            saveDataInOut()
+    // useEffect(() => {
+    //     if (shelve.length === 15 || shelve.length === 16) {
+    //         saveDataInOut()
+    //     }
+    //     if (shelve.length > 1 && shelve.length < 15) {
+    //         checkRack(shelve)
+    //     }
+
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [shelve]);
+
+    // Tạo phiên bản debounce 
+   
+    const debouncedOnChangeShelve = useCallback(debounce((shelve: string, txtshelve: string) => {
+        if (shelve.length >= 15) {
+            saveDataInOut(shelve, txtshelve)
         }
         if (shelve.length > 1 && shelve.length < 15) {
             checkRack(shelve)
         }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [shelve]);
+    }, 1000), []);
 
 
     useEffect(() => {
-        if(txtshelve !== ""){
+        if (txtshelve !== "") {
             getDatgetDataStorage(txtshelve)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -279,7 +292,7 @@ const Stockin = () => {
         const url = connect_string + 'api/getDataStorage'
         const data = {
             rack: txtshelve,
-            get_version:  dataFOC === true ? "FOC" : dataUser[0].WareHouse
+            get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
 
         }
         axios.post(url, data, config).then(response => {
@@ -320,17 +333,18 @@ const Stockin = () => {
 
         const data = {
             rack: txtshelve,
-            get_version:  dataFOC === true ? "FOC" : dataUser[0].WareHouse
+            get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+            get_factory: dataUser[0].factoryName
         }
         axios.post(url_getrack, data, config).then(response => {
             const Value_Total = response.data[0]['Total_Qty']
             const Value_Scan = response.data[0]['Current_Qty']
             if (Value_Total != "0") {
-                setTotal(Value_Total + " ( " + t('dcmRoll') + ": " + response.data[0]['Count_Roll_All'] + " )")
+                setTotal(Value_Total + " (" + t('dcmRoll') + ": " + response.data[0]['Count_Roll_All'] + ")")
                 //setTotal(Value_Total)
             }
             if (Value_Scan != "0") {
-                setValueScan(Value_Scan + " ( " + t('dcmRoll') + ": " + response.data[0]['Count_Roll'] + " )")
+                setValueScan(Value_Scan + " (" + t('dcmRoll') + ": " + response.data[0]['Count_Roll'] + ")")
                 //setValueScan(Value_Scan )
 
             }
@@ -341,20 +355,20 @@ const Stockin = () => {
         })
     }
 
-    const saveDataInOut = () => {
+    const saveDataInOut = (shelve1: string, txtshelve1: string) => {
         setisLoading(true)
         setDisable(true)
         //setQRCode(shelve)
         const url_addqrcode = connect_string + 'api/saveDataInOut'
         const data_qrcode = {
-            Barcode: shelve,
-            Rack: txtshelve,
+            Barcode: shelve1,
+            Rack: txtshelve1,
             User_ID: dataUser[0].UserId,
             get_version: dataUser[0].WareHouse
         }
         axios.post(url_addqrcode, data_qrcode, config).then(response => {
             if (response.data == true) {
-                checkRack(txtshelve)
+                checkRack(txtshelve1)
                 setShelve('')
 
             }
@@ -430,7 +444,7 @@ const Stockin = () => {
                             {/* Check chế độ */}
                             <Grid item xs={6}>
                                 <FormGroup>
-                                    <FormControlLabel sx={styletext} control={<Checkbox  defaultChecked={false} onChange={handleChangeMode} />} label={t("gpbMode") as string} />
+                                    <FormControlLabel sx={styletext} control={<Checkbox defaultChecked={false} onChange={handleChangeMode} />} label={t("gpbMode") as string} />
                                 </FormGroup>
                             </Grid>
                             {/* Check FOC */}
@@ -439,7 +453,7 @@ const Stockin = () => {
                                 <>
                                     <Grid item xs={2}>
                                         <FormGroup>
-                                            <FormControlLabel sx={styletext} control={<Checkbox  checked={dataFOC} onChange={handleChangeModeFOC} />} label={"FOC"} />
+                                            <FormControlLabel sx={styletext} control={<Checkbox checked={dataFOC} onChange={handleChangeModeFOC} />} label={"FOC"} />
                                         </FormGroup>
                                     </Grid>
 
@@ -496,7 +510,7 @@ const Stockin = () => {
                             </Grid>
                             {/* Nhập kệ ERP */}
                             <Grid item xs={4} className="btn-center">
-                                <MyButton name={t("btnrackERP")} onClick={() => handleOpen("enter-shelves")} disabled={disable}/>
+                                <MyButton name={t("btnrackERP")} onClick={() => handleOpen("enter-shelves")} disabled={disable} />
                                 {modalType === 'enter-shelves' && (
                                     <EnterShelves open={open} onClose={handleClose} />
                                 )}
@@ -504,32 +518,32 @@ const Stockin = () => {
                         </Grid>
                         <Grid container gap={0.5} justifyContent={'center'}>
                             {/* Thông tin */}
-                            <Grid item  className="btn-center">
+                            <Grid item className="btn-center">
                                 <MyButton className="btn-stockin" name={t("btnInformation") as string} onClick={() => handleOpen("detail")} disabled={disable} />
                                 {modalType === 'detail' && (
                                     <Detail open={open} onClose={handleClose} rack={txtshelve} />
                                 )}
                             </Grid>
                             {/* Thống kê */}
-                            <Grid item  className="btn-center">
+                            <Grid item className="btn-center">
                                 <MyButton className="btn-stockin" name={t("btnStatistical") as string} onClick={() => handleOpen("statistic")} disabled={disable} />
                                 {modalType === 'statistic' && (
                                     <Statistics open={open} onClose={handleClose} materialNo={dataRow && dataRow.Material_No} />
                                 )}
                             </Grid>
                             {/* Tồn kho */}
-                            <Grid item  className="btn-center">
+                            <Grid item className="btn-center">
                                 <MyButton className="btn-stockin" name={t("btnInventory_In") as string} onClick={() => navigate("/inventory-in")} disabled={disable} />
                             </Grid>
                             {/* QC */}
-                            <Grid item  className="btn-center">
+                            <Grid item className="btn-center">
                                 <MyButton className="btn-stockin" name="QC" onClick={() => handleOpen("qc")} disabled={disable} />
                                 {modalType === 'qc' && (
                                     <QC open={open} onClose={handleClose} />
                                 )}
                             </Grid>
                             {/* Nhập kho */}
-                            <Grid item  className="btn-center">
+                            <Grid item className="btn-center">
                                 <MyButton className="btn-stockin" name={t("btnEnter_Stock") as string} onClick={() => handleOpen("import-and-export")} disabled={disable} />
                                 {modalType === 'import-and-export' && (
                                     <ImportAndExport form='stockin' open={open} onClose={handleClose} />

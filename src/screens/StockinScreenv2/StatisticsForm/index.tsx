@@ -4,7 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Stack, Box, Modal, Typography, Grid, IconButton } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MyTable3 from '../../../components/MyTable3';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalCofirm from '../../../components/ModalConfirm';
@@ -17,6 +17,8 @@ import { BiArrowBack } from 'react-icons/bi';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
+import Decimal from 'decimal.js';
+import { debounce } from '../../../utils/debounce';
 //#endregion
 function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, materialNo?: string }) {
     const { t } = useTranslation();
@@ -133,27 +135,32 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     //#region Func OnChange Input
     const handleTxtScan = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTxtScan(event.target.value);
+        debouncedOnChangeScanValue(event.target.value)
     };
     //#endregion
 
     //#region useEffect
-    useEffect(() => {
-        ScanValue()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [txtscan])
+    // useEffect(() => {
+    //     ScanValue()
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [txtscan])
     //#endregion
 
+    const debouncedOnChangeScanValue = useCallback(debounce((value: string) => {
+        ScanValue(value)
+    }, 1000), []);
+
     //#region Func Logic
-    const ScanValue = () => {
+    const ScanValue = (value_scan: string) => {
         const url = connect_string + "api/TextChanged_ReportAccounting"
-        if (txtscan !== '') {
+        if (value_scan !== '') {
             setIsLoading(true)
             let data = {}
-            const foundarrayRowUps = arrayRowUps.find((value: any) => value.Barcode === txtscan)
+            const foundarrayRowUps = arrayRowUps.find((value: any) => value.Barcode === value_scan)
             if (foundarrayRowUps) {
                 data = {
                     User_Serial_Key: dataUser[0].UserId,
-                    txtScan: txtscan,
+                    txtScan: value_scan,
                     dgvStock_Cout: arrayRowDowns.length,
                     Check_Exit_Scan: false,
                     get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
@@ -161,7 +168,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
             } else {
                 data = {
                     User_Serial_Key: dataUser[0].UserId,
-                    txtScan: txtscan,
+                    txtScan: value_scan,
                     dgvStock_Cout: arrayRowDowns.length,
                     Check_Exit_Scan: true,
                     get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
@@ -182,19 +189,28 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     User_Serial_Key: item.User_Serial_Key,
                     Value_Total_Qty: item.Value_Total_Qty,
                     Total_QTY: item.Total_QTY,
-                    mau:item.mau
+                    mau: item.mau
                 }))
                 setValue_Material(reponse.data[reponse.data.length - 1].Material_No)
                 setValue_Total_Num(reponse.data[reponse.data.length - 1].Value_Total_Num)
                 setValue_Total_Qty(reponse.data[reponse.data.length - 1].Value_Total_Qty)
+
                 if (arr[0].check_Barcode === true) {
-                    const foundarrayRowUps = arr.find((value: any) => value.Barcode === txtscan)
+                    const foundarrayRowUps = arr.find((value: any) => value.Barcode === value_scan)
                     if (foundarrayRowUps && arrayRowDowns.length > 0) {
                         setArrayRowUps([...arr, ...arrayRowUps])
-                        const arrTemp = arrayRowDowns.filter((value: any) => value.Barcode !== txtscan)
+                        const arrTemp = arrayRowDowns.filter((value: any) => value.Barcode !== value_scan)
                         setArrayRowDowns(arrTemp)
                         if (arr[0].Material_No === value_material) {
-                            setTotal_Click(lastitem => lastitem + arr[0].QTY)
+                            // làm tròn 4 số
+                            setTotal_Click(lastitem => {
+                                const lastItemDecimal = new Decimal(lastitem);
+                                const qtyDecimal = new Decimal(arr[0].QTY);
+
+                                const total = lastItemDecimal.plus(qtyDecimal);
+
+                                return total.toNumber();
+                            });
                         }
                         else {
                             setTotal_Click(arr[0].QTY)
@@ -219,11 +235,20 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
 
 
     }
+
     const handleRowDownsClick = (params: any, item: any) => {
         setArrayRowUps(prevArray => [...prevArray, item]);
         const foundarray = arrayRowDowns.filter((value: any) => value.Barcode !== item.Barcode)
         setArrayRowDowns(foundarray)
-        setTotal_Click(lastitem => lastitem + item.QTY)
+        // làm tròn 4 số
+        setTotal_Click(lastitem => {
+            const lastItemDecimal = new Decimal(lastitem);
+            const qtyDecimal = new Decimal(item.QTY);
+
+            const total = lastItemDecimal.plus(qtyDecimal);
+
+            return total.toNumber();
+        });
     }
 
     const handleKeyDown = (event: any) => {
@@ -255,7 +280,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
         }
     }
     //#endregion
-    
+
     return (
         <Modal
             open={open}
@@ -267,7 +292,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper"  />
+                            <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblReport_Deviations") as string}</Typography>
                         <IconButton sx={{ marginLeft: '20px' }}  >

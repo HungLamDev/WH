@@ -85,7 +85,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     {
       field: "Order_No_In1",
       headerName: t("dcmDate") as string,
-      width: 70,
+      width: 80,
       headerClassName: "custom-header",
     },
     {
@@ -109,7 +109,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     {
       field: "Order_No_Out1",
       headerName: t("dcpArticle") as string,
-      width: 50,
+      width: 150,
       headerClassName: "custom-header",
     },
     {
@@ -145,7 +145,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     {
       field: "Note_Account",
       headerName: t("dcpNote_Account") as string,
-      width: 200,
+      width: 250,
       headerClassName: "custom-header",
     },
   ];
@@ -205,7 +205,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   //#region useEffect
   useEffect(() => {
     if (txtMaterial_No.length >= 10) {
-      Material_Accounting_Card_Textchanged(txtMaterial_No);
+      Material_Accounting_Card_Textchanged(txtMaterial_No.trim());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [txtMaterial_No]);
@@ -729,9 +729,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           row.RY,
           row.Arr_Material,
           row.Date_Out,
-          "",
+          row.Order_No_In3,
+          row.Qty_Out,
           row.Qty_Redundant,
-          "",
           row.Img_DF,
           row.Note_Account,
         ];
@@ -1167,7 +1167,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           />
         </Grid>
         <Grid sx={{ width: "86%", borderLeft: '1px solid white' }} >
-          <TableVirtual
+          <TableOriginEdit
             columns={columns}
             rows={chemistryRow}
             handlerowClick={null}

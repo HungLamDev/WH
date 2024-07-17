@@ -47,14 +47,14 @@ const WareHouseF = () => {
     // }, [countFetch]);
 
     useEffect(() => {
-       setWareHouse(dataUser[0].building)
+        setWareHouse(dataUser[0].building)
     }, []);
 
     useEffect(() => {
-        if(warehouse !== ""){
+        if (warehouse !== "") {
             updateData();
         }
-       
+
     }, [warehouse]);
 
     useEffect(() => {
@@ -191,7 +191,7 @@ const WareHouseF = () => {
         }
     }
     //#endregion
-    
+
     //#region Giao dien
     const B1L1 = (
         <Grid container >
@@ -356,79 +356,91 @@ const WareHouseF = () => {
             >
                 <Stack direction={'row'} width={'50%'}>
                     {
-                        // này của LHG
-                        dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F' ?
-                            (
-                                <>  <Button className={`warehouse-button ${warehouse === 'G' ? 'active' : ''}`} onClick={() => handleClick('G')}>G</Button>
-                                    <Button className={`warehouse-button ${warehouse === 'R1' ? 'active' : ''}`} onClick={() => handleClick('R1')}>R</Button>
-                                    <Button className={`warehouse-button ${warehouse === 'F' ? 'active' : ''}`} onClick={() => handleClick('F')}>F</Button>
-                                </>
-                            )
+                        (() => {
+                            // này của LHG
+                            if (dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F') {
+                                return (
+                                    <>
+                                        <Button className={`warehouse-button ${warehouse === 'G' ? 'active' : ''}`} onClick={() => handleClick('G')}>G</Button>
+                                        <Button className={`warehouse-button ${warehouse === 'R1' ? 'active' : ''}`} onClick={() => handleClick('R1')}>R</Button>
+                                        <Button className={`warehouse-button ${warehouse === 'F' ? 'active' : ''}`} onClick={() => handleClick('F')}>F</Button>
+                                    </>
+                                );
+                            }
                             // này của LVL
-                            :
-                            (
-                                <>
-                                    <Button className={`warehouse-button ${warehouse === 'B1L1' ? 'active' : ''}`} onClick={() => handleClick('B1L1')}>B1L1</Button>
-                                    <Button className={`warehouse-button ${warehouse === 'B5L1' ? 'active' : ''}`} onClick={() => handleClick('B5L1')}>B5L1</Button>
-                                    <Button className={`warehouse-button ${warehouse === 'B5L2' ? 'active' : ''}`} onClick={() => handleClick('B5L2')}>B5L2</Button>
-                                </>
-                            )
+                            else if (dataUser[0].building === 'B1L1' || dataUser[0].building === 'B5L1' || dataUser[0].building === 'B5L2') {
+                                return (
+                                    <>
+                                        <Button className={`warehouse-button ${warehouse === 'B1L1' ? 'active' : ''}`} onClick={() => handleClick('B1L1')}>B1L1</Button>
+                                        <Button className={`warehouse-button ${warehouse === 'B5L1' ? 'active' : ''}`} onClick={() => handleClick('B5L1')}>B5L1</Button>
+                                        <Button className={`warehouse-button ${warehouse === 'B5L2' ? 'active' : ''}`} onClick={() => handleClick('B5L2')}>B5L2</Button>
+                                    </>
+                                )
+                            }
+                        })()
                     }
                 </Stack>
                 <Stack width={'50%'} justifyContent={'center'} alignItems={'flex-end'}>
                     <Typography variant="caption" style={{ fontStyle: "italic" }}>{t("dcmUnit") + ": (%)"}</Typography>
                 </Stack>
             </Box>
-            {
-                // này của LHG
-                (dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F') ?
-                    (
-                        <Stack height={'100%'}>
-                            <Stack height={'50%'} >
-                                <div className="bar-chart">
-                                    {
-                                        listRack1.map((item: any, index: number) => {
-                                            return (
-                                                <Chart listRack={item} wareHouse={warehouse} />
-                                            )
-                                        })
-                                    }
-                                </div>
+            <>
+                {(() => {
+                    // này của LHG
+                    if (dataUser[0].building === 'G' || dataUser[0].building === 'R1' || dataUser[0].building === 'F') {
+                        return (
+                            <Stack height={'100%'}>
+                                <Stack height={'50%'} >
+                                    <div className="bar-chart">
+                                        {
+                                            listRack1.map((item: any, index: number) => {
+                                                return (
+                                                    <Chart listRack={item} wareHouse={warehouse} />
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </Stack>
                             </Stack>
-                        </Stack>
-                    )
+                        )
+                    }
                     // này của LVL
-                    :
-                    <div style={{
-                        width: '100%',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'center',
-                        overflowX: 'hidden',
-                        marginTop: '15px'
-                    }}>
-                        {
-                            warehouse === 'B1L1' ?
-                                (
-                                    B1L1
-                                )
-                                : warehouse === 'B5L1' ?
-                                    (
-                                        B5L1
-                                    )
-                                    :
-                                    (
-                                        B5L2
-                                    )
-                        }
-                    </div>
+                    else if (dataUser[0].building === 'B1L1' || dataUser[0].building === 'B5L1' || dataUser[0].building === 'B5L2') {
+                        return (
+                            <div style={{
+                                width: '100%',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center',
+                                overflowX: 'hidden',
+                                marginTop: '15px'
+                            }}>
+                                {
+                                    warehouse === 'B1L1' ?
+                                        (
+                                            B1L1
+                                        )
+                                        : warehouse === 'B5L1' ?
+                                            (
+                                                B5L1
+                                            )
+                                            :
+                                            (
+                                                B5L2
+                                            )
+                                }
+                            </div>
+                        )
+                    }
 
-            }
-
+                })()}
+            </>
         </FullScreenContainerWithNavBar>
     )
 
 }
+
+//#region Kho LVL
 const Left_B5L1_LVL = (
     <Grid container direction={'column'} height={'100%'} >
         <Grid item xs={4} height={'100%'}>
@@ -658,6 +670,7 @@ const Bottom_B1L1_LVL = (
     </Grid>
 )
 
+//#endregion
 
 
 export default WareHouseF

@@ -27,7 +27,7 @@ export default defineConfig({
         name: "Warehouse App",
         short_name: "Warehouse App",
         description: "Website description(Could be same with index.html file)",
-        theme_color: "#ffffff",
+        theme_color: "rgba(0, 0, 0, 0.5)",
         start_url: "/",
         display: "standalone",
         orientation: 'landscape',

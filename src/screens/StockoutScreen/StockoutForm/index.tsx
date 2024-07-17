@@ -5,7 +5,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import MyButton from "../../../components/MyButton";
 import InputField from "../../../components/InputField";
 import ImportAndExport from "../../StockinScreenv2/ModelImportandExport";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { addItemArrayStockout, removeArrayStockoutByBarcode, copyValuesArrayStockout, clearArrayStockout } from "../../../redux/ArrayStockout";
@@ -31,6 +31,7 @@ import AccountingCardScreen from "../../ReportScreen/ChemistryForm";
 import { BiArrowBack } from "react-icons/bi";
 import TableStockOut from "../../../components/TableStockOut";
 import FormConfirmMaterial from "../../../components/FormConfirmMaterial";
+import { debounce } from "../../../utils/debounce";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -217,10 +218,12 @@ const StockoutScreen = () => {
     const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMode(event.target.checked);
         setModalScan(event.target.checked);
+
     };
 
     const handleQRcode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQRCode(event.target.value);
+        debouncedHandleOutAll(event.target.value)
     };
 
     const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -284,30 +287,53 @@ const StockoutScreen = () => {
         }
     }, [])
 
-    useEffect(() => {
-        //#region Nhập cải thiện
-        if (qrcode.length >= 15) {
-            checkMaterial(qrcode).then(result => {
-               
-                if (result == true) {
-                    handleOpenConfirm('notify-reject-material')
-                }
-                else(
-                    handleOutAll(qrcode)
-                )
-            })
-        }
-        
-        //#endregion
+    // useEffect(() => {
+    //     //#region Nhập cải thiện
+    //     // if (qrcode.length >= 15) {
+    //     //     checkMaterial(qrcode).then(result => {
 
-        //Bản cũ
-        // if (qrcode.length === 15 || qrcode.length === 16) {
-        //     handleOutAll(qrcode)
+    //     //         if (result == true) {
+    //     //             handleOpenConfirm('notify-reject-material')
+    //     //         }
+    //     //         else (
+    //     //             handleOutAll(qrcode)
+    //     //         )
+    //     //     })
+    //     // }
+
+    //     //#endregion
+
+    //     //Bản cũ
+    //     if (qrcode.length >= 15) {
+    //         handleOutAll(qrcode)
+    //     }
+
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [qrcode])
+    //#endregion
+
+    // Tạo phiên bản debounce của hàm handleOutAll
+    const debouncedHandleOutAll = useCallback(debounce((qrcode: string) => {
+        // Phiên bản không có nhập cải thiện
+        if (qrcode.length >= 15) {
+            handleOutAll(qrcode);
+        }
+
+        //#region Nhập cải thiện
+        // if (qrcode.length >= 15) {
+        //     checkMaterial(qrcode).then(result => {
+
+        //         if (result == true) {
+        //             handleOpenConfirm('notify-reject-material')
+        //         }
+        //         else (
+        //             handleOutAll(qrcode)
+        //         )
+        //     })
         // }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qrcode])
-    //#endregion
+        //#endregion
+    }, 1000), []);
 
     //#region Func Logic 
     const onPressOK = (params: any) => {
@@ -498,7 +524,13 @@ const StockoutScreen = () => {
                             setStockOutDetailValue(result)
                         }
                     });
-                    setValueTotal((TotalQtyOut - response.data[0].Value_Remain).toString())
+
+                    // Làm tròn 4 chữ số trừ tổng
+                    const totalQtyOut = new Decimal(TotalQtyOut);
+                    const valueRemain = new Decimal(response.data[0].Value_Remain);
+                    const valueTotal = totalQtyOut.minus(valueRemain).toString();
+
+                    setValueTotal(valueTotal)
                     setQRCode('')
 
                     // dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out + " | " + ArrayStockout.length))
@@ -553,6 +585,10 @@ const StockoutScreen = () => {
                     dispatch(addTotalQtyOut(cal))
                 }
                 dispatch(removeArrayStockoutByBarcode(qrcodedelte))
+            }
+            else {
+                handleOpenConfirm('no-authorize')
+                setModalCofirm(false)
             }
         }).finally(() => {
             setDisable(false)
@@ -667,7 +703,7 @@ const StockoutScreen = () => {
                                     <Grid container>
                                         {/* Quét QR */}
                                         <Grid item xs={12} display={'flex'} flexDirection={'row'}>
-                                            <InputField focus={true} label={t("gpbScan") as string } handle={handleQRcode} value={qrcode} />
+                                            <InputField focus={true} label={t("gpbScan") as string} handle={handleQRcode} value={qrcode} />
                                             {isLoading && <CircularProgress size={'25px'} color="info" />}
                                         </Grid>
                                     </Grid>
@@ -704,9 +740,9 @@ const StockoutScreen = () => {
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid> */}
                                 {/* ICMWH */}
-                                <Grid item display={'flex'}>
+                                {/* <Grid item display={'flex'}>
                                     <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
-                                </Grid>
+                                </Grid> */}
                                 {/* Xuất chi tiết */}
                                 <Grid item display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
@@ -745,6 +781,7 @@ const StockoutScreen = () => {
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
                 {cofirmType === 'notify-reject-material' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'no-authorize' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblTitleNoAuthorize") as string} />}
                 {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}
                 {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}
             </Stack>

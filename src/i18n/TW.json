@@ -411,6 +411,7 @@
     "lblList_Confirm": "登记名单",
     "dcpAction_Taken": "处理动作",
     "dcpPriority_Vote": "优先事项",
-    "dcpPriority_No": "优先级编号"
+    "dcpPriority_No": "优先级编号",
+    "lblTitleNoAuthorize": "您无权使用该功能"
 
 }

@@ -75,6 +75,7 @@ function App() {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const navigate = useNavigate();
   const [authenticate, setAuthenticate] = useState(false)
+
   // useEffect(() => {
   //   showInstallPromotion();
   // }, []);

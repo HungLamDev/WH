@@ -23,6 +23,8 @@
 }
 
 .hover-effect {
+    width: 64px;
+
     @media screen and (max-height: 500px) {
         width: 48px;
     }
@@ -30,5 +32,4 @@
     @media screen and (max-height: 450px) {
         width: 32px;
     }
-
 }

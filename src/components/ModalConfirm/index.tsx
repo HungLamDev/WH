@@ -32,11 +32,11 @@ function ModalCofirm(props: ModalCofirmProps) {
             <Box sx={style}>
                 <Stack direction={'column'} height={'100%'} gap={2}>
                     <Stack height={'50%'}  justifyContent={'center'}>
-                        <Typography className='textsizebtn' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
+                        <Typography className='textsize' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
                     </Stack>
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, width:'30%', height:'60%'}}>{t("btnSuccess")}</Button>
-                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',width:'30%', height:'60%'}}>{t("btnCancel")}</Button>
+                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth:'30%'}}>{t("btnSuccess")}</Button>
+                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',minWidth:'30%'}}>{t("btnCancel")}</Button>
                     </Stack>
                 </Stack>
             </Box>

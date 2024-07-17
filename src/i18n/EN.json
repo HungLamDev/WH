@@ -413,6 +413,7 @@
     "lblList_Confirm": "Registration List",
     "dcpAction_Taken": "Action Taken",
     "dcpPriority_Vote": "Priority",
-    "dcpPriority_No": "Priority No"
+    "dcpPriority_No": "Priority No",
+    "lblTitleNoAuthorize": "You do not have permission to use this function"
 
 }

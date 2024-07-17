@@ -2,7 +2,7 @@
 import { Stack, Grid, Typography, Modal, Box, FormControlLabel, Radio, FormControl, RadioGroup, Checkbox, FormGroup, IconButton } from '@mui/material'
 import InputField from '../../../components/InputField'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux';
 import './styles.scss'
 import MyButton from '../../../components/MyButton';
@@ -25,6 +25,7 @@ import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
 import Decimal from 'decimal.js';
 import { set } from 'lodash';
 import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
+import { debounce } from '../../../utils/debounce';
 //#endregion
 function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
     const dispatch = useDispatch()
@@ -89,6 +90,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     const handleScanQr = (event: React.ChangeEvent<HTMLInputElement>) => {
         setScanQR(event.target.value);
+        debouncedHandleScanQR(event.target.value)
     };
 
     const handleQtyOut = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,31 +109,58 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#endregion
 
     //#region useEffect
-    useEffect(() => {
-        //#region Nhập cải thiện
-        if (scanqr.length >= 15) {
-            if (form === 'stockout') {
-                checkMaterial(scanqr).then(result => {
-                    if (result == true) {
-                        handleOpenConfirm('notify-reject-material')
-                    }
-                    else (
-                        ScanQR()
-                    )
-                })
-            }
-            else {
-                ScanQR()
-            }
-        }
-        //#endregion
-        // Bản cũ
-        // if (scanqr.length === 15 || scanqr.length === 16) {
-        //     ScanQR()
-        // }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [scanqr])
+    // useEffect(() => {
+    //     //#region Nhập cải thiện
+    //     // if (scanqr.length >= 15) {
+    //     //     if (form === 'stockout') {
+    //     //         checkMaterial(scanqr).then(result => {
+    //     //             if (result == true) {
+    //     //                 handleOpenConfirm('notify-reject-material')
+    //     //             }
+    //     //             else (
+    //     //                 ScanQR()
+    //     //             )
+    //     //         })
+    //     //     }
+    //     //     else {
+    //     //         ScanQR()
+    //     //     }
+    //     // }
+    //     //#endregion
+    //     // Bản cũ
+    //     if (scanqr.length >= 15) {
+    //         ScanQR()
+    //     }
+
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [scanqr])
+
+    // Tạo phiên bản debounce của hàm handleOutAll
+    const debouncedHandleScanQR = useCallback(debounce((qrcode: string) => {
+        // Bản cũ
+        if (qrcode.length >= 15) {
+            ScanQR(qrcode)
+        }
+
+         //#region Nhập cải thiện
+        // if (scanqr.length >= 15) {
+        //     if (form === 'stockout') {
+        //         checkMaterial(scanqr).then(result => {
+        //             if (result == true) {
+        //                 handleOpenConfirm('notify-reject-material')
+        //             }
+        //             else (
+        //                 ScanQR()
+        //             )
+        //         })
+        //     }
+        //     else {
+        //         ScanQR()
+        //     }
+        // }
+        //#endregion
+    }, 1000), []);
 
     useEffect(() => {
         if (form !== 'stockout') {
@@ -142,30 +171,31 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#endregion
 
     //#region Func Logic
-    const onPressOK = (params: any) => {
-        if (params !== "") {
-            if (params !== "") {
-                const url = connect_string + "api/Confirm_QC_Check_Fail"
-                const data = {
-                    user_id: dataUser[0].UserId,
-                    Barcode: scanqr,
-                    Conntent_Input: params
-                }
-                axios.post(url, data, config).then(response => {
-                    if (response.data === true) {
-                        handleCloseConfirm()
-                        ScanQR()
-                    }
-                    else {
-                        handleOpenConfirm('network-error');
-                    }
-                }).catch(() => {
-                    handleOpenConfirm('network-error');
-                })
-            }
+    // const onPressOK = (params: any) => {
+    //     if (params !== "") {
+    //         if (params !== "") {
+    //             const url = connect_string + "api/Confirm_QC_Check_Fail"
+    //             const data = {
+    //                 user_id: dataUser[0].UserId,
+    //                 Barcode: scanqr,
+    //                 Conntent_Input: params
+    //             }
+    //             axios.post(url, data, config).then(response => {
+    //                 if (response.data === true) {
+    //                     handleCloseConfirm()
+    //                     ScanQR()
+    //                 }
+    //                 else {
+    //                     handleOpenConfirm('network-error');
+    //                 }
+    //             }).catch(() => {
+    //                 handleOpenConfirm('network-error');
+    //             })
+    //         }
 
-        }
-    }
+    //     }
+    // }
+
     const onPressCancel = () => {
         handleCloseConfirm()
         setScanQR('')
@@ -210,14 +240,14 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
         }
     }
 
-    const ScanQR = () => {
+    const ScanQR = (value_scan: string) => {
         // if (form === 'stockout') {
         setQtyOut(0)
         setIsLoading(true)
         setDisable(true)
         const url = connect_string + 'api/txtScan_TextChanged'
         const data = {
-            txtScan: scanqr,
+            txtScan: value_scan,
             rbtImport: false,
             rbtExport: true,
             User_Serial_Key: dataUser[0].UserId
@@ -232,16 +262,20 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 setValue_Total_Qty(response.data.Value_Total_Qty)
                 setScanQR('')
             }
-            // else{
-            //     handleOpenConfirm('materialOut')
-            // }
+            else{
+                setBarcode('')
+                setMaterialNo('')
+                setMaterialName('')
+                setQTY(0)
+                setUnit('')
+                setValue_Total_Qty(0)
+            }
         }).finally(() => {
             setIsLoading(false)
             setDisable(false)
         })
         // }
     }
-
 
     const SavePartial = async () => {
         if (await checkPermissionPrint(dataUser[0].UserId)) {

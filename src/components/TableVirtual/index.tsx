@@ -101,8 +101,11 @@ function TableVirtual(props: TableVirtualProps) {
     }, []);
 
     const VirtuosoTableComponents: TableComponents<any> = {
+        Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+            <TableContainer  {...props} ref={ref} />
+        )),
         Table: (props) => (
-            <Table {...props} sx={{ borderCollapse: 'separate' }} />
+            <Table {...props} sx={{ borderCollapse: 'separate', tableLayout:'fixed'}} />
         ),
         TableHead,
         TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
@@ -124,12 +127,13 @@ function TableVirtual(props: TableVirtualProps) {
                                 <TableCell
                                     className="td-responesive"
                                     key={index}
-                                    align={"left"}
+                                    align={"center"}
                                     sx={{
-                                        whiteSpace: "nowrap",
+                                        whiteSpace: "pre-line !important",
+                                        wordBreak:'break-all',
                                         color: "orange",
                                         border: border ? " 1px solid white" : "",
-                                        minWidth: item.width
+                                        width: item.width
                                     }}
                                 >
                                     {item.headerName}
@@ -177,7 +181,7 @@ function TableVirtual(props: TableVirtualProps) {
                                 key={key}
                                 align="left"
                                 className="td-responesive"
-                                style={{ color: textColor, textAlign: key === "Img_DF" ? "center" : 'left' }}
+                                style={{ color: textColor, textAlign: key === "Img_DF" ? "center" : 'left', whiteSpace:'pre-line', wordBreak:'break-all' }}
                                 onClick={() => {
                                     handleRowClick(key, item);
                                     setSelectedRow(

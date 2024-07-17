@@ -140,7 +140,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                   else if ((item.Qty && item.Qty_ERP && item.RY && item.RY_ERP) && (item.Qty !== item.Qty_ERP || item.RY !== item.RY_ERP)) {
                     textColor = "orange";
                   }
-                  else if (item.Order_No_In && item.Order_No_In !== "") {
+                  if (item.Order_No_In2 && item.Arr_Material === "") {
                     textColor = "yellowgreen";
                   }
                   else if (item.Material_Name && item.Material_Name.trim().includes('(BU)')) {

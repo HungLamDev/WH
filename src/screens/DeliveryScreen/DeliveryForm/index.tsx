@@ -1066,6 +1066,7 @@ const DeliveryScreen = () => {
           <MyButton name={t('lblCheckData')} onClick={() => navigate("/check-data")} disabled={disable} />
           {/* Thẻ kho */}
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
+          
           <ModalAccountingCard open={openModalAccounting} handleClose={() => setOpenModalAccounting(false)} data={datalAccounting[0]?.Value_Material ? datalAccounting : null} />
           {/* Check phiếu bù */}
           <FormGroup>

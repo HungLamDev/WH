@@ -198,7 +198,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
                                         }}
                                         disabled={disabled ? disabled : false}
                                     >
-                                        <img className="hover-effect"  src={icon} alt={title} />
+                                        <img className="hover-effect" width={'32px'} src={icon} alt={title} />
                                     </IconWrapper>
                                     <Typography
                                         marginTop={'5px'}

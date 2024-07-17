@@ -438,6 +438,12 @@ const LabelSplit = () => {
     }
 
     const handlePrint = () => {
+        handleOpenConfirm('print')
+    }
+
+    const handlePrintOK = () => {
+        handleCloseConfirm()
+        setIsLoading(true)
         const url = connect_string + "/api/Print_Label_Cut"
         const userid = dataUser[0].UserId
         const arr = listChx.map((item: any) => ({
@@ -449,27 +455,32 @@ const LabelSplit = () => {
         axios.post(url, arr, config).then(response => {
             if (response.data === true) {
                 handleOpenConfirm('print-success')
+                setIsLoading(false)
             }
             else {
                 handleOpenConfirm('print-erorr')
+                setIsLoading(false)
             }
         })
     }
 
     const handleDelete = () => {
         const url = connect_string + "api/Delete_Print_Label_Cut"
-        const data = listChx.map((item: any) => ({
-            barcode: item.BarCode,
-            Value_Roll_Delete: item.QTY,
-            Barcode_restosre: rows[0].BarCode,
-            get_version: dataUser[0].WareHouse
 
-        }))
+        const data = listChx.filter((item: any) => item.BarCode !== rows[0].BarCode).map((item: any) => {
+            return {
+                barcode: item.BarCode,
+                Value_Roll_Delete: item.QTY,
+                Barcode_restosre: rows[0].BarCode,
+                get_version: dataUser[0].WareHouse
+            };
+        });
+
         axios.post(url, data, config).then(response => {
-            const filteredArr1 = rowUps.filter((item1: any) => {
-                return !data.some((item2: any) => item1.BarCode === item2.barcode);
-            });
-            setRowUps(filteredArr1)
+            // const filteredArr1 = rowUps.filter((item1: any) => {
+            //     return !data.some((item2: any) => item1.BarCode === item2.barcode);
+            // });
+            // setRowUps(filteredArr1)
             handleSearch()
             handleOpenConfirm('delete-success')
         })
@@ -536,6 +547,8 @@ const LabelSplit = () => {
                 {/* {cofirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string } />} */}
                 {cofirmType === 'print-erorr' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintErrror") as string} />}
                 {cofirmType === 'delete-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgDeleteSuccesful") as string} />}
+                {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
+
             </Stack>
         </FullScreenContainerWithNavBar >
     )
