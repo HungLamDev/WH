@@ -126,7 +126,7 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
   };
 
   const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
-    rows[rowInd][colName] = value;
+      rows[rowInd][colName] = value;
   };
 
   return (
@@ -219,8 +219,27 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
                             autoFocus
                             className="td-responesive"
                             defaultValue={item[key]}
-                            onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
+                            onChange={(event) => {
+                              const value = event.target.value;
+                              if (key === "Qty") {
+                                if (/^\d*\.?\d*$/.test(value)) {
+                                  handleTextFieldChange(index, key, value);
+                                }
+                              } else {
+                                handleTextFieldChange(index, key, value);
+                              }
+                            }}
                             size="small"
+                            inputProps={{
+                      
+                              onKeyPress: (event) => {
+                                if (key === "Qty") {
+                                  if (!/[\d.]/.test(event.key)) {
+                                    event.preventDefault();
+                                  }
+                                }
+                              },
+                            }}
                             sx={{
                               '& .MuiInputBase-input': {
                                 padding: 0,

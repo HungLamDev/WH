@@ -99,7 +99,6 @@ const InventoryScreen = () => {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const ArrayInventory = useSelector((state: any) => state.ArrayInventory.deliverys);
   const dataFOC = useSelector((state: any) => state.FOC.foc);
-
   //#endregion
 
   //#region Variable
@@ -129,6 +128,14 @@ const InventoryScreen = () => {
   //#region Func OnChange Input
   const handlechxMaterial_No = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchxMaterial_No(event.target.checked);
+    if (event.target.checked === true) {
+      const sortedData = [...ArrayInventory].sort((a, b) => b.Material_No.localeCompare(a.Material_No));
+      dispatch(copyArrayInventory(sortedData))
+    }
+    else {
+      const sortedData = [...ArrayInventory].sort((a, b) => a._id - b._id)
+      dispatch(copyArrayInventory(sortedData))
+    }
   };
 
   const handlechxDate_Auto = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,16 +161,17 @@ const InventoryScreen = () => {
   //#endregion
 
   //#region useEffect
-  useEffect(() => {
-    if (chxMaterial_No === true) {
-      const sortedData = [...ArrayInventory].sort((a, b) => b.Material_No.localeCompare(a.Material_No));
-      dispatch(copyArrayInventory(sortedData))
-    }
-    else {
-      const sortedData = [...ArrayInventory].sort((a, b) => a.Material_No.localeCompare(b.Material_No))
-      dispatch(copyArrayInventory(sortedData))
-    }
-  }, [chxMaterial_No])
+  // useEffect(() => {
+  //   console.log("hIHI")
+  //   if (chxMaterial_No === true) {
+  //     const sortedData = [...ArrayInventory].sort((a, b) => b.Material_No.localeCompare(a.Material_No));
+  //     dispatch(copyArrayInventory(sortedData))
+  //   }
+  //   else {
+  //     const sortedData = [...ArrayInventory].sort((a, b) => a.Material_No.localeCompare(b.Material_No))
+  //     dispatch(copyArrayInventory(sortedData))
+  //   }
+  // }, [chxMaterial_No])
 
   useEffect(() => {
     if (txtScan !== null && txtScan.length >= 15) {
@@ -208,6 +216,7 @@ const InventoryScreen = () => {
           Content: item.Content,
           Count_Roll: item.Count_Roll
         }))
+        
         dispatch(copyArrayInventory(arr))
         setRows(arr)
         if (arr.length > 0) {

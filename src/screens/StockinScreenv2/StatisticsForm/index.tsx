@@ -135,20 +135,20 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     //#region Func OnChange Input
     const handleTxtScan = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTxtScan(event.target.value);
-        debouncedOnChangeScanValue(event.target.value)
     };
     //#endregion
 
     //#region useEffect
-    // useEffect(() => {
-    //     ScanValue()
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [txtscan])
-    //#endregion
+    //Debounced
+    useEffect(() => {
+        const handleTextChange = setTimeout(() => {
+            ScanValue(txtscan)
+        }, 800)
 
-    const debouncedOnChangeScanValue = useCallback(debounce((value: string) => {
-        ScanValue(value)
-    }, 1000), []);
+        return () => clearTimeout(handleTextChange)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [txtscan])
+    //#endregion
 
     //#region Func Logic
     const ScanValue = (value_scan: string) => {

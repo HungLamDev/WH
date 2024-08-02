@@ -184,7 +184,6 @@ const Stockin = () => {
     //#region Func OnChange Input
     const handleShelveChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setShelve(event.target.value)
-        debouncedOnChangeShelve(event.target.value, txtshelve)
     };
 
     const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,27 +198,23 @@ const Stockin = () => {
     //#endregion
 
     //#region useEffect
-    // useEffect(() => {
-    //     if (shelve.length === 15 || shelve.length === 16) {
-    //         saveDataInOut()
-    //     }
-    //     if (shelve.length > 1 && shelve.length < 15) {
-    //         checkRack(shelve)
-    //     }
+    //Debounced
+    useEffect(() => {
+        const handleTextChange = setTimeout(() => {
+            if (shelve.length === 15 || shelve.length === 16) {
+                saveDataInOut(shelve, txtshelve)
+            }
+            if (shelve.length > 1 && shelve.length < 15) {
+                checkRack(shelve)
+            }
+        }, 1000)
 
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [shelve]);
+        return () => clearTimeout(handleTextChange)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [shelve]);
 
     // Tạo phiên bản debounce 
-   
-    const debouncedOnChangeShelve = useCallback(debounce((shelve: string, txtshelve: string) => {
-        if (shelve.length >= 15) {
-            saveDataInOut(shelve, txtshelve)
-        }
-        if (shelve.length > 1 && shelve.length < 15) {
-            checkRack(shelve)
-        }
-    }, 1000), []);
 
 
     useEffect(() => {

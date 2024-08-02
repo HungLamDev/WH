@@ -223,7 +223,6 @@ const StockoutScreen = () => {
 
     const handleQRcode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQRCode(event.target.value);
-        debouncedHandleOutAll(event.target.value)
     };
 
     const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -287,53 +286,35 @@ const StockoutScreen = () => {
         }
     }, [])
 
-    // useEffect(() => {
-    //     //#region Nhập cải thiện
-    //     // if (qrcode.length >= 15) {
-    //     //     checkMaterial(qrcode).then(result => {
+    useEffect(() => {
+        //     //#region Nhập cải thiện
+        //     // if (qrcode.length >= 15) {
+        //     //     checkMaterial(qrcode).then(result => {
 
-    //     //         if (result == true) {
-    //     //             handleOpenConfirm('notify-reject-material')
-    //     //         }
-    //     //         else (
-    //     //             handleOutAll(qrcode)
-    //     //         )
-    //     //     })
-    //     // }
+        //     //         if (result == true) {
+        //     //             handleOpenConfirm('notify-reject-material')
+        //     //         }
+        //     //         else (
+        //     //             handleOutAll(qrcode)
+        //     //         )
+        //     //     })
+        //     // }
 
-    //     //#endregion
+        //     //#endregion
 
-    //     //Bản cũ
-    //     if (qrcode.length >= 15) {
-    //         handleOutAll(qrcode)
-    //     }
+        //     //Bản cũ
+        //Debounced
+        const handleTextChange = setTimeout(() => {
+            if (qrcode.length >= 15) {
 
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [qrcode])
+                handleOutAll(qrcode)
+            }
+        }, 1000)
+
+        return () => clearTimeout(handleTextChange)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [qrcode])
     //#endregion
-
-    // Tạo phiên bản debounce của hàm handleOutAll
-    const debouncedHandleOutAll = useCallback(debounce((qrcode: string) => {
-        // Phiên bản không có nhập cải thiện
-        if (qrcode.length >= 15) {
-            handleOutAll(qrcode);
-        }
-
-        //#region Nhập cải thiện
-        // if (qrcode.length >= 15) {
-        //     checkMaterial(qrcode).then(result => {
-
-        //         if (result == true) {
-        //             handleOpenConfirm('notify-reject-material')
-        //         }
-        //         else (
-        //             handleOutAll(qrcode)
-        //         )
-        //     })
-        // }
-
-        //#endregion
-    }, 1000), []);
 
     //#region Func Logic 
     const onPressOK = (params: any) => {
@@ -526,12 +507,15 @@ const StockoutScreen = () => {
                     });
 
                     // Làm tròn 4 chữ số trừ tổng
+                    setQRCode('')
+
                     const totalQtyOut = new Decimal(TotalQtyOut);
                     const valueRemain = new Decimal(response.data[0].Value_Remain);
                     const valueTotal = totalQtyOut.minus(valueRemain).toString();
 
                     setValueTotal(valueTotal)
-                    setQRCode('')
+
+
 
                     // dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out + " | " + ArrayStockout.length))
                 }

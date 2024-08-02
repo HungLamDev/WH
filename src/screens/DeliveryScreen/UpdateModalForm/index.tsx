@@ -262,7 +262,7 @@ function UpdateModalForm({ open, onClose, dataUpdate }: { open: any, onClose: an
           <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
             {/* Nút back */}
             <IconButton className={'back-button'} onClick={onClose}>
-              <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+              <BiArrowBack className=" icon-wrapper"  />
             </IconButton>
             {/* Tittle */}
             <Typography variant="h4" component="h4" color={'white'}>{t("lblMaterial_Infor") as string}</Typography>

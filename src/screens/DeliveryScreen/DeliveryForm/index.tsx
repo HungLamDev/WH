@@ -189,6 +189,7 @@ const DeliveryScreen = () => {
   const [openModalAccounting, setOpenModalAccounting] = useState(false)
   const [datalAccounting, setDataAccounting] = useState<any[]>([])
   const contentDetail = locate.state
+  const [openModelAuthorize, setOpenModelAuthorize] = useState(false)
   //#endregion
 
   //#region Func OnChange Input
@@ -552,28 +553,30 @@ const DeliveryScreen = () => {
           setIsApi(true)
         })
       }
+      // In <=> Out
       if (columnName === 'RY_Status2') {
+
+        const data = {
+          User_Serial_Key: dataUser[0].UserId,
+          Count_dgv: ArrayDelivery.length,
+          Name_Column: "dcmStatus",
+          Material_Name: item.Material_Name,
+          Color: item.Color,
+          Stam_Num_No: orderNo,
+          RY_Status: item.RY_Status2,
+          Material_No: item.Material_No,
+          Open_date: item.Date_Start,
+          txtLocation: location,
+          dtpFrom_Date: moment(updateDateFrom).format("DD/MM/YYYY HH:MM:SS"),
+          dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
+          Content: item.RY_Status1,
+          Num_No: item.Num_No,
+          Delivery_Serial: item.Delivery_Serial,
+          get_version: dataUser[0].WareHouse
+        }
+
         if (item.RY_Status2 === "In") {
           setIsApi(false)
-          const data = {
-            User_Serial_Key: dataUser[0].UserId,
-            Count_dgv: ArrayDelivery.length,
-            Name_Column: "dcmStatus",
-            Material_Name: item.Material_Name,
-            Color: item.Color,
-            Stam_Num_No: orderNo,
-            RY_Status: item.RY_Status2,
-            Material_No: item.Material_No,
-            Open_date: item.Date_Start,
-            txtLocation: location,
-            dtpFrom_Date: moment(updateDateFrom).format("DD/MM/YYYY HH:MM:SS"),
-            dtpTo_Date: updateDateTo.format("DD/MM/YYYY HH:MM:SS"),
-            Content: item.RY_Status1,
-            Num_No: item.Num_No,
-            Delivery_Serial: item.Delivery_Serial,
-            get_version: dataUser[0].WareHouse
-
-          }
           axios.post(url, data, configNew).then(response => {
             if (response.data.length > 0) {
               dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "Out" }))
@@ -582,33 +585,23 @@ const DeliveryScreen = () => {
             setIsApi(true)
           })
         }
-        else {
-          setIsApi(false)
-          const data = {
-            User_Serial_Key: dataUser[0].UserId,
-            Count_dgv: ArrayDelivery.length,
-            Name_Column: "dcmStatus",
-            Material_Name: item.Material_Name,
-            Color: item.Color,
-            Stam_Num_No: orderNo,
-            RY_Status: item.RY_Status2,
-            Material_No: item.Material_No,
-            Open_date: item.Date_Start,
-            txtLocation: location,
-            dtpFrom_Date: updateDateFrom,
-            dtpTo_Date: updateDateTo,
-            Content: item.RY_Status1,
-            Num_No: item.Num_No,
-            Delivery_Serial: item.Delivery_Serial,
-            get_version: dataUser[0].WareHouse
 
-          }
-          axios.post(url, data, configNew).then(response => {
-            if (response.data.length > 0) {
-              dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
+        else {
+          CheckRYInMonth(data).then(checkResult => {
+            if (checkResult) {
+              setIsApi(false)
+
+              axios.post(url, data, configNew).then(response => {
+                if (response.data.length > 0) {
+                  dispatch(updateRY_Status2ByMaterialNo({ materialNo: item.Material_No, RY: item.RY, newStatus: "In" }))
+                }
+              }).finally(() => {
+                setIsApi(true)
+              })
             }
-          }).finally(() => {
-            setIsApi(true)
+            else{
+              setOpenModelAuthorize(true)
+            }
           })
         }
       }
@@ -878,6 +871,20 @@ const DeliveryScreen = () => {
       // Handle error if needed
     }
   };
+
+  const CheckRYInMonth = async (dataDelivery: any) => {
+    const url = connect_string + "api/Check_Out_In_Month";
+    setIsLoading(true);
+    try {
+      const response = await axios.post(url, dataDelivery);
+      return response.data;
+    } catch (error) {
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   //#endregion
 
   return (
@@ -908,7 +915,7 @@ const DeliveryScreen = () => {
                 </Grid>
                 {/* Text box đơn gia công */}
                 <Grid item display={'flex'} xs={9} className='order-no'>
-                    <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
+                  <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
                 </Grid>
                 {/* Check load lại dữ liệu */}
                 <Grid item xs={1}>
@@ -1066,7 +1073,7 @@ const DeliveryScreen = () => {
           <MyButton name={t('lblCheckData')} onClick={() => navigate("/check-data")} disabled={disable} />
           {/* Thẻ kho */}
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
-          
+
           <ModalAccountingCard open={openModalAccounting} handleClose={() => setOpenModalAccounting(false)} data={datalAccounting[0]?.Value_Material ? datalAccounting : null} />
           {/* Check phiếu bù */}
           <FormGroup>
@@ -1107,6 +1114,7 @@ const DeliveryScreen = () => {
         )}
         {/* Máy ảnh */}
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
+        {openModelAuthorize && <ModalCofirm onPressOK={() => setOpenModelAuthorize(false)} open={openModelAuthorize} onClose={() => setOpenModelAuthorize(false)} title={t("lblTitleNoAuthorize") as string} />}
       </Box>
       <Stack overflow={"hidden"} sx={{ height: '100%' }}>
         {/* Bảng */}

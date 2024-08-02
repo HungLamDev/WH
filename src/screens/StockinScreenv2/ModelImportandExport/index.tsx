@@ -90,13 +90,11 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     const handleScanQr = (event: React.ChangeEvent<HTMLInputElement>) => {
         setScanQR(event.target.value);
-        debouncedHandleScanQR(event.target.value)
     };
 
     const handleQtyOut = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newQtyOut = event.target.valueAsNumber;
         setQtyOut(newQtyOut);
-        // Number(QTY) + Number(qtyout) >= Value_Total_Qty ? 0 : Number(QTY) + Number(qtyout)
     }
 
     const handlechxALL = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,57 +108,36 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     //#region useEffect
 
-    // useEffect(() => {
-    //     //#region Nhập cải thiện
-    //     // if (scanqr.length >= 15) {
-    //     //     if (form === 'stockout') {
-    //     //         checkMaterial(scanqr).then(result => {
-    //     //             if (result == true) {
-    //     //                 handleOpenConfirm('notify-reject-material')
-    //     //             }
-    //     //             else (
-    //     //                 ScanQR()
-    //     //             )
-    //     //         })
-    //     //     }
-    //     //     else {
-    //     //         ScanQR()
-    //     //     }
-    //     // }
-    //     //#endregion
-    //     // Bản cũ
-    //     if (scanqr.length >= 15) {
-    //         ScanQR()
-    //     }
+    useEffect(() => {
+        //     //#region Nhập cải thiện
+        //     // if (scanqr.length >= 15) {
+        //     //     if (form === 'stockout') {
+        //     //         checkMaterial(scanqr).then(result => {
+        //     //             if (result == true) {
+        //     //                 handleOpenConfirm('notify-reject-material')
+        //     //             }
+        //     //             else (
+        //     //                 ScanQR()
+        //     //             )
+        //     //         })
+        //     //     }
+        //     //     else {
+        //     //         ScanQR()
+        //     //     }
+        //     // }
+        //     //#endregion
+        //     // Bản cũ
+        //Debounced
+        const handleTextChange = setTimeout(() => {
+            if (scanqr.length >= 15) {
+                ScanQR(scanqr)
+            }
+        }, 1000)
 
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [scanqr])
+        return () => clearTimeout(handleTextChange)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scanqr])
 
-    // Tạo phiên bản debounce của hàm handleOutAll
-    const debouncedHandleScanQR = useCallback(debounce((qrcode: string) => {
-        // Bản cũ
-        if (qrcode.length >= 15) {
-            ScanQR(qrcode)
-        }
-
-         //#region Nhập cải thiện
-        // if (scanqr.length >= 15) {
-        //     if (form === 'stockout') {
-        //         checkMaterial(scanqr).then(result => {
-        //             if (result == true) {
-        //                 handleOpenConfirm('notify-reject-material')
-        //             }
-        //             else (
-        //                 ScanQR()
-        //             )
-        //         })
-        //     }
-        //     else {
-        //         ScanQR()
-        //     }
-        // }
-        //#endregion
-    }, 1000), []);
 
     useEffect(() => {
         if (form !== 'stockout') {
@@ -262,7 +239,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                 setValue_Total_Qty(response.data.Value_Total_Qty)
                 setScanQR('')
             }
-            else{
+            else {
                 setBarcode('')
                 setMaterialNo('')
                 setMaterialName('')
