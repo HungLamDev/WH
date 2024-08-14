@@ -284,7 +284,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     const url =
       connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
     const data = {
-      User_Serial_Key: dataUser[0].UserId,
+      User_Serial_Key: txtOrder_No,
       V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
@@ -292,6 +292,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       saFactory: dataUser[0].factoryName,
       Rack: "",
       get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
+      User_Login: dataUser[0].UserId
     };
     axios
       .post(url, data, configNew)
@@ -605,7 +606,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
 
 
   const handleSearchUserID = (event: any) => {
-    if (event.key === 'Enter' && chxOrder_No === true && (dataUser[0].UserRole === 'Administrator' || dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === 'Account')) {
+    if (event.key === 'Enter' && chxOrder_No == true) {
+
       dispatch(clearChemistry());
       setLoading(true);
       const url =
@@ -619,8 +621,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         saFactory: dataUser[0].factoryName,
         Rack: "",
         get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
-        User_Login: getWareHouseAcount()
-
+        User_Login: dataUser[0].UserId
       };
       axios
         .post(url, data, config)
@@ -634,10 +635,10 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         .finally(() => {
           setLoading(false);
         });
-    } else
-      if (event.key === 'Enter' && chxOrder_No === false && dataUser[0].UserRole !== 'Administrator' && dataUser[0].UserRole !== 'Manager' && dataUser[0].UserRole !== 'Account') {
-        LoadMaterial();
-      }
+    } //else
+      // if (event.key === 'Enter' && chxOrder_No === false ) {
+      //   LoadMaterial();
+      // }
   };
   //#region Excel
   const exportToExcel = () => {

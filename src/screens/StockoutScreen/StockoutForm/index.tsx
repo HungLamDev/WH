@@ -304,14 +304,10 @@ const StockoutScreen = () => {
 
         //     //Bản cũ
         //Debounced
-        const handleTextChange = setTimeout(() => {
-            if (qrcode.length >= 15) {
+        if (qrcode.length >= 15) {
 
-                handleOutAll(qrcode)
-            }
-        }, 1000)
-
-        return () => clearTimeout(handleTextChange)
+            handleOutAll(qrcode)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qrcode])
     //#endregion

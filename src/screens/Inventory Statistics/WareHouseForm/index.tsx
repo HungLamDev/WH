@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 import ChartLVL from "../../../components/ChartLVL";
 import { ListB1_F1, ListB5_F1, ListB5_F2 } from "../../../utils/listRackLVL";
 import { listF, listG, listR } from "../../../utils/listRackLHG";
+// import { listLYM } from "../../../utils/listRackLYM";
 //#endregion
 const WareHouseF = () => {
     const { t } = useTranslation();
@@ -165,6 +166,21 @@ const WareHouseF = () => {
                 setApiRequestComplete(true);
                 setListRack1(ListB1_F1)
             }
+            // else if (warehouse === 'LYM') {
+            //     listLYM.forEach(item1 => {
+            //         const matchingItem = response.data.find((item2: any) => item1.Rack_Total === item2.Rack_Total && item1.Sum_Total !== item2.Sum_Total);
+            //         if (matchingItem) {
+            //             if (matchingItem.Sum_Total as number > 100) {
+            //                 item1.Sum_Total = "100";
+            //             }
+            //             else {
+            //                 item1.Sum_Total = matchingItem.Sum_Total;
+            //             }
+            //         }
+            //     });
+            //     setApiRequestComplete(true);
+            //     setListRack1(listLYM)
+            // }
             setCountFetch(item => item + 1)
         })
     };
@@ -432,6 +448,25 @@ const WareHouseF = () => {
                             </div>
                         )
                     }
+
+                    // này của LYM
+                    // if (dataUser[0].building === 'LYM') {
+                    //     return (
+                    //         <Stack height={'100%'}>
+                    //             <Stack height={'50%'} >
+                    //                 <div className="bar-chart">
+                    //                     {
+                    //                         listRack1.map((item: any, index: number) => {
+                    //                             return (
+                    //                                 <Chart listRack={item} wareHouse={warehouse} />
+                    //                             )
+                    //                         })
+                    //                     }
+                    //                 </div>
+                    //             </Stack>
+                    //         </Stack>
+                    //     )
+                    // }
 
                 })()}
             </>

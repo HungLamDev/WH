@@ -128,13 +128,9 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
         //     //#endregion
         //     // Bản cũ
         //Debounced
-        const handleTextChange = setTimeout(() => {
-            if (scanqr.length >= 15) {
-                ScanQR(scanqr)
-            }
-        }, 1000)
-
-        return () => clearTimeout(handleTextChange)
+        if (scanqr.length >= 15) {
+            ScanQR(scanqr)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [scanqr])
 

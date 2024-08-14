@@ -19,6 +19,13 @@ export default defineConfig({
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'document',
+            handler: 'NetworkFirst',
+          },
+        ],
+        cleanupOutdatedCaches: true, // Xóa cache cũ
       },
       includeAssets: [
         "**/*",

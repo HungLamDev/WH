@@ -200,16 +200,12 @@ const Stockin = () => {
     //#region useEffect
     //Debounced
     useEffect(() => {
-        const handleTextChange = setTimeout(() => {
-            if (shelve.length === 15 || shelve.length === 16) {
-                saveDataInOut(shelve, txtshelve)
-            }
-            if (shelve.length > 1 && shelve.length < 15) {
-                checkRack(shelve)
-            }
-        }, 1000)
-
-        return () => clearTimeout(handleTextChange)
+        if (shelve.length === 15 || shelve.length === 16) {
+            saveDataInOut(shelve, txtshelve)
+        }
+        if (shelve.length > 1 && shelve.length < 15) {
+            checkRack(shelve)
+        }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shelve]);

@@ -141,11 +141,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     //#region useEffect
     //Debounced
     useEffect(() => {
-        const handleTextChange = setTimeout(() => {
-            ScanValue(txtscan)
-        }, 800)
-
-        return () => clearTimeout(handleTextChange)
+        ScanValue(txtscan)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [txtscan])
     //#endregion
