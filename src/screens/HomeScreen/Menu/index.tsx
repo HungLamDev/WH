@@ -62,7 +62,7 @@ const Menu = () => {
           borderRadius: "20%",
           cursor: "pointer",
           color: "white",
-          background: "#9DB2BF",
+          background: "rgb(157, 178, 191,0.8)",
           ':disabled': {
             background: 'gray', // Thay đổi màu nền khi vô hiệu hóa
             opacity: 0.5
@@ -136,7 +136,7 @@ const Menu = () => {
     {
       title: t("btnAccounting_Card") as string,
       icon: reportIcon,
-      path: "/accounting-card",
+      path:  dataUser[0].WareHouse === 'Fitting' ? "/accountingcard-sole" : "/accounting-card",
       modal: dataUser[0].UserRole === 'Administrator' || dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === 'Account' ? true : false,
       modalName: 'listAccounting_Card',
     },
@@ -213,7 +213,7 @@ const Menu = () => {
     {
       title: t("btnAccounting_Sole") as string,
       icon: soleIcon,
-      path: "/accounting-card",
+      path: "/accountingcard-sole",
       vWareHouse: "Fitting"
     },
     {
@@ -389,14 +389,24 @@ const Menu = () => {
           justifyContent: 'center',
           alignItems: 'center',
           border: '1px solid',
+          // border: '1px solid black',
           padding: '5px',
           borderRadius: '20px',
         }}>
           {/* icon user */}
-          <AccountCircleIcon fontSize="large" />
+          <AccountCircleIcon
+            fontSize="large"
+          // sx={{color:'black'}}
+          />
           <Stack marginLeft={'10px'} marginRight={'20px'}>
             {/* Tên người dùng */}
-            <Typography>{dataUser[0].UserName}</Typography>
+            <Typography
+              // sx={{
+              //   color: 'black',
+              // }}
+            >
+              {dataUser[0].UserName}
+            </Typography>
             <Box display={'flex'} justifyContent={'space-between'}>
               {/* Số thẻ */}
               <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
@@ -404,7 +414,13 @@ const Menu = () => {
             </Box>
           </Stack>
           {/* Nút logout */}
-          <LogoutIcon sx={{ color: 'white', cursor: 'pointer' }} onClick={() => window.location.reload()} />
+          <LogoutIcon
+            sx={{
+              // color: 'white',
+              // color: 'black',
+              cursor: 'pointer'
+            }}
+            onClick={() => window.location.reload()} />
         </Box>
       </div>
       {/* Menu */}
@@ -437,13 +453,28 @@ const Menu = () => {
               >
                 <img src={icon} alt={title} className="hover-effect" />
               </IconWrapper>
-              <Typography sx={{ fontSize: '15px' }} className="textsize-960px" >{t(title)}</Typography>
+              <Typography
+                sx={{
+                  fontSize: '15px',
+                  // color: '#17153B'
+                  color:'white'
+                }}
+                className="textsize-960px" >{t(title)}</Typography>
             </Grid>
           );
         })}
       </Grid>
 
-      <Typography variant="caption" sx={{ flex: 1, color: 'white', opacity: 0.5, textAlign: 'center', alignItems: 'flex-end', display: 'flex' }}> Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
+      <Typography variant="caption"
+        sx={{
+          flex: 1,
+          color: 'white',
+          // color: 'black',
+          opacity: 0.5,
+          // opacity: 0.9,
+          textAlign: 'center', alignItems: 'flex-end', display: 'flex'
+        }}
+      > Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
       {/* Modal danh sách thẻ kho */}
       {modalName === 'listAccounting_Card' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={list} />}
       {/* Modal danh sách ngôn ngữ */}

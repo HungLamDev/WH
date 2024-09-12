@@ -122,9 +122,19 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                     return null;
                   }
                   let textColor = "white";
+                  if (item?.Order_No_In?.trim() != "" && item?.Order_No_Out?.trim() == ""){
+                    textColor = "darkorange";
+                  }
+                  else if (item?.Order_No_In?.trim() != "" && item?.Order_No_Out?.trim() != ""){
+                    textColor= 'NavajoWhite'
+                  }
                   if (item.Order_No_In2 || item.Order_No_In2 === 'Tồn') {
                     textColor = "darkorange";
-                  } else if (item.Stamp_Caculator === "0") {
+                  } 
+                  if (item.Order_No_In2 || item.Order_No_In2 === 'Tồn') {
+                    textColor = "darkorange";
+                  } 
+                  else if (item.Stamp_Caculator === "0") {
                     textColor = "white";
                   }
                   else if ((item.Stamp_Caculator && item.Stamp_Caculator !== "0") || (item.Stamp_Caculator && item.Stamp_Caculator !== 0)) {

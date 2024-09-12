@@ -76,6 +76,7 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
     const handleClickWareHouse = (wareHouse: string) => {
         if (wareHouse !== 'FOC') {
             setWareHouseAcount(wareHouse)
+            setWareHouse(wareHouse)
             dispatch(addFOC(false))
         }
         else {

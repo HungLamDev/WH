@@ -19,6 +19,7 @@ import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import Decimal from 'decimal.js';
 import { debounce } from '../../../utils/debounce';
+import useDebounced from '../../../components/CustomHook/useDebounce';
 //#endregion
 function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, materialNo?: string }) {
     const { t } = useTranslation();
@@ -139,12 +140,22 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     //#endregion
 
     //#region useEffect
-    //Debounced
-    useEffect(() => {
-        ScanValue(txtscan)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [txtscan])
+    // useEffect(() => {
+    //     ScanValue(txtscan)
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [txtscan])
     //#endregion
+
+     //#region useDebounced
+     const debouncedSearchTerm = useDebounced(txtscan, 500);
+     useEffect(() => {
+         if (debouncedSearchTerm) {
+            ScanValue(debouncedSearchTerm)
+         }
+       }, [debouncedSearchTerm]);
+ 
+     //#endregion
+ 
 
     //#region Func Logic
     const ScanValue = (value_scan: string) => {

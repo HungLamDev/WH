@@ -411,7 +411,7 @@ const RegisterLabel = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={3.5}></Grid>
+                        <Grid item xs={2.5}></Grid>
                         {/* Tìm kiếm */}
                         <Grid item display={'flex'} xs={1.5}>
                             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
@@ -429,15 +429,15 @@ const RegisterLabel = () => {
                             <MyButton name={t("tsmPrint")} disabled={disable} onClick={handlePrint} />
                         </Grid>
                         {/* Tìm lại */}
-                        <Grid item xs={2} display={'flex'} alignItems={'center'}>
+                        <Grid item xs={1.5} display={'flex'} alignItems={'center'}>
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox value={chxFind} onChange={handleChxFind} />}
                                 label={t("lblFindAgain")}
                             />
                         </Grid>
-                        <Grid item xs={2} display={'flex'} alignItems={'center'}>
-                            {isLoading && <CircularProgress size={'25px'} color="info" />}
+                        <Grid item xs={0.5} display={'flex'} alignItems={'center'}>
+                            {true && <CircularProgress size={'25px'} color="info" />}
                         </Grid>
                     </Grid>
                 </Box>

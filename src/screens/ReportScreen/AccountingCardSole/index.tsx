@@ -22,7 +22,6 @@ import { currentDay } from "../../../utils/date";
 import MyButton from "../../../components/MyButton";
 import Statistics from "../../StockinScreenv2/StatisticsForm";
 import { useNavigate } from "react-router-dom";
-import "./style.scss";
 import axios from "axios";
 import { config, createConfig } from "../../../utils/api";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
@@ -46,6 +45,7 @@ import { successSound } from "../../../utils/pathsound";
 import { copyArrayAccountingCard } from "../../../redux/ArrayAccountingCard";
 import TableOriginEdit from "../../../components/TableOriginEdit";
 import TableVirtual from "../../../components/TableVirtual";
+
 export interface Chemistry {
   _id: number;
   Order_No_In1: string;
@@ -60,8 +60,9 @@ export interface Chemistry {
   Img_DF: string;
   Order_No_Out1: string;
 }
+
 //#endregion
-const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
+const AccountingCardSole = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const { t } = useTranslation();
   const navigato = useNavigate();
   const dispatch = useDispatch();
@@ -83,13 +84,19 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   ];
   const columns: GridColDef[] = [
     {
-      field: "Order_No_In1",
-      headerName: t("dcmDate") as string,
+      field: "STT",
+      headerName: t("dcpNum") as string,
       width: 80,
       headerClassName: "custom-header",
     },
     {
-      field: "Order_No_In2",
+      field: "Date_In",
+      headerName: t("btnPartial_In") as string,
+      width: 150,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "Order_No_In",
       headerName: t("dcpOrder_No_In") as string,
       width: 150,
       headerClassName: "custom-header",
@@ -101,32 +108,26 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       headerClassName: "custom-header",
     },
     {
-      field: "Arr_Material",
-      headerName: t("dcpRemak_RY") as string,
-      width: 200,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "Order_No_Out1",
+      field: "Position",
       headerName: t("dcpArticle") as string,
       width: 150,
       headerClassName: "custom-header",
     },
     {
       field: "Date_Out",
-      headerName: t("dcmDate") as string,
+      headerName: t("btnPartial_Out") as string,
       width: 80,
       headerClassName: "custom-header",
     },
     {
-      field: "Order_No_In3",
-      headerName: t("dcpImport") as string,
+      field: "Qty_In",
+      headerName: t("dcpQty_In") as string,
       width: 100,
       headerClassName: "custom-header",
     },
     {
       field: "Qty_Out",
-      headerName: t("dcpExport") as string,
+      headerName: t("dcpQty_Out") as string,
       width: 100,
       headerClassName: "custom-header",
     },
@@ -175,10 +176,6 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const [dtpTo_Date, setDtpTo_Date] = useState(
     currentDay.endOf("month").format("MM/DD/YYYY")
   );
-  const [chxChemistry, setChxChemistry] = useState(false);
-  const [chxTotalOrder, setChxTotalOrder] = useState(false);
-  const [chxRY, setChxRY] = useState(false);
-  const [chxOrder_No, setChxOrder_No] = useState(false);
   const [lblMaterialNo, setLblMaterialNo] = useState(true);
   const [openmodal, setOpenModal] = useState(false);
   const [txtMaterial_No, setTxtMaterial_No] = useState(dataMaterialNo ? dataMaterialNo : "");
@@ -188,10 +185,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const [modalType, setModalType] = useState("");
   const [rowsMaterial, setRowsMaterial] = useState([]);
   const [itemToProcess, setItemToProcess] = useState<any>();
-  const [date, setDate] = useState(accountCardRow.Value_Date_Card);
   const [materialName, setMaterialName] = useState(accountCardRow.Value_Material_Name);
-  const [materialNo, setMaterialNo] = useState(accountCardRow.Value_Material_No);
-  const [unit, setUnit] = useState(accountCardRow.Value_Unit_Card);
   const [mess, setMess] = useState("");
   const [rowsExcel, setRowsExcel] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -215,11 +209,6 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     // dispatch(clearChemistry());
   }, [chemistryRow]);
 
-  useEffect(() => {
-    // dispatch(clearChemistry());
-    dataUser[0].UserRole !== 'Administrator' && dataUser[0].UserRole !== 'Manager' && dataUser[0].UserRole !== 'Account' ? LoadMaterial() : '';
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   //#endregion
 
@@ -259,7 +248,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     }
     setDtpFrom_Date(moment(newDate).format("MM/DD/YYYY"));
   };
-  
+
   const handleClickDateTo = (name: string) => {
     let newDate = moment(dtpTo_Date, "MM/DD/YYYY");
     if (name === "-") {
@@ -277,100 +266,32 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     setDtpTo_Date(newDate.format("MM/DD/YYYY"));
   };
 
-
-  const LoadMaterial = () => {
-    // Load data list material no 
-    setLoading(true);
-    const url =
-      connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
-    const data = {
-      User_Serial_Key: txtOrder_No,
-      V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
-      dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
-      lblMaterialNo: lblMaterialNo,
-      saFactory: dataUser[0].factoryName,
-      Rack: "",
-      get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      User_Login: dataUser[0].UserId
-    };
-    axios
-      .post(url, data, configNew)
-      .then((response) => {
-        const arr = response.data.map((item: any, index: any) => ({
-          _id: index + 1,
-          ...item,
-        }));
-        setRowsMaterial(arr);
-      })
-      .finally(() => {
-        setLoading(false);
-
-      });
-  };
-
-  const Search = () => {
-    dispatch(clearChemistry());
-    setLoading(true);
-    const url =
-      connect_string + "api/Get_Data_Material_Label_Accounting_Card_Search";
-    const data = {
-      txtMaterial_No: txtMaterial_No,
-      txtOrder_No: txtOrder_No,
-      User_Serial_Key: dataUser[0].UserId,
-      V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      chxChemistry: chxChemistry,
-      dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
-      dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
-      lblMaterialNo: lblMaterialNo,
-      saFactory: dataUser[0].factoryName,
-      Barcode: "",
-      get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      chxTotal_Order: chxTotalOrder,
-      chxRy: chxRY
-    };
-    axios
-      .post(url, data, configNew)
-      .then((response) => {
-        const arr: Chemistry[] = [];
-        response.data.forEach((item: any, index: any) => {
-          arr.push({
-            _id: index,
-            ...item,
-          });
-        });
-
-        setRows(arr);
-        dispatch(copyValues(arr));
-        setRowsExcel(arr)
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
   //Select chemistry form Material_No
   const Material_Accounting_Card_Textchanged = (material_no: string) => {
+    console.log(material_no)
     setIsApi(false)
     dispatch(clearChemistry());
     setLoading(true);
     setDisable(true)
     const url =
       connect_string +
-      "api/Get_Data_Material_Label_Accounting_Card_Textchanged";
+      "api/get_Show_Accounting_Card_Sole";
     const data = {
       txtMaterial_No: material_no,
       txtOrder_No: txtOrder_No,
       User_Serial_Key: dataUser[0].UserId,
       V_Warehouse: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      chxChemistry: chxChemistry,
+      chxChemistry: false,
+      txtRack: txtOrder_No,
       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
       lblMaterialNo: lblMaterialNo,
       saFactory: dataUser[0].factoryName,
       get_version: dataFOC === true ? "FOC" : getWareHouseAcount(),
-      chxRy: chxRY,
-      chxTotal_Order: chxTotalOrder
+      chxRy: false,
+      chxTotal_Order: false
     };
+
     axios
       .post(url, data, configNew)
       .then((response) => {
@@ -379,32 +300,28 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
 
           arr.push({
             _id: index,
+            Img_DF: item.Sign,
             ...item,
           });
-        });
-        const arrWithoutLastRow = arr.slice(0, arr.length - 1);
-        // setRows(arrWithoutLastRow);
-        const array = response.data;
-        // setMaterialName(array[array.length - 1].Value_Material_Name);
-        // setMaterialNo(array[array.length - 1].Value_Material_No);
-        // setUnit(array[array.length - 1].Value_Unit_Card);
-        // setDate(array[array.length - 1].Value_Date_Card);
-        ReactDOM.unstable_batchedUpdates(() => {
-          setRows(arrWithoutLastRow);
-          const body = {
-            "Value_Material_Name": array[array.length - 1].Value_Material_Name,
-            "Value_Material_No": array[array.length - 1].Value_Material_No,
-            "Value_Unit_Card": array[array.length - 1].Value_Unit_Card,
-            "Value_Date_Card": array[array.length - 1].Value_Date_Card,
 
-          }
-          dispatch(copyArrayAccountingCard(body))
-          setMaterialName(array[array.length - 1].Value_Material_Name);
-          setMaterialNo(array[array.length - 1].Value_Material_No);
-          setUnit(array[array.length - 1].Value_Unit_Card);
-          setDate(array[array.length - 1].Value_Date_Card);
         });
-        dispatch(copyValues(arrWithoutLastRow));
+        dispatch(copyValues(arr));
+
+        // ReactDOM.unstable_batchedUpdates(() => {
+        //   setRows(arrWithoutLastRow);
+        //   const body = {
+        //     "Value_Material_Name": array[array.length - 1].Value_Material_Name,
+        //     "Value_Material_No": array[array.length - 1].Value_Material_No,
+        //     "Value_Unit_Card": array[array.length - 1].Value_Unit_Card,
+        //     "Value_Date_Card": array[array.length - 1].Value_Date_Card,
+
+        //   }
+        //   dispatch(copyArrayAccountingCard(body))
+        //   setMaterialName(array[array.length - 1].Value_Material_Name);
+        //   setMaterialNo(array[array.length - 1].Value_Material_No);
+        //   setUnit(array[array.length - 1].Value_Unit_Card);
+        //   setDate(array[array.length - 1].Value_Date_Card);
+        // });
         setIsApi(true)
         setRowsExcel(arr)
       })
@@ -417,9 +334,14 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const handlerowClickMaterial = (params: any, item: any) => {
     if (isApi === true) {
       setTxtMaterial_No(item.Material_No);
+      setMaterialName(item.Name)
+      const body = {
+        "Value_Material_Name": item.Name
+      }
+      dispatch(copyArrayAccountingCard(body))
     }
-    // Material_Accounting_Card_Textchanged(item.Material_No);
   };
+
   const handleRow2ClickSign = (params: any, item: any) => {
     if (params === "Img_DF" && item.Qty_Redundant !== "" && dataUser[0].UserRole === 'Account') {
       if (item.Img_DF !== null) {
@@ -491,7 +413,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   }
 
   const handleAddNote = () => {
-    
+
     setModalUserCofirm(false)
     const url = connect_string + "api/CellDoubleClick_Sign_Image";
     const data = {
@@ -566,62 +488,29 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     setTxtMaterial_No("");
     setTxtOrder_No("");
     setMaterialName("");
-    setMaterialNo("");
-    setUnit("");
+  
     setRows([]);
     // dispatch(clearChemistry());
     setRowsExcel([]);
   };
 
-  // const handleKeyDownRack = (event: any) => {
-  //   if (event.key === 'Enter') {
-  //     dispatch(clearChemistry());
-  //     setLoading(true);
-  //     const url =
-  //       connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
-  //     const data = {
-  //       User_Serial_Key: "",
-  //       V_Warehouse: getWareHouse(),
-  //       dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
-  //       dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
-  //       lblMaterialNo: lblMaterialNo,
-  //       saFactory: dataUser[0].factoryName,
-  //       Rack: txtMaterial_No,
-  //       get_version: dataUser[0].WareHouse
-
-  //     };
-  //     axios
-  //       .post(url, data, config)
-  //       .then((response) => {
-  //         const arr = response.data.map((item: any, index: any) => ({
-  //           _id: index + 1,
-  //           ...item,
-  //         }));
-  //         setRowsMaterial(arr);
-  //       })
-  //       .finally(() => {
-  //         setLoading(false);
-  //       });
-  //   }
-  // }
-
 
   const handleSearchUserID = (event: any) => {
     // find user id and rack
-    if (event.key === 'Enter' && chxOrder_No == true) {
+    if (event.key === 'Enter') {
       dispatch(clearChemistry());
       setLoading(true);
       const url =
-        connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad";
+        connect_string + "api/Get_Data_Material_Label_Accounting_Card_frmLoad_Sole";
       const data = {
-        User_Serial_Key: txtOrder_No,
+        User_Serial_Key: txtOrder_No.toUpperCase(),
         V_Warehouse: dataFOC === true ? "FOC" : getWareHouse(),
         dtpFrom_Date: moment(dtpFrom_Date).format("YYYY/MM/DD"),
         dtpTo_Date: moment(dtpTo_Date).format("YYYY/MM/DD"),
         lblMaterialNo: lblMaterialNo,
         saFactory: dataUser[0].factoryName,
         Rack: "",
-        get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+        get_version: dataFOC === true ? "FOC" : getWareHouse(),
         User_Login: dataUser[0].UserId
       };
       axios
@@ -636,10 +525,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         .finally(() => {
           setLoading(false);
         });
-    } //else
-      // if (event.key === 'Enter' && chxOrder_No === false ) {
-      //   LoadMaterial();
-      // }
+    }
   };
   //#region Excel
   const exportToExcel = () => {
@@ -693,19 +579,6 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       ["", "", "", "", "", "", "", "", "", "", "", ""],
       ["THẺ KHO"],
       [""],
-      ["Ngày lập thẻ : " + date],
-      [
-        "Tên, nhãn hiệu, qui cách vật tư :..........." +
-        materialName +
-        ".............Tờ số :....................",
-      ],
-      [
-        "Đơn vị tính :......" +
-        unit +
-        "......Mã số :........" +
-        materialNo +
-        ".......",
-      ],
       [""],
       [
         "Ghi chú",
@@ -840,6 +713,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       modalScan && successSound.play();
     }
   };
+  
   const CheckScanMaterialNo = (barcode: string) => {
     const url = connect_string + 'api/Get_Material_No_Scan'
     const data = {
@@ -868,37 +742,15 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         className={"dark-bg-secondary border-bottom-white"}
       >
         <Stack>
-          <Stack >
-            <Grid container alignItems={"center"} justifyContent={"center"}>
-              <Grid item display={"flex"}>
-                {/* Ngày */}
-                <Box className="textsize">
-                  {" "}
-                  {t("dcmDate") as string}: {date}
-                </Box>
-              </Grid>
-            </Grid>
-          </Stack>
           <Stack  >
             <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
-              <Box flex={1} textAlign={'center'}>
                 <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center' }}>
                   {t("lblMaterial_Name") as string}:{" "}
                   <span style={{ color: "yellow" }}>{materialName}</span>
                 </Typography>
-              </Box>
-              <Box flex={1} textAlign={'center'}>
-                <Typography className="textsize" style={{ textAlign: 'center' }} >
-                  {t("lblMaterial_No") as string}:{" "}
-                  <span style={{ color: "yellow" }}>{materialNo}</span>
-                </Typography>
-              </Box>
-              <Box className="textsize" flex={1} textAlign={'center'}>
-                {t("lblUnit") as string}:{" "}
-                <span style={{ color: "yellow" }}>{unit}</span>
-              </Box>
             </Stack>
             <Stack direction={'row'} >
+              <Box flexBasis={'9%'}></Box>
               <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'}>
                 {/* Check mã vật tư */}
                 <Box className="flex-center">
@@ -929,26 +781,10 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                 </Box>
               </Stack>
 
-              <Box flexBasis={'7%'}></Box>
-              <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'}>
-                {/* Check số phiếu */}
-                <Box className="flex-center">
-                  <FormControlLabel
-                    sx={styletext}
-                    control={
-                      <Checkbox
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setChxOrder_No(e.target.checked)
-                        }
-                        defaultChecked={false}
-                        value={chxOrder_No}
-                      />
-                    }
-                    label={t("dcmOrder_No") as string}
-                  />
-                </Box>
-
+              <Box flexBasis={'9%'}></Box>
+              <Stack direction={'row'} flexBasis={'33%'} justifyContent={'center'} alignItems={'center'} gap={2}>
                 {/* Input số phiêú */}
+                <Typography className="textsize">{t("lblRackName")}</Typography>
                 <Box className="dateTimeContainer flex-center">
                   <InputField
                     customClass="customStack1"
@@ -961,43 +797,10 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                 </Box>
               </Stack>
               <Box flexBasis={'7%'}></Box>
-              <Stack direction={'row'} flexBasis={'20%'}>
 
-                {/* Check hóa chất */}
-                <Box  >
-                  <FormControlLabel
-                    sx={styletext}
-                    control={
-                      <Checkbox
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                          setChxChemistry(event.target.checked)
-                        }
-                        defaultChecked={false}
-                        value={chxChemistry}
-                      />
-                    }
-                    label={t("chxChemistry") as string}
-                  />
-                </Box>
-                {/* Check ry */}
-                <Box>
-                  <FormControlLabel
-                    sx={styletext}
-                    control={
-                      <Checkbox
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                          setChxRY(event.target.checked)
-                        }
-                        defaultChecked={false}
-                        value={chxRY}
-                      />
-                    }
-                    label={"RY"}
-                  />
-                </Box>
-              </Stack>
             </Stack>
             <Stack direction={'row'}>
+              <Box flexBasis={'9%'}></Box>
               <Stack direction={'row'} gap={1} flexBasis={'40%'} justifyContent={'center'} alignItems={'center'}>
                 {/* Từ */}
                 <Box className="flex-center">
@@ -1049,22 +852,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                   <ArrowForwardIosOutlinedIcon sx={{ width: '25px' }} />
                 </Box>
               </Stack>
-              {/* Check tổng đơn */}
-              <Box flexBasis={'20%'}>
-                <FormControlLabel
-                  sx={styletext}
-                  control={
-                    <Checkbox
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        setChxTotalOrder(event.target.checked)
-                      }
-                      defaultChecked={false}
-                      value={chxTotalOrder}
-                    />
-                  }
-                  label={t("chxTotalOrder")}
-                />
-              </Box>
+
             </Stack>
           </Stack>
           {/* Danh sách nút */}
@@ -1090,7 +878,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                 justifyContent={"center"}
                 sx={{ paddingTop: "5px" }}
               >
-                <MyButton name={t("btnSearch") as string} onClick={Search} disabled={loading ? loading : disable} />
+                <MyButton name={t("btnSearch") as string} onClick={() => Material_Accounting_Card_Textchanged(txtMaterial_No)} disabled={loading ? loading : disable} />
               </Grid>
               {/* Xuất excel */}
               <Grid
@@ -1124,9 +912,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                 <MyButton
                   name={t("btnInventory") as string}
                   disabled={loading ? loading : disable}
-                  onClick={() => {
-                    navigato("/inventory", { state: txtMaterial_No });
-                  }}
+                // onClick={() => {
+                //   navigato("/inventory", { state: txtMaterial_No });
+                // }}
                 />
               </Grid>
               {/* Thống kê */}
@@ -1139,7 +927,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
                 <MyButton
                   name={t("btnStatistical") as string}
                   disabled={loading ? loading : disable}
-                  onClick={() => handleOpen("statistic")}
+                // onClick={() => handleOpen("statistic")}
                 />
                 {modalType === "statistic" && (
                   <Statistics
@@ -1203,4 +991,4 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   );
 };
 
-export default AccountingCardScreen;
+export default AccountingCardSole;

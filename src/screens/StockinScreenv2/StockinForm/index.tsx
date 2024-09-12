@@ -26,6 +26,7 @@ import EnterShelves from "../EnterShelves"
 import ModalCofirm from "../../../components/ModalConfirm"
 import { addFOC } from "../../../redux/FOC"
 import { debounce } from "../../../utils/debounce"
+import useDebounced from "../../../components/CustomHook/useDebounce"
 //#endregion
 //#region style
 export const styletext = {
@@ -198,20 +199,16 @@ const Stockin = () => {
     //#endregion
 
     //#region useEffect
-    //Debounced
-    useEffect(() => {
-        if (shelve.length === 15 || shelve.length === 16) {
-            saveDataInOut(shelve, txtshelve)
-        }
-        if (shelve.length > 1 && shelve.length < 15) {
-            checkRack(shelve)
-        }
+    // useEffect(() => {
+    //     if (shelve.length >= 15) {
+    //         saveDataInOut(shelve, txtshelve)
+    //     }
+    //     if (shelve.length > 1 && shelve.length < 15) {
+    //         checkRack(shelve)
+    //     }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [shelve]);
-
-    // Tạo phiên bản debounce 
-
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [shelve]);
 
     useEffect(() => {
         if (txtshelve !== "") {
@@ -219,6 +216,19 @@ const Stockin = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [checkFOC]);
+    //#endregion
+
+    //#region useDebounced
+    const debouncedSearchTerm = useDebounced(shelve, 500);
+    useEffect(() => {
+        if (debouncedSearchTerm.length >= 15) {
+            saveDataInOut(debouncedSearchTerm, txtshelve)
+        }
+        if (debouncedSearchTerm.length > 1 && debouncedSearchTerm.length < 15) {
+            checkRack(debouncedSearchTerm)
+        }
+    }, [debouncedSearchTerm]);
+
     //#endregion
 
     //#region Func Logic
@@ -259,6 +269,7 @@ const Stockin = () => {
     }
 
     const checkRack = (txtshelve: string) => {
+        // check rack nó có tồn tại hay không
         setDisable(true)
         setisLoading(true)
         const url = connect_string + 'api/check_rack_data'
@@ -277,7 +288,7 @@ const Stockin = () => {
     }
 
     const getDatgetDataStorage = (txtshelve: string) => {
-
+        // lấy dữ liệu trong kệ
         setDisable(true)
         setisLoading(true)
         const url = connect_string + 'api/getDataStorage'
@@ -347,6 +358,7 @@ const Stockin = () => {
     }
 
     const saveDataInOut = (shelve1: string, txtshelve1: string) => {
+        // thêm tem vào kệ
         setisLoading(true)
         setDisable(true)
         //setQRCode(shelve)
@@ -418,7 +430,6 @@ const Stockin = () => {
     const handleRowClick = (params: any, item: any) => {
         setDataRow(item)
     }
-
 
     //#endregion
 

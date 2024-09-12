@@ -53,6 +53,7 @@ import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
 import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
+import AccountingCardSole from "./screens/ReportScreen/AccountingCardSole";
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
   if (!authenticate) {
@@ -145,6 +146,7 @@ function App() {
           <Route path={"/check-data"} element={<CheckData />}></Route>
           <Route path={"/register-label"} element={<RegisterLabel />}></Route>
           <Route path={"/inventory-in"} element={<InventoryIn />}></Route>
+          <Route path={"/accountingcard-sole"} element={<AccountingCardSole />}></Route>
         </Route>
         <Route path={"/login"} element={<LoginScreen />} />
         <Route path={"/*"} element={<ErrorScreen />} />

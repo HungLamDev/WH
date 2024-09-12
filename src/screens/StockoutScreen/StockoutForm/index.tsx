@@ -32,6 +32,7 @@ import { BiArrowBack } from "react-icons/bi";
 import TableStockOut from "../../../components/TableStockOut";
 import FormConfirmMaterial from "../../../components/FormConfirmMaterial";
 import { debounce } from "../../../utils/debounce";
+import useDebounced from "../../../components/CustomHook/useDebounce";
 //#endregion
 const StockoutScreen = () => {
     const location = useLocation();
@@ -242,12 +243,6 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region useEffect
-    // useEffect(() => {
-
-    //     //    dispatch(congTotalQtyOut(ArrayStockout.length.toString()))
-
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [ArrayStockout])
 
     useEffect(() => {
         const arrBarcode = listChx.map((item: any) => item.Barcode)
@@ -286,30 +281,39 @@ const StockoutScreen = () => {
         }
     }, [])
 
+    // useEffect(() => {
+    //     //#region Nhập cải thiện
+    //     //     // if (qrcode.length >= 15) {
+    //     //     //     checkMaterial(qrcode).then(result => {
+
+    //     //     //         if (result == true) {
+    //     //     //             handleOpenConfirm('notify-reject-material')
+    //     //     //         }
+    //     //     //         else (
+    //     //     //             handleOutAll(qrcode)
+    //     //     //         )
+    //     //     //     })
+    //     //     // }
+
+    //     //#endregion
+    //     //Bản cũ
+    //     if (qrcode.length >= 15) {
+
+    //         handleOutAll(qrcode)
+    //     }
+
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [qrcode])
+    //#endregion
+
+    //#region useDebounced
+    const debouncedSearchTerm = useDebounced(qrcode, 500);
     useEffect(() => {
-        //     //#region Nhập cải thiện
-        //     // if (qrcode.length >= 15) {
-        //     //     checkMaterial(qrcode).then(result => {
-
-        //     //         if (result == true) {
-        //     //             handleOpenConfirm('notify-reject-material')
-        //     //         }
-        //     //         else (
-        //     //             handleOutAll(qrcode)
-        //     //         )
-        //     //     })
-        //     // }
-
-        //     //#endregion
-
-        //     //Bản cũ
-        //Debounced
-        if (qrcode.length >= 15) {
-
-            handleOutAll(qrcode)
+        if (debouncedSearchTerm.length >= 15) {
+            handleOutAll(debouncedSearchTerm)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qrcode])
+      }, [debouncedSearchTerm]);
+
     //#endregion
 
     //#region Func Logic 

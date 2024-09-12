@@ -26,6 +26,7 @@ import Decimal from 'decimal.js';
 import { set } from 'lodash';
 import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
 import { debounce } from '../../../utils/debounce';
+import useDebounced from '../../../components/CustomHook/useDebounce';
 //#endregion
 function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
     const dispatch = useDispatch()
@@ -108,31 +109,31 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     //#region useEffect
 
-    useEffect(() => {
-        //     //#region Nhập cải thiện
-        //     // if (scanqr.length >= 15) {
-        //     //     if (form === 'stockout') {
-        //     //         checkMaterial(scanqr).then(result => {
-        //     //             if (result == true) {
-        //     //                 handleOpenConfirm('notify-reject-material')
-        //     //             }
-        //     //             else (
-        //     //                 ScanQR()
-        //     //             )
-        //     //         })
-        //     //     }
-        //     //     else {
-        //     //         ScanQR()
-        //     //     }
-        //     // }
-        //     //#endregion
-        //     // Bản cũ
-        //Debounced
-        if (scanqr.length >= 15) {
-            ScanQR(scanqr)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [scanqr])
+    // useEffect(() => {
+    //     //#region Nhập cải thiện
+    //     //     // if (scanqr.length >= 15) {
+    //     //     //     if (form === 'stockout') {
+    //     //     //         checkMaterial(scanqr).then(result => {
+    //     //     //             if (result == true) {
+    //     //     //                 handleOpenConfirm('notify-reject-material')
+    //     //     //             }
+    //     //     //             else (
+    //     //     //                 ScanQR()
+    //     //     //             )
+    //     //     //         })
+    //     //     //     }
+    //     //     //     else {
+    //     //     //         ScanQR()
+    //     //     //     }
+    //     //     // }
+    //     //#endregion
+    //     // Bản cũ
+    //     if (scanqr.length >= 15) {
+    //         ScanQR(scanqr)
+    //     }
+
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [scanqr])
 
 
     useEffect(() => {
@@ -141,6 +142,16 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
             setQtyRemain(result)
         }
     }, [qtyout])
+    //#endregion
+
+    //#region useDebounced
+    const debouncedSearchTerm = useDebounced(scanqr, 500);
+    useEffect(() => {
+        if (debouncedSearchTerm.length >= 15) {
+            ScanQR(debouncedSearchTerm)
+        }
+    }, [debouncedSearchTerm]);
+
     //#endregion
 
     //#region Func Logic
