@@ -1,7 +1,15 @@
 import { Button, ButtonProps } from "@mui/material";
 import { getAppLang } from "../../utils/localStorage";
 
-const MyButton = (props: ButtonProps & { name: string, whiteSpace?: string }) => {
+interface MyButtonProps extends ButtonProps {
+  name: string;
+  whiteSpace?: string;
+  customClass?: string;
+}
+
+const MyButton = (props: MyButtonProps) => {
+  const { name, whiteSpace, customClass = ''} = props;
+
   function handleClick(event: any): void {
     event.preventDefault();
   }
@@ -13,7 +21,9 @@ const MyButton = (props: ButtonProps & { name: string, whiteSpace?: string }) =>
     <Button
       onClick={handleClick}
       onMouseDown={handleMouseDown}
+      className={customClass}
       sx={{
+        
         background: "#757575",
         whiteSpace: props.whiteSpace || "",
         color: "white",
@@ -22,12 +32,12 @@ const MyButton = (props: ButtonProps & { name: string, whiteSpace?: string }) =>
         borderColor: "white",
         border: "1px solid white",
         textTransform: "none",
-        width: "7rem",
+        width: "6.4rem",
         height: "2.5rem",
         fontSize: language === "MM" ? "12px" : "14px",
         "@media screen and (max-width: 1200px)": {
           fontSize: language === "MM" ? "11px" : "12px",
-          width: "6.0rem",
+          width: "5.5rem",
         },
         "@media screen and (max-width: 885px)": {
           fontSize: language === "MM" ? "12px" : "11px",

@@ -307,12 +307,12 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region useDebounced
-    const debouncedSearchTerm = useDebounced(qrcode, 500);
+    const debouncedSearchTerm = useDebounced(qrcode, 300);
     useEffect(() => {
         if (debouncedSearchTerm.length >= 15) {
             handleOutAll(debouncedSearchTerm)
         }
-      }, [debouncedSearchTerm]);
+    }, [debouncedSearchTerm]);
 
     //#endregion
 
@@ -724,9 +724,13 @@ const StockoutScreen = () => {
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid> */}
                                 {/* ICMWH */}
-                                {/* <Grid item display={'flex'}>
-                                    <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
-                                </Grid> */}
+                                {
+                                    dataUser[0].factoryName === 'LVL' && (
+                                        <Grid item display={'flex'}>
+                                            <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
+                                        </Grid>
+                                    )
+                                }
                                 {/* Xuất chi tiết */}
                                 <Grid item display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />

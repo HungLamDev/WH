@@ -68,7 +68,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         },
     ];
     //#endregion
-    
+
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     //#endregion
@@ -83,12 +83,12 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     const [rack, setRack] = useState('')
     const [quantityMaterial, setQuantityMaterial] = useState('')
     const [txtRack, setTxtRack] = useState('')
-    const [chxTransition, setChxTransition] = useState(false)
+    const [chxAll, setChxAll] = useState(true)
     const [materialNo, setMaterialNo] = useState('')
     const [rows, setRows] = useState([])
     const [color, setColor] = useState(false)
     //#endregion
-    
+
     //#region Func OnChange Input
     const handleChangeUserID = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserID(event.target.value)
@@ -103,8 +103,8 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         showStockInERP(event.target.value)
     };
 
-    const handleChxTransition = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChxTransition(event.target.checked)
+    const handleChxAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChxAll(event.target.checked)
     };
 
     const handleEnterKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -149,7 +149,9 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         const data = {
             Rack: rack,
             Version: dataUser[0].WareHouse,
-            chxTransition: false
+            chxTransition: false,
+            chxAll: chxAll
+
         }
         axios.post(url, data, config).then(response => {
             const arr = response.data.map((item: any, index: any) => ({
@@ -161,7 +163,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
             }))
             setRows(arr)
             if (arr.length > 0) {
-                setRack(cutRack(arr[0].Rack))
+                setRack(chxAll ? cutRack(arr[0].Rack) : arr[0].Rack)
                 setQuantityMaterial(arr[arr.length - 1].stt)
                 setTxtRack('')
                 if (arr[arr.length - 1].stt === 1) {
@@ -222,7 +224,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                 <Stack height={'100%'} >
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper"  />
+                            <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("btnStock_In_List") as string}</Typography>
                         <Typography></Typography>
@@ -234,17 +236,20 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                     {chxLogin &&
                                         <>
                                             <Grid container rowSpacing={1}>
+                                                <Grid item xs={3}>
+                                                    <FormGroup>
+                                                        <FormControlLabel sx={styletext}  control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxAll} onChange={handleChxAll} />} label={t("chxAll") as string} />
+                                                    </FormGroup>
+                                                </Grid>
+                                                {/* Tên kệ label*/}
                                                 <Grid item xs={3} display={'flex'} alignItems={'center'}>
                                                     <Typography className="textsize">{t("lblRackName")}</Typography>
                                                 </Grid>
+                                                {/* Tên kệ */}
                                                 <Grid item xs={3} display={'flex'} alignItems={'center'}>
                                                     <Typography className="textsize" color={'aqua'}>{rack}</Typography>
                                                 </Grid>
-                                                <Grid item xs={3}>
-                                                    {/* <FormGroup>
-                                                        <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxTransition} onChange={handleChxTransition} />} label={t("chxTransition") as string} />
-                                                    </FormGroup> */}
-                                                </Grid>
+
                                                 <Grid item xs={6} display={'flex'} justifyContent={'flex-start'}>
                                                     <TextField
                                                         id="outlined-select-currency"
@@ -286,12 +291,15 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                 </Stack>
                                 <Stack width={"40%"} >
                                     <Grid container>
+                                        {/* Tài khoản */}
                                         <Grid item display={"flex"} sx={{ marginBottom: '10px' }} xs={12} justifyContent={"flex-end"}>
                                             <InputField label={t("lblUserID") as string} value={userID} handle={handleChangeUserID} keydown={handleEnterKeyPress} />
                                         </Grid>
+                                        {/* Mật khẩu */}
                                         <Grid item display={"flex"} xs={12} sx={{ marginBottom: '10px' }} justifyContent={"flex-end"} >
                                             <InputField label={t("lblPassword") as string} type="password" value={password} handle={handleChangePassWord} keydown={handleEnterKeyPress} />
                                         </Grid>
+                                        {/* Đăng nhập */}
                                         <Grid item display={'flex'} justifyContent={"flex-end"} xs={12} marginRight={'16px'} alignItems={'center'}>
                                             <MyButton name={t("btnLogin")} onClick={Login} />
                                         </Grid>
@@ -299,7 +307,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                 </Stack>
                             </Stack>
                         </Box>
-                        <Box sx={{ height: '70%', width: '100%', overflow: 'hidden',  }}>
+                        <Box sx={{ height: '70%', width: '100%', overflow: 'hidden', }}>
                             <TableOrigin color={color} columns={columns} rows={rows} arrNotShowCell={[]} handleDoubleClick={null} handlerowClick={null} />
                         </Box>
                         {cofirmType === 'confirm' && <ModalCofirm onPressOK={enterRackERP} open={openCofirm} onClose={handleCloseConfirm} title={t("msgYouWantUpdate") as string} />}

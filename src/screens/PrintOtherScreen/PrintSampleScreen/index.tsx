@@ -135,6 +135,12 @@ const DataHistoryPrintScreen = () => {
       width: 160,
       headerClassName: "custom-header",
     },
+    {
+      field: "Type_Order",
+      headerName: "", // Mã QR
+      width: 160,
+      headerClassName: "custom-header",
+    },
   ];
   const columnsDown: GridColDef[] = [
     {
@@ -227,6 +233,12 @@ const DataHistoryPrintScreen = () => {
       width: 160,
       headerClassName: "custom-header",
     },
+    {
+      field: "Type_Order",
+      headerName: "", //Name
+      width: 160,
+      headerClassName: "custom-header",
+    },
   ];
   const columnsOrderNo: GridColDef[] = [
 
@@ -266,6 +278,7 @@ const DataHistoryPrintScreen = () => {
   const [chxAll_Outsource, setchxAll_Outsource] = useState(false);
   const [chxReprint, setchxReprint] = useState(false)
   const [chxPrintRY, setChxPrintRY] = useState(false);
+  const [chxInventory, setChxInventory] = useState(false);
   const [txtOrderNo, setTxtOrderNo] = useState('')
   const [txtMaterial_No, setTxtMaterial_No] = useState('')
   const [txtInvoid_No, setTxtInvoid_No] = useState('')
@@ -309,6 +322,10 @@ const DataHistoryPrintScreen = () => {
 
   const handlechxAll_Outsource = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchxAll_Outsource(event.target.checked);
+  };
+
+  const handleChxInventory = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChxInventory(event.target.checked);
   };
 
   const handlechxReprint = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -377,7 +394,9 @@ const DataHistoryPrintScreen = () => {
         chxRY: false,
         chxAll_Outsourt: chxAll_Outsource,
         chxReprint: chxReprint,
-        get_version: dataUser[0].WareHouse
+        get_version: dataUser[0].WareHouse,
+        Factory: dataUser[0].factoryName,
+        cbxInventory: chxInventory
 
       }
       axios.post(url, data, configNew).then(response => {
@@ -399,9 +418,11 @@ const DataHistoryPrintScreen = () => {
           cllb_Material_Type: item.cllb_Material_Type,
           zsdh_Supplier_No: item.zsdh_Supplier_No,
           zsywjc_Supplier: item.zsywjc_Supplier,
-          Name_M: item.Name_M
+          Name_M: item.Name_M,
+          Type_Order:item?.Type_Order
         })
         )
+        console.log(arr)
         const arrfillter: any[] = [];
 
         response.data.forEach((item: any, index: any) => {
@@ -429,8 +450,6 @@ const DataHistoryPrintScreen = () => {
       setOpen(true)
       setIsLoading(true)
       const url = connect_string + "api/DoubleClick_Data_Print_Sample"
-      // const date_temp = item.CGDate_Date.split('/')
-      // console.log(item.CGDate_Date)
       const data =
       {
         txtInvoid_No: txtInvoid_No,
@@ -462,7 +481,8 @@ const DataHistoryPrintScreen = () => {
         dcmSupplier_no: item.zsdh_Supplier_No,
         dcmSupplier: item.zsywjc_Supplier,
         dcmDate: item.CGDate_Date,
-        get_version: dataUser[0].WareHouse
+        get_version: dataUser[0].WareHouse,
+        Type_Order:item?.Type_Order
 
       }
       axios.post(url, data, configNew).then(response => {
@@ -484,7 +504,8 @@ const DataHistoryPrintScreen = () => {
             Work_Order: item.Work_Order,
             Material_Types: item.Material_Types,
             Barcode: item.Barcode,
-            Supplier_No: item.Supplier_No
+            Supplier_No: item.Supplier_No,
+            Type_Order:item?.Type_Order
           }))
 
           const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
@@ -608,6 +629,7 @@ const DataHistoryPrintScreen = () => {
         <Stack direction={"row"}>
           <Grid container>
             <Grid item display={'flex'} xs={4.5}>
+              {/* Số phiếu */}
               <InputField
                 focus={true}
                 label={t("dcmOrder_No") as string}
@@ -618,8 +640,17 @@ const DataHistoryPrintScreen = () => {
                 disable={isloading}
               />
             </Grid>
-            <Grid item display={'flex'} xs={1.5}></Grid>
+            <Grid item display={'flex'} xs={1.5}>
+              {/* Check đơn tồn */}
+              <FormControlLabel
+                sx={styletext}
+                className="text"
+                control={<Checkbox sx={{ color: "white" }} value={chxInventory} onChange={handleChxInventory} />}
+                label={t("cbxInventory")}
+              />
+            </Grid>
             <Grid item display={'flex'} xs={4.5}>
+              {/* Đơn gia công */}
               <InputField
                 label={t("lblOutsource") as string}
                 handle={handlextOutsource}
@@ -630,6 +661,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={1.5}>
+              {/* Check tất cả số phiếu bên phải*/}
               <FormControlLabel
                 sx={styletext}
                 className="text"
@@ -638,6 +670,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={4.5}>
+              {/* Mã vật tư */}
               <InputField
                 label={t("dcmMaterial_No") as string}
                 handle={handlextMaterial_No}
@@ -648,6 +681,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={1.5}>
+              {/* Check size */}
               <FormControlLabel
                 sx={styletext}
                 className="text"
@@ -656,6 +690,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={4.5}>
+              {/* Mã Invoice */}
               <InputField
                 label={"Invoice"}
                 handle={handlextInvoid_No}
@@ -666,6 +701,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={1.5}>
+              {/* Check chuyển mã */}
               <FormControlLabel
                 sx={{ width: "100%", display: "flex", ...styletext }}
                 className="text"
@@ -674,6 +710,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={2}>
+              {/* Check tất cả */}
               <FormControlLabel
                 sx={styletext}
                 className="text"
@@ -681,6 +718,7 @@ const DataHistoryPrintScreen = () => {
                 label={t("chxAll")} />
             </Grid>
             <Grid item display={'flex'} xs={2.5}>
+              {/* Check in lại */}
               <FormControlLabel
                 sx={styletext}
                 className="text"
@@ -689,6 +727,7 @@ const DataHistoryPrintScreen = () => {
               />
             </Grid>
             <Grid item display={'flex'} xs={1.5}>
+              {/* Check in lại RY */}
               <FormControlLabel
                 sx={{ width: "100%", display: "flex", ...styletext }}
                 className="text"
@@ -704,9 +743,11 @@ const DataHistoryPrintScreen = () => {
             </Grid>
             {chxPrintRY ? (
               <>
+                {/* Lệnh */}
                 <Grid item xs={2.8} display={'flex'}>
                   <InputField label={t("dcpWork_Order") as string + "\u2002"} handle={null} keydown={null} value={""} />
                 </Grid>
+                {/* Chọn ngày */}
                 <Grid item xs={1.5} display={'flex'}>
                   <DatePickerField onValueChange={dtpDateTo} />
                 </Grid>
@@ -717,7 +758,7 @@ const DataHistoryPrintScreen = () => {
             <Grid item display={'flex'} xs={0.2}></Grid>
             <Grid item display={'flex'} xs={1.5}>
               {(dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === "Administrator") &&
-
+                // Check in bù
                 <FormControlLabel
                   sx={{ width: "100%", display: "flex", ...styletext }}
                   className="text"
@@ -735,10 +776,15 @@ const DataHistoryPrintScreen = () => {
           spacing={3}
           alignItems={"center"}
         >
+          {/* Nút tìm kiếm */}
           <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={isloading} />
+          {/* Nút làm mới */}
           <MyButton name={t("btnClean")} onClick={handleRefresh} disabled={isloading} />
+          {/* Nút xóa */}
           <MyButton name={t("btnDelete")} onClick={handleDelete} disabled={isloading} />
+          {/* Nút in */}
           <MyButton name={t("btnPrint")} onClick={handlePrint} disabled={isloading} />
+          {/* Nút xem trc khi in */}
           <MyButton name={t("btnPrivewPrint")} disabled={isloading} onClick={() => setOpenPrintReview(true)} />
           {open && <CircularProgress size={'24px'} color="info" />}
           {openPrintReview && <FormPrintSample rows={ArrayDeleteAndPrint} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}

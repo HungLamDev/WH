@@ -46,6 +46,7 @@ import { successSound } from "../../../utils/pathsound";
 import { copyArrayAccountingCard } from "../../../redux/ArrayAccountingCard";
 import TableOriginEdit from "../../../components/TableOriginEdit";
 import TableVirtual from "../../../components/TableVirtual";
+import { copyValuesAccountingCardMaterial } from "../../../redux/ArrayAccountingCardMaterial";
 export interface Chemistry {
   _id: number;
   Order_No_In1: string;
@@ -156,6 +157,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   const chemistryRow = useSelector((state: any) => state.ArrayChemistry.items);
   const accountCardRow = useSelector((state: any) => state.ArrayAccountingCard.items);
   const dataFOC = useSelector((state: any) => state.FOC.foc);
+  const ArrayAccountingCardMaterial = useSelector((state: any) => state.ArrayAccountingCardMaterial.items);
 
   //#endregion
 
@@ -302,6 +304,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           ...item,
         }));
         setRowsMaterial(arr);
+        dispatch(copyValuesAccountingCardMaterial(arr))
       })
       .finally(() => {
         setLoading(false);
@@ -608,7 +611,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
 
   const handleSearchUserID = (event: any) => {
     // find user id and rack
-    if (event.key === 'Enter' && chxOrder_No == true) {
+    if (event.key === 'Enter') {
       dispatch(clearChemistry());
       setLoading(true);
       const url =
@@ -632,6 +635,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
             ...item,
           }));
           setRowsMaterial(arr);
+          dispatch(copyValuesAccountingCardMaterial(arr))
         })
         .finally(() => {
           setLoading(false);
@@ -881,8 +885,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           </Stack>
           <Stack  >
             <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
-              <Box flex={1} textAlign={'center'}>
-                <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center' }}>
+              <Box flex={2}  textAlign={'center'} overflow={'hidden'}>
+                <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center'}}>
                   {t("lblMaterial_Name") as string}:{" "}
                   <span style={{ color: "yellow" }}>{materialName}</span>
                 </Typography>
@@ -1161,7 +1165,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         <Grid container sx={{ width: "14%", borderRight: '1px solid white' }}>
           <TableOrigin
             columns={columnsMaterial}
-            rows={rowsMaterial}
+            rows={ArrayAccountingCardMaterial}
             handlerowClick={handlerowClickMaterial}
             handleDoubleClick={null}
             arrNotShowCell={["_id"]}

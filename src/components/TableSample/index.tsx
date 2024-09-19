@@ -46,6 +46,7 @@ const TableSample = (props: TableSampleProps) => {
             arrEditCell?.push(columnEdit)
         }
     }, [columnEdit])
+
     useEffect(() => {
         setSelected([])
         const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;
@@ -154,7 +155,7 @@ const TableSample = (props: TableSampleProps) => {
             // rows[rowInd][colName] = moment(params, "MMMM-YYYY").format("MMM-YYYY");
         }
         else if (colName === 'ngay' || colName === 'CGDate_Date') {
-            dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: moment(params).format("YYYY-MM-DD") }))
+            dispatch(DateTimePickerChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: moment(params).format("DD/MM/YYYY") }))
 
             // rows[rowInd][colName] = moment(params).format("YYYY-MM-DD");
 
@@ -196,7 +197,7 @@ const TableSample = (props: TableSampleProps) => {
                     sx={{
                         overflow: "scroll",
                         "& td": {
-                            whiteSpace: "pre",
+                            whiteSpace: "nowrap",
                         },
                     }}
                 >
@@ -229,7 +230,7 @@ const TableSample = (props: TableSampleProps) => {
                                 {Object.keys(item).map((key, i) => {
                                     const column = columns.find((col) => col.field === key);
                                     if (column) {
-                                        const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date';
+                                        const isProductionCell = key === "ywsm_Production" || key === "ngay" || key === 'CGDate_Date' || key ==="nhasx";
                                         const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
                                         return (
                                             <TableCell
@@ -249,7 +250,6 @@ const TableSample = (props: TableSampleProps) => {
                                             >
                                                 {isEditing && !isProductionCell && selectedColumn == key ? (
                                                     <TextField
-
                                                         defaultValue={item[key]}
                                                         onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
                                                         size="small"
@@ -261,14 +261,14 @@ const TableSample = (props: TableSampleProps) => {
                                                                 // textAlign: 'center',
                                                                 fontSize: '17px',
                                                                 '@media screen and (max-width: 1200px)': {
-                                                                    fontSize: '15px !important',
+                                                                    fontSize: '14px !important',
                                                                     textAlign: 'center',
                                                                 },
                                                             },
 
                                                         }}
                                                     />
-                                                ) : isProductionCell && key === "ywsm_Production" ? (
+                                                ) : isProductionCell && key === "nhasx" ? (
 
                                                     <LocalizationProvider dateAdapter={AdapterMoment} dateFormats={{
                                                         monthAndYear: "MM/YYYY",

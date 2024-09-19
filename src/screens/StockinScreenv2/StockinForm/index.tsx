@@ -219,7 +219,7 @@ const Stockin = () => {
     //#endregion
 
     //#region useDebounced
-    const debouncedSearchTerm = useDebounced(shelve, 500);
+    const debouncedSearchTerm = useDebounced(shelve, 300);
     useEffect(() => {
         if (debouncedSearchTerm.length >= 15) {
             saveDataInOut(debouncedSearchTerm, txtshelve)

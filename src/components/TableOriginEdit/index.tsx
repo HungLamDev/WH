@@ -128,10 +128,10 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                   else if (item?.Order_No_In?.trim() != "" && item?.Order_No_Out?.trim() != ""){
                     textColor= 'NavajoWhite'
                   }
-                  if (item.Order_No_In2 || item.Order_No_In2 === 'Tồn') {
+                  if (item.Order_No_In2 || item.Order_No_In2 === 'Ton') {
                     textColor = "darkorange";
                   } 
-                  if (item.Order_No_In2 || item.Order_No_In2 === 'Tồn') {
+                  if (item.Order_No_In2 || item.Order_No_In2 === 'Ton') {
                     textColor = "darkorange";
                   } 
                   else if (item.Stamp_Caculator === "0") {
@@ -150,7 +150,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
                   else if ((item.Qty && item.Qty_ERP && item.RY && item.RY_ERP) && (item.Qty !== item.Qty_ERP || item.RY !== item.RY_ERP)) {
                     textColor = "orange";
                   }
-                  if (item.Order_No_In2 && item.Arr_Material === "") {
+                  if (item.Order_No_In && item.Order_No_In !== "" && item?.Flat === false && item?.Order_No_In2 !== 'Ton') {
                     textColor = "yellowgreen";
                   }
                   else if (item.Material_Name && item.Material_Name.trim().includes('(BU)')) {

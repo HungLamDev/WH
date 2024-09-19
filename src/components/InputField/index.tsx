@@ -44,6 +44,10 @@ const InputField = ({ label, value, handle, keydown, type, disable, customClass,
 
             // '& .MuiInputBase-input': {
 
+            '@media screen and (max-width: 1200px)': {
+              height: "1.8rem",
+            },
+
             '@media screen and (max-width: 900px)': {
               height: "1.5rem",
             },

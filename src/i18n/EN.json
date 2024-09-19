@@ -414,6 +414,7 @@
     "dcpAction_Taken": "Action Taken",
     "dcpPriority_Vote": "Priority",
     "dcpPriority_No": "Priority No",
-    "lblTitleNoAuthorize": "You do not have permission to use this function"
+    "lblTitleNoAuthorize": "You do not have permission to use this function",
+    "cbxInventory": "Inventory Orders"
 
 }

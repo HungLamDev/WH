@@ -37,6 +37,7 @@ import { clearArrayStockout } from '../../../redux/ArrayStockout';
 import TableCheckBoxRedux from '../../../components/TableCheckBoxRedux';
 import { createConfig, config } from '../../../utils/api';
 import { ModalAccountingCard } from '../../StockoutScreen/StockoutForm';
+import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
 //#endregion
 
 const DeliveryScreen = () => {
@@ -599,7 +600,7 @@ const DeliveryScreen = () => {
                 setIsApi(true)
               })
             }
-            else{
+            else {
               setOpenModelAuthorize(true)
             }
           })
@@ -1073,6 +1074,14 @@ const DeliveryScreen = () => {
           <MyButton name={t('lblCheckData')} onClick={() => navigate("/check-data")} disabled={disable} />
           {/* Thẻ kho */}
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
+          {/* ICMWH */}
+          {
+           dataUser[0].factoryName === 'LVL' && (
+              <Grid item display={'flex'}>
+                <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} />
+              </Grid>
+            )
+          }
 
           <ModalAccountingCard open={openModalAccounting} handleClose={() => setOpenModalAccounting(false)} data={datalAccounting[0]?.Value_Material ? datalAccounting : null} />
           {/* Check phiếu bù */}
@@ -1094,6 +1103,7 @@ const DeliveryScreen = () => {
         {modalType === 'statistic' && (<Statistics open={open} onClose={handleClose} materialNo={dataStatistic} />)}
         {/* Modal cập nhật*/}
         {modalType === 'update' && (<UpdateModalForm dataUpdate={dataUpdate} open={open} onClose={handleClose} />)}
+        {modalType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={open} onClose={handleClose} qrcodeScan={""} />}
         {/* Modal chọn danh sách mã vật tư */}
         {modalType === 'list-material' && (
           <Modal

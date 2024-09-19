@@ -145,12 +145,16 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#endregion
 
     //#region useDebounced
-    const debouncedSearchTerm = useDebounced(scanqr, 500);
+    const debouncedSearchTerm = useDebounced(scanqr, 300);
     useEffect(() => {
         if (debouncedSearchTerm.length >= 15) {
             ScanQR(debouncedSearchTerm)
         }
     }, [debouncedSearchTerm]);
+
+    useEffect(() => {
+        setScanQR("")
+    },[open])
 
     //#endregion
 

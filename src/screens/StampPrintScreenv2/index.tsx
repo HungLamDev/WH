@@ -152,6 +152,13 @@ const StampPrintScreen = () => {
             width: 180,
 
         },
+        {
+            field: "Type_Order",
+            headerName: "",
+            align: "center",
+            width: 200,
+            headerAlign: 'center'
+        },
     ];
     const columnsDown: GridColDef[] = [
         {
@@ -265,6 +272,13 @@ const StampPrintScreen = () => {
         },
         {
             field: "Name_Material_Detail",
+            headerName: "",
+            align: "center",
+            width: 200,
+            headerAlign: 'center'
+        },
+        {
+            field: "Type_Order",
             headerName: "",
             align: "center",
             width: 200,
@@ -449,6 +463,7 @@ const StampPrintScreen = () => {
                 ZLBH_Work_Order: item.ZLBH_Work_Order,
                 cllb_Material_Type: item.cllb_Material_Type,
                 Name_Material_Detail: item.Name_Material_Detail,
+                Type_Order:item?.Type_Order
             }))
             dispatch(copyValues(arr))
             setrowUps([]);
@@ -492,7 +507,9 @@ const StampPrintScreen = () => {
                     chxPrint_All_RY: chxPrint_All_RY,
                     chxPrint_RY: chxPrint_RY,
                     get_version: dataUser[0].WareHouse,
-                    Production: params.ywsm_Production
+                    Production: params.ywsm_Production,
+                    Type_Order: params?.Type_Order,
+                    get_Factory: dataUser[0].factoryName
 
                 }
                 axios.post(url1, data_stamp, configNew).then(response => {
@@ -516,7 +533,8 @@ const StampPrintScreen = () => {
                                 Production: item.Production,
                                 Work_Order: item.Work_Order,
                                 Material_Type: item.Material_Type,
-                                Barcode: item.Barcode,
+                                Barcode: item.Barcode, 
+                                Type_Order: item?.Type_Order
                             };
                         });
                         // xóa phần tử có qrcode trùng trên bảng

@@ -412,6 +412,7 @@
     "dcpAction_Taken": "处理动作",
     "dcpPriority_Vote": "优先事项",
     "dcpPriority_No": "优先级编号",
-    "lblTitleNoAuthorize": "您无权使用该功能"
+    "lblTitleNoAuthorize": "您无权使用该功能",
+    "cbxInventory": "库存订单"
 
 }

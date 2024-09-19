@@ -32,6 +32,7 @@ import TableOrigin from '../../../components/TableOrigin';
 import { styletext } from '../../StockinScreenv2/StockinForm';
 import ModalCofirm from '../../../components/ModalConfirm';
 import TableCheckBoxRedux from '../../../components/TableCheckBoxRedux';
+import './styles.scss'
 //#endregion
 const DeliverySampleScreen = () => {
     const { t } = useTranslation();
@@ -653,6 +654,7 @@ const DeliverySampleScreen = () => {
                         <Grid container>
                             <Grid container justifyContent={'center'}>
                                 <Grid item xs={1}>
+                                    {/* Check đơn gia công */}
                                     <FormGroup>
                                         <FormControlLabel sx={styletext} className="text" control={<Checkbox
                                             sx={{ color: 'white' }} />}
@@ -660,16 +662,19 @@ const DeliverySampleScreen = () => {
                                     </FormGroup>
                                 </Grid>
                                 <Grid item display={'flex'} xs={9}>
+                                    {/* Đơn gia công */}
                                     <InputField disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} />
                                 </Grid>
                                 <Grid item xs={1}>
+                                    {/* Check load data */}
                                     <FormGroup>
                                         <FormControlLabel sx={styletext} className="text" control={<Checkbox value={chxLoad_Data} onChange={handleChxLoad_Data} defaultChecked sx={{ color: 'white' }} />} label={undefined} />
                                     </FormGroup>
                                 </Grid>
                                 <Grid item xs={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                                    {/* Nút enter */}
                                     <IconButton disabled={disable}>
-                                        <img src={EnterIcon} alt="enter" width={"25px"} onClick={handleDelivery} />
+                                        <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"} onClick={handleDelivery} />
                                     </IconButton>
                                 </Grid>
                             </Grid>
@@ -677,6 +682,7 @@ const DeliverySampleScreen = () => {
                                 <Grid item xs={1}  >
                                 </Grid>
                                 <Grid item xs={9} display={'flex'} >
+                                    {/* Tên vật tư */}
                                     <InputField disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
                                 </Grid>
                             </Grid>
@@ -684,15 +690,19 @@ const DeliverySampleScreen = () => {
                                 <Grid item xs={1}>
                                 </Grid>
                                 <Grid item xs={3.1} display={'flex'}>
+                                    {/* Ngày mở phiếu label */}
                                     <span className='textsize'>{t('lblOpen_Date')}</span>
                                 </Grid>
                                 <Grid item xs={2.8} display={'flex'}>
+                                    {/* Chọn ngày mở phiếu từ */}
                                     <DatePickerField valueDate={(param: any) => handleDateChange('openDateFrom', param)} onValueChange={openDateFrom} />
                                 </Grid>
                                 <Grid item xs={2.8} display={'flex'}>
+                                    {/* Chọn ngày mở phiếu đến */}
                                     <DatePickerField valueDate={(param: any) => handleDateChange('openDateTo', param)} />
                                 </Grid>
                                 <Grid item xs={1.5} justifyContent={'center'} display={'flex'}>
+                                    {/* Loading */}
                                     {isLoading && <CircularProgress size={'24px'} color='info' />}
                                 </Grid>
                             </Grid>
@@ -702,12 +712,15 @@ const DeliverySampleScreen = () => {
                         <Grid container>
                             <Grid container >
                                 <Grid item xs={4} display={'flex'}>
+                                    {/* Địa điểm */}
                                     <InputField disable={disable} value={location} handle={handleLocationChange} />
                                 </Grid>
                                 <Grid item xs={6} display={'flex'}>
+                                    {/* Mã vật tư */}
                                     <InputField disable={disable} value={acceptNo} handle={handleAcceptNo} />
                                 </Grid>
                                 <Grid item xs={2} display={'flex'}>
+                                    {/* Danh sách chọn mvt */}
                                     <IconButton disabled={disable} className={'sidebar-toggle-button'} onClick={() => handleOpen('list-material')}>
                                         <BsListCheck />
                                     </IconButton>
@@ -715,6 +728,7 @@ const DeliverySampleScreen = () => {
                             </Grid>
                             <Grid container display={'flex'} alignItems={'center'}>
                                 <Grid item xs={4} paddingRight={'16px'}>
+                                    {/* Danh sách cung ứng */}
                                     {checked && (
                                         <TextField
                                             disabled={disable}
@@ -738,17 +752,21 @@ const DeliverySampleScreen = () => {
                                     )}
                                 </Grid>
                                 <Grid item xs={6} display={'flex'}>
+                                    {/* Màu */}
                                     <InputField value={color} disable={disable} />
                                 </Grid>
                             </Grid>
                             <Grid container columnSpacing={1} alignItems={'center'} marginTop={'4px'}>
                                 <Grid item xs={4.1} display={'flex'}>
+                                    {/* Ngày cập nhật label */}
                                     <span className='textsize'>{t('dcmModify_Date')}</span>
                                 </Grid>
                                 <Grid item xs={2.8} display={'flex'}>
+                                    {/* Ngày cập nhật từ */}
                                     <DatePickerField valueDate={(param: any) => handleDateChange('openDateFrom', param)} />
                                 </Grid>
                                 <Grid item xs={2.8} display={'flex'}>
+                                    {/* Ngày cập nhật đến */}
                                     <DatePickerField valueDate={(param: any) => handleDateChange('openDateTo', param)} />
                                 </Grid>
                             </Grid>
@@ -756,17 +774,25 @@ const DeliverySampleScreen = () => {
                     </Stack>
                 </Stack>
                 <Stack marginTop={'10px'} width={'100%'} direction={'row'} spacing={3} justifyContent={'center'}>
+                    {/* Check tất cả */}
                     <FormGroup>
-                        <FormControlLabel sx={styletext} control={<Checkbox
-                        />}
-                            label={t('chxAll')} />
+                        <FormControlLabel sx={styletext} control={<Checkbox />}
+                            label={t('chxAll')}
+                        />
                     </FormGroup>
+                    {/* Nút tìm kiếm */}
                     <MyButton name={t('btnSearch')} onClick={handleSearch} disabled={disable} />
+                    {/* Nút xuất excel */}
                     <MyButton name={t('btnExcel')} disabled={disable} />
+                    {/* Nút cập nhật */}
                     <MyButton name={t('btnUpdate_Delivery')} onClick={() => handleOpen('update')} disabled={disable} />
+                    {/* Nút làm mới */}
                     <MyButton name={t('btnClean')} onClick={handleReset} disabled={disable} />
+                    {/* Nút lịch sử */}
                     <MyButton name={t('btnHistory')} onClick={() => handleOpen('history-ry')} disabled={disable} />
+                    {/* Nút thống kê */}
                     <MyButton name={t('btnStatistical')} onClick={() => handleOpen('statistic')} disabled={disable} />
+                    {/* Phiếu bù */}
                     <FormGroup>
                         <FormControlLabel sx={styletext} control={<Checkbox value={chxOffset} onChange={handleChxOffSet}
                             sx={{ color: 'white' }} />}
@@ -798,32 +824,26 @@ const DeliverySampleScreen = () => {
                 }
 
             </Box>
-            <Stack overflow={"hidden"} sx={{ height: '100%' }}>
-                <Stack height={'55%'}>
+            <Stack sx={{ height: '100%' }} overflow={'hidden'}>
+                <Stack height={'55%'} overflow={'hidden'}>
                     <TableCheckBox columns={columns} rows={ArrayDelivery} arrNotShowCell={['_id', 'Delivery_Serial', 'RY_Status2']} onDoubleClick={handleDoubleClick} handlerowClick={handleRowClick} />
                 </Stack>
-                <Stack height={'45%'} direction={'row'}>
-                    <Stack overflow={"hidden"} width={'60%'} borderRight={'2px solid white'}>
-                        <Stack height={'85%'}>
+                <Stack height={'45%'} direction={'row'} overflow={'hidden'} borderTop={'1px solid white'}>
+                    <Stack width={'60%'} borderRight={'1px solid white'} >
+                        <Stack height={'80%'} overflow={"hidden"}>
                             <TableOrigin columns={columnsDownLeft} rows={ArrayDeliverySampleLeft} arrNotShowCell={['_id']} />
                         </Stack>
-                        <Stack marginBottom={'5px'} height={'15%'} direction={'row'} justifyContent={'flex-end'} alignItems={'end'}>
-                            <Stack alignItems={'end'} height={'100%'}>
-                                <MyButton style={{ zIndex: 1 }} name='Kiểm tra' onClick={handleCheck} />
-                            </Stack>
+                        <Stack direction={'row'} height={'20%'} justifyContent={'flex-end'} paddingRight={2} >
+                            <MyButton name={t('lblCheckData')} onClick={handleCheck} customClass='customBtn' disabled={disable}/>
                         </Stack>
                     </Stack>
                     <Stack width={'40%'}>
                         <Stack height={'85%'} overflow={"hidden"}>
                             <TableCheckBox listChx={(params: any) => setListChx(params)} columns={columnsDownRight} rows={ArrayDeliverySampleRight} />
                         </Stack>
-                        <Stack marginBottom={'5px'} direction={'row'} height={'15%'} justifyContent={'flex-end'}>
-                            <Stack marginRight={'5px'} alignItems={'end'} height={'100%'}>
-                                <MyButton name='Xác nhận' onClick={handleCofirm} />
-                            </Stack>
-                            <Stack alignItems={'end'} height={'100%'}>
-                                <MyButton name='In' onClick={handlePrint} />
-                            </Stack>
+                        <Stack direction={'row'} height={'20%'} justifyContent={'flex-end'} paddingRight={2} gap={1} >
+                            <MyButton name={t('btnConfirm_Out')} onClick={handleCofirm} customClass='customBtn' disabled={disable}/>
+                            <MyButton name={t('btnPrint')} onClick={handlePrint} customClass='customBtn' disabled={disable}/>
                         </Stack>
                     </Stack>
                 </Stack>

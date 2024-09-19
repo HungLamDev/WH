@@ -145,37 +145,39 @@ const DeleteOrder = () => {
     })
 
     const handleSearch = () => {
-        setDisable(true)
-        const url = connect_string + "api/Get_Data_Delete_Label"
-        const data = {
-            User_Serial_Key: dataUser[0].UserId,
-            txtNum_No: orderNo,
-            txtMaterial: materialNo,
-            txtQty: qty,
-            txtBarcode: qrCode,
-            chxDate: chxDate,
-            dtpfromdate: moment(dateStart).format("YYYY/MM/DD"),
-            dtptodate: moment(dateEnd).format("YYYY/MM/DD"),
-            get_version: dataUser[0].WareHouse
-
+        if (orderNo !== "" || materialNo !== "" || qrCode !== ""){
+            setDisable(true)
+            const url = connect_string + "api/Get_Data_Delete_Label"
+            const data = {
+                User_Serial_Key: dataUser[0].UserId,
+                txtNum_No: orderNo,
+                txtMaterial: materialNo,
+                txtQty: qty,
+                txtBarcode: qrCode,
+                chxDate: chxDate,
+                dtpfromdate: moment(dateStart).format("YYYY/MM/DD"),
+                dtptodate: moment(dateEnd).format("YYYY/MM/DD"),
+                get_version: dataUser[0].WareHouse
+    
+            }
+            axios.post(url, data, config).then(response => {
+                const arr = response.data.map((item: any, index: any) => ({
+                    _id: index + 1,
+                    Order_No: item.Order_No,
+                    Material_No: item.Material_No,
+                    Material_Name: item.Material_Name,
+                    Qty: item.Qty,
+                    Stock_In_Out_Status: item.Stock_In_Out_Status,
+                    // Print_Qty: item.Print_Qty,
+                    Print_Date: item.Print_Date,
+                    User_Serial_Key: item.User_Serial_Key,
+                    Barcode: item.Barcode
+                }))
+                setRows(arr)
+            }).finally(() => {
+                setDisable(false)
+            })
         }
-        axios.post(url, data, config).then(response => {
-            const arr = response.data.map((item: any, index: any) => ({
-                _id: index + 1,
-                Order_No: item.Order_No,
-                Material_No: item.Material_No,
-                Material_Name: item.Material_Name,
-                Qty: item.Qty,
-                Stock_In_Out_Status: item.Stock_In_Out_Status,
-                // Print_Qty: item.Print_Qty,
-                Print_Date: item.Print_Date,
-                User_Serial_Key: item.User_Serial_Key,
-                Barcode: item.Barcode
-            }))
-            setRows(arr)
-        }).finally(() => {
-            setDisable(false)
-        })
     }
 
     const handleDelete = () => {

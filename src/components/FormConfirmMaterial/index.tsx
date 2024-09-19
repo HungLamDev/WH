@@ -290,6 +290,9 @@ const CheckQuality = (props: CheckQualityProps) => {
             setLean(result?.Lean)
             setArrivalQty(result?.Arrival_QTY)
             setDescribe(result?.Material_No_QCcheck)
+            if(res?.data?.length > 0){
+                setQRCode("")
+            }
             // if (res.data === "Pass") {
             //     setAlert("Mã vật tư này đã đạt chất lượng")
             //     setOpenAlert(true)
@@ -471,7 +474,7 @@ const CheckQuality = (props: CheckQualityProps) => {
                                 <div style={{ display: 'flex', width: '35%' }}>
                                     <InputField label={t("lblScanB") as string} value={qrcode} handle={handleQRCodeChange} />
                                 </div>
-                                <div>
+                                <div  style={{ display: 'flex', width: '5%' }}>
                                     {isLoading && <CircularProgress size={'24px'} color='info' />}
                                 </div>
                             </div>

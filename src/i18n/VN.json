@@ -414,5 +414,6 @@
     "dcpAction_Taken": "Hành động xử lý",
     "dcpPriority_Vote": "Ưu tiên",
     "dcpPriority_No": "Mã ưu tiên",
-    "lblTitleNoAuthorize": "Bạn không có quyền dùng chức năng này"
+    "lblTitleNoAuthorize": "Bạn không có quyền dùng chức năng này",
+    "cbxInventory": "Đơn Tồn"
 }

@@ -147,7 +147,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     //#endregion
 
      //#region useDebounced
-     const debouncedSearchTerm = useDebounced(txtscan, 500);
+     const debouncedSearchTerm = useDebounced(txtscan, 300);
      useEffect(() => {
          if (debouncedSearchTerm) {
             ScanValue(debouncedSearchTerm)
