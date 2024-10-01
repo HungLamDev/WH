@@ -439,7 +439,7 @@ const Menu = () => {
       >
         {menuList.map(({ title, icon, path, modal, modalName, disabled }, index: number) => {
           return (
-            <Grid item display={'flex'} flexDirection={'column'} textAlign={'center'} xs={2} alignItems={'center'} gap={'10px'} >
+            <Grid key={index} item display={'flex'} flexDirection={'column'} textAlign={'center'} xs={2} alignItems={'center'} gap={'10px'} >
               <IconWrapper
                 disabled={disabled ? disabled : false}
                 onClick={() => {

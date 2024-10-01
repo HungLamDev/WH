@@ -385,6 +385,7 @@
     "dcpPriority_Vote": "ဦးစားပေး",
     "dcpPriority_No": "ဦးစားပေးနံပါတ်",
     "lblTitleNoAuthorize": "ဤလုပ်ဆောင်ချက်ကို အသုံးပြုရန် သင့်တွင် ခွင့်ပြုချက်မရှိပါ။",
-    "cbxInventory": "စာရင်းအမှာစာများ"
+    "cbxInventory": "စာရင်းအမှာစာများ",
+    "lblMaterialError": "ERP ဖြင့် RY ပမာဏ အမှားရှိသည်။ ထပ်မံစစ်ဆေးပါ။." 
 
 }

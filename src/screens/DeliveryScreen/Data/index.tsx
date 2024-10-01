@@ -1,5 +1,4 @@
 export const listSupplier =[
-  
    "COSMO TEXTILE",
    "GE LAN",
    "PAIHONG VIETNAM",

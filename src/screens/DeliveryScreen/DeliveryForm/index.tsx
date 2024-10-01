@@ -38,6 +38,8 @@ import TableCheckBoxRedux from '../../../components/TableCheckBoxRedux';
 import { createConfig, config } from '../../../utils/api';
 import { ModalAccountingCard } from '../../StockoutScreen/StockoutForm';
 import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
+import InputFieldV1 from '../../../components/InputField/index_new';
+import DatePickerFieldV1 from '../../../components/DatePickerField/index_new';
 //#endregion
 
 const DeliveryScreen = () => {
@@ -191,6 +193,8 @@ const DeliveryScreen = () => {
   const [datalAccounting, setDataAccounting] = useState<any[]>([])
   const contentDetail = locate.state
   const [openModelAuthorize, setOpenModelAuthorize] = useState(false)
+  const [openModelConfirm, setOpenModelConfirm] = useState(false)
+  const [materialNoError, setMaterialNoError] = useState("")
   //#endregion
 
   //#region Func OnChange Input
@@ -350,7 +354,7 @@ const DeliveryScreen = () => {
       saFactory: dataUser[0].factoryName
     }
     axios.post(url, data, config).then(response => {
-      const array = response.data.map((item: any, index: any) => ({
+      const array = response?.data?.Item1?.map((item: any, index: any) => ({
         _id: index,
         ...item
         // Date_Start: item.Date_Start,
@@ -366,9 +370,9 @@ const DeliveryScreen = () => {
         // RY_Status2: item.RY_Status2,
         // User_Serial_Key: item.User_Serial_Key,
       }));
-      if (array[array.length - 1] && array[array.length - 1].dtpFrom_Open) {
+      if (array[array?.length - 1] && array[array?.length - 1]?.dtpFrom_Open) {
         // setOpenDateFrom(array[array.length - 1].dtpFrom_Open.split(" ")[0].split("/")[2] + "/" + array[array.length - 1].dtpFrom_Open.split(" ")[0].split("/")[1] + "/" + array[array.length - 1].dtpFrom_Open.split(" ")[0].split("/")[0])
-        setOpenDateFrom(moment(array[array.length - 1].dtpFrom_Open).format("YYYY/MM/DD"))
+        setOpenDateFrom(moment(array[array?.length - 1]?.dtpFrom_Open).format("YYYY/MM/DD"))
       }
       dispatch(copyArrayDelivery(array))
       setRows(array);
@@ -379,6 +383,10 @@ const DeliveryScreen = () => {
       setMaterialName('');
       setColor('');
       setRowsModal([]);
+      if(response?.data?.Item2 !== ""){
+        setMaterialNoError(response?.data?.Item2)
+        setOpenModelConfirm(true)
+      }
 
     }).finally(() => {
       setIsLoading(false)
@@ -902,154 +910,175 @@ const DeliveryScreen = () => {
         paddingBottom={1}
         className={"dark-bg-secondary border-bottom-white"}
       >
-        <Stack direction={'row'} width={'100%'} margin={'auto'}>
-          <Stack width={'50%'}>
-            <Grid container>
-              <Grid container justifyContent={'center'}>
-                {/* Check đơn gia công */}
-                <Grid item xs={1}>
-                  <FormGroup>
-                    <FormControlLabel className="text" control={<Checkbox
-                      sx={{ color: 'white' }} />}
-                      onChange={handleChange} label={undefined} />
-                  </FormGroup>
-                </Grid>
-                {/* Text box đơn gia công */}
-                <Grid item display={'flex'} xs={9} className='order-no'>
-                  <InputField focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
-                </Grid>
-                {/* Check load lại dữ liệu */}
-                <Grid item xs={1}>
-                  <FormGroup>
-                    <FormControlLabel className="text" sx={styletext} control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxLoad_Data} onChange={handleChxLoadData} />} label={undefined} />
-                  </FormGroup>
-                </Grid>
-                {/* Nút cộng phiếu */}
-                <Grid item xs={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                  <IconButton disabled={disable}>
-                    <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"} onClick={handleDelivery} />
-                  </IconButton>
-                </Grid>
-              </Grid>
-              <Grid container >
-                <Grid item xs={1}  >
-                  {/* {isLoading && <CircularProgress size={'25px'} color="info" />} */}
-                </Grid>
-                {/* Tên vật tư */}
-                <Grid item xs={9} display={'flex'} className='order-no'>
-                  <InputField disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
-                </Grid>
-              </Grid>
-              <Grid container columnSpacing={1} alignItems={'center'} marginTop={'4px'}>
-                <Grid item xs={1}>
-
-                </Grid>
-                {/* Ngày mở phiếu từ */}
-                <Grid item xs={3.1} display={'flex'}>
-                  <span className='textsize'>{t('lblOpen_Date')}</span>
-                </Grid>
-                <Grid item xs={2.8} display={'flex'}>
-                  <DatePickerField valueDate={(param: any) => handleDateChange('openDateFrom', param)} onValueChange={openDateFrom} />
-                </Grid>
-                {/* Ngày mở phiếu đến */}
-                <Grid item xs={2.8} display={'flex'}>
-                  <DatePickerField valueDate={(param: any) => handleDateChange('openDateTo', param)} />
-                </Grid>
-                <Grid item xs={1.5} justifyContent={'center'} display={'flex'}>
-                  {isLoading && <CircularProgress size={'24px'} color='info' />}
-                </Grid>
-              </Grid>
+        <Stack direction={'row'} width={'100%'} justifyContent={'center'}>
+          <Grid container width={'100%'} rowGap={'2px'}>
+            {/* Check đơn gia công */}
+            <Grid item xs={0.5}>
+              <FormGroup>
+                <FormControlLabel className="text" control={<Checkbox
+                  sx={{ color: 'white' }} />}
+                  onChange={handleChange} label={undefined} />
+              </FormGroup>
             </Grid>
-          </Stack>
-          <Stack width={'50%'}>
-            <Grid container>
-              <Grid container >
-                {/* Địa điểm */}
-                <Grid item xs={4} display={'flex'}>
-                  <InputField disable={disable} value={location} handle={handleLocationChange} />
-                </Grid>
-                {/* Mã vật tư đc chọn */}
-                <Grid item xs={6} display={'flex'}>
-                  <InputField disable={disable} value={acceptNo} handle={handleAcceptNo} />
-                </Grid>
-                {/* Check list mã vật tư */}
-                <Grid item xs={2} display={'flex'}>
-                  <IconButton disabled={disable} className={'sidebar-toggle-button'} onClick={() => handleOpen('list-material')}>
-                    <BsListCheck />
-                  </IconButton>
-                </Grid>
-              </Grid>
-              <Grid container display={'flex'} alignItems={'center'}>
-                {/* Danh sách nhà cung ứng */}
-                <Grid item xs={4} paddingRight={'16px'}>
-                  {checked && (
-                    <Autocomplete
-                      value={valueAutocomplete}
-                      onChange={(event: any, newValue: string | null) => {
-                        setValueAutocomplete(newValue);
-                      }}
+            {/* Text box đơn gia công */}
+            <Grid item display={'flex'} xs={4} className='order-no'>
+              <InputFieldV1 focus={true} disable={disable} label={t('lblOutsource') as string} keydown={handleEnter} handle={handleOrderNoChange} value={orderNo} onFocus={onFocus} />
+            </Grid>
+            {/* Check load lại dữ liệu */}
+            <Grid item xs={0.5}>
+              <FormGroup>
+                <FormControlLabel className="text" sx={styletext} control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxLoad_Data} onChange={handleChxLoadData} />} label={undefined} />
+              </FormGroup>
+            </Grid>
+            {/* Nút cộng phiếu */}
+            <Grid item xs={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+              <IconButton disabled={disable} onClick={handleDelivery}>
+                <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"}  />
+              </IconButton>
+            </Grid>
+            {/* Địa điểm */}
+            <Grid item xs={2.5} display={'flex'}>
+              <InputFieldV1 xsLabel={0} xsInput={11} disable={disable} value={location} handle={handleLocationChange} />
+            </Grid>
+            {/* Mã vật tư đc chọn */}
+            <Grid item xs={2.5} display={'flex'}>
+              <InputFieldV1 xsLabel={0} xsInput={11} disable={disable} value={acceptNo} handle={handleAcceptNo} />
+            </Grid>
+            {/* Check list mã vật tư */}
+            <Grid item xs={1} display={'flex'}>
+              <IconButton disabled={disable} className={'sidebar-toggle-button'} onClick={() => handleOpen('list-material')}>
+                <BsListCheck />
+              </IconButton>
+            </Grid>
+            <Grid item xs={0.5} ></Grid>
+            {/* Tên vật tư */}
+            <Grid item xs={4} display={'flex'} className='order-no'>
+              <InputFieldV1 disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
+            </Grid>
+            <Grid item xs={1.5} ></Grid>
+            {/* Danh sách nhà cung ứng */}
+            <Grid item xs={2.5} paddingLeft={'5px'} paddingRight={'12px'}>
+              {checked && (
+                <Autocomplete
+                  value={valueAutocomplete}
+                  onChange={(event: any, newValue: string | null) => {
+                    setValueAutocomplete(newValue);
+                  }}
+                  className="dark-bg-primary "
+                  disablePortal
+                  options={[...new Set(listSupplier)]}
+                  id="combo-box-demo"
+                  disabled={disable}
+                  sx={{
+                    borderRadius: "50px",
+                    border: "1px solid",
+
+                    "& .MuiInputBase-root": {
+                      height: "2rem",
+                      padding: 0,
+
+                      '@media screen and (max-width: 1200px)': {
+                        height: "1.8rem !important",
+                      },
+
+                      '@media screen and (max-width: 900px)': {
+                        height: "1.5rem !important",
+                      },
+                    },
+
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
                       className="dark-bg-primary"
-                      disablePortal
-                      options={listSupplier}
-                      id="combo-box-demo"
-                      disabled={disable}
                       sx={{
                         borderRadius: "50px",
-                        border: "1px solid",
-                        "& .MuiInputBase-root": {
-                          height: "2rem",
+                        color: "white",
+                        height: "2rem",
+                        "& fieldset": {
+                          borderColor: "white",
+                          border: "none"
+                        },
+                        "& .MuiInputBase-input": {
+                          '@media screen and (max-width: 1200px)': {
+                            fontSize: '14px'
+                          },
+
+                          '@media screen and (max-width: 900px)': {
+                            fontSize: '12px'
+                          },
+
+                        },
+                        '@media screen and (max-width: 1200px)': {
+                          height: "1.8rem",
                         },
 
+                        '@media screen and (max-width: 900px)': {
+                          height: "1.5rem",
+                        },
                       }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          className="dark-bg-primary"
-                          sx={{
-                            borderRadius: "50px",
-                            color: "white",
-                            height: "2rem",
-                            "& fieldset": {
-                              borderColor: "white",
-                              border: "none"
-                            },
-                            "& .MuiInputBase-input": {
-                              paddingTop: "0 !important",
-                              paddingBottom: "20px !important",
-                              paddingLeft: "5px !important"
-                            }
-                          }}
-                        />
-                      )}
                     />
                   )}
-                </Grid>
-                {/* Màu */}
-                <Grid item xs={6} display={'flex'}>
-                  <InputField value={color} disable={disable} />
-                </Grid>
-              </Grid>
-              <Grid container columnSpacing={1} alignItems={'center'} marginTop={'4px'}>
-                {/* Ngày cập nhật từ */}
-                <Grid item xs={4.1} display={'flex'}>
-                  <span className='textsize'>{t('dcmModify_Date')}</span>
-                </Grid>
-                <Grid item xs={2.8} display={'flex'}>
-                  <DatePickerField valueDate={(param: any) => handleDateChange('updateDateFrom', param)} />
-                </Grid>
-                {/* Ngày cập nhật đến */}
-                <Grid item xs={2.8} display={'flex'}>
-                  <DatePickerField valueDate={(param: any) => handleDateChange('updateDateTo', param)} />
-                </Grid>
-                {/* Check kệ */}
-                <Grid item xs={2}>
-                  <FormGroup>
-                    <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxRack} onChange={handleChxRack} />} label={t("dcpShelves")} />
-                  </FormGroup>
-                </Grid>
-              </Grid>
+                />
+              )}
             </Grid>
-          </Stack>
+            {/* Màu */}
+            <Grid item xs={2.5} display={'flex'}>
+              <InputFieldV1 xsLabel={0} xsInput={11} value={color} disable={disable} />
+            </Grid>
+            <Grid item xs={1} ></Grid>
+            <Grid item xs={0.5} ></Grid>
+            {/* Ngày mở phiếu từ label*/}
+            <Grid item xs={1.35} display={'flex'} alignItems={'center'}>
+              <span className='textsize'>{t('lblOpen_Date')}</span>
+            </Grid>
+            {/* Ngày mở phiếu từ */}
+            <Grid item xs={1.22} display={'flex'}>
+              <DatePickerFieldV1
+                xsLabel={0}
+                xsDate={11}
+                valueDate={(param: any) => handleDateChange('openDateFrom', param)}
+                onValueChange={openDateFrom}
+              />
+            </Grid>
+            {/* Ngày mở phiếu đến */}
+            <Grid item xs={1.22} display={'flex'}>
+              <DatePickerFieldV1
+                xsLabel={0}
+                xsDate={11}
+                valueDate={(param: any) => handleDateChange('openDateTo', param)}
+              />
+            </Grid>
+            <Grid item xs={0.21} ></Grid>
+            <Grid item xs={1.5} justifyContent={'center'} display={'flex'}>
+              {isLoading && <CircularProgress size={'24px'} color='info' />}
+            </Grid>
+            {/* Ngày cập nhật từ */}
+            <Grid item xs={2.5} paddingLeft={'5px'} display={'flex'} alignItems={'center'} justifyContent={'flex-start'}>
+              <span className='textsize'>{t('dcmModify_Date')}</span>
+            </Grid>
+            <Grid item xs={1.22} display={'flex'}>
+              <DatePickerFieldV1
+                xsLabel={0}
+                xsDate={11}
+                valueDate={(param: any) => handleDateChange('updateDateFrom', param)}
+              />
+            </Grid>
+            {/* Ngày cập nhật đến */}
+            <Grid item xs={1.22} display={'flex'}>
+              <DatePickerFieldV1
+                xsLabel={0}
+                xsDate={11}
+                valueDate={(param: any) => handleDateChange('updateDateTo', param)}
+              />
+            </Grid>
+            <Grid item xs={0.06} ></Grid>
+            <Grid item xs={1}>
+              <FormGroup>
+                <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxRack} onChange={handleChxRack} />} label={t("dcpShelves")} />
+              </FormGroup>
+            </Grid>
+          </Grid>
         </Stack>
         <Stack marginTop={'10px'} width={'100%'} direction={'row'} spacing={1} justifyContent={'center'}>
           {/* Check tất cả */}
@@ -1076,7 +1105,7 @@ const DeliveryScreen = () => {
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
           {/* ICMWH */}
           {
-           dataUser[0].factoryName === 'LVL' && (
+            (dataUser[0].factoryName === 'LVL'|| dataUser[0].factoryName === 'LYV') && (
               <Grid item display={'flex'}>
                 <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} />
               </Grid>
@@ -1125,6 +1154,7 @@ const DeliveryScreen = () => {
         {/* Máy ảnh */}
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
         {openModelAuthorize && <ModalCofirm onPressOK={() => setOpenModelAuthorize(false)} open={openModelAuthorize} onClose={() => setOpenModelAuthorize(false)} title={t("lblTitleNoAuthorize") as string} />}
+        {openModelConfirm && <ModalCofirm onPressOK={() => setOpenModelConfirm(false)} open={openModelConfirm} onClose={() => setOpenModelConfirm(false)} title={t("dcmMaterial_No") as string +": " + materialNoError + t("lblMaterialError") as string }/>}
       </Box>
       <Stack overflow={"hidden"} sx={{ height: '100%' }}>
         {/* Bảng */}

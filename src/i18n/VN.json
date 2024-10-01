@@ -415,5 +415,6 @@
     "dcpPriority_Vote": "Ưu tiên",
     "dcpPriority_No": "Mã ưu tiên",
     "lblTitleNoAuthorize": "Bạn không có quyền dùng chức năng này",
-    "cbxInventory": "Đơn Tồn"
+    "cbxInventory": "Đơn Tồn",
+    "lblMaterialError": "bị lệch số lượng RY với ERP. Vui lòng kiểm tra lại." 
 }

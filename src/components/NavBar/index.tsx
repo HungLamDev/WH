@@ -31,8 +31,8 @@ const NavBar = (props: NavBarProps) => {
         <Stack alignItems={"center"}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography className="titleNavbar" sx={{ whiteSpace: 'pre', textAlign: 'center' }}>{title}</Typography>
-            <IconButton sx={{ marginLeft: '20px' }}  >
-              <CameraAltIcon sx={{ display: !hidden ? 'none' : 'block' }} onClick={onShowScan} />
+            <IconButton sx={{ marginLeft: '20px' }} onClick={onShowScan} >
+              <CameraAltIcon sx={{ display: !hidden ? 'none' : 'block' }}  />
             </IconButton>
           </Box>
           <Divider

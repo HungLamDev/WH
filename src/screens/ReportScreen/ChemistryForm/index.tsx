@@ -261,7 +261,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
     }
     setDtpFrom_Date(moment(newDate).format("MM/DD/YYYY"));
   };
-  
+
   const handleClickDateTo = (name: string) => {
     let newDate = moment(dtpTo_Date, "MM/DD/YYYY");
     if (name === "-") {
@@ -494,7 +494,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
   }
 
   const handleAddNote = () => {
-    
+
     setModalUserCofirm(false)
     const url = connect_string + "api/CellDoubleClick_Sign_Image";
     const data = {
@@ -641,9 +641,9 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           setLoading(false);
         });
     } //else
-      // if (event.key === 'Enter' && chxOrder_No === false ) {
-      //   LoadMaterial();
-      // }
+    // if (event.key === 'Enter' && chxOrder_No === false ) {
+    //   LoadMaterial();
+    // }
   };
   //#region Excel
   const exportToExcel = () => {
@@ -885,8 +885,8 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
           </Stack>
           <Stack  >
             <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
-              <Box flex={2}  textAlign={'center'} overflow={'hidden'}>
-                <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center'}}>
+              <Box flex={2} textAlign={'center'} overflow={'hidden'}>
+                <Typography className="textsize" noWrap sx={{ wordWrap: "break-word", width: "100%", textAlign: 'center' }}>
                   {t("lblMaterial_Name") as string}:{" "}
                   <span style={{ color: "yellow" }}>{materialName}</span>
                 </Typography>
@@ -1083,8 +1083,13 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               flexWrap={'nowrap'}
             >
               {/* Loading */}
-              <Grid item xs={1.5} display={"flex"} alignItems={"center"} justifyContent={'flex-end'} >
-                {loading ? loading : disable && (<CircularProgress size={'25px'} color="info" />)}
+              {/* Loading */}
+              <Grid item xs={1.5} display={"flex"} alignItems={"center"} justifyContent={'flex-end'}>
+                {loading ? (
+                  <>{loading}</> 
+                ) : (
+                  disable && <CircularProgress size={'25px'} color="info" />
+                )}
               </Grid>
               {/* Nút tìm kiếm */}
               <Grid

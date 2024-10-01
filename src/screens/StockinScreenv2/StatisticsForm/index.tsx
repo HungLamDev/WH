@@ -198,11 +198,11 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     Total_QTY: item.Total_QTY,
                     mau: item.mau
                 }))
-                setValue_Material(reponse.data[reponse.data.length - 1].Material_No)
-                setValue_Total_Num(reponse.data[reponse.data.length - 1].Value_Total_Num)
-                setValue_Total_Qty(reponse.data[reponse.data.length - 1].Value_Total_Qty)
+                setValue_Material(reponse?.data[reponse.data.length - 1]?.Material_No)
+                setValue_Total_Num(reponse?.data[reponse.data.length - 1]?.Value_Total_Num)
+                setValue_Total_Qty(reponse?.data[reponse.data.length - 1]?.Value_Total_Qty)
 
-                if (arr[0].check_Barcode === true) {
+                if (arr[0]?.check_Barcode === true) {
                     const foundarrayRowUps = arr.find((value: any) => value.Barcode === value_scan)
                     if (foundarrayRowUps && arrayRowDowns.length > 0) {
                         setArrayRowUps([...arr, ...arrayRowUps])
@@ -302,8 +302,8 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                             <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblReport_Deviations") as string}</Typography>
-                        <IconButton sx={{ marginLeft: '20px' }}  >
-                            <CameraAltIcon onClick={handleScanClick} />
+                        <IconButton sx={{ marginLeft: '20px' }}  onClick={handleScanClick} >
+                            <CameraAltIcon />
                         </IconButton>
                     </Stack>
                     <Stack height={'90%'} >

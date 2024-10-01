@@ -239,13 +239,13 @@ const HistoryRY = ({ open, onClose }: { open?: any, onClose?: any }) => {
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         {/* Nút back */}
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         {/* Title */}
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblHistory_Infor") as string}</Typography>
                         {/* Camera */}
-                        <IconButton sx={{ marginLeft: '20px' }}  >
-                            <CameraAltIcon onClick={handleScanClick} />
+                        <IconButton sx={{ marginLeft: '20px' }} onClick={handleScanClick} >
+                            <CameraAltIcon  />
                         </IconButton>
                     </Stack>
                     <Stack height={'30%'} alignItems={'center'} >

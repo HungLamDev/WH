@@ -16,6 +16,8 @@ import { connect_string } from "../../LoginScreen/ChooseFactory";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { config } from "../../../utils/api";
+import MyAutocomplete from "../../../components/Autocomplete";
+import InputFieldV1 from "../../../components/InputField/index_new";
 
 //#endregion
 const InventoryIn = () => {
@@ -108,6 +110,7 @@ const InventoryIn = () => {
     //#region Func Logic
     const handleSearch = () => {
         if (rack !== "" || orderNo !== "" || materialNo !== "" || supplierNo !== "") {
+            setDisable(true)
             const url = connect_string + "api/Search_Inventory_In"
             const data = {
                 cboRack_ID: rack,
@@ -127,6 +130,7 @@ const InventoryIn = () => {
                     Count_Roll: item.Count_Roll
                 }))
                 setListMaterial(arr)
+                setDisable(false)
             })
         }
     }
@@ -283,26 +287,25 @@ const InventoryIn = () => {
                     <Grid spacing={1} container display={'flex'} justifyContent={'flex-end'} width={'60%'}  >
                         {/* Số phiếu */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <Box className="input-type-container ">
-                                <InputField value={orderNo} handle={handleChangeOrderNo} disable={disable} focus={true} label={t("dcmOrder_No") as string} keydown={null} />
-                            </Box>
+                            <InputFieldV1 value={orderNo} handle={handleChangeOrderNo} disable={disable} focus={true} label={t("dcmOrder_No") as string} keydown={null} />
                         </Grid>
                         {/* Nhà cung ứng */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <Box className="input-type-container ">
-                                <InputField value={supplierNo} handle={handleChangeSupplierNo} disable={disable} focus={true} label={t("dcpSupplier") as string} keydown={null} />
-                            </Box>
+                            <InputFieldV1 value={supplierNo} handle={handleChangeSupplierNo} disable={disable} focus={true} label={t("dcpSupplier") as string} keydown={null} />
                         </Grid>
                         {/* Mã vật tư */}
                         <Grid item xs={6} display={'flex'} justifyContent={'center'}>
-                            <Box className="input-type-container ">
-                                <InputField value={materialNo} handle={handleChangeMaterialNo} disable={disable} focus={true} label={t("dcmMaterial_No") as string} keydown={null} />
-                            </Box>
+                            <InputFieldV1 value={materialNo} handle={handleChangeMaterialNo} disable={disable} focus={true} label={t("dcmMaterial_No") as string} keydown={null} />
                         </Grid>
                         {/* Mã kệ */}
                         <Grid item xs={6} display={'flex'}  >
-                            <Box className="input-type-container" sx={{display:'flex', width:'100%'}} alignItems={'center'}>
-                                <Typography sx={{flex: 1}} className="textsize" id="rack">{t("dcmRack_ID")}</Typography>
+                            <MyAutocomplete
+                                value={rack}
+                                label={t("dcmRack_ID") as string}
+                                handle={(value: any) => handleChangeRack(value)}
+                                data={listRack}
+                            />
+                            {/* <Typography sx={{flex: 1}} className="textsize" id="rack">{t("dcmRack_ID")}</Typography>
                                 <Autocomplete
                                     value={rack}
                                     onChange={(event: any, newValue: string | null) => {
@@ -343,28 +346,19 @@ const InventoryIn = () => {
                                             }}
                                         />
                                     )}
-                                />
-                            </Box>
+                                /> */}
                         </Grid>
                         {/* <Grid item lg={0.2} md={0.3} display={'flex'} ></Grid> */}
                         {/* {isLoading && <CircularProgress size={'25px'} color="info" />} */}
                     </Grid>
                 </Stack>
-                <Stack>
-                    <Grid container display={'flex'} justifyContent={'center'} marginTop={'10px'}>
-                        <Grid item xs={1.5}>
-                            <MyButton name={t("btnSearch") as string} disabled={disable} onClick={handleSearch} />
-                        </Grid>
-                        <Grid item xs={1.5}>
-                            <MyButton name={t("btnExcel") as string} onClick={exportToExcel} disabled={disable} />
-                        </Grid>
-                        <Grid item xs={1.5}>
-                            <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={disable} />
-                        </Grid>
-                    </Grid>
+                <Stack direction={'row'} gap={'20px'} justifyContent={'center'} marginTop={'10px'}>
+                    <MyButton name={t("btnSearch") as string} disabled={disable} onClick={handleSearch} />
+                    <MyButton name={t("btnExcel") as string} onClick={exportToExcel} disabled={disable} />
+                    <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={disable} />
                 </Stack>
             </Box>
-            <Stack overflow={"hidden"} sx={{ height: '100%' }}>
+            <Stack overflow={"hidden"} sx={{ height: '100%', position:'relative' }}>
                 <TableOrigin columns={columns} rows={listMaterial} />
             </Stack>
         </FullScreenContainerWithNavBar>

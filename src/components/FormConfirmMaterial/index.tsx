@@ -69,6 +69,7 @@ const CheckQuality = (props: CheckQualityProps) => {
     const [scale, setScale] = useState(1);
     const [checkResultBarcode, setCheckResultBarcode] = useState("");
     const [openModalListRegister, setOpenModalListRegister] = useState(false);
+    const [Material_No_goc, setMaterial_No_goc]= useState("");
 
     const dataUser = useSelector((state: any) => state.UserLogin.user);
 
@@ -290,6 +291,8 @@ const CheckQuality = (props: CheckQualityProps) => {
             setLean(result?.Lean)
             setArrivalQty(result?.Arrival_QTY)
             setDescribe(result?.Material_No_QCcheck)
+            setMaterial_No_goc(result?.Material_No_goc)
+            console.log(result)
             if(res?.data?.length > 0){
                 setQRCode("")
             }
@@ -383,7 +386,7 @@ const CheckQuality = (props: CheckQualityProps) => {
             Material_Name: materialName,
             Arrival_QTY: arrivalQty,
             Total_QTY: listData[0]?.Total_QTY || "",
-            Confirm_Status: "Fail",
+            Confirm_Status: Material_No_goc,
             Confirm_Content: describe,
             Delivery_Date: time,
             RY_Content: ry,
@@ -399,7 +402,7 @@ const CheckQuality = (props: CheckQualityProps) => {
             sa_Factory: dataUser[0].factoryName,
             byte_Image: imageCam
         }
-        if (checkCBKHO) {
+        if (checkCBKHO && materialNo.trim() !== "" && orderNo.trim() !== "" && describe.trim() !== "" && valueReason.trim() !== "") {
             setIsLoading(true)
             setDisable(true)
             axios.post(url, data).then((res) => {
@@ -557,9 +560,10 @@ const CheckQuality = (props: CheckQualityProps) => {
                                             style={{
                                                 background: 'transparent',
                                                 border: 'none',
-                                                textAlign: 'center'
+                                                textAlign: 'center',
+                                                overflowY:'auto'
                                             }}
-                                            className='textsize text-color text-hidden text-wrap'
+                                            className='textsize text-color  text-wrap'
                                             type="text"
                                             value={lean}
                                             onChange={handleLeanChange}

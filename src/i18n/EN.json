@@ -415,6 +415,6 @@
     "dcpPriority_Vote": "Priority",
     "dcpPriority_No": "Priority No",
     "lblTitleNoAuthorize": "You do not have permission to use this function",
-    "cbxInventory": "Inventory Orders"
-
+    "cbxInventory": "Inventory Orders",
+    "lblMaterialError": "has RY quantity error with ERP. Please check again." 
 }

@@ -146,7 +146,7 @@ const QC = ({ open, onClose }: { open?: any, onClose?: any }) => {
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={onClose}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className="icon-wrapper"  />
                         </IconButton>                        
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblQC_Infor") as string}</Typography>
                         <Typography></Typography>

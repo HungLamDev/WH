@@ -1,10 +1,10 @@
 import { Stack, Box, Modal, Typography, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import '../../App.scss'
-interface ModalCofirmProps{
-    title?: string, 
-    open?: any, 
-    onClose?: any, 
+interface ModalCofirmProps {
+    title?: string,
+    open?: any,
+    onClose?: any,
     onPressOK?: any
 }
 function ModalCofirm(props: ModalCofirmProps) {
@@ -28,15 +28,22 @@ function ModalCofirm(props: ModalCofirmProps) {
             open={open}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            slotProps={{
+                backdrop: {
+                    style: {
+                        backdropFilter: "blur(2px)", // Hiệu ứng làm mờ nền
+                    },
+                },
+            }}
         >
             <Box sx={style}>
                 <Stack direction={'column'} height={'100%'} gap={2}>
-                    <Stack height={'50%'}  justifyContent={'center'}>
+                    <Stack height={'50%'} justifyContent={'center'}>
                         <Typography className='textsize' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
                     </Stack>
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth:'30%'}}>{t("btnSuccess")}</Button>
-                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D',minWidth:'30%'}}>{t("btnCancel")}</Button>
+                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth: '30%' }}>{t("btnSuccess")}</Button>
+                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D', minWidth: '30%' }}>{t("btnCancel")}</Button>
                     </Stack>
                 </Stack>
             </Box>

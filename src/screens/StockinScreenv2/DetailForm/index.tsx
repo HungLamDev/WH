@@ -153,7 +153,9 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
 
     //#region useEffect
     useEffect(() => {
-        hanldeSendRack()
+        if(rack !== ""){
+            hanldeSendRack()
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rack])
 
@@ -288,8 +290,8 @@ function Detail({ open, onClose, rack }: { open: any, onClose: any, rack: any })
                         {/* Title */}
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblMaterial_Infor") as string}</Typography>
                         {/* Máy ảnh */}
-                        <IconButton sx={{ marginLeft: '20px' }}  >
-                            <CameraAltIcon onClick={handleScanClick} />
+                        <IconButton sx={{ marginLeft: '20px' }} onClick={handleScanClick} >
+                            <CameraAltIcon  />
                         </IconButton>
                     </Stack>
                     <Stack direction={'row'} height={'45%'} justifyContent={'center'} gap={10}>

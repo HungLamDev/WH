@@ -27,6 +27,7 @@ import ModalCofirm from "../../../components/ModalConfirm"
 import { addFOC } from "../../../redux/FOC"
 import { debounce } from "../../../utils/debounce"
 import useDebounced from "../../../components/CustomHook/useDebounce"
+import InputERP from "../InputERP"
 //#endregion
 //#region style
 export const styletext = {
@@ -501,17 +502,20 @@ const Stockin = () => {
                         </Grid>
                     </Stack>
                     <Stack width={'55%'} justifyContent={'center'} rowGap={2}>
-                        <Grid container >
+                        <Grid container  justifyContent={'center'} gap={2}>
                             {/* Nhập kho ERP */}
-                            <Grid item xs={4} className="btn-center">
-                                <MyButton name={t("btnEnter_Stock") + " ERP"} disabled={true} />
+                            <Grid item  className="btn-center">
+                                <MyButton name={t("btnEnter_Stock") + " ERP"} onClick={() => handleOpen("input-erp")}  disabled={dataUser[0].factoryName === "LHG" && (dataUser[0].UserRole === "Administrator" || dataUser[0].UserRole === "Account" )? false :true} />
+                                {modalType === 'input-erp' && (
+                                    <InputERP open={open} onClose={handleClose} />
+                                )}
                             </Grid>
                             {/* Xuất kho ERP */}
-                            <Grid item xs={4} className="btn-center">
+                            <Grid item  className="btn-center">
                                 <MyButton name={t("btnexportERP")} disabled={true} />
                             </Grid>
                             {/* Nhập kệ ERP */}
-                            <Grid item xs={4} className="btn-center">
+                            <Grid item  className="btn-center">
                                 <MyButton name={t("btnrackERP")} onClick={() => handleOpen("enter-shelves")} disabled={disable} />
                                 {modalType === 'enter-shelves' && (
                                     <EnterShelves open={open} onClose={handleClose} />

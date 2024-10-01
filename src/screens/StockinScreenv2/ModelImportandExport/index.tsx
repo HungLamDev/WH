@@ -28,7 +28,7 @@ import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
 import { debounce } from '../../../utils/debounce';
 import useDebounced from '../../../components/CustomHook/useDebounce';
 //#endregion
-function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) {
+const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) => {
     const dispatch = useDispatch()
     const { t } = useTranslation();
 
@@ -145,10 +145,26 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //#endregion
 
     //#region useDebounced
-    const debouncedSearchTerm = useDebounced(scanqr, 300);
+    const debouncedSearchTerm = useDebounced(scanqr, 200);
     useEffect(() => {
-        if (debouncedSearchTerm.length >= 15) {
-            ScanQR(debouncedSearchTerm)
+        //Phiên bản có kiểm tra chất lượng vật tư
+        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV") {
+            if (debouncedSearchTerm.length >= 15) {
+                checkMaterial(debouncedSearchTerm).then(result => {
+
+                    if (result == true) {
+                        handleOpenConfirm('notify-reject-material')
+                    }
+                    else (
+                        ScanQR(debouncedSearchTerm)
+                    )
+                })
+            }
+        }
+        else{
+            if (debouncedSearchTerm.length >= 15) {
+                ScanQR(debouncedSearchTerm)
+            }
         }
     }, [debouncedSearchTerm]);
 

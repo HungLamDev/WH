@@ -21,11 +21,12 @@ interface TableCheckBoxProps {
   listChx?: (rows: GridRowsProp) => void,
   arrNotShowCell?: string[],
   tableName?: string,
-  dschx?: any[]
+  dschx?: any[],
+  selectedAll?: boolean
 }
 
 const TableCheckBox = (props: TableCheckBoxProps) => {
-  const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, dschx } = props;
+  const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick, dschx, selectedAll = true } = props;
 
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
   const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
@@ -37,7 +38,7 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
   useEffect(() => {
     setSelected([])
     const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;
-    handleSelectAllClick(event);
+    selectedAll && handleSelectAllClick(event);
   }, [rows])
 
   useEffect(() => {
@@ -126,9 +127,8 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
   };
 
   const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
-      rows[rowInd][colName] = value;
+    rows[rowInd][colName] = value;
   };
-
   return (
     <TableContainer sx={{ height: '100%' }}>
       <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
@@ -200,6 +200,19 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
                   const column = columns.find((col) => col.field === key);
                   if (column) {
                     const isEditing = editingCellId === item._id && (arrEditCell !== undefined && arrEditCell.includes(key));
+                    let textColor = "white";
+                    if(tableName === "inputERP"){
+                      if (item?.Value_HGLB == "") {
+                        textColor = "Yellow"
+                      }
+                      else if (item?.RKNO_Stock_In_No !== "" || item?.Value_HGLB == "" || item?.T_RY_Qty === "0"){
+                        textColor = "White"
+                      }
+                      else{
+                        textColor = "GreenYellow"
+                      }
+                    }
+
                     return (
                       <TableCell
                         className="td-responesive"
@@ -212,6 +225,7 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
                         }}
                         height={'35px'}
                         onBlur={(event) => handleCellBlur(event, item._id)}
+                        style={{color: textColor}}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
                         {isEditing ? (
@@ -231,7 +245,7 @@ const TableCheckBox = (props: TableCheckBoxProps) => {
                             }}
                             size="small"
                             inputProps={{
-                      
+
                               onKeyPress: (event) => {
                                 if (key === "Qty") {
                                   if (!/[\d.]/.test(event.key)) {

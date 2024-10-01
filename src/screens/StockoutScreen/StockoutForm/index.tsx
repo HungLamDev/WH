@@ -307,10 +307,25 @@ const StockoutScreen = () => {
     //#endregion
 
     //#region useDebounced
-    const debouncedSearchTerm = useDebounced(qrcode, 300);
+    const debouncedSearchTerm = useDebounced(qrcode, 200);
     useEffect(() => {
-        if (debouncedSearchTerm.length >= 15) {
-            handleOutAll(debouncedSearchTerm)
+        //Phiên bản có kiểm tra chất lượng vật tư
+        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV") {
+            if (debouncedSearchTerm.length >= 15) {
+                checkMaterial(debouncedSearchTerm).then(result => {
+                    if (result == true) {
+                        handleOpenConfirm('notify-reject-material')
+                    }
+                    else (
+                        handleOutAll(debouncedSearchTerm)
+                    )
+                })
+            }
+        }
+        else {
+            if (debouncedSearchTerm.length >= 15) {
+                handleOutAll(debouncedSearchTerm)
+            }
         }
     }, [debouncedSearchTerm]);
 
@@ -377,7 +392,8 @@ const StockoutScreen = () => {
         const url = connect_string + "api/QC_Check_Marterial";
         const data = {
             user_id: dataUser[0].UserId,
-            Barcode: barcode
+            Barcode: barcode,
+            Factory: dataUser[0].factoryName
         };
 
         return new Promise((resolve, reject) => {
@@ -723,19 +739,20 @@ const StockoutScreen = () => {
                                 {/* <Grid item display={'flex'}>
                                     <MyButton name={t("btnConfirm")} disabled={true} />
                                 </Grid> */}
-                                {/* ICMWH */}
-                                {
-                                    dataUser[0].factoryName === 'LVL' && (
-                                        <Grid item display={'flex'}>
-                                            <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
-                                        </Grid>
-                                    )
-                                }
+
                                 {/* Xuất chi tiết */}
                                 <Grid item display={'flex'}>
                                     <MyButton name={t("dcpExport")} onClick={handleOpen} disabled={disable} />
                                     <ImportAndExport dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} />
                                 </Grid>
+                                {/* ICMWH */}
+                                {
+                                    (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV') && (
+                                        <Grid item display={'flex'}>
+                                            <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
+                                        </Grid>
+                                    )
+                                }
                                 {/* Đối với LVL */}
                                 {
                                     stockout && dataUser[0].factoryName === 'LVL' && (
