@@ -1,9 +1,9 @@
 import { Modal, Box, Button } from "@mui/material";
 import React, { useState } from "react";
-import {QrScanner} from '@yudiel/react-qr-scanner';
+import { QrScanner } from '@yudiel/react-qr-scanner';
 
 interface ScannerQRProps {
-  onScan: (result: string | null) => void, open:any,onClose:any, 
+  onScan: (result: string | null) => void, open: any, onClose: any,
 }
 
 const QRScanner: React.FC<ScannerQRProps> = ({ onScan, open, onClose }) => {
@@ -31,26 +31,34 @@ const QRScanner: React.FC<ScannerQRProps> = ({ onScan, open, onClose }) => {
     borderRadius: 3,
     boxShadow: 24,
     p: 2,
-};
+  };
   return (
     <Modal
       open={open}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      slotProps={{
+        backdrop: {
+          style: {
+            backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+          },
+        },
+      }}
     >
       <Box sx={style}>
-        <Button onClick={onClose} style={{ color: '#1c2538', backgroundColor: 'white', borderRadius:"50px",
-         height:"30px", width:'30px', padding:'0', border:'3px solid #1c2538',
-         position:'absolute', top:'-15px', right:'-5px'
-         }}>X</Button>
+        <Button onClick={onClose} style={{
+          color: '#1c2538', backgroundColor: 'white', borderRadius: "50px",
+          height: "30px", width: '30px', padding: '0', border: '3px solid #1c2538',
+          position: 'absolute', top: '-15px', right: '-5px'
+        }}>X</Button>
         <QrScanner
           key={scannerKey}
           scanDelay={500}
           onError={handleError}
           onResult={handleScan}
-          containerStyle={{ width: "100%",  margin: "auto" }}
+          containerStyle={{ width: "100%", margin: "auto" }}
           constraints={{ facingMode: 'environment' }}
-          />
+        />
       </Box>
     </Modal>
   );

@@ -117,6 +117,13 @@ const ChangePassword = ({ open, onClose }: { open?: any, onClose?: any }) => {
             onClose={onClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            slotProps={{
+                backdrop: {
+                    style: {
+                        backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+                    },
+                },
+            }}
         >
             <Box sx={style}>
                 <Stack height={'100%'} paddingBottom={'20px'}>

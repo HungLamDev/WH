@@ -731,7 +731,6 @@ const StockoutScreen = () => {
                                     </Grid>
                                 </Grid>
                             </Stack>
-
                         </Stack>
                         <Stack width={'40%'} justifyContent={'center'} spacing={2} >
                             <Grid container gap={0.5} flexWrap={'nowrap'}>

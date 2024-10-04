@@ -114,6 +114,7 @@ const DeleteOrder = () => {
     const [dateEnd, setDateEnd] = useState(moment().format("MM/DD/YYYY"))
     const [listChecked, setListChecked] = useState([])
     const [disable, setDisable] = useState(false)
+    const [openQRRead, setOpenQRRead] = useState(false)
     //#endregion
 
     //#region Func OnChange Input
@@ -259,6 +260,9 @@ const DeleteOrder = () => {
                         </Grid>
                         <Grid item  >
                             <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={disable} />
+                        </Grid>
+                        <Grid item  >
+                            <MyButton name={"QR"} onClick={() => setOpenQRRead(true)} disabled={disable} />
                         </Grid>
                     </Grid>
                 </Stack>

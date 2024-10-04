@@ -66,7 +66,7 @@ const DeliveryScreen = () => {
   };
   //#endregion
   //#region column header table
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
       field: "Date_Start",
       headerName: t("dcmDate") as string,
@@ -76,6 +76,7 @@ const DeliveryScreen = () => {
       field: "Num_No",
       headerName: t("dcpNum_No") as string,
       width: 120,
+      hightlight: true
     },
     {
       field: "Material_No",
@@ -194,7 +195,6 @@ const DeliveryScreen = () => {
   const contentDetail = locate.state
   const [openModelAuthorize, setOpenModelAuthorize] = useState(false)
   const [openModelConfirm, setOpenModelConfirm] = useState(false)
-  const [materialNoError, setMaterialNoError] = useState("")
   //#endregion
 
   //#region Func OnChange Input
@@ -354,7 +354,7 @@ const DeliveryScreen = () => {
       saFactory: dataUser[0].factoryName
     }
     axios.post(url, data, config).then(response => {
-      const array = response?.data?.Item1?.map((item: any, index: any) => ({
+      const array = response?.data?.map((item: any, index: any) => ({
         _id: index,
         ...item
         // Date_Start: item.Date_Start,
@@ -383,10 +383,6 @@ const DeliveryScreen = () => {
       setMaterialName('');
       setColor('');
       setRowsModal([]);
-      if(response?.data?.Item2 !== ""){
-        setMaterialNoError(response?.data?.Item2)
-        setOpenModelConfirm(true)
-      }
 
     }).finally(() => {
       setIsLoading(false)
@@ -564,6 +560,7 @@ const DeliveryScreen = () => {
       }
       // In <=> Out
       if (columnName === 'RY_Status2') {
+        setDisable(true)
 
         const data = {
           User_Serial_Key: dataUser[0].UserId,
@@ -592,6 +589,7 @@ const DeliveryScreen = () => {
             }
           }).finally(() => {
             setIsApi(true)
+            setDisable(false)
           })
         }
 
@@ -606,6 +604,7 @@ const DeliveryScreen = () => {
                 }
               }).finally(() => {
                 setIsApi(true)
+                setDisable(false)
               })
             }
             else {
@@ -703,6 +702,8 @@ const DeliveryScreen = () => {
         handleOpen('modal-location')
 
       }
+
+
     }
 
   }
@@ -894,6 +895,32 @@ const DeliveryScreen = () => {
     }
   };
 
+  //Tô màu dòng trong bảng------------------------------------------
+  const highlightText = (item: any, row: any) => {
+    if (typeof item !== "string") {
+      return  item; 
+    }
+    
+    const regex = new RegExp(`(${row?.list_Num_no?.join("|")})`, "gi");
+
+    const parts = item.split(regex);
+    
+    return (
+      <>
+        {parts.map((part: any, index: any) => (
+          <React.Fragment key={index}>
+            {row?.list_Num_no?.includes(part) ? (
+              <span style={{ color: '#D04848', fontWeight:'bold' }}>{part}</span>
+            ) : (
+              part
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+  //----------------------------------------------------------------
+
   //#endregion
 
   return (
@@ -933,7 +960,7 @@ const DeliveryScreen = () => {
             {/* Nút cộng phiếu */}
             <Grid item xs={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
               <IconButton disabled={disable} onClick={handleDelivery}>
-                <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"}  />
+                <img src={EnterIcon} alt="enter" width={"40px"} height={"30px"} />
               </IconButton>
             </Grid>
             {/* Địa điểm */}
@@ -1105,7 +1132,7 @@ const DeliveryScreen = () => {
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
           {/* ICMWH */}
           {
-            (dataUser[0].factoryName === 'LVL'|| dataUser[0].factoryName === 'LYV') && (
+            (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV') && (
               <Grid item display={'flex'}>
                 <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} />
               </Grid>
@@ -1154,11 +1181,18 @@ const DeliveryScreen = () => {
         {/* Máy ảnh */}
         {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
         {openModelAuthorize && <ModalCofirm onPressOK={() => setOpenModelAuthorize(false)} open={openModelAuthorize} onClose={() => setOpenModelAuthorize(false)} title={t("lblTitleNoAuthorize") as string} />}
-        {openModelConfirm && <ModalCofirm onPressOK={() => setOpenModelConfirm(false)} open={openModelConfirm} onClose={() => setOpenModelConfirm(false)} title={t("dcmMaterial_No") as string +": " + materialNoError + t("lblMaterialError") as string }/>}
       </Box>
       <Stack overflow={"hidden"} sx={{ height: '100%' }}>
         {/* Bảng */}
-        <TableDelivery columns={columns} rows={ArrayDelivery} arrNotShowCell={['_id']} onDoubleClick={handleDoubleClick} handlerowClick={handleRowClick} arrEditCell={['Material_No', 'Material_Name']} />
+        <TableDelivery
+          columns={columns}
+          rows={ArrayDelivery}
+          arrNotShowCell={['_id']}
+          onDoubleClick={handleDoubleClick}
+          handlerowClick={handleRowClick}
+          arrEditCell={['Material_No', 'Material_Name']}
+          highlightText={highlightText}
+        />
       </Stack>
     </FullScreenContainerWithNavBar>
   )

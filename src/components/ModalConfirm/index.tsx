@@ -31,7 +31,7 @@ function ModalCofirm(props: ModalCofirmProps) {
             slotProps={{
                 backdrop: {
                     style: {
-                        backdropFilter: "blur(2px)", // Hiệu ứng làm mờ nền
+                        backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
                     },
                 },
             }}

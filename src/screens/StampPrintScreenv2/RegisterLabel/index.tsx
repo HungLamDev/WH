@@ -12,12 +12,14 @@ import MyButton from "../../../components/MyButton";
 import TableCheckBox from "../../../components/TableCheckBox";
 import { GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
-import {  config } from "../../../utils/api";
+import { config } from "../../../utils/api";
 import { checkPermissionPrint } from "../../LoginScreen/ChooseFactory";
 import { connect_string } from "../../LoginScreen/ChooseFactory";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import ModalCofirm from "../../../components/ModalConfirm";
+import InputFieldV1 from "../../../components/InputField/index_new";
+import DatePickerFieldV1 from "../../../components/DatePickerField/index_new";
 //#endregion
 const RegisterLabel = () => {
     const { t } = useTranslation();
@@ -138,15 +140,15 @@ const RegisterLabel = () => {
     };
     const handleChxFind = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChxFind(event.target.checked);
-        if(event.target.checked === true){
+        if (event.target.checked === true) {
             Find()
         }
     };
-    
+
     //#endregion
 
     //#region Func Logic
-   
+
     const handleOpenConfirm = (confirmName: string) => {
         setCofirmType(confirmName)
         setOpenCofirm(true)
@@ -310,8 +312,7 @@ const RegisterLabel = () => {
         })
     }
 
-    const Find = () =>
-    {
+    const Find = () => {
         setIsLoading(true)
         setDisable(true)
         setListDataRight([])
@@ -351,33 +352,73 @@ const RegisterLabel = () => {
     }
     //#endregion
     return (
-        <FullScreenContainerWithNavBar sideBarDisable={true} sideBarNavigate="" title={t("lblData_Register_Print_Lable")} navigate="/">
+        <FullScreenContainerWithNavBar sideBarDisable={true} sideBarNavigate="" title={t("lblData_Register_Print_Lable")} navigate="/stamp-print">
             <Stack height={'35%'} >
                 <Box
                     paddingX={1}
-                    paddingBottom={1}
                     className={"dark-bg-secondary border-bottom-white"}
-                    sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '100%',
+                        flexDirection: 'column',
+                        gap: '10px'
+                    }}
                 >
-                    <Grid container spacing={1} width={'80%'} columnSpacing={2} >
+                    <Grid container width={'80%'} rowGap={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {/* Số phiếu */}
-                        <Grid item xs={6} display={'flex'}>
-                            <InputField customClass="customStack" focus={true} label={t("dcmOrder_No") as string} value={orderNo} handle={handleOrderNo} keydown={null} disable={disable} />
+                        <Grid item xs={6}>
+                            <InputFieldV1
+                                focus={true}
+                                label={t("dcmOrder_No") as string}
+                                value={orderNo}
+                                handle={handleOrderNo}
+                                keydown={null}
+                                disable={disable}
+                                xsLabel={5.5}
+                                xsInput={5.5}
+                            />
                         </Grid>
                         {/* Đơn hàng đăng ký */}
-                        <Grid item xs={6} display={'flex'}>
-                            <InputField customClass="customStack" label={t("lblOrderNo_Register") as string} value={orderNoRegister} handle={handleOrderNoRegister} keydown={null} disable={disable} />
+                        <Grid item xs={6} >
+                            <InputFieldV1
+                                label={t("lblOrderNo_Register") as string}
+                                value={orderNoRegister}
+                                handle={handleOrderNoRegister}
+                                keydown={null}
+                                disable={disable}
+                                xsLabel={5.5}
+                                xsInput={5.5}
+                            />
                         </Grid>
                         {/* Mã vật tư */}
-                        <Grid item xs={6} display={'flex'}>
-                            <InputField customClass="customStack" label={t("dcpMaterial_No") as string} value={materialNo} handle={handleMaterialNo} keydown={null} disable={disable} />
+                        <Grid item xs={6} >
+                            <InputFieldV1
+                                label={t("dcpMaterial_No") as string}
+                                value={materialNo}
+                                handle={handleMaterialNo}
+                                keydown={null}
+                                disable={disable}
+                                xsLabel={5.5}
+                                xsInput={5.5}
+                            />
                         </Grid>
                         {/* RY */}
-                        <Grid item xs={6} display={'flex'}>
-                            <InputField customClass="customStack" label={t("lblRY") as string} value={ry} handle={handleRY} keydown={null} disable={disable} />
+                        <Grid item xs={6} >
+                            <InputFieldV1
+                                label={t("lblRY") as string}
+                                value={ry}
+                                handle={handleRY}
+                                keydown={null}
+                                disable={disable}
+                                xsLabel={5.5}
+                                xsInput={5.5}
+                            />
                         </Grid>
                         {/* Check ngày in */}
-                        <Grid item lg={2} md={2.3} >
+                        <Grid item xs={2.75} >
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox value={chxDatePrint} onChange={handleChxDatePrint} />}
@@ -385,17 +426,17 @@ const RegisterLabel = () => {
                             />
                         </Grid>
                         {/* Chọn ngày in */}
-                        <Grid item lg={2.6} md={3} display={'flex'} >
-                            <DatePickerField
+                        <Grid item xs={3.25}   >
+                            <DatePickerFieldV1
                                 valueDate={(params: any) => {
                                     setDatePrint(params);
                                 }}
-                                customClass="customDateTimePicker"
+                                xsDate={10.25}
+                                xsLabel={0}
                             />
                         </Grid>
-                        <Grid item lg={1.4} md={0.7}></Grid>
                         {/* Check ngày đăng ký */}
-                        <Grid item lg={2} md={2.3}>
+                        <Grid item xs={2.75}>
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox defaultChecked value={chxDatePrintRegister} onChange={handleChxDatePrintRegister} />}
@@ -403,33 +444,37 @@ const RegisterLabel = () => {
                             />
                         </Grid>
                         {/* Chọn ngày đăng ký */}
-                        <Grid item lg={2.6} md={3} display={'flex'}>
-                            <DatePickerField
-                                customClass="customDateTimePicker"
+                        <Grid item xs={3.25}>
+                            <DatePickerFieldV1
                                 valueDate={(params: any) => {
                                     setDatePrintRegister(params);
                                 }}
+                                xsDate={10.25}
+                                xsLabel={0}
+
                             />
                         </Grid>
-                        <Grid item xs={2.5}></Grid>
+                    </Grid>
+                    <Grid container  justifyContent={'center'} columnGap={'15px'}>
+                        <Grid item xs={0.5}></Grid>
                         {/* Tìm kiếm */}
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} >
                             <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
                         </Grid>
                         {/* Làm mới */}
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} >
                             <MyButton name={t("btnClean") as string} onClick={Refresh} disabled={disable} />
                         </Grid>
                         {/* Đăng ký */}
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} >
                             <MyButton name={t("btnRegister")} onClick={Register} disabled={disable} />
                         </Grid>
                         {/* In */}
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} >
                             <MyButton name={t("tsmPrint")} disabled={disable} onClick={handlePrint} />
                         </Grid>
                         {/* Tìm lại */}
-                        <Grid item xs={1.5} display={'flex'} alignItems={'center'}>
+                        <Grid item  display={'flex'} alignItems={'center'}>
                             <FormControlLabel
                                 sx={styletext}
                                 control={<Checkbox value={chxFind} onChange={handleChxFind} />}
@@ -437,7 +482,7 @@ const RegisterLabel = () => {
                             />
                         </Grid>
                         <Grid item xs={0.5} display={'flex'} alignItems={'center'}>
-                            {true && <CircularProgress size={'25px'} color="info" />}
+                            {isLoading && <CircularProgress size={'25px'} color="info" />}
                         </Grid>
                     </Grid>
                 </Box>

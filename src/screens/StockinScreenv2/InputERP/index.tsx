@@ -20,6 +20,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import ListboxComponent from "./list_autocomplete";
 import { debounce, random } from "lodash";
 import useDebounced from "../../../components/CustomHook/useDebounce";
+import TableCheckBoxSimple from "../../../components/TableCheckBox/TableCheckBoxSimple";
 
 //#endregion
 
@@ -491,6 +492,8 @@ const InputERP = (props: InputERPProps) => {
     }, [debouncedInputValue, listSupplier]);
 
     const handlerowClick = (params: any, item: any) => {
+        setDataBottomLeft([])
+        setDataBottomRight([])
         if (item?.RKNO_Stock_In_No !== "") {
             setDataBottomLeft([item] as never)
             setLoading(true)
@@ -517,29 +520,51 @@ const InputERP = (props: InputERPProps) => {
     }
 
     const handleConfirm = () => {
-        const arr = listCheckData.map(item => ({
-            ...item,
-            ID: item?._id
-        }))
-        const url = connect_string + "api/input_in_ERP"
-        const data =
-        {
-            list_set: arr,
-            user_id_login: dataUser[0].UserId
-        }
-        axios.post(url, data).then(res => {
-            const items = dataTop.map((item1: any) => {
-                const matchedItem = res?.data?.find((item2: any) => item2.id == item1._id)
-                return {
-                    ...item1,
-                    Input_In_ERP_Serial: matchedItem ? matchedItem?.Input_In_ERP_Serial_new : item1?.Input_In_ERP_Serial,
-                    RKNO_Stock_In_No:  matchedItem ? matchedItem?.RKNO_Stock_In_No_new: item1?.RKNO_Stock_In_No
-                }
-            })
-            setDataTop(items)
-        })
+        console.log(listCheckData)
+        // const arr = listCheckData.map(item => ({
+        //     ...item,
+        //     ID: item?._id
+        // }))
+        // const url = connect_string + "api/input_in_ERP"
+        // const data =
+        // {
+        //     list_set: arr,
+        //     user_id_login: dataUser[0].UserId
+        // }
+        // axios.post(url, data).then(res => {
+        //     const items = dataTop.map((item1: any) => {
+        //         const matchedItem = res?.data?.find((item2: any) => item2.id == item1._id)
+        //         return {
+        //             ...item1,
+        //             Input_In_ERP_Serial: matchedItem ? matchedItem?.Input_In_ERP_Serial_new : item1?.Input_In_ERP_Serial,
+        //             RKNO_Stock_In_No: matchedItem ? matchedItem?.RKNO_Stock_In_No_new : item1?.RKNO_Stock_In_No
+        //         }
+        //     })
+        //     setDataTop(items)
+        // })
+
     }
 
+    const checkCondition = (row: any) => {
+        return (
+            row?.Get_Total_RY_ERP !== "0" && 
+            row?.Value_HGLB !== ""
+        );
+    };
+
+    const handleCheckItemClick = (rowInd: number, colName: string, value: boolean) => {
+        if (value === true) {
+            dataTop[rowInd][colName] = "1";
+        }
+        else {
+            dataTop[rowInd][colName] = "0";
+        }
+    };
+
+    const determineCheckedState = (row: any, field: string) => {
+        return row[field] === '1';
+      };
+    
 
 
     //#endregion
@@ -738,7 +763,7 @@ const InputERP = (props: InputERPProps) => {
                 </Stack>
                 <Stack height={'100%'} overflow={'hidden'}>
                     <Stack height={'55%'} overflow={'hidden'} borderTop={'1px solid white'}>
-                        <TableCheckBox
+                        <TableCheckBoxSimple
                             tableName="inputERP"
                             selectedAll={false}
                             columns={columnsTop}
@@ -747,12 +772,20 @@ const InputERP = (props: InputERPProps) => {
                             handlerowClick={handlerowClick}
                             arrEditCell={['DOCNO']}
                             listChx={(value: any) => setListCheckData(value)}
+                            isCheckAllowed={checkCondition}
+                            arrCheckedCell={['QC']}
+                            determineCheckedState={determineCheckedState}
+                            handleCheckItemClick={handleCheckItemClick}
                         />
                     </Stack>
                     <Stack height={'45%'} direction={'row'} overflow={'hidden'} borderTop={'1px solid white'}>
                         <Stack width={'40%'} borderRight={'1px solid white'} >
                             <Stack height={'85%'} overflow={"hidden"}>
-                                <TableOrigin columns={columnsLeft} rows={dataBottomLeft} arrNotShowCell={['_id']} />
+                                <TableOrigin
+                                    columns={columnsLeft}
+                                    rows={dataBottomLeft}
+                                    arrNotShowCell={['_id']}
+                                />
                             </Stack>
                             <Stack direction={'row'} alignItems={'center'} height={'15%'} justifyContent={'flex-end'} paddingX={1} gap={1} >
                                 {/* Nút kiểm tra */}

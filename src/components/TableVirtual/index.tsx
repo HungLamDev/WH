@@ -56,7 +56,8 @@ function TableVirtual(props: TableVirtualProps) {
         setLongPress(false);
     };
 
-    const handleRowClick = (params: any, item: any) => {
+    const handleRowClick = (event: React.MouseEvent,params: any, item: any) => {
+
         if (arrEditCell !== undefined && arrEditCell.includes(params)) {
             if (editingCellId !== item._id) {
                 setEditingCellId(item._id);
@@ -96,14 +97,11 @@ function TableVirtual(props: TableVirtualProps) {
         }
     };
 
-    const datas = useMemo(() => {
-        return rows
-    }, []);
 
     const VirtuosoTableComponents: TableComponents<any> = {
-        Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-            <TableContainer  {...props} ref={ref} />
-        )),
+        // Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+        //     <TableContainer  {...props} ref={ref} />
+        // )),
         Table: (props) => (
             <Table {...props} sx={{ borderCollapse: 'separate', tableLayout:'fixed'}} />
         ),
@@ -118,7 +116,7 @@ function TableVirtual(props: TableVirtualProps) {
         <div ref={divRef} className="TableVirtual" >
             <TableVirtuoso
                 data={rows}
-                style={{ height: divHeight - 1 }}
+                style={{ height: '100%' }}
                 components={VirtuosoTableComponents}
                 fixedHeaderContent={() => (
                     <TableRow sx={{ background: '#1C2538' }}>
@@ -182,8 +180,8 @@ function TableVirtual(props: TableVirtualProps) {
                                 align="left"
                                 className="td-responesive"
                                 style={{ color: textColor, textAlign: key === "Img_DF" ? "center" : 'left', whiteSpace:'pre-line', wordBreak:'break-all' }}
-                                onClick={() => {
-                                    handleRowClick(key, item);
+                                onClick={(event) => {
+                                    handleRowClick(event, key, item);
                                     setSelectedRow(
                                         item._id === selectedRow ? null : item._id
                                     );

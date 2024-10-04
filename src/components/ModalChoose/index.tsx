@@ -136,6 +136,13 @@ const ModalChoose = ({ array, open, onClose, setShowState }: { array?: any, open
             onClose={onClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            slotProps={{
+                backdrop: {
+                    style: {
+                        backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+                    },
+                },
+            }}
         >
             <Box sx={style} >
                 {/* <Grid container flexWrap={'nowrap'} alignContent={'center'} justifyContent={'center'} >

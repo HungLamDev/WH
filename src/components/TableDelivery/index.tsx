@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateContent, updateMaterialName, updateMaterialNo } from "../../redux/ArrayDelivery";
 
 interface TableDeliveryProps {
-  columns: GridColDef[];
+  columns: any[];
   rows: GridRowsProp;
   handlerowClick?: any,
   onDoubleClick?: any,
@@ -13,10 +13,21 @@ interface TableDeliveryProps {
   listChx?: (rows: GridRowsProp) => void,
   arrNotShowCell?: string[],
   tableName?: string
+  highlightText?: any
 }
 
 const TableDelivery = (props: TableDeliveryProps) => {
-  const { columns, rows, onDoubleClick, arrEditCell, listChx, arrNotShowCell, tableName, handlerowClick } = props;
+  const {
+    columns,
+    rows,
+    onDoubleClick,
+    arrEditCell,
+    listChx,
+    arrNotShowCell,
+    tableName,
+    handlerowClick,
+    highlightText
+  } = props;
   const MaterialTableChecked = useSelector((state: any) => state.MaterialTableChecked.items);
   const StockoutDetailChecked = useSelector((state: any) => state.StockoutDetailChecked.items);
   const [selected, setSelected] = useState<GridRowsProp>([])
@@ -254,45 +265,55 @@ const TableDelivery = (props: TableDeliveryProps) => {
                         style={{
                           paddingBottom: '10px',
                           paddingTop: '10px',
-                         
+
                           textAlign: 'center',
                         }}
                         sx={item.RY_Status2 && item.RY_Status2 === "In" && item.RY && item.RY.indexOf('/A') != -1 ? { color: 'yellow' } : item.RY_Status2 && item.RY_Status2 === "In" ? { color: 'orange' } : {}}
                       >
-                        {isEditing && selectedEdit == key ? (
-                          <TextField
-                            multiline
-                            autoFocus
-                            defaultValue={item[key]}
-                            onFocus={() => handleFocus(key)}
-                            onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
-                            size="small"
-                            sx={{
-                              '& .MuiInputBase-input': {
-                                padding: 0,
-                                // width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
-                                width: column.width,
+                        {isEditing && selectedEdit == key ?
+                          (
+                            <TextField
+                              multiline
+                              autoFocus
+                              defaultValue={item[key]}
+                              onFocus={() => handleFocus(key)}
+                              onChange={(event) => handleTextFieldChange(index, key, event.target.value)}
+                              size="small"
+                              sx={{
+                                '& .MuiInputBase-input': {
+                                  padding: 0,
+                                  // width: `${item[key] !== undefined && item[key] != null && !Number.isNaN(item[key].length * 1) && (item[key].length * 8) + 40}px`,
+                                  width: column.width,
 
-                                textAlign: 'center',
-                                fontSize: '16px',
-                                '@media screen and (max-width: 1200px)': {
-                                  fontSize: '15px !important',
                                   textAlign: 'center',
+                                  fontSize: '16px',
+                                  '@media screen and (max-width: 1200px)': {
+                                    fontSize: '15px !important',
+                                    textAlign: 'center',
+                                  },
                                 },
-                              },
 
-                            }}
-                          />
-                        ) : (
-                          <span
-                            onClick={(event) => {
-                              (arrEditCell !== undefined && arrEditCell.includes(key)) && event.stopPropagation() // Ngăn chặn lan rộng sự kiện
-                              handleEditClick(key, item);
-                            }}
-                          >
-                            {item[key]}
-                          </span>
-                        )}
+                              }}
+                            />
+                          )
+                          :
+                          column?.hightlight === true?
+                            (
+                              <span>{highlightText(item[key], item)}</span>
+                            )
+                            :
+                            (
+                              <span
+                                onClick={
+                                  (event) => {
+                                    (arrEditCell !== undefined && arrEditCell.includes(key)) && event.stopPropagation() // Ngăn chặn lan rộng sự kiện
+                                    handleEditClick(key, item);
+                                  }}
+                              >
+                                {item[key]}
+                              </span>
+                            )
+                        }
                       </TableCell>
                     );
                   }
@@ -306,7 +327,7 @@ const TableDelivery = (props: TableDeliveryProps) => {
           })}
         </TableBody>
       </Table>
-    </TableContainer>
+    </TableContainer >
   );
 };
 
