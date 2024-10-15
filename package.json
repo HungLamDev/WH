@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "update-version": "ts-node update-version.ts",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run update-version && tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --port 8080"
   },
@@ -24,6 +25,7 @@
     "dayjs": "^1.11.8",
     "decimal.js": "^10.4.3",
     "exceljs": "^4.3.0",
+    "fs": "^0.0.1-security",
     "howler": "^2.2.3",
     "html5-qrcode": "^2.2.7",
     "i18next": "^22.5.1",
@@ -53,6 +55,7 @@
     "@types/howler": "^2.2.7",
     "@types/lodash": "^4.14.195",
     "@types/md5": "^2.3.2",
+    "@types/node": "^22.7.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@types/react-window": "^1.8.8",
@@ -63,6 +66,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "sass": "^1.63.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.2",
     "vite": "^4.3.2",
     "vite-plugin-mkcert": "^1.14.0"

@@ -7,9 +7,11 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import { darkTheme } from "./utils/themes.ts";
 import { Provider } from "react-redux";
 import store from "./redux/store.tsx";
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({ immediate: true })
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  // <React.StrictMode>
   <Provider store={store}>
     <BrowserRouter>
       <ThemeProvider theme={darkTheme}>
@@ -19,7 +21,4 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </BrowserRouter>
   </Provider>
 
-
-  // </React.StrictMode>
 );
-

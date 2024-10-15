@@ -422,7 +422,6 @@ const DataHistoryPrintScreen = () => {
           Type_Order:item?.Type_Order
         })
         )
-        console.log(arr)
         const arrfillter: any[] = [];
 
         response.data.forEach((item: any, index: any) => {
@@ -445,7 +444,6 @@ const DataHistoryPrintScreen = () => {
 
   const handleDoubleClick = (colname: string, item: any) => {
     // && listChxDown.includes(item)
-
     if (listChxDown) {
       setOpen(true)
       setIsLoading(true)
@@ -475,7 +473,7 @@ const DataHistoryPrintScreen = () => {
         dcmQTY: item.QTY,
         dcmRoll: item.Roll,
         dcmSize: item.Size,
-        dcmMaterial: item.ywpm_Material,
+        dcmMaterial: item.ywpm_Material !== "" ? item?.ywpm_Material :  item.Name_M,
         dcmProduction: item.nhasx,
         dcmWork_Order: item.ZLBH_Work_Order,
         dcmSupplier_no: item.zsdh_Supplier_No,
@@ -587,7 +585,8 @@ const DataHistoryPrintScreen = () => {
       Material_Name: item.Material_Name,
       Work_Order: item.Work_Order,
       dcpCheck: true,
-      get_version: dataUser[0].WareHouse
+      get_version: dataUser[0].WareHouse,
+      get_Factory: dataUser[0].factoryName
     }))
     axios.post(url, data, config).then(response => {
       if (response.data === true) {
@@ -841,6 +840,7 @@ const DataHistoryPrintScreen = () => {
       </Stack>
     </FullScreenContainerWithNavBar>
   );
+  
 };
 
 export default DataHistoryPrintScreen;

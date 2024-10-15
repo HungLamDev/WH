@@ -5,10 +5,11 @@ interface ModalCofirmProps {
     title?: string,
     open?: any,
     onClose?: any,
-    onPressOK?: any
+    onPressOK?: any,
+    showOk?: boolean
 }
 function ModalCofirm(props: ModalCofirmProps) {
-    const { title, open, onClose, onPressOK } = props
+    const { title, open, onClose, onPressOK, showOk = true } = props
     const { t } = useTranslation();
     const style = {
         position: 'absolute',
@@ -42,7 +43,12 @@ function ModalCofirm(props: ModalCofirmProps) {
                         <Typography className='textsize' color={'white'} sx={{ fontSize: 20 }}>{title}</Typography>
                     </Stack>
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                        <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth: '30%' }}>{t("btnSuccess")}</Button>
+                        {
+                            showOk === true &&
+                                (
+                                    <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth: '30%' }}>{t("btnSuccess")}</Button>
+                                )
+                        }
                         <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D', minWidth: '30%' }}>{t("btnCancel")}</Button>
                     </Stack>
                 </Stack>

@@ -261,9 +261,6 @@ const DeleteOrder = () => {
                         <Grid item  >
                             <MyButton name={t("btnSearch")} onClick={handleSearch} disabled={disable} />
                         </Grid>
-                        <Grid item  >
-                            <MyButton name={"QR"} onClick={() => setOpenQRRead(true)} disabled={disable} />
-                        </Grid>
                     </Grid>
                 </Stack>
             </Box>

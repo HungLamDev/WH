@@ -520,28 +520,27 @@ const InputERP = (props: InputERPProps) => {
     }
 
     const handleConfirm = () => {
-        console.log(listCheckData)
-        // const arr = listCheckData.map(item => ({
-        //     ...item,
-        //     ID: item?._id
-        // }))
-        // const url = connect_string + "api/input_in_ERP"
-        // const data =
-        // {
-        //     list_set: arr,
-        //     user_id_login: dataUser[0].UserId
-        // }
-        // axios.post(url, data).then(res => {
-        //     const items = dataTop.map((item1: any) => {
-        //         const matchedItem = res?.data?.find((item2: any) => item2.id == item1._id)
-        //         return {
-        //             ...item1,
-        //             Input_In_ERP_Serial: matchedItem ? matchedItem?.Input_In_ERP_Serial_new : item1?.Input_In_ERP_Serial,
-        //             RKNO_Stock_In_No: matchedItem ? matchedItem?.RKNO_Stock_In_No_new : item1?.RKNO_Stock_In_No
-        //         }
-        //     })
-        //     setDataTop(items)
-        // })
+        const arr = listCheckData.map(item => ({
+            ...item,
+            ID: item?._id
+        }))
+        const url = connect_string + "api/input_in_ERP"
+        const data =
+        {
+            list_set: arr,
+            user_id_login: dataUser[0].UserId
+        }
+        axios.post(url, data).then(res => {
+            const items = dataTop.map((item1: any) => {
+                const matchedItem = res?.data?.find((item2: any) => item2.id == item1._id)
+                return {
+                    ...item1,
+                    Input_In_ERP_Serial: matchedItem ? matchedItem?.Input_In_ERP_Serial_new : item1?.Input_In_ERP_Serial,
+                    RKNO_Stock_In_No: matchedItem ? matchedItem?.RKNO_Stock_In_No_new : item1?.RKNO_Stock_In_No
+                }
+            })
+            setDataTop(items)
+        })
 
     }
 

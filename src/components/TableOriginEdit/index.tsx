@@ -22,7 +22,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
   const [selectedRow, setSelectedRow] = useState("");
   const [editingCellId, setEditingCellId] = useState<number | null>(null);
   const [longPress, setLongPress] = useState<boolean>(false);
-  const timeoutRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | NodeJS.Timeout | null>(null);
   const dispatch = useDispatch();
 
 

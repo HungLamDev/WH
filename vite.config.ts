@@ -14,22 +14,18 @@ export default defineConfig({
     react(),
     mkcert(),
     VitePWA({
-      // registerType: "prompt",
       registerType: "autoUpdate",
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html}'],
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'document',
-            handler: 'NetworkFirst',
-          },
-        ],
-        cleanupOutdatedCaches: true, // Xóa cache cũ
+        cleanupOutdatedCaches: true, 
+        skipWaiting: true, 
+        clientsClaim: true, 
       },
       includeAssets: [
         "**/*",
       ],
+      
       manifest: {
         name: "Warehouse App",
         short_name: "Warehouse App",

@@ -292,7 +292,6 @@ const CheckQuality = (props: CheckQualityProps) => {
             setArrivalQty(result?.Arrival_QTY)
             setDescribe(result?.Material_No_QCcheck)
             setMaterial_No_goc(result?.Material_No_goc)
-            console.log(result)
             if(res?.data?.length > 0){
                 setQRCode("")
             }

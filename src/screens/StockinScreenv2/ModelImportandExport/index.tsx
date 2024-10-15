@@ -149,15 +149,15 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
     const debouncedSearchTerm = useDebounced(scanqr, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV") {
+        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV" || dataUser[0].factoryName === "LHG") {
             if (debouncedSearchTerm.length >= 15) {
                 checkMaterial(debouncedSearchTerm).then(result => {
-
                     if (result == true) {
                         handleOpenConfirm('notify-reject-material')
                     }
                     else (
                         ScanQR(debouncedSearchTerm)
+                        
                     )
                 })
             }
@@ -312,7 +312,8 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                     rbtColor_G: dataColor.rbtColor_G,
                     rbtColor_H: dataColor.rbtColor_H,
                     rbtColor_O: dataColor.rbtColor_O,
-                    Check_ScanMore: false
+                    Check_ScanMore: false,
+                    get_Factory: dataUser[0].factoryName
                 }
                 axios.post(url, data, config).then(response => {
                     const item = response.data;
@@ -366,7 +367,8 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                     txtScan: Barcode,
                     User_Serial_Key: dataUser[0].UserId,
                     chxAll: chxAll,
-                    get_version: dataUser[0].WareHouse
+                    get_version: dataUser[0].WareHouse,
+                    get_Factory: dataUser[0].factoryName
 
                 }
                 axios.post(url, data, config).then(response => {
@@ -434,7 +436,9 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
         const url = connect_string + "api/QC_Check_Marterial";
         const data = {
             user_id: dataUser[0].UserId,
-            Barcode: barcode
+            Barcode: barcode,
+            Factory: dataUser[0].factoryName
+
         };
 
         return new Promise((resolve, reject) => {
@@ -623,7 +627,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'notify-reject-material' && <ModalCofirm onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'notify-reject-material' && <ModalCofirm  showOk={false} onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
                 {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}            </Box>
         </Modal >
     )

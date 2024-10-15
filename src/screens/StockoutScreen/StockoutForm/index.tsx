@@ -310,15 +310,15 @@ const StockoutScreen = () => {
     const debouncedSearchTerm = useDebounced(qrcode, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV") {
+        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV" || dataUser[0].factoryName === "LHG") {
             if (debouncedSearchTerm.length >= 15) {
                 checkMaterial(debouncedSearchTerm).then(result => {
                     if (result == true) {
                         handleOpenConfirm('notify-reject-material')
                     }
-                    else (
+                    else {
                         handleOutAll(debouncedSearchTerm)
-                    )
+                    }
                 })
             }
         }
@@ -746,7 +746,7 @@ const StockoutScreen = () => {
                                 </Grid>
                                 {/* ICMWH */}
                                 {
-                                    (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV') && (
+                                    (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV'|| dataUser[0].factoryName === 'LHG') && (
                                         <Grid item display={'flex'}>
                                             <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
                                         </Grid>
@@ -784,7 +784,7 @@ const StockoutScreen = () => {
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'notify-reject-material' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgResual_Fail") as string} />}
                 {cofirmType === 'no-authorize' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblTitleNoAuthorize") as string} />}
                 {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}
                 {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}

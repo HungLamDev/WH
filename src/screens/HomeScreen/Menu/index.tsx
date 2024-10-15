@@ -136,7 +136,7 @@ const Menu = () => {
     {
       title: t("btnAccounting_Card") as string,
       icon: reportIcon,
-      path:  dataUser[0].WareHouse === 'Fitting' ? "/accountingcard-sole" : "/accounting-card",
+      path: dataUser[0].WareHouse === 'Fitting' ? "/accountingcard-sole" : "/accounting-card",
       modal: dataUser[0].UserRole === 'Administrator' || dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === 'Account' ? true : false,
       modalName: 'listAccounting_Card',
     },
@@ -401,9 +401,9 @@ const Menu = () => {
           <Stack marginLeft={'10px'} marginRight={'20px'}>
             {/* Tên người dùng */}
             <Typography
-              // sx={{
-              //   color: 'black',
-              // }}
+            // sx={{
+            //   color: 'black',
+            // }}
             >
               {dataUser[0].UserName}
             </Typography>
@@ -457,7 +457,7 @@ const Menu = () => {
                 sx={{
                   fontSize: '15px',
                   // color: '#17153B'
-                  color:'white'
+                  color: 'white'
                 }}
                 className="textsize-960px" >{t(title)}</Typography>
             </Grid>
@@ -465,16 +465,31 @@ const Menu = () => {
         })}
       </Grid>
 
-      <Typography variant="caption"
+      <Typography className="textsizemini" variant="caption"
         sx={{
           flex: 1,
-          color: 'white',
-          // color: 'black',
+          color: '#FDE767',
           opacity: 0.5,
-          // opacity: 0.9,
-          textAlign: 'center', alignItems: 'flex-end', display: 'flex'
+          textAlign: 'center',
+          alignItems: 'flex-end',
+          display: 'flex',
+          fontWeight: 'bold'
         }}
-      > Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved. </Typography>
+      > Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved.
+      </Typography>
+      <Typography className="textsizemini" variant="caption"
+        sx={{
+          flex: 1,
+          color: '#FDE767',
+          opacity: 0.5,
+          textAlign: 'center',
+          position: 'absolute',
+          top: 1,
+          left: 1,
+          fontWeight: 'bold'
+        }}
+      > Version: {import.meta.env.VITE_APP_VERSION}
+      </Typography>
       {/* Modal danh sách thẻ kho */}
       {modalName === 'listAccounting_Card' && <ModalChoose setShowState={() => setShowPage(false)} open={open} onClose={() => setOpen(false)} array={list} />}
       {/* Modal danh sách ngôn ngữ */}
@@ -491,6 +506,7 @@ const Menu = () => {
           <img src={!showPage ? Load : ''} style={{ width: 500 }} />
         </div>
       )}
+
     </Stack>
   );
 };

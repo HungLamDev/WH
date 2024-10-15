@@ -63,24 +63,10 @@ const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
   return <Outlet />;
 };
 
-// function showInstallPromotion() {
-//   if ('serviceWorker' in navigator) {
-//     window.addEventListener('load', function () {
-//       navigator.serviceWorker.register('/service-worker.js');
-//     });
-//   }
-// }
-
-// const isSignedIn = false;
 function App() {
   const dataUser = useSelector((state: any) => state.UserLogin.user);
   const navigate = useNavigate();
   const [authenticate, setAuthenticate] = useState(false)
-
-  // useEffect(() => {
-  //   showInstallPromotion();
-  // }, []);
-
 
   useEffect(() => {
     if (dataUser != '') {
@@ -91,28 +77,6 @@ function App() {
   }, [dataUser]);
 
 
-
-
-  // useEffect(() => {
-  //   function checkOrientation() {
-  //     if (!window.matchMedia("(orientation: landscape)").matches) {
-  //       alert("Vui lòng xoay màn hình sang chế độ ngang để xem trang web.");
-  //       screen.orientation.lock("landscape").catch(function (error: any) {
-  //         // console.error("Không thể khóa hướng màn hình:", error);
-  //       });
-  //     }
-  //   }
-
-  //   checkOrientation();
-
-  //   window.addEventListener("orientationchange", checkOrientation);
-
-  //   return () => {
-  //     // Xóa bỏ event listener khi component bị unmount
-  //     window.removeEventListener("orientationchange", checkOrientation);
-  //   };
-
-  // }, []);
 
   return (
 

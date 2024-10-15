@@ -257,15 +257,15 @@ const DataHistoryPrintScreen = () => {
   //#region Variable
   // const [rowDowns, setrowDowns] = useState<any[]>([]);
   // const [rowUps, setrowUps] = useState<any[]>([]);
-   //#region  Cancel request axios
-   const controllerRef = useRef(new AbortController());
-   const configNew = createConfig(controllerRef.current.signal);
-   // Func cancel Request
-   const cancelRequest = () => {
-     controllerRef.current.abort();
-   };
-   //#endregion
- 
+  //#region  Cancel request axios
+  const controllerRef = useRef(new AbortController());
+  const configNew = createConfig(controllerRef.current.signal);
+  // Func cancel Request
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+  };
+  //#endregion
+
   const [chxPrintRY, setChxPrintRY] = useState(false);
   const [open, setOpen] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -333,7 +333,7 @@ const DataHistoryPrintScreen = () => {
         setDisabled(true);
         setIsApi(false)
         const url = connect_string + "api/DoubleClick_Print_Chemistry"
-  
+
         const data = {
           RowIndex: true,
           dcmOrder_No: params.CGNO_Order_No,
@@ -346,11 +346,12 @@ const DataHistoryPrintScreen = () => {
           dcmQTY: params.QTY,
           dcmRoll: params.Roll,
           dcmSize: params.Size,
-          dcmMaterial: params.ywpm_Material,
+          dcmMaterial: params.ywpm_Material !== "" ? params?.ywpm_Material : params?.Name_M,
           dcmProduction: moment(params.ngaysx, 'DD/MM/YYYY', true).isValid() ? params.ngaysx : moment(params.ngaysx).format('DD/MM/YYYY'),
           dcmWork_Order: params.ZLBH_Work_Order,
           dcmExpire_Date: moment(params.ngayhh, 'DD/MM/YYYY', true).isValid() ? params.ngayhh : moment(params.ngayhh).format('DD/MM/YYYY'),
           dcmSupplier: params.zsywjc_Supplier,
+          Supplier_No: params.zsdh_Supplier_No,
           dcmDate: moment(params.ngay, 'DD/MM/YYYY', true).isValid() ? params.ngay : moment(params.ngay).format('DD/MM/YYYY'),
           User_Serial_Key: dataUser[0].UserId,
           chxReprint: chxRePrint,
@@ -358,6 +359,7 @@ const DataHistoryPrintScreen = () => {
           chxRY: chxRY,
           get_version: dataUser[0].WareHouse
         }
+
         axios.post(url, data, configNew).then(response => {
           if (response.data.length > 0) {
             const arr = response.data.map((item: any, index: any) => ({
@@ -384,15 +386,15 @@ const DataHistoryPrintScreen = () => {
             // const uniqueArr = arr.filter((item: any) => {
             //   return !ArrayRowUps.some((row: any) => row.Barcode === item.Barcode);
             // });
-  
+
             const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
               return !arr.some((newItem: any) => {
                 return newItem.Barcode === oldItem.Barcode;
               });
             });
-  
+
             const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-  
+
             // setrowUps((prevRowUps) => [...prevRowUps, ...uniqueArr]);
             // const arrTemp = [...ArrayRowUps, ...uniqueArr]
             dispatch(copyValuesRowUps(mergedDataInRowUps));
@@ -403,7 +405,7 @@ const DataHistoryPrintScreen = () => {
           setIsApi(true)
         })
       }
-      else{
+      else {
         handleOpenConfirm('no-data')
       }
     }
@@ -465,7 +467,8 @@ const DataHistoryPrintScreen = () => {
       User_Serial_Key: dataUser[0].UserId,
       dcpBarcode: arr,
       dcpCheck: true,
-      get_version: dataUser[0].WareHouse
+      get_version: dataUser[0].WareHouse,
+      get_Factory: dataUser[0].factoryName
     }
     axios.post(url, data, config).then(response => {
       if (response.data === true) {
@@ -485,6 +488,7 @@ const DataHistoryPrintScreen = () => {
     setDisabled(true);
     dispatch(clearArrayRowDowns())
     const url = connect_string + "api/btnSearch_Print_Chemistry";
+    
     const data = {
       chxRY: chxRY,
       txtOrderNo: orderNo,
@@ -494,12 +498,14 @@ const DataHistoryPrintScreen = () => {
       get_version: dataUser[0].WareHouse,
       get_Factory: dataUser[0].factoryName
     };
+
     axios
       .post(url, data, configNew)
       .then((response) => {
         const arr = response.data.map((item: any, index: any) => ({
           _id: index,
           zsywjc_Supplier: item.zsywjc_Supplier,
+          zsdh_Supplier_No: item.zsdh_Supplier_No,
           CLBH_Material_No: item.CLBH_Material_No,
           ywpm_Material: item.ywpm_Material,
           Color: item.Color,
@@ -515,6 +521,7 @@ const DataHistoryPrintScreen = () => {
           ngayhh: item.zsdh_Supplier_No,
           ZLBH_Work_Order: item.ZLBH_Work_Order,
           cllb_Material_Type: item.cllb_Material_Type,
+          Name_M: item.Name_M
         }));
         dispatch(copyValues(arr))
         // setrowDowns(arr);
@@ -548,13 +555,13 @@ const DataHistoryPrintScreen = () => {
         if (response.data === true) {
           dispatch(changeItemsArrayRowUps({ barcodes: listBarcode, modifyDate: dateChange, Work_Order: workOrder }))
         }
-        else{
-            handleOpenConfirm('changedatefail') 
+        else {
+          handleOpenConfirm('changedatefail')
         }
-    }).finally(() => {
+      }).finally(() => {
         setIsLoading(false)
         setDisabled(false)
-    })
+      })
     }
   }
 

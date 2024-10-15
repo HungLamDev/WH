@@ -37,18 +37,31 @@ const LoginScreen = () => {
         <ChooseLanguage />
       </div>
       <LoginForm />
-      <Typography variant="caption" sx={{
+      <Typography className="textsizemini" variant="caption" sx={{
         position: 'absolute',
         bottom: 1,
         color: '#FDE767',
-        //opacity: 0.5,
+        opacity: 0.5,
         fontWeight: '700',
         width: '100%',
         textAlign: 'center',
         "@media screen and (max-height: 450px)": {
           display: 'none'
         },
-      }}> Powered by IT-Software LHG<br /> © {year} LACTY CO II.,LTD. All rights reserved. </Typography>
+      }}>Powered by IT-Software LHG<br /> © {year} LACTY CO II.,LTD. All rights reserved. </Typography>
+
+      <Typography className="textsizemini" variant="caption" sx={{
+        top: 1,
+        position: 'absolute',
+        color: '#FDE767',
+        opacity: 0.5,
+        fontWeight: '700',
+        width: '100%',
+        textAlign: 'left',
+        "@media screen and (max-height: 450px)": {
+          display: 'none'
+        },
+      }}>  Version: {import.meta.env.VITE_APP_VERSION} </Typography>
     </section>
   );
 };

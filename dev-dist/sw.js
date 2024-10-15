@@ -67,7 +67,7 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-f1d5f0d8'], (function (workbox) { 'use strict';
+define(['./workbox-b6a59dc3'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -88,8 +88,6 @@ define(['./workbox-f1d5f0d8'], (function (workbox) { 'use strict';
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/]
   }));
-  workbox.registerRoute(({
-    request
-  }) => request.destination === "document", new workbox.NetworkFirst(), 'GET');
 
 }));
+//# sourceMappingURL=sw.js.map

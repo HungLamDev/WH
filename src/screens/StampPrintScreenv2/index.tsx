@@ -463,7 +463,8 @@ const StampPrintScreen = () => {
                 ZLBH_Work_Order: item.ZLBH_Work_Order,
                 cllb_Material_Type: item.cllb_Material_Type,
                 Name_Material_Detail: item.Name_Material_Detail,
-                Type_Order:item?.Type_Order
+                Type_Order:item?.Type_Order,
+                Suplier_no: item?.zsdh_Supplier_No
             }))
             dispatch(copyValues(arr))
             setrowUps([]);
@@ -495,7 +496,8 @@ const StampPrintScreen = () => {
                     Arrival_QTY: params.Arrival_QTY,
                     Roll: params.Roll,
                     Size: params.Size,
-                    Material_Name: params.ywpm_Material,
+                    Material_Name: params?.ywpm_Material !== "" ? params?.ywpm_Material : params?.Name_Material_Detail,
+                    Supplier_No: params.Suplier_no,
                     Supplier: params.zsywjc_Supplier,
                     Date: moment(ngay).format("YYYY-MM-DD"),
                     Work_Order: params.ZLBH_Work_Order,
@@ -646,8 +648,8 @@ const StampPrintScreen = () => {
             chxPrint_All_RY: chxPrint_All_RY,
             chxPrint_RY: chxPrint_RY,
             dcpCheck: true,
-            get_version: dataUser[0].WareHouse
-
+            get_version: dataUser[0].WareHouse,
+            get_Factory: dataUser[0].factoryName
         }))
         axios.post(url, dataprint, config).then(response => {
             if (response.status == 200) {
@@ -886,7 +888,7 @@ const StampPrintScreen = () => {
                     <TableCheckBox columns={columnsUp} rows={ArrayRowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
                 </Stack>
                 <Stack sx={{ height: '50%' }} >
-                    <TableDateTimePicker checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id']} />
+                    <TableDateTimePicker checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id','Suplier_no']} />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>

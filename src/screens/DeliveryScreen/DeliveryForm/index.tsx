@@ -189,6 +189,7 @@ const DeliveryScreen = () => {
   const [chxRack, setChxRack] = useState(false)
   const [onFocus, setOnFocus] = useState(false)
   const [chxAll, setChxAll] = useState(false)
+  const [chxKT, setChxKT] = useState(false)
   const [isApi, setIsApi] = useState(true)
   const [openModalAccounting, setOpenModalAccounting] = useState(false)
   const [datalAccounting, setDataAccounting] = useState<any[]>([])
@@ -213,6 +214,10 @@ const DeliveryScreen = () => {
 
   const handleChxAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChxAll(event.target.checked);
+  };
+
+  const handleChxKT = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChxKT(event.target.checked);
   };
 
   const handleChxLoadData = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -351,7 +356,8 @@ const DeliveryScreen = () => {
       dtpFrom_Date: moment(updateDateFrom).format('YYYY/MM/DD HH:mm:ss'),
       dtpTo_Date: moment(updateDateTo).format('YYYY/MM/DD HH:mm:ss'),
       get_version: dataUser[0].WareHouse,
-      saFactory: dataUser[0].factoryName
+      saFactory: dataUser[0].factoryName,
+      chxKT: chxKT
     }
     axios.post(url, data, config).then(response => {
       const array = response?.data?.map((item: any, index: any) => ({
@@ -408,7 +414,8 @@ const DeliveryScreen = () => {
       dtpFrom_Date: moment(updateDateFrom).format('YYYY/MM/DD HH:mm:ss'),
       dtpTo_Date: moment(updateDateTo).format('YYYY/MM/DD HH:mm:ss'),
       get_version: dataUser[0].WareHouse,
-      saFactory: dataUser[0].factoryName
+      saFactory: dataUser[0].factoryName,
+      chxKT: chxKT
     }
 
     axios.post(url, data, configNew).then(response => {
@@ -898,19 +905,19 @@ const DeliveryScreen = () => {
   //Tô màu dòng trong bảng------------------------------------------
   const highlightText = (item: any, row: any) => {
     if (typeof item !== "string") {
-      return  item; 
+      return item;
     }
-    
+
     const regex = new RegExp(`(${row?.list_Num_no?.join("|")})`, "gi");
 
     const parts = item.split(regex);
-    
+
     return (
       <>
         {parts.map((part: any, index: any) => (
           <React.Fragment key={index}>
             {row?.list_Num_no?.includes(part) ? (
-              <span style={{ color: '#D04848', fontWeight:'bold' }}>{part}</span>
+              <span style={{ color: '#D04848', fontWeight: 'bold' }}>{part}</span>
             ) : (
               part
             )}
@@ -1053,7 +1060,14 @@ const DeliveryScreen = () => {
             <Grid item xs={2.5} display={'flex'}>
               <InputFieldV1 xsLabel={0} xsInput={11} value={color} disable={disable} />
             </Grid>
-            <Grid item xs={1} ></Grid>
+            <Grid item xs={1} >
+              {/* Kiểm tra lệnh  */}
+              <FormGroup>
+                <FormControlLabel className="text" control={<Checkbox checked={chxKT} onChange={handleChxKT}
+                  sx={{ color: 'white' }} />}
+                  label={"KT"} />
+              </FormGroup>
+            </Grid>
             <Grid item xs={0.5} ></Grid>
             {/* Ngày mở phiếu từ label*/}
             <Grid item xs={1.35} display={'flex'} alignItems={'center'}>
@@ -1077,7 +1091,7 @@ const DeliveryScreen = () => {
               />
             </Grid>
             <Grid item xs={0.21} ></Grid>
-            <Grid item xs={1.5} justifyContent={'center'} display={'flex'}>
+            <Grid item xs={1.5} justifyContent={'center'} display={'flex'} alignItems={'center'}>
               {isLoading && <CircularProgress size={'24px'} color='info' />}
             </Grid>
             {/* Ngày cập nhật từ */}
@@ -1100,6 +1114,7 @@ const DeliveryScreen = () => {
               />
             </Grid>
             <Grid item xs={0.06} ></Grid>
+            {/* Kệ */}
             <Grid item xs={1}>
               <FormGroup>
                 <FormControlLabel className="text" sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxRack} onChange={handleChxRack} />} label={t("dcpShelves")} />
@@ -1132,7 +1147,7 @@ const DeliveryScreen = () => {
           <MyButton name={t("btnAccounting_Card")} onClick={() => setOpenModalAccounting(true)} disabled={disable} />
           {/* ICMWH */}
           {
-            (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV') && (
+            (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV' || dataUser[0].factoryName === 'LHG') && (
               <Grid item display={'flex'}>
                 <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} />
               </Grid>

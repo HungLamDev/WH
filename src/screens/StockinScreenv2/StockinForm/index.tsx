@@ -505,7 +505,7 @@ const Stockin = () => {
                         <Grid container  justifyContent={'center'} gap={2}>
                             {/* Nhập kho ERP */}
                             <Grid item  className="btn-center">
-                                <MyButton name={t("btnEnter_Stock") + " ERP"} onClick={() => handleOpen("input-erp")}  disabled={dataUser[0].factoryName === "LHG" && (dataUser[0].UserRole === "Administrator" || dataUser[0].UserRole === "Account" )? false :true} />
+                                <MyButton  name={t("btnEnter_Stock") + " ERP"} onClick={() => handleOpen("input-erp")}  disabled={dataUser[0].factoryName === "LHG" && (dataUser[0].UserRole === "Administrator" || dataUser[0].UserRole === "Account" )? false :true} />
                                 {modalType === 'input-erp' && (
                                     <InputERP open={open} onClose={handleClose} />
                                 )}
