@@ -1,3 +1,4 @@
+//#region Import
 import { Autocomplete, Box, Button, CircularProgress, Divider, FormControlLabel, FormGroup, Grid, IconButton, Modal, Stack, TextField, Typography } from "@mui/material"
 import { useTranslation } from "react-i18next";
 import InputField from "../../components/InputField";
@@ -22,6 +23,8 @@ import CachedIcon from '@mui/icons-material/Cached';
 import CloseIcon from '@mui/icons-material/Close';
 import { TbListSearch } from "react-icons/tb";
 import ListRegister from "./ListRegister";
+//#endregion
+
 interface CheckQualityProps {
     open: any,
     onClose: any,
@@ -31,6 +34,7 @@ interface CheckQualityProps {
 
 const CheckQuality = (props: CheckQualityProps) => {
     const { open, onClose, data, qrcodeScan } = props
+    //#region Variable
     const { t } = useTranslation();
     const [imageCam, setImageCam] = useState("");
     const [currentMenu, setCurrentMenu] = useState("chooseImg");
@@ -72,7 +76,9 @@ const CheckQuality = (props: CheckQualityProps) => {
     const [Material_No_goc, setMaterial_No_goc]= useState("");
 
     const dataUser = useSelector((state: any) => state.UserLogin.user);
+    //#endregion
 
+    //#region style
     const style = {
         position: 'absolute',
         top: '50%',
@@ -118,6 +124,7 @@ const CheckQuality = (props: CheckQualityProps) => {
         display: 'flex',
         flexDirection: "column"
     };
+    //#endregion
 
     useEffect(() => {
         if (open === true) {
@@ -125,16 +132,6 @@ const CheckQuality = (props: CheckQualityProps) => {
             handleLoadComboBoxData()
         }
     }, [open])
-
-    // useEffect(() => {
-    //     if (materialNo.length > 4) {
-    //         handleGetRyLocation(materialNo)
-    //     }
-    //     else {
-    //         setRY("")
-    //         setLean("")
-    //     }
-    // }, [materialNo])
 
     const handleChangeValueSelect = (value: any) => {
         setValueSelect(value);

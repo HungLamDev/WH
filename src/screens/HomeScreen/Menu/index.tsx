@@ -45,6 +45,8 @@ import { connect_string } from "../../LoginScreen/ChooseFactory/index.tsx";
 import { useSelector } from "react-redux";
 import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
 import { year } from "../../LoginScreen/index.tsx";
+import { registerSW } from 'virtual:pwa-register'
+
 //#endregion
 
 const Menu = () => {
@@ -364,6 +366,26 @@ const Menu = () => {
     setModalName('');
   };
 
+  const handleLogout = () => {
+    window.location.reload()
+    const updateSW = registerSW({
+      onRegistered(r) {
+        if (r) {
+          r.onupdatefound = () => {
+            const newWorker = r.installing;
+            if (newWorker) {
+              newWorker.onstatechange = () => {
+                if (newWorker.state === 'installed') {
+                  alert("Cập nhật phiên bản mới thành công - The new version has been installed successfully");
+                }
+              };
+            }
+          };
+        }
+      }
+    })
+  }
+
   //#endregion
 
   return (
@@ -389,38 +411,31 @@ const Menu = () => {
           justifyContent: 'center',
           alignItems: 'center',
           border: '1px solid',
-          // border: '1px solid black',
           padding: '5px',
           borderRadius: '20px',
         }}>
           {/* icon user */}
           <AccountCircleIcon
             fontSize="large"
-          // sx={{color:'black'}}
           />
           <Stack marginLeft={'10px'} marginRight={'20px'}>
             {/* Tên người dùng */}
             <Typography
-            // sx={{
-            //   color: 'black',
-            // }}
+
             >
               {dataUser[0].UserName}
             </Typography>
             <Box display={'flex'} justifyContent={'space-between'}>
               {/* Số thẻ */}
               <Typography marginRight={'20px'} variant="subtitle2" color={dataUser[0].UserRole === 'Administrator' ? 'red' : dataUser[0].UserRole === 'Manager' ? 'green' : '#FFE17B'}>{dataUser[0].UserId}  </Typography>
-              {/* <Typography variant="subtitle2" color={'#FFE17B'}>{ctime}</Typography> */}
             </Box>
           </Stack>
           {/* Nút logout */}
           <LogoutIcon
             sx={{
-              // color: 'white',
-              // color: 'black',
               cursor: 'pointer'
             }}
-            onClick={() => window.location.reload()} />
+            onClick={handleLogout} />
         </Box>
       </div>
       {/* Menu */}

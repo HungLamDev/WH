@@ -414,6 +414,7 @@
     "dcpPriority_No": "优先级编号",
     "lblTitleNoAuthorize": "您无权使用该功能",
     "cbxInventory": "库存订单",
-    "lblMaterialError": "ERP 中的 RY 数量有错误。请再次检查." 
+    "lblMaterialError": "ERP 中的 RY 数量有错误。请再次检查.",
+    "UpdateSuccess": "新版本已安装成功!"
 
 }

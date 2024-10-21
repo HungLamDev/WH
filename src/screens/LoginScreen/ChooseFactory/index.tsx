@@ -72,9 +72,9 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LHG') {
-            connect_string = 'https://192.168.30.100:7777/'
+            //connect_string = 'https://192.168.30.100:7777/'
             // connect_string = 'https://192.168.32.84:7777/'
-            //connect_string = 'https://192.168.32.81/'
+            connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LYM') {
             connect_string = 'https://192.168.55.7:7777/'

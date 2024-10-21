@@ -40,17 +40,26 @@ const QRScanner: React.FC<ScannerQRProps> = ({ onScan, open, onClose }) => {
       slotProps={{
         backdrop: {
           style: {
-            backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+            backdropFilter: "blur(1px)"
           },
         },
       }}
     >
       <Box sx={style}>
         <Button onClick={onClose} style={{
-          color: '#1c2538', backgroundColor: 'white', borderRadius: "50px",
-          height: "30px", width: '30px', padding: '0', border: '3px solid #1c2538',
-          position: 'absolute', top: '-15px', right: '-5px'
-        }}>X</Button>
+          color: '#1c2538',
+          backgroundColor: 'white',
+          borderRadius: "50px",
+          height: "30px",
+          width: '30px',
+          padding: '0',
+          border: '3px solid #1c2538',
+          position: 'absolute',
+          top: '-15px',
+          right: '-5px'
+        }}>
+          X
+        </Button>
         <QrScanner
           key={scannerKey}
           scanDelay={500}

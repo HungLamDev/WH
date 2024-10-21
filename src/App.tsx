@@ -1,3 +1,4 @@
+//#region 
 import "./App.scss";
 import { useEffect, useState } from "react";
 import {
@@ -11,19 +12,6 @@ import {
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import { ThemeProvider, CssBaseline } from "@mui/material";
-
-
-
-// const PrivateRoutes = () => {
-//   const location = useLocation();
-//   location.state.Userid
-//   const auth = {'token': location.state.Userid ? true : false}
-//   return(
-//       auth.token ? <Outlet/> : <Navigate to="/"/>
-//   )
-// }
-
-// import
 import StockoutScreen from "./screens/StockoutScreen/StockoutForm";
 import StampPrintScreen from "./screens/StampPrintScreenv2";
 import ErrorScreen from "./screens/ErrorScreen";
@@ -54,12 +42,13 @@ import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
 import AccountingCardSole from "./screens/ReportScreen/AccountingCardSole";
+//#endregion
+
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
 
   if (!authenticate) {
     return <Navigate to={"/login"} replace />;
   }
-
   return <Outlet />;
 };
 
@@ -77,9 +66,7 @@ function App() {
   }, [dataUser]);
 
 
-
   return (
-
     <section className={"App"}>
       <Routes>
         <Route element={<ProtectedRoutes authenticate={authenticate} />}>
