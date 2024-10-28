@@ -310,7 +310,9 @@ const StockoutScreen = () => {
     const debouncedSearchTerm = useDebounced(qrcode, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV" || dataUser[0].factoryName === "LHG") {
+        if (
+            dataUser[0].factoryName !== "LYM"
+        ) {
             if (debouncedSearchTerm.length >= 15) {
                 checkMaterial(debouncedSearchTerm).then(result => {
                     if (result == true) {
@@ -746,7 +748,7 @@ const StockoutScreen = () => {
                                 </Grid>
                                 {/* ICMWH */}
                                 {
-                                    (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV'|| dataUser[0].factoryName === 'LHG') && (
+                                    (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV' || dataUser[0].factoryName === 'LHG') && (
                                         <Grid item display={'flex'}>
                                             <MyButton name={"ICMWH"} onClick={() => handleOpenConfirm("confirm-Material")} />
                                         </Grid>

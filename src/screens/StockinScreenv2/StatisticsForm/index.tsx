@@ -146,16 +146,16 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
     // }, [txtscan])
     //#endregion
 
-     //#region useDebounced
-     const debouncedSearchTerm = useDebounced(txtscan, 300);
-     useEffect(() => {
-         if (debouncedSearchTerm) {
+    //#region useDebounced
+    const debouncedSearchTerm = useDebounced(txtscan, 300);
+    useEffect(() => {
+        if (debouncedSearchTerm) {
             ScanValue(debouncedSearchTerm)
-         }
-       }, [debouncedSearchTerm]);
- 
-     //#endregion
- 
+        }
+    }, [debouncedSearchTerm]);
+
+    //#endregion
+
 
     //#region Func Logic
     const ScanValue = (value_scan: string) => {
@@ -201,7 +201,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                 setValue_Material(reponse?.data[reponse.data.length - 1]?.Material_No)
                 setValue_Total_Num(reponse?.data[reponse.data.length - 1]?.Value_Total_Num)
                 setValue_Total_Qty(reponse?.data[reponse.data.length - 1]?.Value_Total_Qty)
-
+                if (arr?.length > 0) setTxtScan('')
                 if (arr[0]?.check_Barcode === true) {
                     const foundarrayRowUps = arr.find((value: any) => value.Barcode === value_scan)
                     if (foundarrayRowUps && arrayRowDowns.length > 0) {
@@ -234,7 +234,6 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                     setArrayRowDowns(arr)
                     setArrayRowUps([])
                 }
-                setTxtScan('')
             }).finally(() => {
                 setIsLoading(false)
             })
@@ -302,7 +301,7 @@ function Statistics({ open, onClose, materialNo }: { open: any, onClose: any, ma
                             <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         <Typography variant="h4" component="h4" color={'white'}>{t("lblReport_Deviations") as string}</Typography>
-                        <IconButton sx={{ marginLeft: '20px' }}  onClick={handleScanClick} >
+                        <IconButton sx={{ marginLeft: '20px' }} onClick={handleScanClick} >
                             <CameraAltIcon />
                         </IconButton>
                     </Stack>

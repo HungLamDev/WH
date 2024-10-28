@@ -149,7 +149,9 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
     const debouncedSearchTerm = useDebounced(scanqr, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (dataUser[0].factoryName === "LVL" || dataUser[0].factoryName === "LYV" || dataUser[0].factoryName === "LHG") {
+        if (
+            dataUser[0].factoryName !== "LYM"
+        ) {
             if (debouncedSearchTerm.length >= 15) {
                 checkMaterial(debouncedSearchTerm).then(result => {
                     if (result == true) {
@@ -157,7 +159,6 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                     }
                     else (
                         ScanQR(debouncedSearchTerm)
-                        
                     )
                 })
             }
@@ -627,7 +628,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'notify-reject-material' && <ModalCofirm  showOk={false} onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
                 {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}            </Box>
         </Modal >
     )

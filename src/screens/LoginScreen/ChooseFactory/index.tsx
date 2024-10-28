@@ -72,8 +72,7 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LHG') {
-            //connect_string = 'https://192.168.30.100:7777/'
-            // connect_string = 'https://192.168.32.84:7777/'
+           // connect_string = 'https://192.168.30.100:7777/'
             connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LYM') {
@@ -81,8 +80,8 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LYV') {
-            //connect_string = 'https://192.168.32.84:7776/'
-            connect_string = 'https://192.168.32.81/'
+            connect_string = 'https://192.168.0.108:7777/'
+            //connect_string = 'https://192.168.32.81/'
         }
     }, [selectedValue])
     //#endregion
