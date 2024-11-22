@@ -417,5 +417,12 @@
     "lblTitleNoAuthorize": "Bạn không có quyền dùng chức năng này",
     "cbxInventory": "Đơn Tồn",
     "lblMaterialError": "bị lệch số lượng RY với ERP. Vui lòng kiểm tra lại." ,
-    "UpdateSuccess": "Phiên bản mới đã được cài đặt thành công!"
+    "UpdateSuccess": "Phiên bản mới đã được cài đặt thành công!",
+    "lblNoBOM": "Bạn chưa chọn BOM.",
+    "lblNoMaterial": "Vật tư xuất không nằm trong bảng BOM.",
+    "btnCreate":"Tạo phiếu",
+    "lblNoStockOut": "Vật tư đã vượt định mức không thể xuất",
+    "lblConfirmCreateSlip": "Xác nhận tạo phiếu xuất vật tư",
+    "lblCreateSlipError": "Tạo phiếu xuất thất bại. Vui lòng thử lại",
+    "btnCreateBOM": "Tạo BOM"
 }

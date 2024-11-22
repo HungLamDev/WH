@@ -415,6 +415,13 @@
     "lblTitleNoAuthorize": "您无权使用该功能",
     "cbxInventory": "库存订单",
     "lblMaterialError": "ERP 中的 RY 数量有错误。请再次检查.",
-    "UpdateSuccess": "新版本已安装成功!"
+    "UpdateSuccess": "新版本已安装成功!",
+    "lblNoBOM": "您还没有选择BOM",
+    "lblNoMaterial": "导出的物料不包含在BOM表中。",
+    "btnCreate":"创建单据",
+    "lblNoStockOut": "超过限制的材料不能出口",
+    "lblConfirmCreateSlip": "确认创建物料交货单",
+    "lblCreateSlipError": "生成出库单失败。请重试。",
+    "btnCreateBOM": "创建物料清单"
 
 }

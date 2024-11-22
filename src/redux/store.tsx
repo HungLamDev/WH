@@ -18,6 +18,7 @@ import ArrayInventory from './ArrayInventory';
 import ArrayAccountingCard from './ArrayAccountingCard';
 import FOC from './FOC';
 import ArrayAccountingCardMaterial from './ArrayAccountingCardMaterial';
+import UserERP from './UserERP'
 const store = configureStore({
   reducer: {
     MaterialTable,
@@ -38,7 +39,8 @@ const store = configureStore({
     ArrayInventory,
     ArrayAccountingCard,
     FOC,
-    ArrayAccountingCardMaterial
+    ArrayAccountingCardMaterial,
+    UserERP
   }
 });
 

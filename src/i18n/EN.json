@@ -417,5 +417,13 @@
     "lblTitleNoAuthorize": "You do not have permission to use this function",
     "cbxInventory": "Inventory Orders",
     "lblMaterialError": "has RY quantity error with ERP. Please check again." ,
-    "UpdateSuccess": "The new version has been installed successfully!"
+    "UpdateSuccess": "The new version has been installed successfully!",
+    "lblNoBOM": "You have not selected a BOM.",
+    "lblNoMaterial": "Exported materials are not included in the BOM table.",
+    "btnCreate":"Create Slip",
+    "lblNoStockOut": "Supplies have exceeded the quota and cannot be exported",
+    "lblConfirmCreateSlip": "Confirm creation of material delivery note",
+    "lblCreateSlipError": "Failed to create the export slip. Please try again.",
+    "btnCreateBOM": "Create BOM"
+
 }

@@ -5,10 +5,11 @@ interface MyButtonProps extends ButtonProps {
   name: string;
   whiteSpace?: string;
   customClass?: string;
+  height?: string;
 }
 
 const MyButton = (props: MyButtonProps) => {
-  const { name, whiteSpace, customClass = ''} = props;
+  const { name, whiteSpace, customClass = '', height= "2.5rem"} = props;
 
   function handleClick(event: any): void {
     event.preventDefault();
@@ -33,7 +34,7 @@ const MyButton = (props: MyButtonProps) => {
         border: "1px solid white",
         textTransform: "none",
         width: "6.4rem",
-        height: "2.5rem",
+        height: height,
         fontSize: language === "MM" ? "12px" : "14px",
         "@media screen and (max-width: 1200px)": {
           fontSize: language === "MM" ? "11px" : "12px",

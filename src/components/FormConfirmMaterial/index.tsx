@@ -126,13 +126,16 @@ const CheckQuality = (props: CheckQualityProps) => {
     };
     //#endregion
 
+    //#region useEffect
     useEffect(() => {
         if (open === true) {
             handleCleanData()
             handleLoadComboBoxData()
         }
     }, [open])
+    //#endregion
 
+    //#region functionOnchange
     const handleChangeValueSelect = (value: any) => {
         setValueSelect(value);
         setValueReason(value)
@@ -197,7 +200,9 @@ const CheckQuality = (props: CheckQualityProps) => {
             setValueReason(pre => pre + "\u2002" + no)
         }
     }
+    //#endregion
 
+    //#region functionLogic
     const handlePasswordCBQCKeyDown = (event: any) => {
         if (event.key === "Enter") {
             handleCheckLogin(userIDCBQC, passwordCBQC)
@@ -398,7 +403,7 @@ const CheckQuality = (props: CheckQualityProps) => {
             sa_Factory: dataUser[0].factoryName,
             byte_Image: imageCam
         }
-        if (checkCBKHO && materialNo.trim() !== "" && orderNo.trim() !== "" && describe.trim() !== "" && valueReason.trim() !== "") {
+        if (checkCBKHO && materialNo.trim() !== "" && orderNo.trim() !== "" && describe.trim() !== "" && valueReason.trim() !== "" && decision.trim() !== "") {
             setIsLoading(true)
             setDisable(true)
             axios.post(url, data).then((res) => {
@@ -406,7 +411,7 @@ const CheckQuality = (props: CheckQualityProps) => {
                     handleCleanData()
                 }
                 else {
-                    setAlert("Thêm thất bại. Vui lòng thử lại")
+                    setAlert(t("msgCompleteInformation") as string)
                     setOpenAlert(true)
                 }
             }).finally(() => {
@@ -441,6 +446,7 @@ const CheckQuality = (props: CheckQualityProps) => {
             handleCheckBarcode("", materialNo, orderNo, lean)
         }
     }
+    //#endregion
 
     return (
         <Modal
@@ -459,7 +465,6 @@ const CheckQuality = (props: CheckQualityProps) => {
                     <Typography variant="h5" component="h5" color={'white'}>{"ICMWH - Kho Vật Tư"}</Typography>
                     {/* Nút xóa */}
                     <IconButton className={'back-button'} onClick={() => setOpenModalListRegister(true)}>
-                        {/* <RestartAltIcon className=" icon-wrapper" sx={{ color: 'white' }} /> */}
                         <TbListSearch className=" icon-wrapper" />
                     </IconButton>
                 </Stack>
@@ -494,7 +499,6 @@ const CheckQuality = (props: CheckQualityProps) => {
                                             onChange={handleMaterialNoChange}
                                         />
                                     </div>
-                                    {/* <Typography className='textsize text-color text-hidden text-wrap' style={{ height: '50px', textAlign: 'center' }}>{materialNo}</Typography> */}
                                 </Grid>
                                 <Grid item xs={1.7} className="display-center" style={{ borderRight: '1px solid gray', padding: 3 }}>
                                     {/* Đơn hàng */}
@@ -512,7 +516,6 @@ const CheckQuality = (props: CheckQualityProps) => {
                                             onChange={handleOrderNoChange}
                                         />
                                     </div>
-                                    {/* <Typography className='textsize text-color text-hidden text-wrap' style={{ height: '50px', textAlign: 'center' }}>{orderNo}</Typography> */}
                                 </Grid>
                                 <Grid item xs={1.7} className="display-center" style={{ borderRight: '1px solid gray', padding: 3 }}>
                                     {/* Số lượng về */}
@@ -535,7 +538,6 @@ const CheckQuality = (props: CheckQualityProps) => {
                                             onChange={handleAreaChange}
                                         />
                                     </div>
-                                    {/* <Typography className='textsize text-color text-hidden text-wrap' style={{ height: '50px', textAlign: 'center' }} >{location}</Typography> */}
                                 </Grid>
                                 <Grid item xs={1.7} className="display-center" style={{ borderRight: '1px solid gray', padding: 3 }}>
                                     {/* Thời gian phát hàng */}

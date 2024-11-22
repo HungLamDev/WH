@@ -28,7 +28,7 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { currentDay } from "../../../utils/date";
 import { useDispatch } from "react-redux";
 import { changeMonth } from "../../../redux/Datetimepicker";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TableOrigin from "../../../components/TableOrigin";
 import { useTranslation } from "react-i18next";
 import TableCheckBox from "../../../components/TableCheckBox";
@@ -45,6 +45,7 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 const DataHistoryPrintScreen = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //#region column header table
 
@@ -488,7 +489,7 @@ const DataHistoryPrintScreen = () => {
     setDisabled(true);
     dispatch(clearArrayRowDowns())
     const url = connect_string + "api/btnSearch_Print_Chemistry";
-    
+
     const data = {
       chxRY: chxRY,
       txtOrderNo: orderNo,
@@ -770,6 +771,8 @@ const DataHistoryPrintScreen = () => {
           <MyButton name={t("btnDelete")} disabled={disabled} onClick={handleDelete} />
           <MyButton name={t("btnPrint")} disabled={disabled} onClick={handlePrint} />
           <MyButton name={t("btnPrivewPrint")} disabled={disabled} onClick={() => setOpenPrintReview(true)} />
+          {/* Đăng ký */}
+          <MyButton name={t("btnRegister")} disabled={isloading} onClick={() => navigate("/register-label")} />
           {isloading && <CircularProgress size={"24px"} color="info" />}
           {openPrintReview && <FormprintChemistry rows={ArrayDeleteAndPrint} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}
           {isloading && <ModalCofirm onClose={() => setOpen(false)} open={open} title={t("msgCofirmPrint") as string} />}

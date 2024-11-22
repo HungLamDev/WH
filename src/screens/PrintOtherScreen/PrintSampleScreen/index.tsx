@@ -25,7 +25,7 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { currentDay } from "../../../utils/date";
 import { useDispatch } from "react-redux";
 import { changeMonth } from "../../../redux/Datetimepicker";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TableOrigin from "../../../components/TableOrigin";
 import { useTranslation } from "react-i18next";
 import TableCheckBox from "../../../components/TableCheckBox";
@@ -42,6 +42,7 @@ import TableSample from "../../../components/TableSample";
 const DataHistoryPrintScreen = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //#region column header table
   const columnsUp: GridColDef[] = [
@@ -419,7 +420,7 @@ const DataHistoryPrintScreen = () => {
           zsdh_Supplier_No: item.zsdh_Supplier_No,
           zsywjc_Supplier: item.zsywjc_Supplier,
           Name_M: item.Name_M,
-          Type_Order:item?.Type_Order
+          Type_Order: item?.Type_Order
         })
         )
         const arrfillter: any[] = [];
@@ -473,14 +474,14 @@ const DataHistoryPrintScreen = () => {
         dcmQTY: item.QTY,
         dcmRoll: item.Roll,
         dcmSize: item.Size,
-        dcmMaterial: item.ywpm_Material !== "" ? item?.ywpm_Material :  item.Name_M,
+        dcmMaterial: item.ywpm_Material !== "" ? item?.ywpm_Material : item.Name_M,
         dcmProduction: item.nhasx,
         dcmWork_Order: item.ZLBH_Work_Order,
         dcmSupplier_no: item.zsdh_Supplier_No,
         dcmSupplier: item.zsywjc_Supplier,
         dcmDate: item.CGDate_Date,
         get_version: dataUser[0].WareHouse,
-        Type_Order:item?.Type_Order
+        Type_Order: item?.Type_Order
 
       }
       axios.post(url, data, configNew).then(response => {
@@ -503,7 +504,7 @@ const DataHistoryPrintScreen = () => {
             Material_Types: item.Material_Types,
             Barcode: item.Barcode,
             Supplier_No: item.Supplier_No,
-            Type_Order:item?.Type_Order
+            Type_Order: item?.Type_Order
           }))
 
           const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
@@ -785,6 +786,8 @@ const DataHistoryPrintScreen = () => {
           <MyButton name={t("btnPrint")} onClick={handlePrint} disabled={isloading} />
           {/* Nút xem trc khi in */}
           <MyButton name={t("btnPrivewPrint")} disabled={isloading} onClick={() => setOpenPrintReview(true)} />
+          {/* Đăng ký */}
+          <MyButton name={t("btnRegister")} disabled={isloading} onClick={() => navigate("/register-label")} />
           {open && <CircularProgress size={'24px'} color="info" />}
           {openPrintReview && <FormPrintSample rows={ArrayDeleteAndPrint} onClose={() => setOpenPrintReview(false)} open={openPrintReview} />}
           {/* {cofirmType === 'print' && <ModalCofirm title={t("msgPrintSuccess") as string} onClose={handleCloseConfirm} open={openCofirm} onPressOK={handleCloseConfirm} />} */}
@@ -840,7 +843,7 @@ const DataHistoryPrintScreen = () => {
       </Stack>
     </FullScreenContainerWithNavBar>
   );
-  
+
 };
 
 export default DataHistoryPrintScreen;

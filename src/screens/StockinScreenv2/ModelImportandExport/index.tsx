@@ -28,8 +28,9 @@ import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
 import { debounce } from '../../../utils/debounce';
 import useDebounced from '../../../components/CustomHook/useDebounce';
 import InputFieldV1 from '../../../components/InputField/index_new';
+import { barcodeToMaterial } from '../../../utils/api_global';
 //#endregion
-const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClose: any, form: any, dataColor?: any }) => {
+const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [], Insert_Material_Stock_Out_Sample, Article, PoNo, listMaterialStockout = [], KFJD }: { open: any, onClose: any, form: any, dataColor?: any, listMaterialBOM?: any[], Insert_Material_Stock_Out_Sample?: any, Article?: any, PoNo?: any, listMaterialStockout?: any[], KFJD?: any }) => {
     const dispatch = useDispatch()
     const { t } = useTranslation();
 
@@ -78,7 +79,9 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
     const [qtyRemain, setQtyRemain] = useState(0)
     const [chxpair, setChxPair] = useState(false)
     const [title, setTitle] = useState<any>('')
-
+    const [chxPrint, setchxPrint] = useState(false)
+    const [message, setMessage] = useState('')
+    const [dinhMuc, setDinhMuc] = useState("")
     //#endregion
 
     //#region Func OnChange Input
@@ -105,6 +108,10 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
 
     const handlechxPair = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChxPair(event.target.checked);
+    };
+
+    const handlechxPrint = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setchxPrint(event.target.checked);
     };
     //#endregion
 
@@ -149,25 +156,34 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
     const debouncedSearchTerm = useDebounced(scanqr, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (
-            dataUser[0].factoryName !== "LYM"
-        ) {
-            if (debouncedSearchTerm.length >= 15) {
-                checkMaterial(debouncedSearchTerm).then(result => {
-                    if (result == true) {
-                        handleOpenConfirm('notify-reject-material')
-                    }
-                    else (
-                        ScanQR(debouncedSearchTerm)
-                    )
-                })
-            }
-        }
-        else {
+        if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
             if (debouncedSearchTerm.length >= 15) {
                 ScanQR(debouncedSearchTerm)
             }
         }
+        else {
+            if (
+                dataUser[0].factoryName !== "LYM"
+            ) {
+                if (debouncedSearchTerm.length >= 15) {
+                    checkMaterial(debouncedSearchTerm).then(result => {
+                        if (result !== "") {
+                            setMessage(result)
+                            handleOpenConfirm('notify-reject-material')
+                        }
+                        else (
+                            ScanQR(debouncedSearchTerm)
+                        )
+                    })
+                }
+            }
+            else {
+                if (debouncedSearchTerm.length >= 15) {
+                    ScanQR(debouncedSearchTerm)
+                }
+            }
+        }
+
     }, [debouncedSearchTerm]);
 
     useEffect(() => {
@@ -246,11 +262,23 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
         }
     }
 
+    const handleGet_qty_out_Sample = (poNo: any, qr: any) => {
+        const url = connect_string + "api/get_qty_out_Sample"
+        const data = {
+            PONO: poNo?.PONO || poNo,
+            barcode: qr
+        }
+        axios.post(url, data).then(res => {
+            setDinhMuc(res.data)
+        })
+    }
+
     const ScanQR = (value_scan: string) => {
         // if (form === 'stockout') {
         setQtyOut(0)
         setIsLoading(true)
         setDisable(true)
+        handleGet_qty_out_Sample(PoNo, value_scan)
         const url = connect_string + 'api/txtScan_TextChanged'
         const data = {
             txtScan: value_scan,
@@ -284,133 +312,307 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     const SavePartial = async () => {
-        if (await checkPermissionPrint(dataUser[0].UserId)) {
+        if (await checkPermissionPrint(dataUser[0].UserId) || chxPrint === false) {
             // Xuất tách tem
-            if (form === 'stockout') {
-                setIsLoading(true)
-                setDisable(true)
-                const url = connect_string + 'api/btn_Save_Partial'
-                const data = {
-                    rbtImport: false,
-                    rbtExport: true,
-                    txtQty_Input: qtyout >= QTY ? Number(QTY) : qtyout,
-                    Value_Barcode: Barcode,
-                    txtQty_Remain: calculateRemainingQty(),
-                    Value_Unit: Unit,
-                    txtScan: Barcode,
-                    User_Serial_Key: dataUser[0].UserId,
-                    chxAll: chxAll,
-                    chxpair: chxpair,
-                    get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
-                    Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
-                    chxColor: dataColor.chxColor,
-                    rbtColor_A: dataColor.rbtColor_A,
-                    rbtColor_B: dataColor.rbtColor_B,
-                    rbtColor_C: dataColor.rbtColor_C,
-                    rbtColor_D: dataColor.rbtColor_D,
-                    rbtColor_E: dataColor.rbtColor_E,
-                    rbtColor_F: dataColor.rbtColor_F,
-                    rbtColor_G: dataColor.rbtColor_G,
-                    rbtColor_H: dataColor.rbtColor_H,
-                    rbtColor_O: dataColor.rbtColor_O,
-                    Check_ScanMore: false,
-                    get_Factory: dataUser[0].factoryName
-                }
-                axios.post(url, data, config).then(response => {
-                    const item = response.data;
-                    if (item.Barcode !== null) {
-                        const newItem = {
-                            _id: item.Barcode,
-                            Barcode: item.Barcode,
-                            Material_No: item.Material_No,
-                            Supplier: item.Supplier,
-                            Material_Name: item.Material_Name,
-                            Color: item.colorValue,
-                            Size: item.Size,
-                            QTY: item.QTY,
-                            Print_QTY: item.Print_QTY,
-                            Order_No: item.Order_No,
-                            Roll: item.Roll,
-                            Production: item.Production,
-                            Supplier_No: item.Supplier_No,
-                            Work_Order: item.Work_Order,
-                            Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY"),
-                            User_Serial_Key: item.User_Serial_Key,
-                            Value_Total: item.Value_Total,
-                            Material_Label_Serial: item.Material_Label_Serial,
-                        };
-                        dispatch(addItemArrayStockout(newItem))
-                        dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
-                        setScanQR(Barcode)
-                        // handleOpenConfirm('ok')
+
+            //Kho mẫu SG
+            if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+                barcodeToMaterial(Barcode).then(value => {
+                    const QTY_BOM = listMaterialBOM
+                        .filter((item: any) => item.MatNo === value.Material_No)
+                        .reduce(
+                            (accumulator: Decimal, currentValue: any) =>
+                                accumulator.plus(new Decimal(currentValue.Qty)),
+                            new Decimal(0)
+                        );
+
+                    const QTY_Da_Xuat = listMaterialStockout
+                        .filter((item: any) => item.Material_No === value.Material_No)
+                        .reduce(
+                            (accumulator: Decimal, currentValue: any) =>
+                                accumulator.plus(new Decimal(currentValue.QTY_Sample)),
+                            new Decimal(0)
+                        )
+                    
+                    
+                    const QTY_Xuat = (new Decimal(qtyout >= QTY ? Number(QTY) : qtyout))
+
+                    const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(QTY_Xuat).plus(QTY_Da_Xuat)))).toNumber()
+
+                    const checkBarcode = listMaterialBOM.some((item: any) => item.MatNo === value.Material_No)
+
+                    if (listMaterialBOM.length === 0) {
+                        handleOpenConfirm("no-list-bom")
                     }
-                    else {
-                        handleOpenConfirm('materialOut')
+                    else if (checkBarcode === false && value.Material_No !== null) {
+                        handleOpenConfirm("no-material")
                     }
-                }).finally(() => {
-                    setIsLoading(false)
-                    setDisable(false)
+                    else if (value?.Stock_In_Out_Status.toLowerCase().includes("in") && QTY_Dinh_Muc < 0) {
+                        handleOpenConfirm("no-stockout")
+                    }
+                    else if ( QTY_Xuat.toNumber() > 0 && listMaterialBOM.length > 0 && checkBarcode === true && value?.Stock_In_Out_Status.toLowerCase().includes("in")) {
+                        if (form === 'stockout') {
+
+                            setIsLoading(true)
+                            setDisable(true)
+                            const url = connect_string + 'api/btn_Save_Partial'
+                            const data = {
+                                rbtImport: false,
+                                rbtExport: true,
+                                txtQty_Input: qtyout >= QTY ? Number(QTY) : qtyout,
+                                Value_Barcode: Barcode,
+                                txtQty_Remain: calculateRemainingQty(),
+                                Value_Unit: Unit,
+                                txtScan: Barcode,
+                                User_Serial_Key: dataUser[0].UserId,
+                                chxAll: (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") ? chxPrint : chxAll,
+                                chxpair: chxpair,
+                                get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+                                Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
+                                chxColor: dataColor.chxColor,
+                                rbtColor_A: dataColor.rbtColor_A,
+                                rbtColor_B: dataColor.rbtColor_B,
+                                rbtColor_C: dataColor.rbtColor_C,
+                                rbtColor_D: dataColor.rbtColor_D,
+                                rbtColor_E: dataColor.rbtColor_E,
+                                rbtColor_F: dataColor.rbtColor_F,
+                                rbtColor_G: dataColor.rbtColor_G,
+                                rbtColor_H: dataColor.rbtColor_H,
+                                rbtColor_O: dataColor.rbtColor_O,
+                                Check_ScanMore: false,
+                                get_Factory: dataUser[0].factoryName,
+                                chxPrint: chxPrint
+                            }
+                            axios.post(url, data, config).then(response => {
+                                const item = response.data;
+                                if (item.Barcode !== null) {
+                                    const newItem = {
+                                        _id: item.Barcode,
+                                        Barcode: item.Barcode,
+                                        Material_No: item.Material_No,
+                                        Supplier: item.Supplier,
+                                        Material_Name: item.Material_Name,
+                                        Color: item.colorValue,
+                                        Size: item.Size,
+                                        QTY: item.QTY,
+                                        Print_QTY: item.Print_QTY,
+                                        Order_No: item.Order_No,
+                                        Roll: item.Roll,
+                                        Production: item.Production,
+                                        Supplier_No: item.Supplier_No,
+                                        Work_Order: item.Work_Order,
+                                        Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY"),
+                                        User_Serial_Key: item.User_Serial_Key,
+                                        Value_Total: item.Value_Total,
+                                        Material_Label_Serial: item.Material_Label_Serial,
+                                    };
+                                    // dispatch(addItemArrayStockout(newItem))
+                                    // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
+                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key,  PoNo?.PONO || PoNo, Article, QTY_BOM, KFJD, value.size)
+
+                                    setScanQR(Barcode)
+                                    // handleOpenConfirm('ok')
+                                }
+                                else {
+                                    handleOpenConfirm('materialOut')
+                                }
+                            }).finally(() => {
+                                setIsLoading(false)
+                                setDisable(false)
+                            })
+                        }
+                        // Nhập số lượng trong tem
+                        else {
+                            setIsLoading(true)
+                            setDisable(true)
+                            const remainingQty = new Decimal(QTY).plus(qtyout).toNumber();
+                            const url = connect_string + 'api/btn_Save_Partial'
+                            const data = {
+                                rbtImport: true,
+                                rbtExport: false,
+                                txtQty_Input: remainingQty >= Value_Total_Qty ? 0 : qtyout,
+                                Value_Barcode: Barcode,
+                                txtQty_Remain: qtyRemain,
+                                Value_Unit: Unit,
+                                txtScan: Barcode,
+                                User_Serial_Key: dataUser[0].UserId,
+                                chxAll: chxAll,
+                                get_version: dataUser[0].WareHouse,
+                                get_Factory: dataUser[0].factoryName
+
+                            }
+                            axios.post(url, data, config).then(response => {
+                                const item = response.data;
+                                if (item.Barcode !== null) {
+
+                                    const newItem = {
+                                        _id: item.Barcode,
+                                        Barcode: item.Barcode,
+                                        Material_No: item.Material_No,
+                                        Supplier: item.Supplier,
+                                        Material_Name: item.Material_Name,
+                                        Color: item.Color,
+                                        Size: item.Size,
+                                        QTY: item.QTY,
+                                        Print_QTY: item.Print_QTY,
+                                        Order_No: item.Order_No,
+                                        Roll: item.Roll,
+                                        Production: item.Production,
+                                        Supplier_No: item.Supplier_No,
+                                        Work_Order: item.Work_Order,
+                                        ngay: moment(item.Modify_Date).format("DD/MM/YYYY"),
+                                        User_Serial_Key: item.User_Serial_Key,
+                                        Value_Total: item.Value_Total,
+                                        Material_Label_Serial: item.Material_Label_Serial,
+                                    };
+                                    setQTY(newItem.QTY)
+                                    setValue_Total_Qty(value => new Decimal(value).minus(qtyout).toNumber())
+
+                                    // dispatch(addItemArrayStockout(newItem))
+                                    setScanQR(Barcode)
+                                    // handleOpenConfirm('ok')
+                                }
+                                else {
+                                    handleOpenConfirm('materialOut')
+                                }
+                            }).finally(() => {
+                                setIsLoading(false)
+                                setDisable(false)
+                            })
+                        }
+                    }
                 })
             }
-            // Nhập số lượng trong tem
+            // Kho bình thường
             else {
-                setIsLoading(true)
-                setDisable(true)
-                const remainingQty = new Decimal(QTY).plus(qtyout).toNumber();
-                const url = connect_string + 'api/btn_Save_Partial'
-                const data = {
-                    rbtImport: true,
-                    rbtExport: false,
-                    txtQty_Input: remainingQty >= Value_Total_Qty ? 0 : qtyout,
-                    Value_Barcode: Barcode,
-                    txtQty_Remain: qtyRemain,
-                    Value_Unit: Unit,
-                    txtScan: Barcode,
-                    User_Serial_Key: dataUser[0].UserId,
-                    chxAll: chxAll,
-                    get_version: dataUser[0].WareHouse,
-                    get_Factory: dataUser[0].factoryName
-
+                if (form === 'stockout') {
+                    setIsLoading(true)
+                    setDisable(true)
+                    const url = connect_string + 'api/btn_Save_Partial'
+                    const data = {
+                        rbtImport: false,
+                        rbtExport: true,
+                        txtQty_Input: qtyout >= QTY ? Number(QTY) : qtyout,
+                        Value_Barcode: Barcode,
+                        txtQty_Remain: calculateRemainingQty(),
+                        Value_Unit: Unit,
+                        txtScan: Barcode,
+                        User_Serial_Key: dataUser[0].UserId,
+                        chxAll: (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") ? chxPrint : chxAll,
+                        chxpair: chxpair,
+                        get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+                        Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
+                        chxColor: dataColor.chxColor,
+                        rbtColor_A: dataColor.rbtColor_A,
+                        rbtColor_B: dataColor.rbtColor_B,
+                        rbtColor_C: dataColor.rbtColor_C,
+                        rbtColor_D: dataColor.rbtColor_D,
+                        rbtColor_E: dataColor.rbtColor_E,
+                        rbtColor_F: dataColor.rbtColor_F,
+                        rbtColor_G: dataColor.rbtColor_G,
+                        rbtColor_H: dataColor.rbtColor_H,
+                        rbtColor_O: dataColor.rbtColor_O,
+                        Check_ScanMore: false,
+                        get_Factory: dataUser[0].factoryName,
+                        chxPrint: chxPrint
+                    }
+                    axios.post(url, data, config).then(response => {
+                        const item = response.data;
+                        if (item.Barcode !== null) {
+                            const newItem = {
+                                _id: item.Barcode,
+                                Barcode: item.Barcode,
+                                Material_No: item.Material_No,
+                                Supplier: item.Supplier,
+                                Material_Name: item.Material_Name,
+                                Color: item.colorValue,
+                                Size: item.Size,
+                                QTY: item.QTY,
+                                Print_QTY: item.Print_QTY,
+                                Order_No: item.Order_No,
+                                Roll: item.Roll,
+                                Production: item.Production,
+                                Supplier_No: item.Supplier_No,
+                                Work_Order: item.Work_Order,
+                                Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY"),
+                                User_Serial_Key: item.User_Serial_Key,
+                                Value_Total: item.Value_Total,
+                                Material_Label_Serial: item.Material_Label_Serial,
+                            };
+                            dispatch(addItemArrayStockout(newItem))
+                            dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
+                            setScanQR(Barcode)
+                            // handleOpenConfirm('ok')
+                        }
+                        else {
+                            handleOpenConfirm('materialOut')
+                        }
+                    }).finally(() => {
+                        setIsLoading(false)
+                        setDisable(false)
+                    })
                 }
-                axios.post(url, data, config).then(response => {
-                    const item = response.data;
-                    if (item.Barcode !== null) {
+                // Nhập số lượng trong tem
+                else {
+                    setIsLoading(true)
+                    setDisable(true)
+                    const remainingQty = new Decimal(QTY).plus(qtyout).toNumber();
+                    const url = connect_string + 'api/btn_Save_Partial'
+                    const data = {
+                        rbtImport: true,
+                        rbtExport: false,
+                        txtQty_Input: remainingQty >= Value_Total_Qty ? 0 : qtyout,
+                        Value_Barcode: Barcode,
+                        txtQty_Remain: qtyRemain,
+                        Value_Unit: Unit,
+                        txtScan: Barcode,
+                        User_Serial_Key: dataUser[0].UserId,
+                        chxAll: chxAll,
+                        get_version: dataUser[0].WareHouse,
+                        get_Factory: dataUser[0].factoryName
 
-                        const newItem = {
-                            _id: item.Barcode,
-                            Barcode: item.Barcode,
-                            Material_No: item.Material_No,
-                            Supplier: item.Supplier,
-                            Material_Name: item.Material_Name,
-                            Color: item.Color,
-                            Size: item.Size,
-                            QTY: item.QTY,
-                            Print_QTY: item.Print_QTY,
-                            Order_No: item.Order_No,
-                            Roll: item.Roll,
-                            Production: item.Production,
-                            Supplier_No: item.Supplier_No,
-                            Work_Order: item.Work_Order,
-                            ngay: moment(item.Modify_Date).format("DD/MM/YYYY"),
-                            User_Serial_Key: item.User_Serial_Key,
-                            Value_Total: item.Value_Total,
-                            Material_Label_Serial: item.Material_Label_Serial,
-                        };
-                        setQTY(newItem.QTY)
-                        setValue_Total_Qty(value => new Decimal(value).minus(qtyout).toNumber())
+                    }
+                    axios.post(url, data, config).then(response => {
+                        const item = response.data;
+                        if (item.Barcode !== null) {
 
-                        // dispatch(addItemArrayStockout(newItem))
-                        setScanQR(Barcode)
-                        // handleOpenConfirm('ok')
-                    }
-                    else {
-                        handleOpenConfirm('materialOut')
-                    }
-                }).finally(() => {
-                    setIsLoading(false)
-                    setDisable(false)
-                })
+                            const newItem = {
+                                _id: item.Barcode,
+                                Barcode: item.Barcode,
+                                Material_No: item.Material_No,
+                                Supplier: item.Supplier,
+                                Material_Name: item.Material_Name,
+                                Color: item.Color,
+                                Size: item.Size,
+                                QTY: item.QTY,
+                                Print_QTY: item.Print_QTY,
+                                Order_No: item.Order_No,
+                                Roll: item.Roll,
+                                Production: item.Production,
+                                Supplier_No: item.Supplier_No,
+                                Work_Order: item.Work_Order,
+                                ngay: moment(item.Modify_Date).format("DD/MM/YYYY"),
+                                User_Serial_Key: item.User_Serial_Key,
+                                Value_Total: item.Value_Total,
+                                Material_Label_Serial: item.Material_Label_Serial,
+                            };
+                            setQTY(newItem.QTY)
+                            setValue_Total_Qty(value => new Decimal(value).minus(qtyout).toNumber())
+
+                            // dispatch(addItemArrayStockout(newItem))
+                            setScanQR(Barcode)
+                            // handleOpenConfirm('ok')
+                        }
+                        else {
+                            handleOpenConfirm('materialOut')
+                        }
+                    }).finally(() => {
+                        setIsLoading(false)
+                        setDisable(false)
+                    })
+                }
             }
+
         }
         else {
             handleOpenConfirm('print-permission')
@@ -526,7 +728,13 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                             <Grid item xs={4} className='input_label'>
                                 <Typography className='_text'>{Barcode} </Typography>
                             </Grid>
-                            <Grid item xs={5} justifyContent={'flex-end'} display={'flex'}>
+                            <Grid item xs={4}>
+                                {
+                                    (dataUser[0].factoryName === 'LYV' && dataUser[0].WareHouse === "Sample") &&
+                                    <Typography className='textsize'>Định mức còn lại: <span className='_text'>{dinhMuc}</span> </Typography>
+                                }
+                            </Grid>
+                            <Grid item xs={1} justifyContent={'flex-end'} display={'flex'}>
                                 {isloading && <CircularProgress size={'24px'} color="info" />}
                             </Grid>
                             {/* Mã vật tư */}
@@ -601,17 +809,38 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                             </Grid>
                             <Grid item xs={2}>
                                 {/* Check tất cả */}
-                                <FormGroup>
-                                    <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxAll} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
-                                </FormGroup>
+                                {
+                                    (form === "stockout" && dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV")
+                                        ?
+                                        (
+                                            <></>
+                                        )
+                                        :
+                                        (
+                                            <FormGroup>
+                                                <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxAll} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
+                                            </FormGroup>
+
+                                        )
+                                }
+
                             </Grid>
                             <Grid item xs={1.5}>
                                 {
                                     // Check đôi
-                                    form === "stockout" &&
+                                    (form === "stockout" && dataUser[0].WareHouse !== "Sample") &&
                                     (
                                         <FormGroup>
                                             <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxpair} onChange={handlechxPair} />} label={t("chxPair")} />
+                                        </FormGroup>
+                                    )
+                                }
+                                {
+                                    // Check In
+                                    (form === "stockout" && dataUser[0].WareHouse === "Sample") &&
+                                    (
+                                        <FormGroup>
+                                            <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} checked={chxPrint} onChange={handlechxPrint} />} label={t("btnPrint")} />
                                         </FormGroup>
                                     )
                                 }
@@ -628,8 +857,13 @@ const ImportAndExport = ({ open, onClose, form, dataColor }: { open: any, onClos
                 {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={t("msgResual_Fail") as string} />}
-                {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}            </Box>
+                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={onPressCancel} open={openCofirm} onClose={onPressCancel} title={message} />}
+                {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}
+                {cofirmType === "no-list-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoBOM") as string} />}
+                {cofirmType === "no-material" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoMaterial") as string} />}
+                {cofirmType === "no-stockout" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={"Vật tư đã vượt định mức không thể xuất"} />}
+
+            </Box>
         </Modal >
     )
 }

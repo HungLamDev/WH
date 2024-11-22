@@ -42,6 +42,8 @@ import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
 import AccountingCardSole from "./screens/ReportScreen/AccountingCardSole";
+import DeliverySampleLYVScreen from "./screens/DeliveryScreen/DeliverySampleFormLYV";
+import HistoryDeliveryForm from "./screens/DeliveryScreen/DeliverySampleFormLYV/HistoryDeliveryForm";
 //#endregion
 
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {
@@ -91,6 +93,8 @@ function App() {
           <Route path={"/inventory-print"} element={<PrintInventoryScreen />}></Route>
           <Route path={"/shelve-code"} element={<PrintShelveCode />}></Route>
           <Route path={"/delivery-sample"} element={<DeliverySampleScreen />}></Route>
+          <Route path={"/delivery-sample-lyv"} element={<DeliverySampleLYVScreen />}></Route>
+          <Route path={"/history-delivery-sample-lyv"} element={<HistoryDeliveryForm />}></Route>
           <Route path={"/warehouse"} element={<WareHouseF />}></Route>
           <Route path={"/material-detail"} element={<MaterialDetailForm />}></Route>
           <Route path={"/permission-print"} element={<PermissionPrintScreen />}></Route>

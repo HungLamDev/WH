@@ -627,7 +627,7 @@ const StampPrintScreen = () => {
     }
 
     const handlePrintOK = () => {
-        handleOpenConfirm('print-success')
+        handleCloseConfirm()
         setIsLoading(true)
         setDisable(true)
         setDataInRowUps([])
@@ -651,16 +651,24 @@ const StampPrintScreen = () => {
             get_version: dataUser[0].WareHouse,
             get_Factory: dataUser[0].factoryName
         }))
-        axios.post(url, dataprint, config).then(response => {
-            if (response.status == 200) {
-                // handleOpenConfirm('print-success')
-            }
-        }).catch(() => {
-            handleOpenConfirm('print-permission')
-        }).finally(() => {
-            setIsLoading(false)
-            setDisable(false)
-        })
+
+        if(isApi === true){
+            setIsApi(false)
+            axios.post(url, dataprint, config).then(response => {
+                if (response.status == 200) {
+                    // handleOpenConfirm('print-success')
+                }
+            }).catch(() => {
+                handleOpenConfirm('print-permission')
+                setIsLoading(false)
+                setDisable(false)
+            }).finally(() => {
+                setIsLoading(false)
+                setDisable(false)
+                setIsApi(true)
+            })
+        }
+      
     }
 
     const handleOrderWordKeyDown = (event: any) => {

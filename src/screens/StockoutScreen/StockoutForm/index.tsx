@@ -195,7 +195,7 @@ const StockoutScreen = () => {
     const [openModal, setOpenModal] = useState(false)
     const [listChx, setListChx] = useState([])
     const [title, setTitle] = useState<any>('')
-
+    const [message, setMessage] = useState('')
     const dataModal = {
         Value_Remain: stockout ? stockout[0].Value_Qty : "",
         chxColor: chcolor, // nếu có check xuất theo màu thì bằng true khong thì false
@@ -315,7 +315,8 @@ const StockoutScreen = () => {
         ) {
             if (debouncedSearchTerm.length >= 15) {
                 checkMaterial(debouncedSearchTerm).then(result => {
-                    if (result == true) {
+                    if (result !== "") {
+                        setMessage(result)
                         handleOpenConfirm('notify-reject-material')
                     }
                     else {
@@ -786,7 +787,7 @@ const StockoutScreen = () => {
                 {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
                 {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); setMode(false); }} />}
                 {cofirmType === 'materialOut' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} />}
-                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgResual_Fail") as string} />}
+                {cofirmType === 'notify-reject-material' && <ModalCofirm showOk={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={message} />}
                 {cofirmType === 'no-authorize' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblTitleNoAuthorize") as string} />}
                 {cofirmType === 'confirm-Material' && <FormConfirmMaterial data={[]} open={openCofirm} onClose={handleCloseConfirm} qrcodeScan={""} />}
                 {/* <FormConfirmMaterial onPressOK={handleCloseConfirm} open={true} onClose={handleCloseConfirm} title={t("msgExistingMaterialExport") as string} /> */}

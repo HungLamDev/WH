@@ -131,7 +131,7 @@ const Menu = () => {
     {
       title: t("btnDelivery"),
       icon: deliveryIcon,
-      path: dataUser[0].WareHouse === 'Sample' ? "/delivery-sample" : "/delivery",
+      path: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName !== 'LYV') ? "/delivery-sample" : (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV')? "/delivery-sample-lyv" : "/delivery",
       modal: false,
       modalName: '',
     },
