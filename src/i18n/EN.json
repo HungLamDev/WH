@@ -424,6 +424,11 @@
     "lblNoStockOut": "Supplies have exceeded the quota and cannot be exported",
     "lblConfirmCreateSlip": "Confirm creation of material delivery note",
     "lblCreateSlipError": "Failed to create the export slip. Please try again.",
-    "btnCreateBOM": "Create BOM"
+    "btnCreateBOM": "Create BOM",
+    "btnCreateSlipSucess": "Export slip created successfully",
+    "btnCreateBOMError": "Failed to create BOM",
+    "lblKFJDAndJiJie": "PoNo must match the stage and season",
+    "lblExistMergeno": "There is already a PoNo containing Merge No",
+    "lblNoAccountERP": "Your account is not yet available in ERP. Please create an ERP account to perform this function."
 
 }

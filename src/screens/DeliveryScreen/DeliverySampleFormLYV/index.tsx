@@ -31,12 +31,13 @@ import { clearUserERP } from '../../../redux/UserERP';
 import EnterIcon from '../../../assets/enter.png'
 import TableOrigin from '../../../components/TableOrigin';
 import TableOriginEdit from '../../../components/TableOriginEdit';
-import { barcodeToMaterial, isEmptyOrNull } from '../../../utils/api_global';
+import { barcodeToMaterial, handleCheckUserERP, isEmptyOrNull } from '../../../utils/api_global';
 import { random, result } from 'lodash';
 import MyTableNew from '../../../components/MyTableNew';
 import Statistics from '../../StockinScreenv2/StatisticsForm';
 import ConfirmDelivery from '../../../components/ConfirmDelivery';
 import CreateMergeBom from './CreateMergeBOMForm';
+import ReturnStamp from '../../../components/ReturnStamp';
 
 //#endregion
 
@@ -114,7 +115,15 @@ const DeliverySampleLYVScreen = () => {
     },
     {
       field: "KFJD",
-      headerName: "Giai đoạn",
+      headerName: "Stage",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "LLNO",
+      headerName: t("dcpOrder_No_Out"),
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -130,7 +139,7 @@ const DeliverySampleLYVScreen = () => {
     },
     {
       field: "Modify_Date",
-      headerName: "Modify Date",
+      headerName: t("dcmModify_Date"),
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -272,6 +281,7 @@ const DeliverySampleLYVScreen = () => {
   const [article, setArticle] = useState("")
   const [kfjd, setKFJD] = useState("")
   const [mergeNo, setMerNo] = useState("")
+  const [isOpenSidebar, setIsOpenSibar] = useState(true)
   const sidebarRef = useRef<SidebarRef>(null);
   //#endregion
 
@@ -296,26 +306,13 @@ const DeliverySampleLYVScreen = () => {
     setOpenCofirm(false)
   }
 
+
+
   const handleQRcode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQRCode(event.target.value);
   };
 
   //#endregion
-
-  //#region useEffect
-  // useEffect(() => {
-  //   if (dataUserERP.length > 0) {
-  //     setOpenERPLogin(false)
-  //   }
-  //   else {
-  //     setOpenERPLogin(true)
-
-  //   }
-
-  // }, [dataUserERP])
-  //#endregion
-
-  //#region Func Logic
 
   //#region useDebounced
   const debouncedSearchTerm = useDebounced(qrcode, 200);
@@ -328,72 +325,7 @@ const DeliverySampleLYVScreen = () => {
 
   //#endregion
 
-
-  const handleDoubleClick = (params: any, item: any) => {
-    setModalCofirm(true)
-    setQRCodeDelete(item.Barcode)
-    setMaterial_Label_Serial(item.Material_Label_Serial)
-  }
-
-  const RowClick = (params: any, item: any) => {
-    setValueTotal(item.QTY)
-  }
-
-  const handleOK = () => {
-    setDisable(true)
-    const url = connect_string + "api/StockOut_CellDoubleClick"
-    const data = {
-      Value_Barcode: qrcodedelte,
-      Value_Material_Key: Material_Label_Serial,
-      User_Serial_Key: dataUser[0].UserId,
-      get_version: dataUser[0].WareHouse
-
-    }
-    axios.post(url, data, config).then(response => {
-      if (response.data == true) {
-        setModalCofirm(false)
-        const result = ArrayStockout.find((item: any) => item.Barcode === qrcodedelte)
-        if (stockout && result.Material_No === stockout[0].Value_Material) {
-          const cal = String(Number(TotalQtyOut) - Number(result.QTY));
-          dispatch(addTotalQtyOut(cal))
-        }
-        dispatch(removeArrayStockoutByBarcode(qrcodedelte))
-      }
-      else {
-        handleOpenConfirm('no-authorize')
-        setModalCofirm(false)
-      }
-    }).finally(() => {
-      setDisable(false)
-    })
-  }
-
-  function checkMaterial(barcode: string): Promise<any> {
-
-    const url = connect_string + "api/QC_Check_Marterial";
-    const data = {
-      user_id: dataUser[0].UserId,
-      Barcode: barcode,
-      Factory: dataUser[0].factoryName
-    };
-
-    return new Promise((resolve, reject) => {
-      setIsLoading(true)
-      axios.post(url, data, config)
-        .then(response => {
-          resolve(response.data); // Trả về dữ liệu từ response
-          setTitle(response.data)
-          setIsLoading(false)
-        })
-        .catch(error => {
-
-          handleOpenConfirm('network-error');
-          reject(error); // Reject với lỗi nếu có lỗi xảy ra
-          setIsLoading(false)
-
-        })
-    });
-  }
+  //#region Func Logic
 
   const handleOutAll = (barcode: string) => {
     setDisable(true)
@@ -466,7 +398,7 @@ const DeliverySampleLYVScreen = () => {
                 Value_Total: item.Value_Total,
                 Material_Label_Serial: item.Material_Label_Serial,
               };
-              Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key,  Po_No?.PONO || Po_No, article, QTY_BOM, kfjd, value.size)
+              Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, Po_No?.PONO || Po_No, article, QTY_BOM, kfjd, value.size)
               // dispatch(addItemArrayStockout(newItem));
               // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
               setQRCode('')
@@ -559,11 +491,6 @@ const DeliverySampleLYVScreen = () => {
       setIsLoading(false)
     })
   }
-
-  const handleLogout = () => {
-    dispatch(clearUserERP())
-  }
-
 
   const handleRefresh = () => {
     if (sidebarRef.current) {
@@ -662,10 +589,8 @@ const DeliverySampleLYVScreen = () => {
           // }
 
           setListMaterialStockout((prev: any[]) => addOrUpdateMaterialStockout(prev, newItem));
-          return true
         }
       })
-      return false
     }
 
   //Tô màu dòng trong bảng------------------------------------------
@@ -713,8 +638,6 @@ const DeliverySampleLYVScreen = () => {
 
   //----------------------------------------------------------------
 
-  //#endregion
-
   const handleCreateSlip = (value: any) => {
     handleCloseConfirm()
     if (
@@ -743,6 +666,7 @@ const DeliverySampleLYVScreen = () => {
     }
   }
 
+  //#endregion
   return (
     <FullScreenContainerWithNavBar
       hidden={true}
@@ -754,6 +678,7 @@ const DeliverySampleLYVScreen = () => {
       cancelRequest={cancelRequest}>
       <Stack style={{ height: '100%', borderTop: '1px solid rgba(255,255,255, 0.5)', overflow: 'hidden' }}>
         <Stack style={{ position: 'relative', height: '100%', }}>
+          {/* Phần Merge BOM */}
           <Sidebar
             column={columnsBOM}
             PO_NO={(value: any) => setPo_No(value)}
@@ -763,6 +688,7 @@ const DeliverySampleLYVScreen = () => {
             ref={sidebarRef}
             KFJD={(value: any) => setKFJD(value)}
             MergeNo={(value: any) => setMerNo(value)}
+            isOpenSidebar={(value: any) => setIsOpenSibar(value)}
           />
           <div className="main-content">
             <Box
@@ -770,13 +696,14 @@ const DeliverySampleLYVScreen = () => {
               style={{ flexShrink: 0, minHeight: 'calc(80dvh/ 3)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
             >
               <Stack direction={'row'} height={'100%'}>
-                <Stack direction={'row'} width={'100%'} padding={0.5} height={'100%'} alignItems={'center'}>
-                  <Stack padding={0.5} width={'60%'}>
+                <Stack direction={'row'} width={'100%'} padding={0.5} height={'100%'} alignItems={'flex-end'}>
+                  <Stack padding={0.5} width={'100%'} gap={2}>
                     <Grid container >
                       <Grid item xs={12} display={'flex'}>
+                        {/* Merge No */}
                         <span className='textsize' style={{ color: 'orangered' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
                       </Grid>
-                      <Grid item xs={11}>
+                      <Grid item xs={isOpenSidebar === true ? 10 : 6}>
                         {/* Scan xuất */}
                         <InputFieldV1
                           xsLabel={2}
@@ -791,9 +718,7 @@ const DeliverySampleLYVScreen = () => {
                         {isLoading && <CircularProgress size={'24px'} color='info' />}
                       </Grid>
                     </Grid>
-                  </Stack>
-                  <Stack width={'40%'}>
-                    <Grid container direction={'row'} gap={'10px'} justifyContent={'center'} >
+                    <Grid container direction={'row'} gap={'10px'} justifyContent={isOpenSidebar === true ? 'center' : 'flex-start'} >
                       {/* Xuất chi tiết */}
                       <Grid item display={'flex'} alignItems={'center'} >
                         <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={disable} />
@@ -801,40 +726,18 @@ const DeliverySampleLYVScreen = () => {
                       </Grid>
 
                       <Grid item display={'flex'} >
+                        {/* Thống kê */}
                         <MyButton height='2rem' name={t("btnStatistical")} onClick={() => handleOpen('Statistics')} disabled={disable} />
                         {modalName === 'Statistics' && <Statistics open={open} onClose={handleClose} materialNo='' />}
+                      </Grid>
+                      <Grid item display={'flex'} >
+                        {/* Tìm tem */}
+                        <MyButton height='2rem' name={"Tem xuất"} onClick={() => handleOpen('ReturnStamp')} disabled={disable} />
+                        {modalName === 'ReturnStamp' && <ReturnStamp open={open} onClose={handleClose} />}
                       </Grid>
                     </Grid>
                   </Stack>
                 </Stack>
-                {/* <div style={{
-                  width: '20%',
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  alignItems: 'flex-start',
-                  paddingTop: '10px',
-                }}>
-                  <div className='user-erp' style={{
-                    border: '1px solid white',
-                    padding: '2px',
-                    borderRadius: '10px',
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                    gap: '10px',
-                    // width:'100%'
-                  }}>
-                    <span className='textsize' style={{ color: 'lightblue', fontSize: '15px', }}>
-                      ERP: {dataUserERP && dataUserERP[0]?.UserERP}
-                    </span>
-                    <LogoutIcon
-                      sx={{
-                        cursor: 'pointer',
-                        fontSize: '25px'
-                      }}
-                      onClick={handleLogout} />
-                  </div>
-                </div> */}
               </Stack>
             </Box>
             <Stack sx={{ height: '100%' }}>
@@ -852,18 +755,18 @@ const DeliverySampleLYVScreen = () => {
                 />
               </Stack>
               <Stack alignItems={'flex-end'} paddingRight={'10px'}>
+                {/* Tạo phiếu */}
                 <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
               </Stack>
             </Stack>
 
           </div>
         </Stack>
-        {/* <ERPLogin open={openERPLogin} onClose={() => setOpenERPLogin(false)} /> */}
         {cofirmType === "no-list-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoBOM") as string} />}
         {cofirmType === "no-material" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoMaterial") as string} />}
         {cofirmType === "no-stockout" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoStockOut") as string} />}
-        {cofirmType === "insert-slip-sucess" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={"Tạo phiếu xuất thành công"} />}
-        {cofirmType === "insert-slip-error" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={"Tạo phiếu xuất thất bại"} />}
+        {cofirmType === "insert-slip-sucess" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateSlipSucess") as string} />}
+        {cofirmType === "insert-slip-error" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblCreateSlipError") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
       </Stack>
     </FullScreenContainerWithNavBar>
@@ -877,7 +780,8 @@ interface SidebarProps {
   listMaterialStockOut: any,
   Article: any,
   KFJD: any,
-  MergeNo: any
+  MergeNo: any,
+  isOpenSidebar: any
 }
 
 interface SidebarRef {
@@ -885,12 +789,12 @@ interface SidebarRef {
   refreshMaterial_Stock_Out_Sample: () => void;
 }
 
-
 //#region Tạo BOM
 const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
-  const { column, PO_NO, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo } = props
+  const { column, PO_NO, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, isOpenSidebar } = props
   const { t } = useTranslation();
 
+  //#region Variable
   const [isOpen, setIsOpen] = useState(true);
   const [openCreateBOM, setOpenCreateBOM] = useState(false);
   const [valueAutocomplete, setValueAutocomplete] = React.useState<any>('');
@@ -901,7 +805,9 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [disable, setDisable] = useState(false)
   const [infoPO, setInfoPO] = useState<any>({})
   const [listWH, setListWH] = useState<any[]>([])
+  //#endregion
 
+  //#region ref
   useImperativeHandle(ref, () => ({
     refreshData,
     refreshMaterial_Stock_Out_Sample
@@ -914,11 +820,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const refreshMaterial_Stock_Out_Sample = () => {
     get_Material_Stock_Out_Sample(valueAutocomplete?.PONO || valueAutocomplete)
   };
+  //#endregion
 
 
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
-  const dataUserERP = useSelector((state: any) => state.UserERP.user);
   //#endregion
 
   const handlePoNoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -934,52 +840,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }, [debouncedSearchTerm]);
   //#endregion
 
-  //#region Tạo BOM nghỉ xài
-  // const createMergeBOM = () => {
-  //   if (testNo !== "") {
 
-  //     setIsLoading(true)
-  //     setDisable(true)
-
-  //     const url = connect_string + "api/Create_Merge_Bom"
-  //     const data = {
-  //       Factory: dataUser[0].factoryName,
-  //       Ware_House: dataUser[0].WareHouse,
-  //       User_WH: dataUser[0].UserId,
-  //       User_ERP: dataUserERP[0].UserERP,
-  //       Test_NO: testNo
-  //     }
-
-  //     axios.post(url, data).then(res => {
-  //       if (res.data.length > 0) {
-  //         setListSampleOrder(res.data)
-  //         setTestNo("")
-  //         setValueAutocomplete(res?.data[0]?.YPDH)
-  //         YPDH(res?.data[0]?.YPDH)
-  //         getDataWaiting(res?.data[0]?.YPDH)
-  //       }
-  //     }).finally(() => {
-  //       setIsLoading(false)
-  //       setDisable(false)
-  //     })
-  //   }
-  // }
-  //#endregion
-
-
-  // const memoizedValue = useMemo(() => {
-  //   // Tính toán giá trị cần memoize
-  //   console.log(listBOMFilter)
-
-  //   if(listBOMFilter.length > 0){
-  //     return setListDataWaiting(listBOMFilter)
-  //   }
-
-  // }, [listBOMFilter]);
-
-
+  //#region Func Logic
   const getDataWaiting = (value: any) => {
     if (value !== '') {
+      setListDataWaiting([])
       setIsLoading(true)
       setDisable(true)
       getInfoPO(value)
@@ -1033,6 +898,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }
 
   const get_Material_Stock_Out_Sample = (Po_No: any) => {
+    listMaterialStockOut([])
     setIsLoading(true)
     setDisable(true)
     const url = connect_string + "api/get_Material_Stock_Out_Sample"
@@ -1064,6 +930,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }
 
   const getInfoPO = (Po_No: string) => {
+    setInfoPO("")
+    Article("")
+    KFJD("")
+    MergeNo("")
+
     setIsLoading(true)
     setDisable(true)
     const url = connect_string + "api/get_info_pono"
@@ -1084,9 +955,12 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }
 
   const getDataWaitingAndgetInfoPO = (Po_No: any) => {
-    setIsLoading(true)
-    setDisable(true)
-    Promise.all([getDataWaiting(Po_No?.PONO || Po_No), getInfoPO(Po_No?.PONO || Po_No), get_Material_Stock_Out_Sample(Po_No?.PONO || Po_No)])
+
+    Promise.all([getDataWaiting(Po_No?.PONO || Po_No), get_Material_Stock_Out_Sample(Po_No?.PONO || Po_No)])
+      .then(() => {
+        setIsLoading(true)
+        setDisable(true)
+      })
       .finally(() => {
         setIsLoading(false)
         setDisable(false)
@@ -1121,6 +995,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   // Hàm để chuyển đổi trạng thái sidebar
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+    isOpenSidebar(!isOpen)
   };
 
   const handleClean = () => {
@@ -1128,6 +1003,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     listMaterialBOM([])
     listMaterialStockOut([])
   }
+
+  //#endregion
 
   //Tô màu dòng trong bảng------------------------------------------
   const paintingRow = (item: any, row: any) => {
@@ -1151,7 +1028,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       <button className="toggle-button" onClick={toggleSidebar}>
         {isOpen ? <SkipPreviousIcon color='action' /> : <SkipNextIcon color='action' />}
       </button>
-      {!isOpen &&
+      {
+        !isOpen &&
         (
           <div style={{
             position: 'absolute',
@@ -1172,15 +1050,19 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             <Stack width={'100%'} padding={0.5}>
               <Grid container spacing={1} justifyContent={'center'}>
                 <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+                  {/* Article */}
                   <span className='textsize' style={{ color: 'orangered' }}> {infoPO?.ARTICLE ? "Article: " + infoPO.ARTICLE : ""}</span>
                 </Grid>
                 <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+                  {/* Stage */}
                   <span className='textsize' style={{ color: 'orangered' }}>{infoPO?.KFJD ? "Stage: " + infoPO.KFJD : ""}</span>
                 </Grid>
                 <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+                  {/* Pairs */}
                   <span className='textsize' style={{ color: 'orangered' }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
                 </Grid>
                 <Grid item xs={6} display={'flex'}>
+                  {/* Quét PO */}
                   <InputFieldV1
                     xsLabel={4}
                     xsInput={8}
@@ -1190,28 +1072,22 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     handle={handlePoNoChange}
                   />
                 </Grid>
-                {/* <Grid item xs={1} display={'flex'}>
-
-                  <IconButton disabled={disable} onClick={createMergeBOM}>
-                    <img src={EnterIcon} alt="enter" width={"100%"} height={"30px"} />
-                  </IconButton>
-                </Grid> */}
                 <Grid container item xs={6} display={'flex'} alignItems={'center'}>
+                  {/* List PO */}
                   <Grid item display={'flex'} xs={3}>
                     <span className='textsize'>PO NO</span>
                   </Grid>
                   <Grid item display={'flex'} xs={9}>
                     <Autocomplete
-                      value={valueAutocomplete}
+                      value={valueAutocomplete?.PONO || valueAutocomplete}
                       onChange={(event: any, newValue: any | null) => {
-                        setValueAutocomplete(newValue);
-                        PO_NO(newValue);
-                        getDataWaitingAndgetInfoPO(newValue)
+                        setValueAutocomplete(newValue?.PONO || newValue);
+                        PO_NO(newValue?.PONO || newValue);
+                        getDataWaitingAndgetInfoPO(newValue?.PONO || newValue)
                       }}
                       onInputChange={(event, newInputValue: any) => {
-                        setValueAutocomplete(newInputValue);
-                        PO_NO(newInputValue);
-
+                        setValueAutocomplete(newInputValue?.PONO || newInputValue);
+                        PO_NO(newInputValue?.PONO || newInputValue);
                       }}
 
                       freeSolo
@@ -1287,21 +1163,24 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
                 <Grid container item xs={12} justifyContent={'center'} gap={"20px"}>
                   <Grid item display={'flex'}>
+                    {/* Nút tìm kiếm */}
                     <MyButton height='2rem' name={t('btnSearch')} onClick={() => getDataWaitingAndgetInfoPO(valueAutocomplete)} disabled={disable} />
                   </Grid>
                   <Grid item display={'flex'}>
+                    {/* Nút làm mới */}
                     <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={disable} />
                   </Grid>
-                  <Grid item display={'flex'}>
+                  {/* <Grid item display={'flex'}>
                     <MyButton height='2rem' name={t('btnExcel')} onClick={undefined} disabled={disable} />
-                  </Grid>
+                  </Grid> */}
                   <Grid item display={'flex'}>
+                    {/* Nút tạo BOM */}
                     <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={disable} />
-                    { openCreateBOM &&  <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)}/>} 
+                    {openCreateBOM && <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)} />}
                   </Grid>
-                  <Grid item display={'flex'} alignItems={'center'}>
+                  {/* <Grid item display={'flex'} alignItems={'center'}>
                     {isLoading && <CircularProgress size={'24px'} color='info' />}
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Grid>
             </Stack>

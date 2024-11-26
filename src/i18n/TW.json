@@ -422,6 +422,10 @@
     "lblNoStockOut": "超过限制的材料不能出口",
     "lblConfirmCreateSlip": "确认创建物料交货单",
     "lblCreateSlipError": "生成出库单失败。请重试。",
-    "btnCreateBOM": "创建物料清单"
-
+    "btnCreateBOM": "创建物料清单",
+    "btnCreateSlipSucess": "出库单创建成功",
+    "btnCreateBOMError": "创建物料清单失败",
+    "lblKFJDAndJiJie": "PO号必须与阶段和季节匹配",
+    "lblExistMergeno": "已有包含Merge No的PoNo",
+    "lblNoAccountERP": "您的账户尚未在ERP中注册。请创建ERP账户以执行此功能。"
 }

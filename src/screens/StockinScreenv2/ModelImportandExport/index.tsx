@@ -333,8 +333,8 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
                                 accumulator.plus(new Decimal(currentValue.QTY_Sample)),
                             new Decimal(0)
                         )
-                    
-                    
+
+
                     const QTY_Xuat = (new Decimal(qtyout >= QTY ? Number(QTY) : qtyout))
 
                     const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(QTY_Xuat).plus(QTY_Da_Xuat)))).toNumber()
@@ -350,7 +350,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
                     else if (value?.Stock_In_Out_Status.toLowerCase().includes("in") && QTY_Dinh_Muc < 0) {
                         handleOpenConfirm("no-stockout")
                     }
-                    else if ( QTY_Xuat.toNumber() > 0 && listMaterialBOM.length > 0 && checkBarcode === true && value?.Stock_In_Out_Status.toLowerCase().includes("in")) {
+                    else if (QTY_Xuat.toNumber() > 0 && listMaterialBOM.length > 0 && checkBarcode === true && value?.Stock_In_Out_Status.toLowerCase().includes("in")) {
                         if (form === 'stockout') {
 
                             setIsLoading(true)
@@ -408,7 +408,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
                                     };
                                     // dispatch(addItemArrayStockout(newItem))
                                     // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
-                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key,  PoNo?.PONO || PoNo, Article, QTY_BOM, KFJD, value.size)
+                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PoNo?.PONO || PoNo, Article, QTY_BOM, KFJD, value.size)
 
                                     setScanQR(Barcode)
                                     // handleOpenConfirm('ok')
@@ -758,12 +758,21 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
                                 </Typography>
                             </Grid>
                             {/* Tên vật tư */}
-                            <Grid item xs={3}>
-                                <Typography className='textsize'>{t("lblMaterial_Name") as string}</Typography>
+                            <Grid item xs={3} >
+                                <Typography 
+                                    className='textsize'
+                                >
+                                    {t("lblMaterial_Name") as string}
+                                </Typography>
                             </Grid>
                             {/* Chỗ hiện tên vật tư */}
                             <Grid item xs={4} className='input_label' >
-                                <Typography className='_text' overflow={'hidden'} textOverflow={'ellipsis'}>{MaterialName} </Typography>
+                                <Typography sx={{
+                                    display: '-webkit-box',
+                                    overflow: 'hidden',
+                                    WebkitBoxOrient: 'vertical',
+                                    WebkitLineClamp: 3, // Giới hạn số dòng
+                                }} className='_text' overflow={'hidden'} textOverflow={'ellipsis'}>{MaterialName} </Typography>
                             </Grid>
                             {/* Số lượng */}
                             <Grid item xs={5} >
@@ -848,7 +857,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
 
                             <Grid item xs={1.5} display={'flex'}>
                                 {/* Nút lưu */}
-                                <MyButton name={t("btnSave") as string} onClick={SavePartial} disabled={disable} />
+                                <MyButton height='2rem' name={t("btnSave") as string} onClick={SavePartial} disabled={disable} />
                             </Grid>
                         </Grid>
                     </Stack>

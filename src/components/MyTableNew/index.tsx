@@ -46,7 +46,6 @@ const MyTableNew = (props: TableCheckBoxProps) => {
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
     const [selectAll, setSelectAll] = useState(false);
-
     useEffect(() => {
         setSelected([])
         const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;

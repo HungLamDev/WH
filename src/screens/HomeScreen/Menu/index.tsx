@@ -46,6 +46,8 @@ import { useSelector } from "react-redux";
 import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
 import { year } from "../../LoginScreen/index.tsx";
 import { registerSW } from 'virtual:pwa-register'
+import { handleCheckUserERP } from "../../../utils/api_global.ts";
+import ModalCofirm from "../../../components/ModalConfirm/index.tsx";
 
 //#endregion
 
@@ -93,7 +95,20 @@ const Menu = () => {
   const [date, setDate] = useState(new Date());
   const [load, setLoad] = useState(false);
   const [ctime, setCtime] = useState(new Date().toLocaleTimeString('vi-VN'));
+  const [cofirmType, setCofirmType] = useState('')
+  const [openCofirm, setOpenCofirm] = useState(false)
   //#endregion
+
+  const handleCloseConfirmERP = () => {
+    setCofirmType('')
+    setOpenCofirm(false)
+    navigate("/")
+  }
+  const handleOpenConfirm = (confirmName: string) => {
+    setCofirmType(confirmName)
+    setOpenCofirm(true)
+  }
+
 
   //#region List Data
 
@@ -131,7 +146,7 @@ const Menu = () => {
     {
       title: t("btnDelivery"),
       icon: deliveryIcon,
-      path: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName !== 'LYV') ? "/delivery-sample" : (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV')? "/delivery-sample-lyv" : "/delivery",
+      path: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName !== 'LYV') ? "/delivery-sample" : (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV') ? "/delivery-sample-lyv" : "/delivery",
       modal: false,
       modalName: '',
     },
@@ -351,11 +366,29 @@ const Menu = () => {
       point: title,
       get_version: dataUser[0].WareHouse
     }
-    setShowPage(false);
-    setTimeout(() => {
-      navigate(path);
-    }, 1400);
-    axios.post(url, data, config)
+    // bắt user phải tồn tại ERP với kho mẫu LYV
+    if (path === "/delivery-sample-lyv") {
+      handleCheckUserERP(dataUser[0].UserId).then(result => {
+        if (result === false) {
+          handleOpenConfirm("no-account-erp")
+        }
+        else {
+          setShowPage(false);
+          setTimeout(() => {
+            navigate(path);
+          }, 1400);
+          axios.post(url, data, config)
+        }
+      })
+    }
+    // các chức năng bình thường
+    else {
+      setShowPage(false);
+      setTimeout(() => {
+        navigate(path);
+      }, 1400);
+      axios.post(url, data, config)
+    }
   }
   const handleOpen = (name: any) => {
     setModalName(name);
@@ -521,6 +554,7 @@ const Menu = () => {
           <img src={!showPage ? Load : ''} style={{ width: 500 }} />
         </div>
       )}
+      {cofirmType === "no-account-erp" && <ModalCofirm showCancel={false} open={openCofirm} onPressOK={handleCloseConfirmERP} title={t("lblNoAccountERP") as string} />}
 
     </Stack>
   );

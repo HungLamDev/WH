@@ -1,12 +1,16 @@
 import { Box, CircularProgress, Grid, IconButton, Modal, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BiArrowBack } from "react-icons/bi";
-import { TbListSearch } from "react-icons/tb";
 import MyButton from "../../../../components/MyButton";
 import { useEffect, useState } from "react";
 import InputFieldV1 from "../../../../components/InputField/index_new";
 import MyTableNew from "../../../../components/MyTableNew";
 import useDebounced from "../../../../components/CustomHook/useDebounce";
+import { connect_string } from "../../../LoginScreen/ChooseFactory";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import moment from "moment";
+import ModalCofirm from "../../../../components/ModalConfirm";
 
 interface CreateMergeBomProps {
     title?: string,
@@ -18,6 +22,7 @@ interface CreateMergeBomProps {
 
 const CreateMergeBom = (props: CreateMergeBomProps) => {
 
+    //#region columnHeader
     const columns: any[] = [
         {
             field: "Po_No",
@@ -25,7 +30,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             align: "center",
             headerAlign: 'center',
             width: 180,
-
         },
         {
             field: "Article",
@@ -33,7 +37,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             align: "center",
             headerAlign: 'center',
             width: 150,
-
         },
         {
             field: "KFJD",
@@ -41,7 +44,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             align: "center",
             headerAlign: 'center',
             width: 150,
-
         },
         {
             field: "JiJie",
@@ -54,14 +56,18 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             headerName: "YPDH",
             align: "center",
             headerAlign: 'center'
-
         },
         {
             field: "User_ID",
             headerName: "User ID",
             align: "center",
             headerAlign: 'center'
-
+        },
+        {
+            field: "YPZLBH",
+            headerName: "Merge No",
+            align: "center",
+            headerAlign: 'center'
         },
         {
             field: "Modify_Date",
@@ -69,12 +75,18 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             align: "center",
             headerAlign: 'center',
             width: 150,
-
         },
     ];
+    //#endregion
 
     const { title, open, onClose, onPressOK, showOk = true } = props
     const { t } = useTranslation();
+
+    //#region useSelector
+    const dataUser = useSelector((state: any) => state.UserLogin.user);
+    //#endregion
+
+    //#region style
     const style = {
         position: 'absolute',
         top: '50%',
@@ -89,27 +101,157 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         display: 'flex',
         flexDirection: 'column'
     };
+    //#endregion
+
+    //#region Variable
     const [disable, setDisable] = useState(false)
     const [valueScan, setValueScan] = useState("")
+    const [itemRow, setItemRow] = useState<any>({})
+    const [data, setData] = useState<any[]>([])
+    const [mergeNo, setMergeNo] = useState("")
+    const [cofirmType, setCofirmType] = useState('')
+    const [openCofirm, setOpenCofirm] = useState(false)
+    //#endregion
+
+    //#region handleOnChange
+
+    const handleOpenConfirm = (confirmName: string) => {
+        setCofirmType(confirmName)
+        setOpenCofirm(true)
+    }
+
+    const handleCloseConfirm = () => {
+        setCofirmType('')
+        setOpenCofirm(false)
+    }
 
     const handleValueScanChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValueScan(event.target.value);
     };
 
+    const handleMergeNoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setMergeNo(event.target.value);
+    };
+    //#endregion
+
     //#region useDebounced
     const debouncedSearchTerm = useDebounced(valueScan, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (debouncedSearchTerm.length >= 15) {
+        if (debouncedSearchTerm.length >= 5) {
             scanPoNo(debouncedSearchTerm)
         }
     }, [debouncedSearchTerm]);
 
     //#endregion
 
+    //#region Func Logic
+
+    const handleRowClick = (params: any, item: any) => {
+        setItemRow(item)
+    }
+
+    const handleDeleteRow = () => {
+        const findItemIndex = data.findIndex(
+            (item) => item.Po_No === itemRow.Po_No
+        );
+
+        if (findItemIndex !== -1) {
+            const updatedData = [...data];
+            updatedData.splice(findItemIndex, 1);
+
+            setData(updatedData);
+        }
+    }
+
+    const addPoNo = (prev: any[], newItem: any): any[] => {
+        // Tìm xem đã có phần tử nào trong mảng trong không, nếu ko có trả về -1
+        const existingItemIndex = prev.findIndex(
+            (item) => item.Po_No === newItem.Po_No
+        );
+        setValueScan("")
+
+        // Nếu khác -1 thì gom hàng
+        if (existingItemIndex === -1) {
+            return [...prev, newItem];
+        }
+        else {
+            // Nếu tìm thấy, xóa phần tử cũ và thêm phần tử mới
+            const updatedArray = [...prev];
+            updatedArray.splice(existingItemIndex, 1); // Xóa phần tử cũ
+            updatedArray.push(newItem); // Thêm phần tử mới
+            return updatedArray;
+        }
+    };
+
     const scanPoNo = (value: any) => {
+        setDisable(true)
+        const url = connect_string + "api/Create_Merge_Bom"
+        const dataPoNo = {
+            User_WH: dataUser[0].UserId,
+            Po_No: value
+        }
+
+        axios.post(url, dataPoNo).then(res => {
+            if (res?.data?.Po_No !== null) {
+
+                const checkKFJDAndJiJie = data.some(
+                    (item: any) => item.KFJD === res?.data?.KFJD && item.JiJie === res?.data?.JiJie
+                )
+
+                if (checkKFJDAndJiJie === true || data.length === 0) {
+                    const _id = Math.floor(Math.random() * 10000000) + 1;
+                    const newItem = {
+                        ...res.data,
+                        _id: _id,
+                        Modify_Date: moment(res.data.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
+                    }
+                    setData((prev: any[]) => addPoNo(prev, newItem));
+                }
+                else if (data.length > 0 && checkKFJDAndJiJie === false) {
+                    handleOpenConfirm("no-KFJD-JiJie")
+                }
+                setValueScan("")
+            }
+        })
+            .finally(() => {
+                setDisable(false)
+            })
 
     }
+
+    const createBOM = () => {
+        setDisable(true)
+        const hasMatchingItem = data.some(
+            (item) => item.YPZLBH !== "" && item.YPZLBH !== null
+        );
+
+        const listPO = data.map(item => item.Po_No);
+
+        if (!hasMatchingItem) {
+            const url = connect_string + "api/insert_Merge_Bom_ERP"
+
+            const data = {
+                list_PONO: listPO,
+                user_id: dataUser[0].UserId
+            }
+            axios.post(url, data).then(res => {
+                const arr = res.data.map((item: any, index: any) => ({
+                    _id: index + 1,
+                    ...item
+                }))
+                setData(arr)
+            }).finally(() => {
+                setDisable(false)
+            })
+        }
+        else {
+            setDisable(false)
+            handleOpenConfirm("exist-mergeno")
+        }
+    }
+
+    //#endregion
 
     return (
         <Modal
@@ -135,19 +277,39 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     <Typography variant="h5" component="h5" color={'white'}></Typography>
                 </Stack>
                 <Stack flex={1} gap={2} >
-                    <Grid container  padding={'10px'}>
+                    <Grid container padding={'10px'} gap={'10px'} >
                         <Grid item display={'flex'} xs={4}>
                             {/* Scan xuất */}
                             <InputFieldV1
                                 xsLabel={2}
-                                xsInput={9}
+                                xsInput={8}
                                 label={t("gpbScan") as string}
                                 disable={disable}
                                 value={valueScan}
                                 handle={handleValueScanChange}
                             />
                         </Grid>
-                        <Grid item xs={1.5} display={"flex"}>
+                        <Grid item display={'flex'} xs={4}>
+                            {/* Merge No */}
+                            <InputFieldV1
+                                xsLabel={3}
+                                xsInput={8}
+                                label={"Merge No"}
+                                disable={disable}
+                                value={mergeNo}
+                                handle={handleMergeNoChange}
+                            />
+                        </Grid>
+
+                        <Grid item display={'flex'}>
+                            <MyButton height='2rem' name={t('btnSearch')} onClick={undefined} disabled={disable} />
+                        </Grid>
+
+                        <Grid item display={'flex'}>
+                            <MyButton height='2rem' name={t('btnDelete')} onClick={handleDeleteRow} disabled={disable} />
+                        </Grid>
+
+                        <Grid item xs={0.5} display={"flex"} alignItems={'center'}>
                             {disable && <CircularProgress size={'24px'} color='info' />}
                         </Grid>
                     </Grid>
@@ -159,14 +321,19 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                             {/* Bảng */}
                             <MyTableNew
                                 columns={columns}
-                                rows={[]}
+                                rows={data}
                                 checkBox={false}
+                                handlerowClick={handleRowClick}
                             />
                         </Stack>
                         <Stack alignItems={'flex-end'} padding={'10px'}>
-                            <MyButton height='2rem' name={t('btnCreateBOM')} onClick={undefined} disabled={disable} />
+                            <MyButton height='2rem' name={t('btnCreateBOM')} onClick={createBOM} disabled={disable} />
                         </Stack>
                     </Stack>
+
+                    {cofirmType === "no-create-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateBOMError") as string} />}
+                    {cofirmType === "exist-mergeno" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblExistMergeno") as string} />}
+                    {cofirmType === "no-KFJD-JiJie" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblKFJDAndJiJie") as string} />}
                 </Stack>
             </Box>
         </Modal>

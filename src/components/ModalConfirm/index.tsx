@@ -7,9 +7,10 @@ interface ModalCofirmProps {
     onClose?: any,
     onPressOK?: any,
     showOk?: boolean
+    showCancel?: boolean
 }
 function ModalCofirm(props: ModalCofirmProps) {
-    const { title, open, onClose, onPressOK, showOk = true } = props
+    const { title, open, onClose, onPressOK, showOk = true, showCancel = true } = props
     const { t } = useTranslation();
     const style = {
         position: 'absolute',
@@ -32,7 +33,7 @@ function ModalCofirm(props: ModalCofirmProps) {
             slotProps={{
                 backdrop: {
                     style: {
-                        backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+                        backdropFilter: "blur(2px)", // Hiệu ứng làm mờ nền
                     },
                 },
             }}
@@ -45,11 +46,16 @@ function ModalCofirm(props: ModalCofirmProps) {
                     <Stack height={'50%'} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
                         {
                             showOk === true &&
-                                (
-                                    <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth: '30%' }}>{t("btnSuccess")}</Button>
-                                )
+                            (
+                                <Button className='textsizebtn' onClick={onPressOK} style={{ color: 'white', backgroundColor: '#17594A', marginRight: 20, minWidth: '25%', border: '1px solid white' }}>{t("btnSuccess")}</Button>
+                            )
                         }
-                        <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D', minWidth: '30%' }}>{t("btnCancel")}</Button>
+                        {
+                            showCancel === true &&
+                            (
+                                <Button className='textsizebtn' onClick={onClose} style={{ color: 'white', backgroundColor: '#F24C3D', minWidth: '25%', border: '1px solid white' }}>{t("btnCancel")}</Button>
+                            )
+                        }
                     </Stack>
                 </Stack>
             </Box>
