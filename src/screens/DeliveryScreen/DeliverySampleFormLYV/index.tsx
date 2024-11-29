@@ -38,6 +38,7 @@ import Statistics from '../../StockinScreenv2/StatisticsForm';
 import ConfirmDelivery from '../../../components/ConfirmDelivery';
 import CreateMergeBom from './CreateMergeBOMForm';
 import ReturnStamp from '../../../components/ReturnStamp';
+import GenericAutocomplete from '../../../components/GenericAutocomplete';
 
 //#endregion
 
@@ -281,6 +282,7 @@ const DeliverySampleLYVScreen = () => {
   const [article, setArticle] = useState("")
   const [kfjd, setKFJD] = useState("")
   const [mergeNo, setMerNo] = useState("")
+  const [qtyOutSample, setQtyOutSample] = useState<any>({})
   const [isOpenSidebar, setIsOpenSibar] = useState(true)
   const sidebarRef = useRef<SidebarRef>(null);
   //#endregion
@@ -527,10 +529,8 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
-
   const Insert_Material_Stock_Out_Sample =
-    (
-      Material_No: string,
+    (Material_No: string,
       Barcode: string,
       QTY_Sample: string,
       User_ID: string,
@@ -538,8 +538,7 @@ const DeliverySampleLYVScreen = () => {
       Article: string,
       QTY_BOM: any,
       KFJD: any,
-      Size: any
-    ) => {
+      Size: any) => {
       const url = connect_string + "api/insert_Key_Material_Stock_Out_Sample"
       const data = {
         Material_No: Material_No,
@@ -666,6 +665,24 @@ const DeliverySampleLYVScreen = () => {
     }
   }
 
+  const handleGet_qty_out_Sample = (poNo: any, materialNo: any) => {
+    const url = connect_string + "api/get_qty_out_Sample"
+    const data = {
+      PONO: poNo?.PONO || poNo,
+      barcode: "",
+      Material_No: materialNo
+    }
+    axios.post(url, data).then(res => {
+      const data = {
+        Material_No: materialNo,
+        QTY: res.data
+      }
+      setQtyOutSample(data)
+    })
+  }
+
+
+
   //#endregion
   return (
     <FullScreenContainerWithNavBar
@@ -689,21 +706,32 @@ const DeliverySampleLYVScreen = () => {
             KFJD={(value: any) => setKFJD(value)}
             MergeNo={(value: any) => setMerNo(value)}
             isOpenSidebar={(value: any) => setIsOpenSibar(value)}
+            get_qty_out_Sample={handleGet_qty_out_Sample}
           />
           <div className="main-content">
             <Box
               className={"dark-bg-secondary border-bottom-white"}
-              style={{ flexShrink: 0, minHeight: 'calc(80dvh/ 3)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{
+                flexShrink: 0,
+                minHeight: isOpenSidebar === true ? 'calc(80dvh/ 3)' : 'calc(80dvh/ 5)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}
             >
               <Stack direction={'row'} height={'100%'}>
                 <Stack direction={'row'} width={'100%'} padding={0.5} height={'100%'} alignItems={'flex-end'}>
-                  <Stack padding={0.5} width={'100%'} gap={2}>
+                  <Stack padding={0.5} width={'100%'} gap={1} flexDirection={isOpenSidebar === true ? 'column' : 'row'}>
                     <Grid container >
                       <Grid item xs={12} display={'flex'}>
                         {/* Merge No */}
-                        <span className='textsize' style={{ color: 'orangered' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
+                        <Stack direction={'row'} justifyContent={'space-around'} width={'100%'}>
+                          <span className='textsize' style={{ color: 'orangered' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
+                        </Stack>
                       </Grid>
-                      <Grid item xs={isOpenSidebar === true ? 10 : 6}>
+                      <Grid item xs={isOpenSidebar === true ? 10 : 8}>
                         {/* Scan xuất */}
                         <InputFieldV1
                           xsLabel={2}
@@ -720,19 +748,19 @@ const DeliverySampleLYVScreen = () => {
                     </Grid>
                     <Grid container direction={'row'} gap={'10px'} justifyContent={isOpenSidebar === true ? 'center' : 'flex-start'} >
                       {/* Xuất chi tiết */}
-                      <Grid item display={'flex'} alignItems={'center'} >
+                      <Grid item display={'flex'} alignItems={'flex-end'}>
                         <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={disable} />
                         {modalName === 'ImportAndExport' && <ImportAndExport listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNo={Po_No?.PONO || Po_No} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
                       </Grid>
 
-                      <Grid item display={'flex'} >
+                      <Grid item display={'flex'} alignItems={'flex-end'}>
                         {/* Thống kê */}
                         <MyButton height='2rem' name={t("btnStatistical")} onClick={() => handleOpen('Statistics')} disabled={disable} />
                         {modalName === 'Statistics' && <Statistics open={open} onClose={handleClose} materialNo='' />}
                       </Grid>
-                      <Grid item display={'flex'} >
-                        {/* Tìm tem */}
-                        <MyButton height='2rem' name={"Tem xuất"} onClick={() => handleOpen('ReturnStamp')} disabled={disable} />
+                      <Grid item display={'flex'} alignItems={'flex-end'}>
+                        {/* Tem xuất */}
+                        <MyButton height='2rem' name={t("btnExportStamp")} onClick={() => handleOpen('ReturnStamp')} disabled={disable} />
                         {modalName === 'ReturnStamp' && <ReturnStamp open={open} onClose={handleClose} />}
                       </Grid>
                     </Grid>
@@ -740,20 +768,15 @@ const DeliverySampleLYVScreen = () => {
                 </Stack>
               </Stack>
             </Box>
-            <Stack sx={{ height: '100%' }}>
-              <Stack
-                overflow={"hidden"}
-                sx={{ height: '100%' }}
-              >
-                {/* Bảng */}
-                <MyTableNew
-                  columns={columns}
-                  rows={listMaterialStockout}
-                  checkBox={false}
-                  paintingRow={paintingRow}
-                  highlightText={highlightText}
-                />
-              </Stack>
+            <Stack sx={{ height: '100%', overflow: 'hidden' }}>
+              {/* Bảng */}
+              <MyTableNew
+                columns={columns}
+                rows={listMaterialStockout}
+                checkBox={false}
+                paintingRow={paintingRow}
+                highlightText={highlightText}
+              />
               <Stack alignItems={'flex-end'} paddingRight={'10px'}>
                 {/* Tạo phiếu */}
                 <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
@@ -764,7 +787,7 @@ const DeliverySampleLYVScreen = () => {
         </Stack>
         {cofirmType === "no-list-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoBOM") as string} />}
         {cofirmType === "no-material" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoMaterial") as string} />}
-        {cofirmType === "no-stockout" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoStockOut") as string} />}
+        {cofirmType === "no-stockout" && <ModalCofirm showOk={false} open={openCofirm} onClose={() => { handleCloseConfirm(), setQRCode("") }} title={t("lblNoStockOut") as string} />}
         {cofirmType === "insert-slip-sucess" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateSlipSucess") as string} />}
         {cofirmType === "insert-slip-error" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblCreateSlipError") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
@@ -781,7 +804,8 @@ interface SidebarProps {
   Article: any,
   KFJD: any,
   MergeNo: any,
-  isOpenSidebar: any
+  isOpenSidebar: any,
+  get_qty_out_Sample: any
 }
 
 interface SidebarRef {
@@ -791,7 +815,7 @@ interface SidebarRef {
 
 //#region Tạo BOM
 const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
-  const { column, PO_NO, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, isOpenSidebar } = props
+  const { column, PO_NO, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, isOpenSidebar, get_qty_out_Sample } = props
   const { t } = useTranslation();
 
   //#region Variable
@@ -1078,7 +1102,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     <span className='textsize'>PO NO</span>
                   </Grid>
                   <Grid item display={'flex'} xs={9}>
-                    <Autocomplete
+                    {/* <Autocomplete
                       value={valueAutocomplete?.PONO || valueAutocomplete}
                       onChange={(event: any, newValue: any | null) => {
                         setValueAutocomplete(newValue?.PONO || newValue);
@@ -1123,6 +1147,22 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                           },
                         },
 
+
+
+                      }}
+                      componentsProps={{
+                        popper: {
+                          sx: {
+                            "& .MuiAutocomplete-listbox": {
+                              '@media screen and (max-width: 1200px)': {
+                                fontSize: '14px !important',
+                              },
+                              '@media screen and (max-width: 900px)': {
+                                fontSize: '12px !important',
+                              },
+                            },
+                          },
+                        },
                       }}
                       renderInput={(params) => (
                         <TextField
@@ -1144,7 +1184,6 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                               '@media screen and (max-width: 900px)': {
                                 fontSize: '12px'
                               },
-
                             },
                             '@media screen and (max-width: 1200px)': {
                               height: "1.8rem  !important",
@@ -1156,9 +1195,29 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                           }}
                         />
                       )}
+                    />  */}
+                    <GenericAutocomplete
+                      options={Array.isArray(listSampleOrder) ? listSampleOrder : []}
+                      value={valueAutocomplete?.PONO || valueAutocomplete}
+                      onChange={(newValue: any | null) => {
+                        setValueAutocomplete(newValue?.PONO || newValue);
+                        PO_NO(newValue?.PONO || newValue);
+                        getDataWaitingAndgetInfoPO(newValue?.PONO || newValue)
+                      }}
+                      onInputChange={(newInputValue: any) => {
+                        setValueAutocomplete(newInputValue?.PONO || newInputValue);
+                        PO_NO(newInputValue?.PONO || newInputValue);
+                      }}
+                      getOptionLabel={(option) => (typeof option === 'string' ? option : option?.PONO || '')}
+                      isOptionEqualToValue={(option, value) => {
+                        if (typeof value === 'string') {
+                          return option.PONO === value; 
+                        }
+                        return option.PONO === value?.PONO; 
+                      }}
+                      allowFreeSolo={false}
                     />
                   </Grid>
-
                 </Grid>
 
                 <Grid container item xs={12} justifyContent={'center'} gap={"20px"}>
@@ -1196,6 +1255,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             rows={listDataWaiting}
             paintingRow={paintingRow}
             checkBox={false}
+            handlerowClick={(params: any, item: any) => get_qty_out_Sample(valueAutocomplete?.PONO || valueAutocomplete, item?.MatNo || "")}
           />
         </Stack>
       </div>

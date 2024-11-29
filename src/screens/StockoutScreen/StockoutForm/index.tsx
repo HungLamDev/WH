@@ -34,12 +34,15 @@ import FormConfirmMaterial from "../../../components/FormConfirmMaterial";
 import { debounce } from "../../../utils/debounce";
 import useDebounced from "../../../components/CustomHook/useDebounce";
 //#endregion
+
 const StockoutScreen = () => {
+    
     const location = useLocation();
     const stockout = location.state && location.state.data;
     const dataRY = location.state && location.state.dataRY;
     const { t } = useTranslation();
     const dispatch = useDispatch()
+
     //#region column header table
     const columns: GridColDef[] = [
         {
@@ -209,6 +212,7 @@ const StockoutScreen = () => {
         rbtColor_H: chcolor === true && value === 'H' ? true : false,
         rbtColor_O: chcolor === true && value === 'O' ? true : false,
     }
+    
     //#endregion
 
     //#region Func OnChange Input
@@ -566,7 +570,6 @@ const StockoutScreen = () => {
         setModalCofirm(true)
         setQRCodeDelete(item.Barcode)
         setMaterial_Label_Serial(item.Material_Label_Serial)
-
     }
 
     const handleOK = () => {

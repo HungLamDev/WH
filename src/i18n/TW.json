@@ -427,5 +427,7 @@
     "btnCreateBOMError": "创建物料清单失败",
     "lblKFJDAndJiJie": "PO号必须与阶段和季节匹配",
     "lblExistMergeno": "已有包含Merge No的PoNo",
-    "lblNoAccountERP": "您的账户尚未在ERP中注册。请创建ERP账户以执行此功能。"
+    "lblNoAccountERP": "您的账户尚未在ERP中注册。请创建ERP账户以执行此功能。",
+    "btnExportStamp": "出库标签",
+    "noRecoverStamp": "此标签已生成出库单，无法退回。"
 }

@@ -23,16 +23,43 @@ import QRScanner from '../../../components/QRScanner';
 import { successSound } from '../../../utils/pathsound';
 import { addTotalQtyOut } from '../../../redux/TotalQtyOut';
 import Decimal from 'decimal.js';
-import { set } from 'lodash';
 import FormConfirmMaterial from '../../../components/FormConfirmMaterial';
 import { debounce } from '../../../utils/debounce';
 import useDebounced from '../../../components/CustomHook/useDebounce';
 import InputFieldV1 from '../../../components/InputField/index_new';
 import { barcodeToMaterial } from '../../../utils/api_global';
 //#endregion
-const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [], Insert_Material_Stock_Out_Sample, Article, PoNo, listMaterialStockout = [], KFJD }: { open: any, onClose: any, form: any, dataColor?: any, listMaterialBOM?: any[], Insert_Material_Stock_Out_Sample?: any, Article?: any, PoNo?: any, listMaterialStockout?: any[], KFJD?: any }) => {
+
+
+interface ImportAndExportProps {
+    open: any,
+    onClose: any,
+    form: any,
+    dataColor?: any,
+    listMaterialBOM?: any[],
+    Insert_Material_Stock_Out_Sample?: any,
+    Article?: any,
+    PoNo?: any,
+    listMaterialStockout?: any[],
+    KFJD?: any
+}
+
+
+const ImportAndExport = (props: ImportAndExportProps) => {
     const dispatch = useDispatch()
     const { t } = useTranslation();
+    const {
+        open,
+        onClose,
+        form,
+        dataColor,
+        listMaterialBOM = [],
+        Insert_Material_Stock_Out_Sample,
+        Article,
+        PoNo,
+        listMaterialStockout = [],
+        KFJD
+    } = props
 
     //#region Style
     const style = {
@@ -266,7 +293,8 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
         const url = connect_string + "api/get_qty_out_Sample"
         const data = {
             PONO: poNo?.PONO || poNo,
-            barcode: qr
+            barcode: qr,
+            Material_No: ""
         }
         axios.post(url, data).then(res => {
             setDinhMuc(res.data)
@@ -759,7 +787,7 @@ const ImportAndExport = ({ open, onClose, form, dataColor, listMaterialBOM = [],
                             </Grid>
                             {/* Tên vật tư */}
                             <Grid item xs={3} >
-                                <Typography 
+                                <Typography
                                     className='textsize'
                                 >
                                     {t("lblMaterial_Name") as string}

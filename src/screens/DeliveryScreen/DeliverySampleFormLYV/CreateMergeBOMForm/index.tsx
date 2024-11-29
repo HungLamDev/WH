@@ -1,3 +1,4 @@
+//#region Import
 import { Box, CircularProgress, Grid, IconButton, Modal, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BiArrowBack } from "react-icons/bi";
@@ -11,6 +12,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import ModalCofirm from "../../../../components/ModalConfirm";
+//#endregion
 
 interface CreateMergeBomProps {
     title?: string,
@@ -235,12 +237,18 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                 list_PONO: listPO,
                 user_id: dataUser[0].UserId
             }
+
             axios.post(url, data).then(res => {
+                if (res.data.length === 0) {
+                    handleOpenConfirm("no-create-bom")
+                }
                 const arr = res.data.map((item: any, index: any) => ({
                     _id: index + 1,
                     ...item
                 }))
                 setData(arr)
+
+
             }).finally(() => {
                 setDisable(false)
             })
@@ -249,6 +257,21 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             setDisable(false)
             handleOpenConfirm("exist-mergeno")
         }
+    }
+
+    const handleMergeNoToPono = () => {
+        const url = connect_string + "api/Merge_No_To_Pono"
+        const data = {
+            ypzlbh: mergeNo
+        }
+
+        axios.post(url, data).then(res => {
+            const arr = res.data.map((item: any, index: any) => ({
+                _id: index + 1,
+                ...item
+            }))
+            setData(arr)
+        })
     }
 
     //#endregion
@@ -302,10 +325,12 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                         </Grid>
 
                         <Grid item display={'flex'}>
-                            <MyButton height='2rem' name={t('btnSearch')} onClick={undefined} disabled={disable} />
+                            {/* Nút tìm kiếm */}
+                            <MyButton height='2rem' name={t('btnSearch')} onClick={handleMergeNoToPono} disabled={disable} />
                         </Grid>
 
                         <Grid item display={'flex'}>
+                            {/* Nút xóa */}
                             <MyButton height='2rem' name={t('btnDelete')} onClick={handleDeleteRow} disabled={disable} />
                         </Grid>
 
@@ -327,6 +352,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                             />
                         </Stack>
                         <Stack alignItems={'flex-end'} padding={'10px'}>
+                            {/* Tạo BOM */}
                             <MyButton height='2rem' name={t('btnCreateBOM')} onClick={createBOM} disabled={disable} />
                         </Stack>
                     </Stack>
@@ -339,4 +365,5 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         </Modal>
     )
 }
+
 export default CreateMergeBom

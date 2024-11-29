@@ -429,5 +429,7 @@
     "btnCreateBOMError": "Tạo BOM thất bại",
     "lblKFJDAndJiJie": "PoNo phải trùng giai đoạn và mùa",
     "lblExistMergeno": "Đã có PoNo chứa Merge No",
-    "lblNoAccountERP": "Tài khoản của bạn hiện chưa có ở ERP. Vui lòng tạo tài khoản ERP để thực hiện chức năng này."
+    "lblNoAccountERP": "Tài khoản của bạn hiện chưa có ở ERP. Vui lòng tạo tài khoản ERP để thực hiện chức năng này.",
+    "btnExportStamp": "Tem xuất",
+    "noRecoverStamp": "Tem này đã tạo phiếu xuất không thể trả về"
 }
