@@ -429,5 +429,6 @@
     "lblExistMergeno": "已有包含Merge No的PoNo",
     "lblNoAccountERP": "您的账户尚未在ERP中注册。请创建ERP账户以执行此功能。",
     "btnExportStamp": "出库标签",
-    "noRecoverStamp": "此标签已生成出库单，无法退回。"
+    "noRecoverStamp": "此标签已生成出库单，无法退回。",
+    "lblNoOption": "没有数据"
 }

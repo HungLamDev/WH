@@ -27,6 +27,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     //#region columnHeader
     const columns: any[] = [
         {
+            field: "TestNo",
+            headerName: "Test No",
+            align: "center",
+            headerAlign: 'center',
+            width: 180,
+        },
+        {
             field: "Po_No",
             headerName: "Po No",
             align: "center",
@@ -188,10 +195,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
     const scanPoNo = (value: any) => {
         setDisable(true)
+        const POAndTestNo = value.split("-")
+
         const url = connect_string + "api/Create_Merge_Bom"
         const dataPoNo = {
             User_WH: dataUser[0].UserId,
-            Po_No: value
+            Po_No: POAndTestNo[1]?.trim() || "",
+            TestNo: [POAndTestNo[0]?.trim() || ""]
         }
 
         axios.post(url, dataPoNo).then(res => {
@@ -214,6 +224,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     handleOpenConfirm("no-KFJD-JiJie")
                 }
                 setValueScan("")
+
             }
         })
             .finally(() => {
@@ -228,13 +239,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             (item) => item.YPZLBH !== "" && item.YPZLBH !== null
         );
 
-        const listPO = data.map(item => item.Po_No);
+        const listTestNo = data.map(item => item.TestNo);
 
         if (!hasMatchingItem) {
             const url = connect_string + "api/insert_Merge_Bom_ERP"
 
             const data = {
-                list_PONO: listPO,
+                list_TestNo: listTestNo,
                 user_id: dataUser[0].UserId
             }
 

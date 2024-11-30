@@ -71,6 +71,14 @@ const DeliverySampleLYVScreen = () => {
   //#region column header table
   const columns: any[] = [
     {
+      field: "TestNo",
+      headerName: "Test No",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
       field: "PONO",
       headerName: "PONO",
       align: "center",
@@ -117,6 +125,14 @@ const DeliverySampleLYVScreen = () => {
     {
       field: "KFJD",
       headerName: "Stage",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "YPZLBH",
+      headerName: "Merge No",
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -276,12 +292,13 @@ const DeliverySampleLYVScreen = () => {
   const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
   const [message, setMessage] = useState('')
   const [openERPLogin, setOpenERPLogin] = useState(false)
-  const [Po_No, setPo_No] = useState<any>("")
+  const [PO_NOAndTestNo, setPO_NOAndTestNo] = useState<any>("")
   const [listMaterialBOM, setListMaterialBOM] = useState([])
   const [listMaterialStockout, setListMaterialStockout] = useState<any[]>([])
   const [article, setArticle] = useState("")
   const [kfjd, setKFJD] = useState("")
   const [mergeNo, setMerNo] = useState("")
+  const [testNo, setTestNo] = useState("")
   const [qtyOutSample, setQtyOutSample] = useState<any>({})
   const [isOpenSidebar, setIsOpenSibar] = useState(true)
   const sidebarRef = useRef<SidebarRef>(null);
@@ -400,7 +417,7 @@ const DeliverySampleLYVScreen = () => {
                 Value_Total: item.Value_Total,
                 Material_Label_Serial: item.Material_Label_Serial,
               };
-              Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, Po_No?.PONO || Po_No, article, QTY_BOM, kfjd, value.size)
+              Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PO_NOAndTestNo?.PONO, PO_NOAndTestNo?.TestNo, mergeNo, article, QTY_BOM, kfjd, value.size)
               // dispatch(addItemArrayStockout(newItem));
               // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
               setQRCode('')
@@ -461,7 +478,7 @@ const DeliverySampleLYVScreen = () => {
                 };
 
                 // dispatch(addItemArrayStockout(newItem));
-                Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, Po_No?.PONO || Po_No, article, QTY_BOM, kfjd, value.size)
+                Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PO_NOAndTestNo?.PONO, PO_NOAndTestNo?.TestNo, mergeNo, article, QTY_BOM, kfjd, value.size)
 
                 if (response.data[0].Material_No === stockout[0].Value_Material) {
                   dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out))
@@ -505,7 +522,7 @@ const DeliverySampleLYVScreen = () => {
     handleRefresh()
     // Tìm xem đã có phần tử nào trong mảng trong không, nếu ko có trả về -1
     const existingItemIndex = prev.findIndex(
-      (item) => item.PONO === newItem.PONO && item.Material_No === newItem.Material_No
+      (item) => item.TestNo === newItem.TestNo && item.Material_No === newItem.Material_No
     );
 
     // Nếu khác -1 thì gom hàng
@@ -516,7 +533,7 @@ const DeliverySampleLYVScreen = () => {
             ...item,
             Size: item.Size + "\r\n" + newItem.Size,
             Barcode: item.Barcode + "\r\n" + newItem.Barcode,
-            QTY_Sample: new Decimal(item.QTY_Sample).plus(newItem.QTY_Sample).toFixed(2),
+            QTY_Sample: new Decimal(item.QTY_Sample).plus(new Decimal(newItem.QTY_Sample)).toNumber(),
             Modify_Date: item.Modify_Date + "\r\n" + newItem.Modify_Date,
           };
         }
@@ -535,6 +552,8 @@ const DeliverySampleLYVScreen = () => {
       QTY_Sample: string,
       User_ID: string,
       PO_NO: string,
+      TestNo: string,
+      YPZLBH: string,
       Article: string,
       QTY_BOM: any,
       KFJD: any,
@@ -546,6 +565,8 @@ const DeliverySampleLYVScreen = () => {
         QTY_Sample: QTY_Sample,
         User_ID: User_ID,
         PONO: PO_NO,
+        TestNo: TestNo,
+        YPZLBH: YPZLBH,
         Article: Article,
         QTY_Bom: QTY_BOM,
         Size: Size,
@@ -598,7 +619,7 @@ const DeliverySampleLYVScreen = () => {
       return item;
     }
 
-    if (row.Material_No !== null && row.QTY_Bom !== "" && ((new Decimal(row.QTY_Bom).toNumber() - new Decimal(row.QTY_Sample).toNumber()) !== 0)) {
+    if (row.Material_No !== null && row.QTY_Bom !== "" && ((new Decimal(row.QTY_Bom).minus(new Decimal(row.QTY_Sample))).toNumber() !== 0)) {
       return "orange"
     }
 
@@ -665,10 +686,11 @@ const DeliverySampleLYVScreen = () => {
     }
   }
 
-  const handleGet_qty_out_Sample = (poNo: any, materialNo: any) => {
+  const handleGet_qty_out_Sample = (value: any, materialNo: any) => {
     const url = connect_string + "api/get_qty_out_Sample"
     const data = {
-      PONO: poNo?.PONO || poNo,
+      PONO: value?.PONO,
+      TestNo: value?.TestNo,
       barcode: "",
       Material_No: materialNo
     }
@@ -680,8 +702,6 @@ const DeliverySampleLYVScreen = () => {
       setQtyOutSample(data)
     })
   }
-
-
 
   //#endregion
   return (
@@ -698,13 +718,14 @@ const DeliverySampleLYVScreen = () => {
           {/* Phần Merge BOM */}
           <Sidebar
             column={columnsBOM}
-            PO_NO={(value: any) => setPo_No(value)}
+            PO_NOAndTestNo={(value: any) => setPO_NOAndTestNo(value)}
             listMaterialBOM={(value: any) => setListMaterialBOM(value)}
             listMaterialStockOut={(value: any) => setListMaterialStockout(value)}
             Article={(value: any) => setArticle(value)}
             ref={sidebarRef}
             KFJD={(value: any) => setKFJD(value)}
             MergeNo={(value: any) => setMerNo(value)}
+            TestNo={(value: any) => setTestNo(value)}
             isOpenSidebar={(value: any) => setIsOpenSibar(value)}
             get_qty_out_Sample={handleGet_qty_out_Sample}
           />
@@ -725,7 +746,7 @@ const DeliverySampleLYVScreen = () => {
                     <Grid container >
                       <Grid item xs={12} display={'flex'}>
                         {/* Merge No */}
-                        <Stack direction={'row'} justifyContent={'space-around'} width={'100%'}>
+                        <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
                           <span className='textsize' style={{ color: 'orangered' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
                           <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
                           <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
@@ -750,7 +771,7 @@ const DeliverySampleLYVScreen = () => {
                       {/* Xuất chi tiết */}
                       <Grid item display={'flex'} alignItems={'flex-end'}>
                         <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={disable} />
-                        {modalName === 'ImportAndExport' && <ImportAndExport listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNo={Po_No?.PONO || Po_No} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
+                        {modalName === 'ImportAndExport' && <ImportAndExport listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNoAndTestNo={PO_NOAndTestNo} MergeNo={mergeNo} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
                       </Grid>
 
                       <Grid item display={'flex'} alignItems={'flex-end'}>
@@ -798,12 +819,13 @@ const DeliverySampleLYVScreen = () => {
 
 interface SidebarProps {
   column: any,
-  PO_NO: any,
+  PO_NOAndTestNo: any,
   listMaterialBOM: any,
   listMaterialStockOut: any,
   Article: any,
   KFJD: any,
   MergeNo: any,
+  TestNo: any,
   isOpenSidebar: any,
   get_qty_out_Sample: any
 }
@@ -815,13 +837,13 @@ interface SidebarRef {
 
 //#region Tạo BOM
 const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
-  const { column, PO_NO, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, isOpenSidebar, get_qty_out_Sample } = props
+  const { column, PO_NOAndTestNo, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, TestNo, isOpenSidebar, get_qty_out_Sample } = props
   const { t } = useTranslation();
 
   //#region Variable
   const [isOpen, setIsOpen] = useState(true);
   const [openCreateBOM, setOpenCreateBOM] = useState(false);
-  const [valueAutocomplete, setValueAutocomplete] = React.useState<any>('');
+  const [valueAutocomplete, setValueAutocomplete] = React.useState<any>(null);
   const [listSampleOrder, setListSampleOrder] = useState<any[]>([])
   const [listDataWaiting, setListDataWaiting] = useState<any[]>([])
   const [PoNo, setPoNo] = useState('')
@@ -838,11 +860,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }));
 
   const refreshData = () => {
-    getDataWaiting(valueAutocomplete?.PONO || valueAutocomplete);
+    getDataWaiting(valueAutocomplete);
   };
 
   const refreshMaterial_Stock_Out_Sample = () => {
-    get_Material_Stock_Out_Sample(valueAutocomplete?.PONO || valueAutocomplete)
+    get_Material_Stock_Out_Sample(valueAutocomplete)
   };
   //#endregion
 
@@ -874,24 +896,13 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       getInfoPO(value)
       const url = connect_string + "api/get_Merge_Bom_ERP"
       const data = {
-        Po_No: value
+        TestNo: value?.TestNo
       }
 
       axios.post(url, data).then(res => {
         const arr = res.data.map((item: any, index: any) => ({
 
           _id: index,
-          // MatNo: item.MatNo,
-          // MJBH: item.MJBH,
-          // Unit: item.Unit,
-          // SIZE: item.SIZE,
-          // SuppID: item.SuppID,
-          // Supplier: item.Supplier,
-          // USAGE: item.USAGE,
-          // Qty: item.Qty,
-          // ARTICLE: item.ARTICLE,
-          // MatName: item.MatName,
-          // USERDATE: moment(item.USERDATE).format("DD/MM/YYYY"),
           ...item
         }))
 
@@ -921,13 +932,13 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   }
 
-  const get_Material_Stock_Out_Sample = (Po_No: any) => {
+  const get_Material_Stock_Out_Sample = (value: any) => {
     listMaterialStockOut([])
     setIsLoading(true)
     setDisable(true)
     const url = connect_string + "api/get_Material_Stock_Out_Sample"
     const data = {
-      Po_No: Po_No
+      TestNo: value?.TestNo
     }
 
     axios.post(url, data).then(res => {
@@ -953,7 +964,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   }
 
-  const getInfoPO = (Po_No: string) => {
+  const getInfoPO = (value: any) => {
     setInfoPO("")
     Article("")
     KFJD("")
@@ -963,7 +974,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     setDisable(true)
     const url = connect_string + "api/get_info_pono"
     const data = {
-      Po_No: Po_No
+      TestNo: value?.TestNo
     }
 
     axios.post(url, data).then(res => {
@@ -978,9 +989,9 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       })
   }
 
-  const getDataWaitingAndgetInfoPO = (Po_No: any) => {
+  const getDataWaitingAndgetInfoPO = (value: any) => {
 
-    Promise.all([getDataWaiting(Po_No?.PONO || Po_No), get_Material_Stock_Out_Sample(Po_No?.PONO || Po_No)])
+    Promise.all([getDataWaiting(value), get_Material_Stock_Out_Sample(value)])
       .then(() => {
         setIsLoading(true)
         setDisable(true)
@@ -992,23 +1003,38 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   }
 
   const getAllPoNo = (po: any) => {
+    const POAndTestNo = po.split("-")
     setIsLoading(true)
     setDisable(true)
     const url = connect_string + "api/get_Merge_Bom_To_PONO"
+
     const data = {
-      Po_No: po,
+      TestNo: POAndTestNo[0]?.trim(),
+      Po_No: POAndTestNo[1]?.trim(),
       User_WH: dataUser[0].UserId
     }
+
     axios.post(url, data).then(res => {
       if (res.data.length > 0) {
         setListSampleOrder(res.data)
-        setValueAutocomplete(po)
-        getDataWaitingAndgetInfoPO(po)
+
+        const newValue = {
+          PONO: POAndTestNo[1]?.trim(),
+          TestNo: POAndTestNo[0]?.trim(),
+      };
+
+        setValueAutocomplete(
+          newValue
+        );
+
+        getDataWaitingAndgetInfoPO(
+          newValue
+        )
         setPoNo('')
       }
       else {
         setListSampleOrder([])
-        setValueAutocomplete("")
+        setValueAutocomplete(null)
       }
     }).finally(() => {
       setIsLoading(false)
@@ -1198,24 +1224,27 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     />  */}
                     <GenericAutocomplete
                       options={Array.isArray(listSampleOrder) ? listSampleOrder : []}
-                      value={valueAutocomplete?.PONO || valueAutocomplete}
+                      value={valueAutocomplete}
                       onChange={(newValue: any | null) => {
-                        setValueAutocomplete(newValue?.PONO || newValue);
-                        PO_NO(newValue?.PONO || newValue);
-                        getDataWaitingAndgetInfoPO(newValue?.PONO || newValue)
+                        if (newValue !== null) {
+                          setValueAutocomplete(newValue);
+                          PO_NOAndTestNo(newValue);
+                          getDataWaitingAndgetInfoPO(newValue)
+                        }
                       }}
-                      onInputChange={(newInputValue: any) => {
-                        setValueAutocomplete(newInputValue?.PONO || newInputValue);
-                        PO_NO(newInputValue?.PONO || newInputValue);
-                      }}
-                      getOptionLabel={(option) => (typeof option === 'string' ? option : option?.PONO || '')}
+                      // onInputChange={(newInputValue: any) => {
+                      //     console.log(newInputValue)
+                      // }}
+
+                      getOptionLabel={(option) => 
+                        typeof option === "string" ? option : option.PONO
+                      }
                       isOptionEqualToValue={(option, value) => {
                         if (typeof value === 'string') {
-                          return option.PONO === value; 
+                          return option.TestNo === value;
                         }
-                        return option.PONO === value?.PONO; 
+                        return option.TestNo === value?.TestNo;
                       }}
-                      allowFreeSolo={false}
                     />
                   </Grid>
                 </Grid>
@@ -1255,7 +1284,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             rows={listDataWaiting}
             paintingRow={paintingRow}
             checkBox={false}
-            handlerowClick={(params: any, item: any) => get_qty_out_Sample(valueAutocomplete?.PONO || valueAutocomplete, item?.MatNo || "")}
+            handlerowClick={(params: any, item: any) => get_qty_out_Sample(valueAutocomplete, item?.MatNo || "")}
           />
         </Stack>
       </div>
@@ -1265,4 +1294,5 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 //#endregion
 
 export default DeliverySampleLYVScreen;
+
 

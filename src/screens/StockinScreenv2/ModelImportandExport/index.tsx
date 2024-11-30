@@ -39,9 +39,10 @@ interface ImportAndExportProps {
     listMaterialBOM?: any[],
     Insert_Material_Stock_Out_Sample?: any,
     Article?: any,
-    PoNo?: any,
+    PoNoAndTestNo?: any,
     listMaterialStockout?: any[],
-    KFJD?: any
+    KFJD?: any,
+    MergeNo?: any
 }
 
 
@@ -56,9 +57,10 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         listMaterialBOM = [],
         Insert_Material_Stock_Out_Sample,
         Article,
-        PoNo,
+        PoNoAndTestNo,
         listMaterialStockout = [],
-        KFJD
+        KFJD,
+        MergeNo
     } = props
 
     //#region Style
@@ -289,10 +291,11 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         }
     }
 
-    const handleGet_qty_out_Sample = (poNo: any, qr: any) => {
+    const handleGet_qty_out_Sample = (value: any, qr: any) => {
         const url = connect_string + "api/get_qty_out_Sample"
         const data = {
-            PONO: poNo?.PONO || poNo,
+            PONO: value?.PONO,
+            TestNo: value?.TestNo,
             barcode: qr,
             Material_No: ""
         }
@@ -306,7 +309,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         setQtyOut(0)
         setIsLoading(true)
         setDisable(true)
-        handleGet_qty_out_Sample(PoNo, value_scan)
+        handleGet_qty_out_Sample(PoNoAndTestNo, value_scan)
         const url = connect_string + 'api/txtScan_TextChanged'
         const data = {
             txtScan: value_scan,
@@ -436,7 +439,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                                     };
                                     // dispatch(addItemArrayStockout(newItem))
                                     // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
-                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PoNo?.PONO || PoNo, Article, QTY_BOM, KFJD, value.size)
+                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PoNoAndTestNo?.PONO, PoNoAndTestNo?.TestNo, MergeNo , Article, QTY_BOM, KFJD, value.size)
 
                                     setScanQR(Barcode)
                                     // handleOpenConfirm('ok')

@@ -1,6 +1,7 @@
 import React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { t } from 'i18next';
 
 type GenericAutocompleteProps<T> = {
     options: T[]; // Mảng các đối tượng
@@ -38,6 +39,7 @@ function GenericAutocomplete<T extends object | string>({
                     onChange(newInputValue as T); // Cho phép gán trực tiếp khi freeSolo
                 }
             }}
+            noOptionsText={t("lblNoOption") as string}
             freeSolo={allowFreeSolo} // Bật/tắt tính năng freeSolo
             disablePortal
             options={options}
@@ -54,9 +56,8 @@ function GenericAutocomplete<T extends object | string>({
                 width: '100%',
                 // height: '2rem !important',
                 '& .MuiInputBase-root': {
-                    height: '2rem !important',
-                    padding: 0,
-                    paddingLeft: 0.5,
+                    padding: '0px 5px',
+                    height: '1.9rem !important',
                     '@media screen and (max-width: 1200px)': {
                         height: '1.8rem !important',
                     },
