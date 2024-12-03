@@ -365,7 +365,6 @@ const PrintFOC = () => {
             get_version: dataUser[0].WareHouse
         }
         axios.post(url, data, configNew).then(response => {
-            console.log(response.data)
             const item = {
                 zsywjc_Supplier: response.data.zsywjc_Supplier,
                 CLBH_Material_No: response.data.CLBH_Material_No,

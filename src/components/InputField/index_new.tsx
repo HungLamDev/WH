@@ -2,23 +2,41 @@ import { Grid, Stack, TextField, Typography } from "@mui/material";
 import '../../App.scss'
 import { useEffect, useRef } from "react";
 
-interface InputFieldV1Props{ 
-    label?: string, 
-    value?: any, 
-    handle?: any, 
+interface InputFieldV1Props {
+    label?: string,
+    value?: any,
+    handle?: any,
     keydown?: any,
-    type?: string, 
-    disable?: boolean, 
-    customClass?: string, 
-    selected?: boolean, 
-    focus?: boolean, 
+    type?: string,
+    disable?: boolean,
+    customClass?: string,
+    selected?: boolean,
+    focus?: boolean,
     onFocus?: any,
     xsLabel?: number
-    xsInput?: number
+    xsInput?: number,
+    handleOnFocus?: any,
+    id?: string
 }
 
 const InputFieldV1 = (props: InputFieldV1Props) => {
-    const { label, value, handle, keydown, type, disable, customClass, selected, focus, onFocus,xsLabel = 4,  xsInput = 7} = props
+    const {
+        label,
+        value,
+        handle,
+        keydown,
+        type,
+        disable,
+        customClass,
+        selected,
+        focus,
+        onFocus,
+        xsLabel = 4,
+        xsInput = 7,
+        handleOnFocus,
+        id
+    } = props
+
     const textFieldRef: any = useRef(null);
     useEffect(() => {
         if (onFocus) {
@@ -33,21 +51,23 @@ const InputFieldV1 = (props: InputFieldV1Props) => {
             className={`${customClass}`}
             width={'100%'}
         >
-            <Grid container alignItems={'center'} flexWrap={'nowrap'} columnGap={'5px'}  
+            <Grid container alignItems={'center'} flexWrap={'nowrap'} columnGap={'5px'}
             >
                 <Grid item xs={xsLabel} display={'flex'} >
-                    <Typography className="textsize" sx={{wordBreak:'break-word'}}>{label}</Typography>
+                    <Typography className="textsize" sx={{ wordBreak: 'break-word' }}>{label}</Typography>
                 </Grid>
                 <Grid item xs={xsInput} flexShrink={0}>
                     <TextField
+                        id={id}
                         inputRef={textFieldRef}
                         autoFocus={focus}
                         select={selected}
                         disabled={disable}
                         autoComplete="off"
                         type={type ? type : "text"}
-                        sx={{ 
-                            width:'100%',
+                        onFocus={handleOnFocus}
+                        sx={{
+                            width: '100%',
                         }}
                         InputProps={{
                             inputProps: {
@@ -61,7 +81,7 @@ const InputFieldV1 = (props: InputFieldV1Props) => {
                                 borderRadius: "50px",
                                 color: "white",
                                 height: "2rem",
-                               
+
 
                                 "& fieldset": { borderColor: "white" },
 

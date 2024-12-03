@@ -268,7 +268,6 @@ const AccountingCardSole = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
 
   //Select chemistry form Material_No
   const Material_Accounting_Card_Textchanged = (material_no: string) => {
-    console.log(material_no)
     setIsApi(false)
     dispatch(clearChemistry());
     setLoading(true);
@@ -437,7 +436,6 @@ const AccountingCardSole = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       .then((response) => {
         const data = response.data
         // if (data.Qty_Redundant_result !== null &&  data.Qty_Out_result !== null && data.Note_Account !== null && data.Image_Sign !== null) {
-        //   console.log(response.data)
         // }
       })
       .finally(() => {

@@ -162,7 +162,6 @@ const InventoryScreen = () => {
 
   //#region useEffect
   // useEffect(() => {
-  //   console.log("hIHI")
   //   if (chxMaterial_No === true) {
   //     const sortedData = [...ArrayInventory].sort((a, b) => b.Material_No.localeCompare(a.Material_No));
   //     dispatch(copyArrayInventory(sortedData))

@@ -239,6 +239,7 @@ const CheckData = () => {
         setMode(true);
         setModalScan(true);
     }
+    
     const handleScanCam = async (result: any | null) => {
         if (result || result.text) {
             CheckScanMaterialNo(result.text)

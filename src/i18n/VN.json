@@ -432,5 +432,7 @@
     "lblNoAccountERP": "Tài khoản của bạn hiện chưa có ở ERP. Vui lòng tạo tài khoản ERP để thực hiện chức năng này.",
     "btnExportStamp": "Tem xuất",
     "noRecoverStamp": "Tem này đã tạo phiếu xuất không thể trả về",
-    "lblNoOption": "Không có dữ liệu"
+    "lblNoOption": "Không có dữ liệu",
+    "lblChooseWH": "Chọn kho",
+    "lblRemainingQuota": "Định mức còn lại"
 }

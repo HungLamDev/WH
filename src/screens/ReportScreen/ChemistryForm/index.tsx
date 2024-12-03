@@ -518,7 +518,6 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
       .then((response) => {
         const data = response.data
         // if (data.Qty_Redundant_result !== null &&  data.Qty_Out_result !== null && data.Note_Account !== null && data.Image_Sign !== null) {
-        //   console.log(response.data)
         // }
       })
       .finally(() => {

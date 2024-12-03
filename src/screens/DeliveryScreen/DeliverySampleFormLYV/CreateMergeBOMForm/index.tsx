@@ -1,5 +1,5 @@
 //#region Import
-import { Box, CircularProgress, Grid, IconButton, Modal, Stack, Typography } from "@mui/material";
+import { Backdrop, Box, CircularProgress, Grid, IconButton, Modal, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { BiArrowBack } from "react-icons/bi";
 import MyButton from "../../../../components/MyButton";
@@ -49,14 +49,14 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         },
         {
             field: "KFJD",
-            headerName: "KFJD",
+            headerName: "Stage",
             align: "center",
             headerAlign: 'center',
             width: 150,
         },
         {
             field: "JiJie",
-            headerName: "JiJie",
+            headerName: "Sesson",
             align: "center",
             headerAlign: 'center',
         },
@@ -176,7 +176,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     const addPoNo = (prev: any[], newItem: any): any[] => {
         // Tìm xem đã có phần tử nào trong mảng trong không, nếu ko có trả về -1
         const existingItemIndex = prev.findIndex(
-            (item) => item.Po_No === newItem.Po_No
+            (item) => item.TestNo === newItem.TestNo
         );
         setValueScan("")
 
@@ -185,7 +185,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             return [...prev, newItem];
         }
         else {
-            // Nếu tìm thấy, xóa phần tử cũ và thêm phần tử mới
             const updatedArray = [...prev];
             updatedArray.splice(existingItemIndex, 1); // Xóa phần tử cũ
             updatedArray.push(newItem); // Thêm phần tử mới
@@ -194,7 +193,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     };
 
     const scanPoNo = (value: any) => {
-        setDisable(true)
         const POAndTestNo = value.split("-")
 
         const url = connect_string + "api/Create_Merge_Bom"
@@ -205,7 +203,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         }
 
         axios.post(url, dataPoNo).then(res => {
-            if (res?.data?.Po_No !== null) {
+            if (res?.data?.TestNo !== null) {
 
                 const checkKFJDAndJiJie = data.some(
                     (item: any) => item.KFJD === res?.data?.KFJD && item.JiJie === res?.data?.JiJie
@@ -227,50 +225,55 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
             }
         })
-            .finally(() => {
-                setDisable(false)
-            })
+        // .finally(() => {
+        //     setDisable(false)
+        // })
 
     }
 
     const createBOM = () => {
-        setDisable(true)
-        const hasMatchingItem = data.some(
-            (item) => item.YPZLBH !== "" && item.YPZLBH !== null
-        );
+        if (data.length > 0) {
+            setDisable(true)
 
-        const listTestNo = data.map(item => item.TestNo);
+            const hasMatchingItem = data.some(
+                (item) => item.YPZLBH !== "" && item.YPZLBH !== null
+            );
 
-        if (!hasMatchingItem) {
-            const url = connect_string + "api/insert_Merge_Bom_ERP"
+            const listTestNo = data.map(item => item.TestNo);
 
-            const data = {
-                list_TestNo: listTestNo,
-                user_id: dataUser[0].UserId
-            }
+            if (!hasMatchingItem) {
+                const url = connect_string + "api/insert_Merge_Bom_ERP"
 
-            axios.post(url, data).then(res => {
-                if (res.data.length === 0) {
-                    handleOpenConfirm("no-create-bom")
+                const data = {
+                    list_TestNo: listTestNo,
+                    user_id: dataUser[0].UserId
                 }
-                const arr = res.data.map((item: any, index: any) => ({
-                    _id: index + 1,
-                    ...item
-                }))
-                setData(arr)
+
+                axios.post(url, data).then(res => {
+                    if (res.data.length === 0) {
+                        handleOpenConfirm("no-create-bom")
+                    }
+                    const arr = res.data.map((item: any, index: any) => ({
+                        _id: index + 1,
+                        ...item
+                    }))
+                    setData(arr)
 
 
-            }).finally(() => {
+                }).finally(() => {
+                    setDisable(false)
+                })
+            }
+            else {
                 setDisable(false)
-            })
+                handleOpenConfirm("exist-mergeno")
+            }
         }
-        else {
-            setDisable(false)
-            handleOpenConfirm("exist-mergeno")
-        }
+
     }
 
     const handleMergeNoToPono = () => {
+        setDisable(true)
         const url = connect_string + "api/Merge_No_To_Pono"
         const data = {
             ypzlbh: mergeNo
@@ -279,10 +282,15 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         axios.post(url, data).then(res => {
             const arr = res.data.map((item: any, index: any) => ({
                 _id: index + 1,
-                ...item
+                ...item,
+                Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss")
             }))
             setData(arr)
+            setMergeNo("")
         })
+            .finally(() => {
+                setDisable(false)
+            })
     }
 
     //#endregion
@@ -295,7 +303,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             slotProps={{
                 backdrop: {
                     style: {
-                        backdropFilter: "blur(1px)", // Hiệu ứng làm mờ nền
+                        backdropFilter: "blur(1px)",
                     },
                 },
             }}
@@ -345,9 +353,9 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                             <MyButton height='2rem' name={t('btnDelete')} onClick={handleDeleteRow} disabled={disable} />
                         </Grid>
 
-                        <Grid item xs={0.5} display={"flex"} alignItems={'center'}>
+                        {/* <Grid item xs={0.5} display={"flex"} alignItems={'center'}>
                             {disable && <CircularProgress size={'24px'} color='info' />}
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     <Stack sx={{ height: '100%' }}>
                         <Stack
@@ -371,6 +379,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     {cofirmType === "no-create-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateBOMError") as string} />}
                     {cofirmType === "exist-mergeno" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblExistMergeno") as string} />}
                     {cofirmType === "no-KFJD-JiJie" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblKFJDAndJiJie") as string} />}
+                    {/* Loading khi tạo phiếu */}
+                    <Backdrop
+                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                        open={disable}
+                    >
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </Stack>
             </Box>
         </Modal>

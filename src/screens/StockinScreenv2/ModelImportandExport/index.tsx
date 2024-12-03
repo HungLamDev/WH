@@ -303,13 +303,17 @@ const ImportAndExport = (props: ImportAndExportProps) => {
             setDinhMuc(res.data)
         })
     }
-
     const ScanQR = (value_scan: string) => {
         // if (form === 'stockout') {
         setQtyOut(0)
         setIsLoading(true)
         setDisable(true)
-        handleGet_qty_out_Sample(PoNoAndTestNo, value_scan)
+
+        // lấy định mức kho mẫu LYV
+        if(dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+            handleGet_qty_out_Sample(PoNoAndTestNo, value_scan)
+        }
+
         const url = connect_string + 'api/txtScan_TextChanged'
         const data = {
             txtScan: value_scan,
@@ -346,7 +350,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         if (await checkPermissionPrint(dataUser[0].UserId) || chxPrint === false) {
             // Xuất tách tem
 
-            //Kho mẫu SG
+            //Kho mẫu LYV
             if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
                 barcodeToMaterial(Barcode).then(value => {
                     const QTY_BOM = listMaterialBOM
@@ -761,8 +765,9 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                             </Grid>
                             <Grid item xs={4}>
                                 {
+                                    // Định mức còn lại
                                     (dataUser[0].factoryName === 'LYV' && dataUser[0].WareHouse === "Sample") &&
-                                    <Typography className='textsize'>Định mức còn lại: <span className='_text'>{dinhMuc}</span> </Typography>
+                                    <Typography className='textsize'>{t("lblRemainingQuota")}: <span className='_text'>{dinhMuc}</span> </Typography>
                                 }
                             </Grid>
                             <Grid item xs={1} justifyContent={'flex-end'} display={'flex'}>

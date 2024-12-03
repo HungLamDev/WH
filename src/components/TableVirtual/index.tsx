@@ -50,9 +50,7 @@ function TableVirtual(props: TableVirtualProps) {
         if (timeoutRef.current !== null) {
             clearTimeout(timeoutRef.current);
         }
-        // if (!longPress) {
-        //     console.log('Short press');
-        // }
+
         setLongPress(false);
     };
 

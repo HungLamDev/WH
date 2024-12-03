@@ -1,6 +1,6 @@
 //#region  import
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
-import { IconButton, Box, Stack, Typography, Divider, Grid, Checkbox, FormControlLabel, FormGroup, TextField, Button, Modal, MenuItem, Autocomplete, CircularProgress } from "@mui/material";
+import { IconButton, Box, Stack, Typography, Divider, Grid, Checkbox, FormControlLabel, FormGroup, TextField, Button, Modal, MenuItem, Autocomplete, CircularProgress, Backdrop } from "@mui/material";
 import { GridColDef } from '@mui/x-data-grid';
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ import ConfirmDelivery from '../../../components/ConfirmDelivery';
 import CreateMergeBom from './CreateMergeBOMForm';
 import ReturnStamp from '../../../components/ReturnStamp';
 import GenericAutocomplete from '../../../components/GenericAutocomplete';
+import QRScannerV1 from '../../../components/QRScanner/indexV1';
 
 //#endregion
 
@@ -156,7 +157,7 @@ const DeliverySampleLYVScreen = () => {
     },
     {
       field: "Modify_Date",
-      headerName: t("dcmModify_Date"),
+      headerName: t("dcpModify_Date"),
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -212,7 +213,7 @@ const DeliverySampleLYVScreen = () => {
     },
     {
       field: "SuppID",
-      headerName: "SuppID",
+      headerName: "Supplier	ID",
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -301,7 +302,11 @@ const DeliverySampleLYVScreen = () => {
   const [testNo, setTestNo] = useState("")
   const [qtyOutSample, setQtyOutSample] = useState<any>({})
   const [isOpenSidebar, setIsOpenSibar] = useState(true)
+  const [isLoadingCreateSlip, setIsLoadingCreateSlip] = useState(false)
   const sidebarRef = useRef<SidebarRef>(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [focusedInputId, setFocusedInputId] = useState<string | null>(null);
+
   //#endregion
 
   //#region Func OnChange Input
@@ -666,6 +671,7 @@ const DeliverySampleLYVScreen = () => {
       !isEmptyOrNull(dataUser[0]?.UserId) &&
       !isEmptyOrNull(dataUser[0]?.factoryName)
     ) {
+      setIsLoadingCreateSlip(true)
       const url = connect_string + "api/creat_Stock_Out_No"
       const data = {
         Factory: dataUser[0]?.factoryName,
@@ -682,7 +688,12 @@ const DeliverySampleLYVScreen = () => {
         else {
           handleOpenConfirm("insert-slip-error")
         }
+      }).finally(() => {
+        setIsLoadingCreateSlip(false)
       })
+    }
+    else {
+      handleOpenConfirm("no-information")
     }
   }
 
@@ -703,12 +714,25 @@ const DeliverySampleLYVScreen = () => {
     })
   }
 
+  const handleFocus = (id: string) => {
+    setFocusedInputId(id); 
+  };
+
+  const handleScan = (data: string | null) => {
+    if (data && focusedInputId) {
+      const inputElement = document.getElementById(focusedInputId) as HTMLInputElement;
+      if (inputElement) {
+        inputElement.value = data; 
+      }
+    }
+  };
+
   //#endregion
   return (
     <FullScreenContainerWithNavBar
-      hidden={true}
-      sideBarDisable={false}
-      onShowScan={undefined}
+      hidden={false}
+      sideBarDisable={true}
+      onShowScan={() => setIsScannerOpen(true)}
       sideBarNavigate='/history-delivery-sample-lyv'
       title={t("lblStock_Out") + " " + t("btnAccounting_Sample")}
       navigate="/"
@@ -745,11 +769,17 @@ const DeliverySampleLYVScreen = () => {
                   <Stack padding={0.5} width={'100%'} gap={1} flexDirection={isOpenSidebar === true ? 'column' : 'row'}>
                     <Grid container >
                       <Grid item xs={12} display={'flex'}>
+                        {/* Test No */}
+                        <Stack direction={'row'} justifyContent={'center'} width={'100%'} >
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{testNo ? "Test No: " + testNo : ""}</span>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12} display={'flex'}>
                         {/* Merge No */}
-                        <Stack direction={'row'} justifyContent={'space-between'} width={'100%'}>
-                          <span className='textsize' style={{ color: 'orangered' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
-                          <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
-                          <span className='textsize' style={{ color: 'orangered' }}>{qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
+                        <Stack direction={'row'} justifyContent={'space-evenly'} width={'100%'} >
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
                         </Stack>
                       </Grid>
                       <Grid item xs={isOpenSidebar === true ? 10 : 8}>
@@ -761,6 +791,8 @@ const DeliverySampleLYVScreen = () => {
                           disable={disable}
                           value={qrcode}
                           handle={handleQRcode}
+                          id='scan-stock-out'
+                          handleOnFocus={() => handleFocus("scan-stock-out")}
                         />
                       </Grid>
                       <Grid item display={'flex'} alignItems={'center'} xs={1}>
@@ -803,7 +835,13 @@ const DeliverySampleLYVScreen = () => {
                 <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
               </Stack>
             </Stack>
-
+            {/* Loading khi tạo phiếu */}
+            <Backdrop
+              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open={isLoadingCreateSlip}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
           </div>
         </Stack>
         {cofirmType === "no-list-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblNoBOM") as string} />}
@@ -811,7 +849,10 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "no-stockout" && <ModalCofirm showOk={false} open={openCofirm} onClose={() => { handleCloseConfirm(), setQRCode("") }} title={t("lblNoStockOut") as string} />}
         {cofirmType === "insert-slip-sucess" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateSlipSucess") as string} />}
         {cofirmType === "insert-slip-error" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblCreateSlipError") as string} />}
+        {cofirmType === "no-information" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCompleteInformation") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
+        {/* Quét Camera */}
+        {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => { setIsScannerOpen(false); } } />}
       </Stack>
     </FullScreenContainerWithNavBar>
   )
@@ -827,7 +868,7 @@ interface SidebarProps {
   MergeNo: any,
   TestNo: any,
   isOpenSidebar: any,
-  get_qty_out_Sample: any
+  get_qty_out_Sample: any,
 }
 
 interface SidebarRef {
@@ -846,11 +887,12 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [valueAutocomplete, setValueAutocomplete] = React.useState<any>(null);
   const [listSampleOrder, setListSampleOrder] = useState<any[]>([])
   const [listDataWaiting, setListDataWaiting] = useState<any[]>([])
-  const [PoNo, setPoNo] = useState('')
+  const [PoNo, setPoNo] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [disable, setDisable] = useState(false)
   const [infoPO, setInfoPO] = useState<any>({})
   const [listWH, setListWH] = useState<any[]>([])
+
   //#endregion
 
   //#region ref
@@ -880,7 +922,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   //#region useDebounced
   const debouncedSearchTerm = useDebounced(PoNo, 300);
   useEffect(() => {
-    if (debouncedSearchTerm !== "" && debouncedSearchTerm.length > 10) {
+    if (debouncedSearchTerm !== "" && debouncedSearchTerm.length > 7) {
       getAllPoNo(debouncedSearchTerm)
     }
   }, [debouncedSearchTerm]);
@@ -969,6 +1011,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     Article("")
     KFJD("")
     MergeNo("")
+    TestNo("")
 
     setIsLoading(true)
     setDisable(true)
@@ -982,6 +1025,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       Article(res?.data?.ARTICLE)
       KFJD(res?.data?.KFJD)
       MergeNo(res?.data?.YPZLBH)
+      TestNo(res?.data?.TestNo)
     })
       .finally(() => {
         setIsLoading(false)
@@ -1002,10 +1046,9 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       })
   }
 
-  const getAllPoNo = (po: any) => {
-    const POAndTestNo = po.split("-")
-    setIsLoading(true)
-    setDisable(true)
+  const getAllPoNo = (value: any) => {
+    const POAndTestNo = value.split("-")
+
     const url = connect_string + "api/get_Merge_Bom_To_PONO"
 
     const data = {
@@ -1018,10 +1061,15 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       if (res.data.length > 0) {
         setListSampleOrder(res.data)
 
+        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[0]?.trim())
+
         const newValue = {
-          PONO: POAndTestNo[1]?.trim(),
-          TestNo: POAndTestNo[0]?.trim(),
-      };
+          PONO: filterListPo[0]?.PONO?.trim(),
+          TestNo: filterListPo[0]?.TestNo?.trim(),
+        };
+
+
+        PO_NOAndTestNo(newValue);
 
         setValueAutocomplete(
           newValue
@@ -1037,8 +1085,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         setValueAutocomplete(null)
       }
     }).finally(() => {
-      setIsLoading(false)
-      setDisable(false)
+
     })
   }
 
@@ -1232,11 +1279,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                           getDataWaitingAndgetInfoPO(newValue)
                         }
                       }}
-                      // onInputChange={(newInputValue: any) => {
-                      //     console.log(newInputValue)
-                      // }}
 
-                      getOptionLabel={(option) => 
+                      getOptionLabel={(option) =>
                         typeof option === "string" ? option : option.PONO
                       }
                       isOptionEqualToValue={(option, value) => {

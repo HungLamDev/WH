@@ -129,8 +129,6 @@ const TableDateTimePickerInventory = (props: TableDateTimePickerInventoryProps) 
 
     const handleTextFieldChange = (rowInd: number, colName: string, value: string) => {
         dispatch(TextFieldChangeArrayRowDowns({ _id: rowInd, columnName: colName, value: value }));
-        console.log(rowInd)
-        console.log(colName)
     };
 
 

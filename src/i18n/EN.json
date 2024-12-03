@@ -432,6 +432,8 @@
     "lblNoAccountERP": "Your account is not yet available in ERP. Please create an ERP account to perform this function.",
     "btnExportStamp": "Export label",
     "noRecoverStamp": "This label has already generated an export slip and cannot be returned.",
-    "lblNoOption": "No data available"
+    "lblNoOption": "No data available",
+    "lblChooseWH": "Select warehouse",
+    "lblRemainingQuota": "Remaining quota"
 
 }

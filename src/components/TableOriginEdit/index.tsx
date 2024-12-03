@@ -37,9 +37,7 @@ const TableOriginEdit = (props: TableOriginEditProps) => {
     if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
     }
-    // if (!longPress) {
-    //     console.log('Short press');
-    // }
+
     setLongPress(false);
 };
 

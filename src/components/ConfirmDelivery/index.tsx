@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { connect_string } from "../../screens/LoginScreen/ChooseFactory";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import GenericAutocomplete from "../GenericAutocomplete";
 
 interface ConfirmDeliveryProps {
     title?: string,
@@ -71,10 +72,10 @@ const ConfirmDelivery = (props: ConfirmDeliveryProps) => {
                         <Typography className="titleNavbar" color={'white'} sx={{ fontSize: 30 }}>{title}</Typography>
                         <Grid container>
                             <Grid item display={'flex'} xs={4} alignItems={"center"}>
-                                <Typography className='textsize' color={'white'}>Chọn kho</Typography>
+                                <Typography className='textsize' color={'white'}>{t("lblChooseWH")}</Typography>
                             </Grid>
                             <Grid item display={'flex'} xs={8}>
-                                <Autocomplete
+                                {/* <Autocomplete
                                     value={valueWH}
                                     onChange={(event: any, newValue: any | "") => {
                                         setValueWH(newValue);
@@ -146,6 +147,21 @@ const ConfirmDelivery = (props: ConfirmDeliveryProps) => {
                                             }}
                                         />
                                     )}
+                                /> */}
+                                <GenericAutocomplete
+                                    value={valueWH}
+                                    onChange={( newValue: any | "") => {
+                                        setValueWH(newValue);
+
+                                    }}
+                                    getOptionLabel={(option) => (typeof option === 'string' ? option : option?.CKBH || "")}
+                                    isOptionEqualToValue={(option, value) => {
+                                        if (typeof value === 'string') {
+                                            return option.CKBH === value; // So sánh chuỗi với chuỗi
+                                        }
+                                        return option.CKBH === value?.CKBH; // So sánh object với object
+                                    }}
+                                    options={Array.isArray(listWH) ? listWH : []}
                                 />
                             </Grid>
                         </Grid>
