@@ -44,7 +44,6 @@ import { config } from "../../../utils/api.ts";
 import { connect_string } from "../../LoginScreen/ChooseFactory/index.tsx";
 import { useSelector } from "react-redux";
 import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
-import { year } from "../../LoginScreen/index.tsx";
 import { registerSW } from 'virtual:pwa-register'
 import { handleCheckUserERP } from "../../../utils/api_global.ts";
 import ModalCofirm from "../../../components/ModalConfirm/index.tsx";
@@ -523,7 +522,7 @@ const Menu = () => {
           display: 'flex',
           fontWeight: 'bold'
         }}
-      > Powered by IT-Software LHG<br /> © {year} LACTY CO.,LTD. All rights reserved.
+      > Powered by IT-Software LHG<br /> © 2024 LACTY CO.,LTD. All rights reserved.
       </Typography>
       <Typography className="textsizemini" variant="caption"
         sx={{

@@ -44,6 +44,7 @@ const InputFieldV1 = (props: InputFieldV1Props) => {
         }
     }, [onFocus])
 
+
     return (
         <Stack
             direction={"row"}
@@ -80,7 +81,7 @@ const InputFieldV1 = (props: InputFieldV1Props) => {
                             sx: {
                                 borderRadius: "50px",
                                 color: "white",
-                                height: "2rem",
+                                height: "1.9rem ",
 
 
                                 "& fieldset": { borderColor: "white" },
@@ -89,7 +90,7 @@ const InputFieldV1 = (props: InputFieldV1Props) => {
 
                                 '@media screen and (max-width: 1200px)': {
                                     fontSize: '14px !important',
-                                    height: "1.8rem",
+                                    height: "1.6rem",
                                 },
 
                                 '@media screen and (max-width: 900px)': {

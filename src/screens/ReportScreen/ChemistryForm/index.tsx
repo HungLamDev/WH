@@ -310,7 +310,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
         setLoading(false);
 
       });
-  };
+  }; 
 
   const Search = () => {
     dispatch(clearChemistry());

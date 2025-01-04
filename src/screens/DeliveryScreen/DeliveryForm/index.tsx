@@ -620,6 +620,7 @@ const DeliveryScreen = () => {
           })
         }
       }
+      // Chi tiết kiện
       if (columnName === 'RY_Status1') {
         setIsApi(false)
 
@@ -1213,4 +1214,3 @@ const DeliveryScreen = () => {
   )
 }
 export default DeliveryScreen;
-

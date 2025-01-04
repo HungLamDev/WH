@@ -12,6 +12,9 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import ModalCofirm from "../../../../components/ModalConfirm";
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import QRScanner from "../../../../components/QRScanner";
+
 //#endregion
 
 interface CreateMergeBomProps {
@@ -33,13 +36,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             headerAlign: 'center',
             width: 180,
         },
-        {
-            field: "Po_No",
-            headerName: "Po No",
-            align: "center",
-            headerAlign: 'center',
-            width: 180,
-        },
+        // {
+        //     field: "Po_No",
+        //     headerName: "Po No",
+        //     align: "center",
+        //     headerAlign: 'center',
+        //     width: 180,
+        // },
         {
             field: "Article",
             headerName: "Article",
@@ -101,7 +104,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '80%',
+        width: '90%',
         height: '90%',
         bgcolor: '#1c2538',
         border: '2px solid white',
@@ -120,6 +123,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     const [mergeNo, setMergeNo] = useState("")
     const [cofirmType, setCofirmType] = useState('')
     const [openCofirm, setOpenCofirm] = useState(false)
+    const [modalScan, setModalScan] = useState(false)
+
     //#endregion
 
     //#region handleOnChange
@@ -147,7 +152,11 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     const debouncedSearchTerm = useDebounced(valueScan, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (debouncedSearchTerm.length >= 5) {
+        if (
+            debouncedSearchTerm !== "" &&
+            debouncedSearchTerm.length > 10 &&
+            debouncedSearchTerm.includes("-")
+        ) {
             scanPoNo(debouncedSearchTerm)
         }
     }, [debouncedSearchTerm]);
@@ -155,6 +164,19 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     //#endregion
 
     //#region Func Logic
+
+    const handleScanClick = () => {
+        setModalScan(true);
+    }
+
+    const handleScan = async (result: any | null) => {
+
+        if (result || result.text) {
+            setValueScan(result.text)
+            // setModalScan(false)
+        }
+    }
+
 
     const handleRowClick = (params: any, item: any) => {
         setItemRow(item)
@@ -198,8 +220,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         const url = connect_string + "api/Create_Merge_Bom"
         const dataPoNo = {
             User_WH: dataUser[0].UserId,
-            Po_No: POAndTestNo[1]?.trim() || "",
-            TestNo: [POAndTestNo[0]?.trim() || ""]
+            Po_No: POAndTestNo[0]?.trim() || "",
+            TestNo: [POAndTestNo[1]?.trim() || ""]
         }
 
         axios.post(url, dataPoNo).then(res => {
@@ -303,7 +325,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             slotProps={{
                 backdrop: {
                     style: {
-                        backdropFilter: "blur(1px)",
+                        backdropFilter: "blur(2px)",
                     },
                 },
             }}
@@ -316,11 +338,14 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     </IconButton>
                     {/* Tittle */}
                     <Typography variant="h5" component="h5" color={'white'}>{t("btnCreateBOM")}</Typography>
-                    <Typography variant="h5" component="h5" color={'white'}></Typography>
+                    {/* Camera */}
+                    <IconButton sx={{ marginLeft: '20px' }}  >
+                        <CameraAltIcon onClick={handleScanClick} />
+                    </IconButton>
                 </Stack>
-                <Stack flex={1} gap={2} >
-                    <Grid container padding={'10px'} gap={'10px'} >
-                        <Grid item display={'flex'} xs={4}>
+                <Stack flex={1} >
+                    <Grid container padding={'10px'} spacing={2}>
+                        <Grid item display={'flex'} xs={3.5}>
                             {/* Scan xuất */}
                             <InputFieldV1
                                 xsLabel={2}
@@ -331,10 +356,10 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                                 handle={handleValueScanChange}
                             />
                         </Grid>
-                        <Grid item display={'flex'} xs={4}>
+                        <Grid item display={'flex'} xs={3.5}>
                             {/* Merge No */}
                             <InputFieldV1
-                                xsLabel={3}
+                                xsLabel={4}
                                 xsInput={8}
                                 label={"Merge No"}
                                 disable={disable}
@@ -343,14 +368,19 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                             />
                         </Grid>
 
-                        <Grid item display={'flex'}>
+                        <Grid item display={'flex'} xs={1.5}>
                             {/* Nút tìm kiếm */}
                             <MyButton height='2rem' name={t('btnSearch')} onClick={handleMergeNoToPono} disabled={disable} />
                         </Grid>
 
-                        <Grid item display={'flex'}>
+                        <Grid item display={'flex'} xs={1.5}>
                             {/* Nút xóa */}
                             <MyButton height='2rem' name={t('btnDelete')} onClick={handleDeleteRow} disabled={disable} />
+                        </Grid>
+
+                        <Grid item display={'flex'} xs={1.5}>
+                            {/* Nút lamf mới */}
+                            <MyButton height='2rem' name={t('btnClean')} onClick={() => setData([])} disabled={disable} />
                         </Grid>
 
                         {/* <Grid item xs={0.5} display={"flex"} alignItems={'center'}>
@@ -379,6 +409,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     {cofirmType === "no-create-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateBOMError") as string} />}
                     {cofirmType === "exist-mergeno" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblExistMergeno") as string} />}
                     {cofirmType === "no-KFJD-JiJie" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblKFJDAndJiJie") as string} />}
+                    {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
+
                     {/* Loading khi tạo phiếu */}
                     <Backdrop
                         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

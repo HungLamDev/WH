@@ -102,7 +102,7 @@ function ModalLocation({ open, onClose, dataUpdate, materialNo, dtpFrom_Open, dt
                 <Stack height={'100%'}>
                     <Stack height={'10%'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                         <IconButton className={'back-button'} onClick={handleBack}>
-                            <BiArrowBack className=" icon-wrapper" sx={{ color: 'white' }} />
+                            <BiArrowBack className=" icon-wrapper" />
                         </IconButton>
                         <Typography variant="h6" component="h6" color={'lightblue'}>{dataUpdate[0] ? dataUpdate[0].Material_No : ""}</Typography>
 

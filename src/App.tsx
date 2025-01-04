@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
-import { ThemeProvider, CssBaseline } from "@mui/material";
 import StockoutScreen from "./screens/StockoutScreen/StockoutForm";
 import StampPrintScreen from "./screens/StampPrintScreenv2";
 import ErrorScreen from "./screens/ErrorScreen";
@@ -39,7 +38,6 @@ import PermissionPrintScreen from "./screens/SettingsScreen/PrintPermissionForm"
 import CheckData from "./screens/DeliveryScreen/CheckData";
 import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
 import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
-import { getFactory, getWareHouse, setFactory } from "./utils/localStorage";
 import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
 import AccountingCardSole from "./screens/ReportScreen/AccountingCardSole";
 import DeliverySampleLYVScreen from "./screens/DeliveryScreen/DeliverySampleFormLYV";

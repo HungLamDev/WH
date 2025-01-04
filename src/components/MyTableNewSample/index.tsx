@@ -7,6 +7,7 @@ import {
     TableCell,
     Checkbox,
     TextField,
+    Stack,
 } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
@@ -24,10 +25,12 @@ interface TableCheckBoxProps {
     paintingRow?: any,
     checkBox?: any,
     highlightText?: any
-    selectedFirstRow?: boolean
+    selectedFirstRow?: boolean,
+    lastRowData?: any[],
+    lastRow?: boolean
 }
 
-const MyTableNew = (props: TableCheckBoxProps) => {
+const MyTableNewSample = (props: TableCheckBoxProps) => {
     const {
         columns,
         rows,
@@ -41,7 +44,9 @@ const MyTableNew = (props: TableCheckBoxProps) => {
         paintingRow,
         checkBox = true,
         highlightText,
-        selectedFirstRow = false
+        selectedFirstRow = false,
+        lastRowData,
+        lastRow = false
     } = props;
 
     const [selected, setSelected] = useState<GridRowsProp>([])
@@ -53,13 +58,13 @@ const MyTableNew = (props: TableCheckBoxProps) => {
         const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;
         selectedAll && handleSelectAllClick(event);
 
-        if (rows.length > 0 && selectedFirstRow === true) {
-            const firstRow = rows[0]; // Lấy hàng đầu tiên
-            setSelectedRow(firstRow._id); // Đặt hàng đầu tiên là được chọn
-            if (typeof handlerowClick === "function") {
-                handlerowClick(columns[0]?.field, firstRow); // Gọi handleRowClick với hàng đầu tiên
-            }
-        }
+        // if (rows.length > 0 && selectedFirstRow === true) {
+        //     const firstRow = rows[0]; // Lấy hàng đầu tiên
+        //     setSelectedRow(firstRow._id); // Đặt hàng đầu tiên là được chọn
+        //     if (typeof handlerowClick === "function") {
+        //         handlerowClick(columns[0]?.field, firstRow); // Gọi handleRowClick với hàng đầu tiên
+        //     }
+        // }
     }, [rows])
 
     useEffect(() => {
@@ -139,8 +144,24 @@ const MyTableNew = (props: TableCheckBoxProps) => {
     };
 
     return (
-        <TableContainer sx={{ height: '100%' }}>
-            <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
+        <Stack
+            sx={{
+                height: "100%",
+                position: "relative",
+                display: "flex",
+                justifyContent: "space-between",
+                overflowY: "auto"
+            }}
+        >
+             <Table
+                    size={"small"}
+                    sx={{
+                        width: '100%',
+                        tableLayout: 'fixed',
+                    }}
+                    stickyHeader
+                    className="table-sample"
+                >
                 <TableHead>
                     <TableRow>
                         {
@@ -160,12 +181,17 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                         {columns.map((item: any, index: number) => {
                             return (
                                 <TableCell
-                                    className="td-responesive"
+                                    className="td-responesive-sample"
                                     key={index}
                                     align={"left"}
                                     sx={{
                                         whiteSpace: "nowrap",
                                         color: "orange",
+                                        padding: "0 8px !important",
+                                        background: "#1E201E",
+                                        lineHeight: 1.5,
+                                        width: item.width // Thêm width từ column
+
                                     }}
                                 >
                                     {item.headerName}
@@ -191,6 +217,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                     backgroundColor:
                                         item._id === selectedRow ? "#415a77" : "inherit",
                                     cursor: "pointer",
+
                                 }}
 
                             >
@@ -200,7 +227,6 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                             <Checkbox
                                                 onClick={(event) => {
                                                     handleClick(event, item)
-
                                                 }
                                                 }
                                                 role="checkbox"
@@ -222,7 +248,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                     return (
                                         <TableCell
                                             key={i}
-                                            className="td-responesive"
+                                            className="td-responesive-sample"
                                             onClick={() => {
                                                 handleRowClick(key, item);
                                                 setSelectedRow(item._id === selectedRow ? null : item._id);
@@ -230,7 +256,14 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                             onBlur={(event) => handleCellBlur(event, item._id)}
                                             sx={{
                                                 color: paintingRow?.(item[key], item) ?? "white",
+                                                padding: "0 8px !important",
+                                                textAlign: 'center',
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                width: column.width // Thêm width từ column,
                                             }}
+                                            title={item[key]}
+
                                         >
                                             {isEditing ? (
                                                 <TextField
@@ -278,7 +311,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                                     :
                                                     (
                                                         <span
-                                                           
+
                                                         >
                                                             {item[key]}
                                                         </span>
@@ -294,8 +327,60 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                     })}
                 </TableBody>
             </Table>
-        </TableContainer>
+
+            {/* Hàng cuối luôn được hiển thị ở dưới cùng */}
+            {lastRow && (
+
+                <Table
+                    size={"small"}
+                    sx={{
+                        tableLayout: 'fixed',
+                        borderCollapse: "collapse",
+                        position: 'sticky', // Sticky position
+                        bottom: 0, // Luôn bám ở dưới cùng
+                        zIndex: 2, // Đảm bảo không bị header hay body che khuất
+                        background: "#1c2538", // Màu nền cố định
+                    }}
+                >
+
+                    <TableBody>
+
+                        {lastRowData && lastRowData.map((item: any, index: number) => (
+                            <TableRow
+                                key={index}
+                                sx={{
+                                    backgroundColor: "#1c2538",
+                                    cursor: "pointer",
+                                    padding: "0px !important",
+                                }}
+                            >
+                                {columns.map((column: any, i: number) => {
+                                    const key = column.field;
+                                    return (
+                                        <TableCell
+                                            key={i}
+                                            className="td-responesive-sample"
+                                            sx={{
+                                                padding: "0 0px !important",
+                                                textAlign: 'center',
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                width: column.width // Thêm width từ column
+                                            }}
+                                        >
+
+                                            <span>{item[key]}</span>
+
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            )}
+        </Stack>
     );
 };
 
-export default MyTableNew;
+export default MyTableNewSample;

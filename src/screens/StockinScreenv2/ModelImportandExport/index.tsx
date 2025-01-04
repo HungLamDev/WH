@@ -98,7 +98,9 @@ const ImportAndExport = (props: ImportAndExportProps) => {
     const [QTY, setQTY] = useState<number>(0)
     const [Value_Total_Qty, setValue_Total_Qty] = useState<number>(0)
     const [Unit, setUnit] = useState('')
-    const [qtyout, setQtyOut] = useState<number>(0)
+    const [dinhMuc, setDinhMuc] = useState<number>(0)
+    const [dinhMucText, setDinhMucText] = useState<number>(0)
+    const [qtyout, setQtyOut] = useState<number>(0);
     const [chxAll, setchxAll] = useState(true)
     const [disable, setDisable] = useState(false)
     const [openCofirm, setOpenCofirm] = useState(false)
@@ -110,7 +112,6 @@ const ImportAndExport = (props: ImportAndExportProps) => {
     const [title, setTitle] = useState<any>('')
     const [chxPrint, setchxPrint] = useState(false)
     const [message, setMessage] = useState('')
-    const [dinhMuc, setDinhMuc] = useState("")
     //#endregion
 
     //#region Func OnChange Input
@@ -127,9 +128,16 @@ const ImportAndExport = (props: ImportAndExportProps) => {
     };
 
     const handleQtyOut = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newQtyOut = event.target.valueAsNumber;
-        setQtyOut(newQtyOut);
+        if (form === 'stockout' && dataUser[0].factoryName !== "LYV" && dataUser[0].WareHouse !== "Sample") {
+            const newQtyOut = event.target.valueAsNumber;
+            setQtyOut(newQtyOut);
+        }
+        else if (form === 'stockout' && dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+            const newQtyOut = event.target.valueAsNumber;
+            setDinhMucText(newQtyOut);
+        }
     }
+
 
     const handlechxALL = (event: React.ChangeEvent<HTMLInputElement>) => {
         setchxAll(event.target.checked);
@@ -268,27 +276,45 @@ const ImportAndExport = (props: ImportAndExportProps) => {
     }
 
     const calculateRemainingQty = () => {
-        const remainingQty = new Decimal(QTY).minus(qtyout).toNumber();
+        let remainingQty = 0;
+        if (form === 'stockout' && dataUser[0].factoryName !== "LYV" && dataUser[0].WareHouse !== "Sample") {
+            remainingQty = new Decimal(QTY).minus(qtyout).toNumber();
+        }
+        else if (form === 'stockout' && dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+            if (dinhMucText > dinhMuc) {
+                remainingQty = new Decimal(QTY).minus(dinhMuc).toNumber();
+            }
+            else {
+                remainingQty = new Decimal(QTY).minus(dinhMucText).toNumber();
+            }
+        }
         return remainingQty >= 0 ? Number(remainingQty) : 0;
     };
 
     const calculateQtyOut = () => {
-        if (form === 'stockout') {
+        if (form === 'stockout' && dataUser[0].factoryName !== "LYV" && dataUser[0].WareHouse !== "Sample") {
             if (qtyout >= QTY) {
                 return QTY
             }
             else if (qtyout < QTY && qtyout >= 0) {
                 return qtyout
             }
-            else {
-                return ''
+        }
+        else if (form === 'stockout' && dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+            if (dinhMuc <= QTY) {
+                if (dinhMucText <= dinhMuc) {
+                    return dinhMucText
+                }
+                else if (dinhMucText > dinhMuc) {
+                    return dinhMuc
+                }
+            }
+            else if (dinhMuc > QTY) {
+                return QTY
             }
         }
-        else {
-            // if(Number(QTY) + Number(qtyout) >= Value_Total_Qty){
-            //     return ''
-            // }
-        }
+        return ''
+
     }
 
     const handleGet_qty_out_Sample = (value: any, qr: any) => {
@@ -301,8 +327,10 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         }
         axios.post(url, data).then(res => {
             setDinhMuc(res.data)
+            setDinhMucText(res.data)
         })
     }
+
     const ScanQR = (value_scan: string) => {
         // if (form === 'stockout') {
         setQtyOut(0)
@@ -310,7 +338,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
         setDisable(true)
 
         // lấy định mức kho mẫu LYV
-        if(dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
+        if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
             handleGet_qty_out_Sample(PoNoAndTestNo, value_scan)
         }
 
@@ -368,9 +396,10 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                                 accumulator.plus(new Decimal(currentValue.QTY_Sample)),
                             new Decimal(0)
                         )
+                    
+                
 
-
-                    const QTY_Xuat = (new Decimal(qtyout >= QTY ? Number(QTY) : qtyout))
+                    const QTY_Xuat = (new Decimal(calculateQtyOut()))
 
                     const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(QTY_Xuat).plus(QTY_Da_Xuat)))).toNumber()
 
@@ -394,7 +423,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                             const data = {
                                 rbtImport: false,
                                 rbtExport: true,
-                                txtQty_Input: qtyout >= QTY ? Number(QTY) : qtyout,
+                                txtQty_Input: calculateQtyOut(),
                                 Value_Barcode: Barcode,
                                 txtQty_Remain: calculateRemainingQty(),
                                 Value_Unit: Unit,
@@ -443,7 +472,7 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                                     };
                                     // dispatch(addItemArrayStockout(newItem))
                                     // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
-                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PoNoAndTestNo?.PONO, PoNoAndTestNo?.TestNo, MergeNo , Article, QTY_BOM, KFJD, value.size)
+                                    Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PoNoAndTestNo?.PONO, PoNoAndTestNo?.TestNo, MergeNo, Article, QTY_BOM, KFJD, value.size)
 
                                     setScanQR(Barcode)
                                     // handleOpenConfirm('ok')
@@ -460,14 +489,13 @@ const ImportAndExport = (props: ImportAndExportProps) => {
                         else {
                             setIsLoading(true)
                             setDisable(true)
-                            const remainingQty = new Decimal(QTY).plus(qtyout).toNumber();
                             const url = connect_string + 'api/btn_Save_Partial'
                             const data = {
                                 rbtImport: true,
                                 rbtExport: false,
-                                txtQty_Input: remainingQty >= Value_Total_Qty ? 0 : qtyout,
+                                txtQty_Input: calculateQtyOut(),
                                 Value_Barcode: Barcode,
-                                txtQty_Remain: qtyRemain,
+                                txtQty_Remain: calculateRemainingQty() ,
                                 Value_Unit: Unit,
                                 txtScan: Barcode,
                                 User_Serial_Key: dataUser[0].UserId,

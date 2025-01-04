@@ -13,7 +13,7 @@ const QRScannerV1: React.FC<ScannerQRProps> = ({ open, onClose, onScan }) => {
 
   const handleScan = (data: any | null) => {
     if (data) {
-      onScan(data); // Gửi dữ liệu về parent qua callback
+      onScan(data);
       setScannerKey((prevKey) => prevKey + 1);
     }
   };
@@ -71,7 +71,7 @@ const QRScannerV1: React.FC<ScannerQRProps> = ({ open, onClose, onScan }) => {
           onResult={handleScan}
           containerStyle={{ width: "100%", margin: "auto" }}
           constraints={{ facingMode: 'environment' }}
-        />
+          />
       </Box>
     </Modal>
   );

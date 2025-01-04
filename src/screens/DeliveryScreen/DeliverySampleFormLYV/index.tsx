@@ -32,7 +32,7 @@ import EnterIcon from '../../../assets/enter.png'
 import TableOrigin from '../../../components/TableOrigin';
 import TableOriginEdit from '../../../components/TableOriginEdit';
 import { barcodeToMaterial, handleCheckUserERP, isEmptyOrNull } from '../../../utils/api_global';
-import { random, result } from 'lodash';
+import { random, result, set } from 'lodash';
 import MyTableNew from '../../../components/MyTableNew';
 import Statistics from '../../StockinScreenv2/StatisticsForm';
 import ConfirmDelivery from '../../../components/ConfirmDelivery';
@@ -40,6 +40,8 @@ import CreateMergeBom from './CreateMergeBOMForm';
 import ReturnStamp from '../../../components/ReturnStamp';
 import GenericAutocomplete from '../../../components/GenericAutocomplete';
 import QRScannerV1 from '../../../components/QRScanner/indexV1';
+import { styletext } from '../../StockinScreenv2/StockinForm';
+import SampleSearchERP from '../../SampleSearchERP';
 
 //#endregion
 
@@ -71,14 +73,14 @@ const DeliverySampleLYVScreen = () => {
 
   //#region column header table
   const columns: any[] = [
-    {
-      field: "TestNo",
-      headerName: "Test No",
-      align: "center",
-      headerAlign: 'center',
-      width: 150,
+    // {
+    //   field: "TestNo",
+    //   headerName: "Test No",
+    //   align: "center",
+    //   headerAlign: 'center',
+    //   width: 150,
 
-    },
+    // },
     {
       field: "PONO",
       headerName: "PONO",
@@ -513,6 +515,7 @@ const DeliverySampleLYVScreen = () => {
     }).finally(() => {
       setDisable(false)
       setIsLoading(false)
+      setQRCode("")
     })
   }
 
@@ -536,10 +539,10 @@ const DeliverySampleLYVScreen = () => {
         if (index === existingItemIndex) {
           return {
             ...item,
-            Size: item.Size + "\r\n" + newItem.Size,
-            Barcode: item.Barcode + "\r\n" + newItem.Barcode,
+            Size: newItem.Size + "\r\n" + item.Size,
+            Barcode: newItem.Barcode + "\r\n" + item.Barcode,
             QTY_Sample: new Decimal(item.QTY_Sample).plus(new Decimal(newItem.QTY_Sample)).toNumber(),
-            Modify_Date: item.Modify_Date + "\r\n" + newItem.Modify_Date,
+            Modify_Date: newItem.Modify_Date + "\r\n" + item.Modify_Date,
           };
         }
         return item;
@@ -547,7 +550,7 @@ const DeliverySampleLYVScreen = () => {
     }
     // Ngược lại thì ko
     else {
-      return [...prev, newItem];
+      return [newItem, ...prev];
     }
   };
 
@@ -620,9 +623,7 @@ const DeliverySampleLYVScreen = () => {
 
   //Tô màu dòng trong bảng------------------------------------------
   const paintingRow = (item: any, row: any) => {
-    if (typeof item !== "string") {
-      return item;
-    }
+
 
     if (row.Material_No !== null && row.QTY_Bom !== "" && ((new Decimal(row.QTY_Bom).minus(new Decimal(row.QTY_Sample))).toNumber() !== 0)) {
       return "orange"
@@ -715,22 +716,29 @@ const DeliverySampleLYVScreen = () => {
   }
 
   const handleFocus = (id: string) => {
-    setFocusedInputId(id); 
+    setFocusedInputId(id);
   };
 
-  const handleScan = (data: string | null) => {
+  const handleScan = (data: any | null) => {
     if (data && focusedInputId) {
-      const inputElement = document.getElementById(focusedInputId) as HTMLInputElement;
-      if (inputElement) {
-        inputElement.value = data; 
-      }
+      setTimeout(() => {
+        const inputElement = document.getElementById(focusedInputId) as HTMLInputElement;
+        if (inputElement) {
+          if (focusedInputId === "scan-po") {
+            sidebarRef.current?.setPoNoValue(data?.text)
+          }
+          else if (focusedInputId === "scan-stock-out") {
+            setQRCode(data?.text)
+          }
+        }
+      }, 500); // Độ trễ 500ms
     }
   };
 
   //#endregion
   return (
     <FullScreenContainerWithNavBar
-      hidden={false}
+      hidden={true}
       sideBarDisable={true}
       onShowScan={() => setIsScannerOpen(true)}
       sideBarNavigate='/history-delivery-sample-lyv'
@@ -752,6 +760,7 @@ const DeliverySampleLYVScreen = () => {
             TestNo={(value: any) => setTestNo(value)}
             isOpenSidebar={(value: any) => setIsOpenSibar(value)}
             get_qty_out_Sample={handleGet_qty_out_Sample}
+            handleFocusInput={(id: any) => handleFocus(id)}
           />
           <div className="main-content">
             <Box
@@ -801,20 +810,25 @@ const DeliverySampleLYVScreen = () => {
                     </Grid>
                     <Grid container direction={'row'} gap={'10px'} justifyContent={isOpenSidebar === true ? 'center' : 'flex-start'} >
                       {/* Xuất chi tiết */}
-                      <Grid item display={'flex'} alignItems={'flex-end'}>
+                      <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
                         <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={disable} />
                         {modalName === 'ImportAndExport' && <ImportAndExport listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNoAndTestNo={PO_NOAndTestNo} MergeNo={mergeNo} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
                       </Grid>
 
-                      <Grid item display={'flex'} alignItems={'flex-end'}>
+                      <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
                         {/* Thống kê */}
                         <MyButton height='2rem' name={t("btnStatistical")} onClick={() => handleOpen('Statistics')} disabled={disable} />
                         {modalName === 'Statistics' && <Statistics open={open} onClose={handleClose} materialNo='' />}
                       </Grid>
-                      <Grid item display={'flex'} alignItems={'flex-end'}>
+                      <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
                         {/* Tem xuất */}
                         <MyButton height='2rem' name={t("btnExportStamp")} onClick={() => handleOpen('ReturnStamp')} disabled={disable} />
                         {modalName === 'ReturnStamp' && <ReturnStamp open={open} onClose={handleClose} />}
+                      </Grid>
+                      <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
+                        {/* Tìm ERP */}
+                        <MyButton height='2rem' name={"Xem ERP"} onClick={() => handleOpen('SearchERPSample')} disabled={disable} />
+                        {modalName === 'SearchERPSample' && <SampleSearchERP open={open} onClose={handleClose} />}
                       </Grid>
                     </Grid>
                   </Stack>
@@ -852,7 +866,7 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "no-information" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCompleteInformation") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
         {/* Quét Camera */}
-        {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => { setIsScannerOpen(false); } } />}
+        {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => { setIsScannerOpen(false); }} />}
       </Stack>
     </FullScreenContainerWithNavBar>
   )
@@ -869,16 +883,30 @@ interface SidebarProps {
   TestNo: any,
   isOpenSidebar: any,
   get_qty_out_Sample: any,
+  handleFocusInput: any
 }
 
 interface SidebarRef {
   refreshData: () => void;
   refreshMaterial_Stock_Out_Sample: () => void;
+  setPoNoValue: (value: any) => void
 }
 
 //#region Tạo BOM
 const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
-  const { column, PO_NOAndTestNo, listMaterialBOM, listMaterialStockOut, Article, KFJD, MergeNo, TestNo, isOpenSidebar, get_qty_out_Sample } = props
+  const {
+    column,
+    PO_NOAndTestNo,
+    listMaterialBOM,
+    listMaterialStockOut,
+    Article,
+    KFJD,
+    MergeNo,
+    TestNo,
+    isOpenSidebar,
+    get_qty_out_Sample,
+    handleFocusInput
+  } = props
   const { t } = useTranslation();
 
   //#region Variable
@@ -892,13 +920,18 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [disable, setDisable] = useState(false)
   const [infoPO, setInfoPO] = useState<any>({})
   const [listWH, setListWH] = useState<any[]>([])
+  const [checkSole, setCheckSole] = useState(false)
+  const [loadingState, setLoadingState] = useState(false)
+  const [loadingAll, setLoadingAll] = useState("")
+  const [onFocus, setOnFocus] = useState(false)
 
   //#endregion
 
   //#region ref
   useImperativeHandle(ref, () => ({
     refreshData,
-    refreshMaterial_Stock_Out_Sample
+    refreshMaterial_Stock_Out_Sample,
+    setPoNoValue
   }));
 
   const refreshData = () => {
@@ -908,6 +941,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const refreshMaterial_Stock_Out_Sample = () => {
     get_Material_Stock_Out_Sample(valueAutocomplete)
   };
+
+  const setPoNoValue = (value: any) => {
+    setPoNo(value)
+  }
+
   //#endregion
 
 
@@ -921,11 +959,17 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   //#region useDebounced
   const debouncedSearchTerm = useDebounced(PoNo, 300);
+
   useEffect(() => {
-    if (debouncedSearchTerm !== "" && debouncedSearchTerm.length > 7) {
-      getAllPoNo(debouncedSearchTerm)
+    if (
+      debouncedSearchTerm !== "" &&
+      debouncedSearchTerm.length > 10 &&
+      debouncedSearchTerm.includes("-")
+    ) {
+      getAllPoNo(debouncedSearchTerm);
     }
   }, [debouncedSearchTerm]);
+  
   //#endregion
 
 
@@ -935,10 +979,12 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       setListDataWaiting([])
       setIsLoading(true)
       setDisable(true)
+      console
       getInfoPO(value)
       const url = connect_string + "api/get_Merge_Bom_ERP"
       const data = {
-        TestNo: value?.TestNo
+        TestNo: value?.TestNo,
+        checkSole: checkSole
       }
 
       axios.post(url, data).then(res => {
@@ -1033,27 +1079,26 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       })
   }
 
-  const getDataWaitingAndgetInfoPO = (value: any) => {
+  const getDataWaitingAndgetInfoPO = async (value: any) => {
+    setLoadingAll("load")
+    setLoadingState(true)
+
 
     Promise.all([getDataWaiting(value), get_Material_Stock_Out_Sample(value)])
-      .then(() => {
-        setIsLoading(true)
-        setDisable(true)
-      })
       .finally(() => {
-        setIsLoading(false)
-        setDisable(false)
+        setLoadingAll("")
+        setLoadingState(false)
       })
-  }
+  };
 
   const getAllPoNo = (value: any) => {
     const POAndTestNo = value.split("-")
-
+    setOnFocus(false)
     const url = connect_string + "api/get_Merge_Bom_To_PONO"
 
     const data = {
-      TestNo: POAndTestNo[0]?.trim(),
-      Po_No: POAndTestNo[1]?.trim(),
+      TestNo: POAndTestNo[1]?.trim(),
+      Po_No: POAndTestNo[0]?.trim(),
       User_WH: dataUser[0].UserId
     }
 
@@ -1061,7 +1106,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       if (res.data.length > 0) {
         setListSampleOrder(res.data)
 
-        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[0]?.trim())
+        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[1]?.trim())
 
         const newValue = {
           PONO: filterListPo[0]?.PONO?.trim(),
@@ -1084,8 +1129,10 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         setListSampleOrder([])
         setValueAutocomplete(null)
       }
-    }).finally(() => {
+      
 
+    }).finally(() => {
+      setOnFocus(true)
     })
   }
 
@@ -1145,30 +1192,37 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         >
           <Stack direction={'row'} height={'100%'} alignItems={'flex-end'}>
             <Stack width={'100%'} padding={0.5}>
-              <Grid container spacing={1} justifyContent={'center'}>
-                <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+              <Grid container columnSpacing={1} justifyContent={'center'}>
+
+                <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Article */}
-                  <span className='textsize' style={{ color: 'orangered' }}> {infoPO?.ARTICLE ? "Article: " + infoPO.ARTICLE : ""}</span>
+                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.ARTICLE ? "Article: " + infoPO.ARTICLE : ""}</span>
                 </Grid>
-                <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+                <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Stage */}
-                  <span className='textsize' style={{ color: 'orangered' }}>{infoPO?.KFJD ? "Stage: " + infoPO.KFJD : ""}</span>
+                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.KFJD ? "Stage: " + infoPO.KFJD : ""}</span>
                 </Grid>
-                <Grid item xs={3} display={'flex'} justifyContent={'center'}>
+                <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Pairs */}
-                  <span className='textsize' style={{ color: 'orangered' }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
+                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
                 </Grid>
+              
                 <Grid item xs={6} display={'flex'}>
                   {/* Quét PO */}
                   <InputFieldV1
                     xsLabel={4}
                     xsInput={8}
                     label={t("gpbScan") as string}
-                    disable={disable}
+                    disable={loadingAll === "load" ? loadingState : disable}
                     value={PoNo}
+                    focus ={true}
+                    onFocus={onFocus}
                     handle={handlePoNoChange}
+                    id='scan-po'
+                    handleOnFocus={() => handleFocusInput('scan-po')}
                   />
                 </Grid>
+
                 <Grid container item xs={6} display={'flex'} alignItems={'center'}>
                   {/* List PO */}
                   <Grid item display={'flex'} xs={3}>
@@ -1292,27 +1346,71 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     />
                   </Grid>
                 </Grid>
+                <Grid item display={'flex'} alignItems={'center'} xs={6}>
+                    <FormControlLabel
+                      sx={styletext}
+                      control={
+                        <Checkbox
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            setCheckSole(event.target.checked)
+                          }
+                          defaultChecked={false}
+                          checked={checkSole}
+                        />
+                      }
+                      label={t("btnAccounting_Sole")}
+                    />
+                  </Grid>
+
+                {/* Đơn gia công */}
+                <Grid container item xs={6} display={'flex'} alignItems={'center'}>
+                  <Grid item display={'flex'} xs={3}>
+                    <span className='textsize'>JGNO</span>
+                  </Grid>
+                  <Grid item display={'flex'} xs={9}>
+                    <GenericAutocomplete
+                      options={[]}
+                      value={""}
+                      onChange={(newValue: any | null) => {
+                        // if (newValue !== null) {
+                        //   setValueAutocomplete(newValue);
+                        //   PO_NOAndTestNo(newValue);
+                        //   getDataWaitingAndgetInfoPO(newValue)
+                        // }
+                      }}
+
+                      getOptionLabel={(option) =>
+                        typeof option === "string" ? option : option.PONO
+                      }
+                      isOptionEqualToValue={(option, value) => {
+                        if (typeof value === 'string') {
+                          return option.TestNo === value;
+                        }
+                        return option.TestNo === value?.TestNo;
+                      }}
+                    />
+                  </Grid>
+                </Grid>
 
                 <Grid container item xs={12} justifyContent={'center'} gap={"20px"}>
-                  <Grid item display={'flex'}>
+
+                  <Grid item display={'flex'} alignItems={'center'} xs={2} >
                     {/* Nút tìm kiếm */}
-                    <MyButton height='2rem' name={t('btnSearch')} onClick={() => getDataWaitingAndgetInfoPO(valueAutocomplete)} disabled={disable} />
+                    <MyButton height='2rem' name={t('btnSearch')} onClick={() => getDataWaitingAndgetInfoPO(valueAutocomplete)} disabled={loadingAll === "load" ? loadingState : disable} />
                   </Grid>
-                  <Grid item display={'flex'}>
+                  <Grid item display={'flex'} alignItems={'center'} xs={2}>
                     {/* Nút làm mới */}
-                    <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={disable} />
+                    <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={loadingAll === "load" ? loadingState : disable} />
                   </Grid>
                   {/* <Grid item display={'flex'}>
                     <MyButton height='2rem' name={t('btnExcel')} onClick={undefined} disabled={disable} />
                   </Grid> */}
-                  <Grid item display={'flex'}>
+                  <Grid item display={'flex'} alignItems={'center'} xs={2} >
                     {/* Nút tạo BOM */}
-                    <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={disable} />
+                    <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={loadingAll === "load" ? loadingState : disable} />
                     {openCreateBOM && <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)} />}
                   </Grid>
-                  {/* <Grid item display={'flex'} alignItems={'center'}>
-                    {isLoading && <CircularProgress size={'24px'} color='info' />}
-                  </Grid> */}
+                
                 </Grid>
               </Grid>
             </Stack>
@@ -1329,6 +1427,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             paintingRow={paintingRow}
             checkBox={false}
             handlerowClick={(params: any, item: any) => get_qty_out_Sample(valueAutocomplete, item?.MatNo || "")}
+            selectedFirstRow={true}
           />
         </Stack>
       </div>

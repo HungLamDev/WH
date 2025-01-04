@@ -1,0 +1,35 @@
+.table-sample-container {
+
+  th,
+  td {
+    border: 1px solid rgba($color: white, $alpha: 0.5) !important;
+  }
+
+}
+
+.td-responesive-sample {
+  text-align: center !important;
+  font-size: 13px !important;
+
+  @media screen and (max-width: 1200px) {
+    font-size: 10px !important;
+    text-align: center !important;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 8px !important;
+    text-align: center !important;
+  }
+}
+
+.titleNavbarSample {
+  font-size: 2rem !important;
+
+  @media screen and (max-width: 1200px) {
+    font-size: 1.7rem !important;
+  }
+
+  @media screen and (max-width: 800px) {
+    font-size: 1.5rem !important;
+  }
+}

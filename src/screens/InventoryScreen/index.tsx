@@ -103,12 +103,14 @@ const InventoryScreen = () => {
 
   //#region Variable
   //#region  Cancel request axios
+
   const controllerRef = useRef(new AbortController());
   const configNew = createConfig(controllerRef.current.signal);
   // Func cancel Request
   const cancelRequest = () => {
     controllerRef.current.abort();
   };
+  
   //#endregion
 
   const [isLoading, setIsLoading] = useState(false)

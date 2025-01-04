@@ -59,7 +59,7 @@ function GenericAutocomplete<T extends object | string>({
                     padding: '0px 5px',
                     height: '1.9rem !important',
                     '@media screen and (max-width: 1200px)': {
-                        height: '1.8rem !important',
+                        height: '1.6rem !important',
                     },
                     '@media screen and (max-width: 900px)': {
                         height: '1.5rem !important',
@@ -101,7 +101,7 @@ function GenericAutocomplete<T extends object | string>({
                             },
                         },
                         '@media screen and (max-width: 1200px)': {
-                            height: '1.8rem  !important',
+                            height: '1.6rem  !important',
                         },
                         '@media screen and (max-width: 900px)': {
                             height: '1.5rem  !important',

@@ -17,15 +17,16 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: 'auto',
       workbox: {
-        globPatterns: ['**/*.{js,css,html}'],
-        cleanupOutdatedCaches: true, 
-        skipWaiting: true, 
-        clientsClaim: true, 
+        globPatterns: ['**/*.{js,css,html,png}'],
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
       },
       includeAssets: [
         "**/*",
       ],
-      
+
+
       manifest: {
         name: "Warehouse App",
         short_name: "Warehouse App",
@@ -36,12 +37,12 @@ export default defineConfig({
         orientation: 'landscape',
         icons: [
           {
-            src: "pwa-192x192.png",
+            src: "logo192x192.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "pwa-512x512.png",
+            src: "logo512x512.png",
             sizes: "512x512",
             type: "image/png",
           },

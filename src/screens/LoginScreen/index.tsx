@@ -8,7 +8,6 @@ import { Fireworks } from 'fireworks-js'
 import { useEffect } from "react";
 
 
-export const year = new Date().getFullYear()
 const LoginScreen = () => {
 
   // useEffect(() => {
@@ -48,7 +47,7 @@ const LoginScreen = () => {
         "@media screen and (max-height: 450px)": {
           display: 'none'
         },
-      }}>Powered by IT-Software LHG<br /> © {year} LACTY CO II.,LTD. All rights reserved. </Typography>
+      }}>Powered by IT-Software LHG<br /> © 2024 LACTY CO II.,LTD. All rights reserved. </Typography>
 
       <Typography className="textsizemini" variant="caption" sx={{
         top: 1,
