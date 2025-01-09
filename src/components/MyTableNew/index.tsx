@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
+import MyButton from "../MyButton";
+import { useTranslation } from "react-i18next";
 
 interface TableCheckBoxProps {
     columns: any[];
@@ -24,7 +26,8 @@ interface TableCheckBoxProps {
     paintingRow?: any,
     checkBox?: any,
     highlightText?: any
-    selectedFirstRow?: boolean
+    selectedFirstRow?: boolean,
+    onClickButton?: any
 }
 
 const MyTableNew = (props: TableCheckBoxProps) => {
@@ -41,13 +44,16 @@ const MyTableNew = (props: TableCheckBoxProps) => {
         paintingRow,
         checkBox = true,
         highlightText,
-        selectedFirstRow = false
+        selectedFirstRow = false,
+        onClickButton
     } = props;
 
     const [selected, setSelected] = useState<GridRowsProp>([])
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
     const [selectAll, setSelectAll] = useState(false);
+    const { t } = useTranslation();
+
     useEffect(() => {
         setSelected([])
         const event = { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>;
@@ -277,11 +283,18 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                                     )
                                                     :
                                                     (
-                                                        <span
-                                                           
-                                                        >
-                                                            {item[key]}
-                                                        </span>
+                                                        column?.type === "button" ?
+                                                            (
+                                                              onClickButton(item, column)
+                                                            )
+                                                            :
+                                                            (
+                                                                <span
+
+                                                                >
+                                                                    {item[key]}
+                                                                </span>
+                                                            )
                                                     )
                                             }
                                         </TableCell>

@@ -27,6 +27,7 @@
     "btnData_Program_Priority": "Program Priority Modify",
     "btnDelete": "Delete",
     "btnDelivery": "Delivery",
+    "btnDeliverySample": "Delivery",
     "btnEnglish": "English",
     "btnEnter_Shelves": "Enter Shelves",
     "btnEnter_Stock": "Enter Stock",
@@ -434,6 +435,12 @@
     "noRecoverStamp": "This label has already generated an export slip and cannot be returned.",
     "lblNoOption": "No data available",
     "lblChooseWH": "Select warehouse",
-    "lblRemainingQuota": "Remaining quota"
+    "lblRemainingQuota": "Remaining quota",
+    "lblDetail": "Detail",
+    "msgNoMergeNo": "Merge No is not available; you cannot print the label.",
+    "btnPrintMergeNo": "Print MergeNo",
+    "btnCreateSlipOutsource": "Create processing slip",
+    "msgCreateSlipOutsource": "Are you sure you want to create a processing export slip?",
+    "btnViewERP": "View ERP"
 
 }

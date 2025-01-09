@@ -27,6 +27,7 @@
     "btnData_Program_Priority": "Quyền truy cập phần mềm",
     "btnDelete": "Xóa",
     "btnDelivery": "Giao hàng",
+    "btnDeliverySample": "Phát hàng",
     "btnEnglish": "Tiếng Anh",
     "btnEnter_Shelves": "Nhập Kệ",
     "btnEnter_Stock": "Nhập Kho",
@@ -434,5 +435,11 @@
     "noRecoverStamp": "Tem này đã tạo phiếu xuất không thể trả về",
     "lblNoOption": "Không có dữ liệu",
     "lblChooseWH": "Chọn kho",
-    "lblRemainingQuota": "Định mức còn lại"
+    "lblRemainingQuota": "Định mức còn lại",
+    "lblDetail": "Chi tiết",
+    "msgNoMergeNo": "Chưa có Merge No bạn không thể in tem",
+    "btnPrintMergeNo": "In MergeNo",
+    "btnCreateSlipOutsource": "Tạo phiếu gia công",
+    "msgCreateSlipOutsource": "Bạn có chắc chắn muốn tạo phiếu xuất gia công?",
+    "btnViewERP": "Xem ERP"
 }

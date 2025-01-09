@@ -26,6 +26,7 @@
     "btnData_Program": "အစီအစဉ်",
     "btnData_Program_Priority": "အစီအစဉ် ဦးစားပေး",
     "btnDelivery": "ပေးပို့ခြင်း။",
+    "btnDeliverySample": "ပေးပို့ခြင်း။",
     "btnEnglish": "အဂၤလိပ္ဘာသာ",
     "btnEnter_Shelves": "စင်ပေါ်ကို ဝင်ပါ။",
     "btnEnter_Stock": "ဂိုဒေါင်ထဲဝင်ပါ။",
@@ -403,6 +404,12 @@
     "noRecoverStamp": "ဤတံဆိပ်သည် ထုတ်ပို့စာရွက် already ဖန်တီးပြီးဖြစ်ပြီး ပြန်လည်ပေးအပ်၍ မရနိုင်ပါ။",
     "lblNoOption": "ဒေတာမရှိပါ",
     "lblChooseWH": "ဂိုဒေါင်ကိုရွေးပါ",
-    "lblRemainingQuota": "ကျန်ရှိသောပမာဏ"
+    "lblRemainingQuota": "ကျန်ရှိသောပမာဏ",
+    "lblDetail": "အသေးစိတ်",
+    "msgNoMergeNo": "Merge No မရှိသောကြောင့် တံဆိပ်ကို ပုံနှိပ်၍မရပါ။",
+    "btnPrintMergeNo": "Merge No ကို ပုံနှိပ်ပါ",
+    "btnCreateSlipOutsource": "အလုပ်လုပ်ငန်းစာရွက်ဖန်တီးပါ",
+    "msgCreateSlipOutsource": "သင့်အနေနှင့် အလုပ်လုပ်ငန်းထုတ်ပို့စာရွက်ဖန်တီးချင်သည်မှာ သေချာပါသလား။",
+    "btnViewERP": "ERP ကိုကြည့်ပါ"
 
 }

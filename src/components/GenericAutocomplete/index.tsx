@@ -10,6 +10,7 @@ type GenericAutocompleteProps<T> = {
     onInputChange?: (value: string) => void; // Hàm xử lý khi nhập
     getOptionLabel: (option: T | string) => string; // Hàm để lấy nhãn của từng option
     isOptionEqualToValue?: (option: T, value: T | string) => boolean; // Hàm so sánh
+    paintingText?: (value: any) => string;
     disabled?: boolean; // Trạng thái vô hiệu hóa
     allowFreeSolo?: boolean; // Bật/tắt tính năng freeSolo
 };
@@ -23,6 +24,7 @@ function GenericAutocomplete<T extends object | string>({
     isOptionEqualToValue,
     disabled = false,
     allowFreeSolo = false,
+    paintingText = () => "white",
 }: GenericAutocompleteProps<T>) {
     return (
         <Autocomplete
@@ -36,7 +38,7 @@ function GenericAutocomplete<T extends object | string>({
                 if (onInputChange) {
                     onInputChange(newInputValue);
                 } else if (allowFreeSolo) {
-                    onChange(newInputValue as T); // Cho phép gán trực tiếp khi freeSolo
+                    onChange(newInputValue as T);
                 }
             }}
             noOptionsText={t("lblNoOption") as string}
@@ -70,6 +72,7 @@ function GenericAutocomplete<T extends object | string>({
                 popper: {
                     sx: {
                         '& .MuiAutocomplete-listbox': {
+                            color: paintingText(options),
                             '@media screen and (max-width: 1200px)': {
                                 fontSize: '14px !important',
                             },
@@ -87,12 +90,13 @@ function GenericAutocomplete<T extends object | string>({
                     sx={{
                         borderRadius: '50px',
                         height: '1.9rem !important',
-                        
+
                         '& fieldset': {
                             borderColor: 'white',
                             border: 'none',
                         },
                         '& .MuiInputBase-input': {
+                            color: paintingText(options),
                             '@media screen and (max-width: 1200px)': {
                                 fontSize: '14px',
                             },

@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import InputFieldV1 from "../../../../components/InputField/index_new";
 import MyTableNew from "../../../../components/MyTableNew";
 import useDebounced from "../../../../components/CustomHook/useDebounce";
-import { connect_string } from "../../../LoginScreen/ChooseFactory";
+import { checkPermissionPrint, connect_string } from "../../../LoginScreen/ChooseFactory";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import ModalCofirm from "../../../../components/ModalConfirm";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import QRScanner from "../../../../components/QRScanner";
+import DetailMergeBOM from "../../../../components/CreateMergeBOM/DetailMergeBOM";
 
 //#endregion
 
@@ -26,6 +27,8 @@ interface CreateMergeBomProps {
 }
 
 const CreateMergeBom = (props: CreateMergeBomProps) => {
+    const { title, open, onClose, onPressOK, showOk = true } = props
+    const { t } = useTranslation();
 
     //#region columnHeader
     const columns: any[] = [
@@ -36,13 +39,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             headerAlign: 'center',
             width: 180,
         },
-        // {
-        //     field: "Po_No",
-        //     headerName: "Po No",
-        //     align: "center",
-        //     headerAlign: 'center',
-        //     width: 180,
-        // },
+        {
+            field: "Po_No",
+            headerName: "Po No",
+            align: "center",
+            headerAlign: 'center',
+            width: 180,
+        },
         {
             field: "Article",
             headerName: "Article",
@@ -88,11 +91,25 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             headerAlign: 'center',
             width: 150,
         },
+        {
+            field: "",
+            headerName: t("lblDetail") as string,
+            align: "center",
+            headerAlign: 'center',
+            width: 150,
+            type: "button",
+        },
+        {
+            field: "print_all",
+            headerName: t("rbtPrint_All") as string,
+            align: "center",
+            headerAlign: 'center',
+            width: 150,
+            type: "button",
+        },
     ];
     //#endregion
 
-    const { title, open, onClose, onPressOK, showOk = true } = props
-    const { t } = useTranslation();
 
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
@@ -124,6 +141,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     const [cofirmType, setCofirmType] = useState('')
     const [openCofirm, setOpenCofirm] = useState(false)
     const [modalScan, setModalScan] = useState(false)
+    const [itemRowMergeBom, setItemRowMergeBom] = useState<any>({})
 
     //#endregion
 
@@ -215,6 +233,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     };
 
     const scanPoNo = (value: any) => {
+        setDisable(true)
         const POAndTestNo = value.split("-")
 
         const url = connect_string + "api/Create_Merge_Bom"
@@ -247,9 +266,9 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
             }
         })
-        // .finally(() => {
-        //     setDisable(false)
-        // })
+        .finally(() => {
+            setDisable(false)
+        })
 
     }
 
@@ -315,6 +334,74 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             })
     }
 
+    const handleOnClickBtn = (item: any, column: any) => {
+        setItemRowMergeBom(item)
+
+        if (item?.YPZLBH !== "" && item?.YPZLBH !== null && column?.field !== "print_all") {
+            return (
+                <MyButton
+                    height="1.5rem"
+                    name={t("lblDetail")}
+                    onClick={() => handleOpenConfirm("detail-merge-bom")}
+                />
+            );
+        }
+        else if (item?.YPZLBH !== "" && item?.YPZLBH !== null && column?.field === "print_all") {
+            return (
+                <MyButton
+                    height="1.5rem"
+                    name={t("btnPrintMergeNo")}
+                    onClick={() => handlePrintAll()}
+                />
+            );
+        }
+        else {
+            return <></>;
+        }
+    }
+
+    const handlePrintAll = async () => {
+        const hasMatchingItem = data.some(
+            (item) => item.YPZLBH !== "" && item.YPZLBH !== null
+        );
+
+        if (await checkPermissionPrint(dataUser[0].UserId)) {
+
+            if (hasMatchingItem) {
+                handleOpenConfirm("confirm-print")
+            }
+            else {
+                handleOpenConfirm("print-error")
+            }
+        }
+        else {
+            handleOpenConfirm('print-permission')
+        }
+
+    }
+
+    const handlePrintAllOK = () => {
+        handleCloseConfirm()
+        setDisable(true)
+        if (itemRow?.YPZLBH !== "") {
+            const data = {
+                Merge_No: itemRow?.YPZLBH,
+                UserID: dataUser[0].UserId
+            }
+            const url = connect_string + "api/PrintLabel_Delivery_Sample_CLick_Standard_ALL"
+
+            axios.post(url, data).then(res => {
+                if (res.data == true) {
+                    handleOpenConfirm('print-success')
+                }
+                setDisable(false)
+            }).catch(() => {
+                handleOpenConfirm('print-permission')
+                setDisable(false)
+            })
+        }
+    }
+
     //#endregion
 
     return (
@@ -344,8 +431,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     </IconButton>
                 </Stack>
                 <Stack flex={1} >
-                    <Grid container padding={'10px'} spacing={2}>
-                        <Grid item display={'flex'} xs={3.5}>
+                    <Grid container padding={'10px'} >
+                        <Grid item display={'flex'} xs={3}>
                             {/* Scan xuất */}
                             <InputFieldV1
                                 xsLabel={2}
@@ -356,7 +443,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                                 handle={handleValueScanChange}
                             />
                         </Grid>
-                        <Grid item display={'flex'} xs={3.5}>
+                        <Grid item display={'flex'} xs={3}>
                             {/* Merge No */}
                             <InputFieldV1
                                 xsLabel={4}
@@ -368,17 +455,17 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                             />
                         </Grid>
 
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} xs={1.5} justifyContent={'center'}>
                             {/* Nút tìm kiếm */}
                             <MyButton height='2rem' name={t('btnSearch')} onClick={handleMergeNoToPono} disabled={disable} />
                         </Grid>
 
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} xs={1.5} justifyContent={'center'}>
                             {/* Nút xóa */}
                             <MyButton height='2rem' name={t('btnDelete')} onClick={handleDeleteRow} disabled={disable} />
                         </Grid>
 
-                        <Grid item display={'flex'} xs={1.5}>
+                        <Grid item display={'flex'} xs={1.5} justifyContent={'center'}>
                             {/* Nút lamf mới */}
                             <MyButton height='2rem' name={t('btnClean')} onClick={() => setData([])} disabled={disable} />
                         </Grid>
@@ -398,17 +485,28 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                                 rows={data}
                                 checkBox={false}
                                 handlerowClick={handleRowClick}
+                                onClickButton={handleOnClickBtn}
                             />
                         </Stack>
                         <Stack alignItems={'flex-end'} padding={'10px'}>
-                            {/* Tạo BOM */}
-                            <MyButton height='2rem' name={t('btnCreateBOM')} onClick={createBOM} disabled={disable} />
+                            <Stack flexDirection={"row"} justifyContent={'flex-end'} width={'100%'} >
+                                {/* In toàn bộ tem thông tin */}
+                                {/* <MyButton height='2rem' name={t('rbtPrint_All')} onClick={handlePrintAll} disabled={disable} /> */}
+                                {/* Tạo BOM */}
+                                <MyButton height='2rem' name={t('btnCreateBOM')} onClick={createBOM} disabled={disable} />
+                            </Stack>
                         </Stack>
                     </Stack>
 
                     {cofirmType === "no-create-bom" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("btnCreateBOMError") as string} />}
                     {cofirmType === "exist-mergeno" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblExistMergeno") as string} />}
                     {cofirmType === "no-KFJD-JiJie" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblKFJDAndJiJie") as string} />}
+                    {cofirmType === "detail-merge-bom" && <DetailMergeBOM item={itemRowMergeBom} open={openCofirm} onClose={handleCloseConfirm} />}
+                    {cofirmType === "confirm-print" && <ModalCofirm open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} onPressOK={handlePrintAllOK} />}
+                    {cofirmType === "print-error" && <ModalCofirm showCancel={false} open={openCofirm} onClose={handleCloseConfirm} onPressOK={handleCloseConfirm} title={t("msgNoMergeNo") as string} />}
+                    {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
+                    {cofirmType === 'print-success' && <ModalCofirm showCancel={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />}
+
                     {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
 
                     {/* Loading khi tạo phiếu */}

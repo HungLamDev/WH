@@ -42,6 +42,7 @@ import GenericAutocomplete from '../../../components/GenericAutocomplete';
 import QRScannerV1 from '../../../components/QRScanner/indexV1';
 import { styletext } from '../../StockinScreenv2/StockinForm';
 import SampleSearchERP from '../../SampleSearchERP';
+import ImportAndExportSample from '../../StockinScreenv2/ModelImportandExport/index_sample';
 
 //#endregion
 
@@ -168,6 +169,67 @@ const DeliverySampleLYVScreen = () => {
 
   ];
 
+  const columnsOutSource: any[] = [
+    {
+      field: "Material_No",
+      headerName: "Material No",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+    },
+    {
+      field: "JGNO",
+      headerName: "JGNO",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+    },
+    {
+      field: "QTY",
+      headerName: "QTY",
+      align: "center",
+      headerAlign: 'center'
+    },
+    {
+      field: "Article",
+      headerName: "Article",
+      align: "center",
+      headerAlign: 'center'
+    },
+    {
+      field: "YPZLBH",
+      headerName: "Merge No",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "LLNO",
+      headerName: t("dcpOrder_No_Out"),
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "User_ID",
+      headerName: "User ID",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "Modify_Date",
+      headerName: t("dcpModify_Date"),
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+  ];
+
   const columnsBOM: GridColDef[] = [
     {
       field: "MatNo",
@@ -245,6 +307,69 @@ const DeliverySampleLYVScreen = () => {
       width: 150,
     },
   ];
+
+  const columnsBOMOutSource: GridColDef[] = [
+    {
+      field: "MatNo",
+      headerName: "Material No",
+      align: "center",
+      headerAlign: 'center',
+      width: 180,
+
+    },
+    {
+      field: "MJBH",
+      headerName: "MJBH",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "Qty",
+      headerName: "Qty",
+      align: "center",
+      headerAlign: 'center',
+    },
+    {
+      field: "Unit",
+      headerName: "Unit",
+      align: "center",
+      headerAlign: 'center'
+
+    },
+    {
+      field: "SuppID",
+      headerName: "Supplier	ID",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "Supplier",
+      headerName: "Supplier",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "ARTICLE",
+      headerName: "ARTICLE",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+    },
+    {
+      field: "MatName",
+      headerName: "Material Name",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+    },
+  ];
+
   //#endregion
 
   //#region useSelector
@@ -281,9 +406,6 @@ const DeliverySampleLYVScreen = () => {
   }
   const [open, setOpen] = useState(false)
   const [modalName, setModalName] = useState('')
-  const [modalCofirm, setModalCofirm] = useState(false)
-  const [qrcodedelte, setQRCodeDelete] = useState('')
-  const [Material_Label_Serial, setMaterial_Label_Serial] = useState('')
   const [valuetotal, setValueTotal] = useState('')
   const [cofirmType, setCofirmType] = useState('')
   const [openCofirm, setOpenCofirm] = useState(false)
@@ -293,11 +415,10 @@ const DeliverySampleLYVScreen = () => {
   const [rows, setRows] = useState([])
   const [stockoutDetailValue, setStockOutDetailValue] = useState(stockout && stockout[0].Value_Qty)
   const [stockoutTemp, setStockOutTemp] = useState(stockout && stockout[0].Value_Qty)
-  const [message, setMessage] = useState('')
-  const [openERPLogin, setOpenERPLogin] = useState(false)
   const [PO_NOAndTestNo, setPO_NOAndTestNo] = useState<any>("")
   const [listMaterialBOM, setListMaterialBOM] = useState([])
   const [listMaterialStockout, setListMaterialStockout] = useState<any[]>([])
+  const [listMaterialStockoutOutSource, setListMaterialStockoutOutSource] = useState<any[]>([])
   const [article, setArticle] = useState("")
   const [kfjd, setKFJD] = useState("")
   const [mergeNo, setMerNo] = useState("")
@@ -308,7 +429,7 @@ const DeliverySampleLYVScreen = () => {
   const sidebarRef = useRef<SidebarRef>(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [focusedInputId, setFocusedInputId] = useState<string | null>(null);
-
+  const [JGNO, setJGNO] = useState<any>(null)
   //#endregion
 
   //#region Func OnChange Input
@@ -332,8 +453,6 @@ const DeliverySampleLYVScreen = () => {
     setOpenCofirm(false)
   }
 
-
-
   const handleQRcode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQRCode(event.target.value);
   };
@@ -354,114 +473,55 @@ const DeliverySampleLYVScreen = () => {
   //#region Func Logic
 
   const handleOutAll = (barcode: string) => {
-    setDisable(true)
-    setIsLoading(true)
+    if (JGNO === null) {
+      setDisable(true)
+      setIsLoading(true)
+      barcodeToMaterial(barcode).then(value => {
+        const QTY_BOM = listMaterialBOM
+          .filter((item: any) => item.MatNo === value.Material_No)
+          .reduce(
+            (accumulator: Decimal, currentValue: any) =>
+              accumulator.plus(new Decimal(currentValue.Qty)),
+            new Decimal(0)
+          );
 
-    barcodeToMaterial(barcode).then(value => {
-      const QTY_BOM = listMaterialBOM
-        .filter((item: any) => item.MatNo === value.Material_No)
-        .reduce(
-          (accumulator: Decimal, currentValue: any) =>
-            accumulator.plus(new Decimal(currentValue.Qty)),
-          new Decimal(0)
-        );
-
-      const QTY_Da_Xuat = listMaterialStockout
-        .filter((item) => item.Material_No === value.Material_No)
-        .reduce(
-          (accumulator: Decimal, currentValue: any) =>
-            accumulator.plus(new Decimal(currentValue.QTY_Sample)),
-          new Decimal(0)
-        )
-
-
-      const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(value.QTY).plus(QTY_Da_Xuat)))).toNumber()
-
-      const checkBarcode = listMaterialBOM.some((item: any) => item.MatNo === value.Material_No)
+        const QTY_Da_Xuat = listMaterialStockout
+          .filter((item) => item.Material_No === value.Material_No)
+          .reduce(
+            (accumulator: Decimal, currentValue: any) =>
+              accumulator.plus(new Decimal(currentValue.QTY_Sample)),
+            new Decimal(0)
+          )
 
 
-      if (listMaterialBOM.length === 0) {
-        handleOpenConfirm("no-list-bom")
-      }
-      else if (checkBarcode === false && value.Material_No !== null) {
-        handleOpenConfirm("no-material")
-      }
-      else if (value?.Stock_In_Out_Status.toLowerCase().includes("in") && QTY_Dinh_Muc < 0) {
-        handleOpenConfirm("no-stockout")
-      }
-      else if (listMaterialBOM.length > 0 && checkBarcode === true && value?.Stock_In_Out_Status.toLowerCase().includes("in")) {
+        const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(value.QTY).plus(QTY_Da_Xuat)))).toNumber()
 
-        // Xuất ngoài
-        if (!stockout) {
-          const data = {
-            Version_ini: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
-            txtScan: barcode,
-            User_Serial_Key: dataUser[0].UserId,
-            get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
-          }
-          const url = connect_string + 'api/getData_TextChange_Stock_Out'
-          axios.post(url, data, config).then(response => {
-            if (response.data.Barcode !== null) {
-              const item = response.data;
-              const newItem = {
-                _id: item.Barcode,
-                Barcode: item.Barcode,
-                Material_No: item.Material_No,
-                Supplier: item.Supplier,
-                Material_Name: item.Material_Name,
-                Color: item.colorValue,
-                Size: item.Size,
-                QTY: item.QTY,
-                Print_QTY: item.Print_QTY,
-                Order_No: item.Order_No,
-                Roll: item.Roll,
-                Production: item.Production,
-                Supplier_No: item.Supplier_No,
-                Work_Order: item.Work_Order,
-                ngay: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
-                Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
-                User_Serial_Key: item.User_Serial_Key,
-                Value_Total: item.Value_Total,
-                Material_Label_Serial: item.Material_Label_Serial,
-              };
-              Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PO_NOAndTestNo?.PONO, PO_NOAndTestNo?.TestNo, mergeNo, article, QTY_BOM, kfjd, value.size)
-              // dispatch(addItemArrayStockout(newItem));
-              // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
-              setQRCode('')
-            }
-          }).finally(() => {
-            setDisable(false)
-            setIsLoading(false)
-          })
+        const checkBarcode = listMaterialBOM.some((item: any) => item.MatNo === value.Material_No)
 
+
+        if (listMaterialBOM.length === 0) {
+          handleOpenConfirm("no-list-bom")
         }
-        // Xuất giao hàng
-        else {
-          const url = connect_string + 'api/getData_TextChange_Stock_Out_Detail'
-          const data = {
-            txtScan: barcode,
-            User_Serial_Key: dataUser[0].UserId,
-            txtQty: "",
-            Value_Qty_Out: "",
-            Value_Total: "",
-            Value_Remain: stockout[0].Value_Qty,
-            Check_ScanMore: rows.findIndex((item: any) => item.Barcode == qrcode) != -1, //nếu tồn tại barcode trong bảng thì true không thì fale
-            chxColor: false, // nếu có check xuất theo màu thì bằng true khong thì false
-            rbtColor_A: false,
-            rbtColor_B: false,
-            rbtColor_C: false,
-            rbtColor_D: false,
-            rbtColor_E: false,
-            rbtColor_F: false,
-            rbtColor_G: false,
-            rbtColor_H: false,
-            rbtColor_O: false,
-            get_version: dataUser[0].WareHouse
-          }
-          axios.post(url, data, config).then(response => {
-            if (response.data.Barcode !== null) {
+        else if (checkBarcode === false && value.Material_No !== null) {
+          handleOpenConfirm("no-material")
+        }
+        else if (value?.Stock_In_Out_Status.toLowerCase().includes("in") && QTY_Dinh_Muc < 0) {
+          handleOpenConfirm("no-stockout")
+        }
+        else if (listMaterialBOM.length > 0 && checkBarcode === true && value?.Stock_In_Out_Status.toLowerCase().includes("in")) {
 
-              response.data.map((item: any, index: any) => {
+          // Xuất ngoài
+          if (!stockout) {
+            const data = {
+              Version_ini: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
+              txtScan: barcode,
+              User_Serial_Key: dataUser[0].UserId,
+              get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse
+            }
+            const url = connect_string + 'api/getData_TextChange_Stock_Out'
+            axios.post(url, data, config).then(response => {
+              if (response.data.Barcode !== null) {
+                const item = response.data;
                 const newItem = {
                   _id: item.Barcode,
                   Barcode: item.Barcode,
@@ -477,46 +537,106 @@ const DeliverySampleLYVScreen = () => {
                   Production: item.Production,
                   Supplier_No: item.Supplier_No,
                   Work_Order: item.Work_Order,
-                  ngay: moment(item.Modify_Date).format("DD/MM/YYYY HH:MM:SS"),
+                  ngay: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
+                  Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
                   User_Serial_Key: item.User_Serial_Key,
                   Value_Total: item.Value_Total,
                   Material_Label_Serial: item.Material_Label_Serial,
-                  Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:MM:SS"),
                 };
-
-                // dispatch(addItemArrayStockout(newItem));
                 Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PO_NOAndTestNo?.PONO, PO_NOAndTestNo?.TestNo, mergeNo, article, QTY_BOM, kfjd, value.size)
+                // dispatch(addItemArrayStockout(newItem));
+                // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
+                setQRCode('')
+              }
+            }).finally(() => {
+              setDisable(false)
+              setIsLoading(false)
+            })
 
-                if (response.data[0].Material_No === stockout[0].Value_Material) {
-                  dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out))
-                  const result = new Decimal(stockoutTemp).minus(response.data[0].Value_Qty_Out).toNumber();
-                  setStockOutDetailValue(result)
-                }
-              });
-
-              // Làm tròn 4 chữ số trừ tổng
-              setQRCode('')
-
-              const totalQtyOut = new Decimal(TotalQtyOut);
-              const valueRemain = new Decimal(response.data[0].Value_Remain);
-              const valueTotal = totalQtyOut.minus(valueRemain).toString();
-
-              setValueTotal(valueTotal)
+          }
+          // Xuất giao hàng
+          else {
+            const url = connect_string + 'api/getData_TextChange_Stock_Out_Detail'
+            const data = {
+              txtScan: barcode,
+              User_Serial_Key: dataUser[0].UserId,
+              txtQty: "",
+              Value_Qty_Out: "",
+              Value_Total: "",
+              Value_Remain: stockout[0].Value_Qty,
+              Check_ScanMore: rows.findIndex((item: any) => item.Barcode == qrcode) != -1, //nếu tồn tại barcode trong bảng thì true không thì fale
+              chxColor: false, // nếu có check xuất theo màu thì bằng true khong thì false
+              rbtColor_A: false,
+              rbtColor_B: false,
+              rbtColor_C: false,
+              rbtColor_D: false,
+              rbtColor_E: false,
+              rbtColor_F: false,
+              rbtColor_G: false,
+              rbtColor_H: false,
+              rbtColor_O: false,
+              get_version: dataUser[0].WareHouse
             }
-            else {
-              handleOpenConfirm('materialOut')
-            }
-          }).finally(() => {
-            setDisable(false)
-            setIsLoading(false)
-          })
+            axios.post(url, data, config).then(response => {
+              if (response.data.Barcode !== null) {
+
+                response.data.map((item: any, index: any) => {
+                  const newItem = {
+                    _id: item.Barcode,
+                    Barcode: item.Barcode,
+                    Material_No: item.Material_No,
+                    Supplier: item.Supplier,
+                    Material_Name: item.Material_Name,
+                    Color: item.colorValue,
+                    Size: item.Size,
+                    QTY: item.QTY,
+                    Print_QTY: item.Print_QTY,
+                    Order_No: item.Order_No,
+                    Roll: item.Roll,
+                    Production: item.Production,
+                    Supplier_No: item.Supplier_No,
+                    Work_Order: item.Work_Order,
+                    ngay: moment(item.Modify_Date).format("DD/MM/YYYY HH:MM:SS"),
+                    User_Serial_Key: item.User_Serial_Key,
+                    Value_Total: item.Value_Total,
+                    Material_Label_Serial: item.Material_Label_Serial,
+                    Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:MM:SS"),
+                  };
+
+                  // dispatch(addItemArrayStockout(newItem));
+                  Insert_Material_Stock_Out_Sample(newItem.Material_No, newItem.Barcode, newItem.QTY, newItem.User_Serial_Key, PO_NOAndTestNo?.PONO, PO_NOAndTestNo?.TestNo, mergeNo, article, QTY_BOM, kfjd, value.size)
+
+                  if (response.data[0].Material_No === stockout[0].Value_Material) {
+                    dispatch(addTotalQtyOut(response.data[0].Value_Qty_Out))
+                    const result = new Decimal(stockoutTemp).minus(response.data[0].Value_Qty_Out).toNumber();
+                    setStockOutDetailValue(result)
+                  }
+                });
+
+                // Làm tròn 4 chữ số trừ tổng
+                setQRCode('')
+
+                const totalQtyOut = new Decimal(TotalQtyOut);
+                const valueRemain = new Decimal(response.data[0].Value_Remain);
+                const valueTotal = totalQtyOut.minus(valueRemain).toString();
+
+                setValueTotal(valueTotal)
+              }
+              else {
+                handleOpenConfirm('materialOut')
+              }
+            }).finally(() => {
+              setDisable(false)
+              setIsLoading(false)
+            })
+          }
         }
-      }
-    }).finally(() => {
-      setDisable(false)
-      setIsLoading(false)
-      setQRCode("")
-    })
+      }).finally(() => {
+        setDisable(false)
+        setIsLoading(false)
+        setQRCode("")
+      })
+    }
   }
 
   const handleRefresh = () => {
@@ -624,7 +744,6 @@ const DeliverySampleLYVScreen = () => {
   //Tô màu dòng trong bảng------------------------------------------
   const paintingRow = (item: any, row: any) => {
 
-
     if (row.Material_No !== null && row.QTY_Bom !== "" && ((new Decimal(row.QTY_Bom).minus(new Decimal(row.QTY_Sample))).toNumber() !== 0)) {
       return "orange"
     }
@@ -696,9 +815,11 @@ const DeliverySampleLYVScreen = () => {
     else {
       handleOpenConfirm("no-information")
     }
+
   }
 
   const handleGet_qty_out_Sample = (value: any, materialNo: any) => {
+    setQtyOutSample("")
     const url = connect_string + "api/get_qty_out_Sample"
     const data = {
       PONO: value?.PONO,
@@ -735,7 +856,39 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+
+  const create_Material_Stock_Out_Sample_Outsource = async () => {
+    if (JGNO !== null && JGNO !== "" && mergeNo !== "") {
+      handleCloseConfirm()
+      setIsLoadingCreateSlip(true)
+      const url = connect_string + "api/Insert_Stock_Out_Sample_OutSource";
+      const data = {
+        JGNO: JGNO,
+        YPZLBH: mergeNo,
+        User_ID: dataUser[0].UserId
+      }
+      try {
+        const res = await axios.post(url, data);
+        if (res.data === true) {
+          handleOpenConfirm("insert-slip-sucess")
+        }
+        else {
+          handleOpenConfirm("insert-slip-error")
+        }
+
+        setIsLoadingCreateSlip(false)
+
+      } catch (error) {
+        console.error("Error fetching Material Stock Out Sample:", error);
+        handleOpenConfirm("insert-slip-error")
+        setIsLoadingCreateSlip(false)
+      }
+    }
+  };
+
   //#endregion
+
+
   return (
     <FullScreenContainerWithNavBar
       hidden={true}
@@ -750,7 +903,10 @@ const DeliverySampleLYVScreen = () => {
           {/* Phần Merge BOM */}
           <Sidebar
             column={columnsBOM}
+            columnOutSource={columnsBOMOutSource}
             PO_NOAndTestNo={(value: any) => setPO_NOAndTestNo(value)}
+            listMaterialStockOut_Outsource={(value: any) => setListMaterialStockoutOutSource(value)}
+            JGNO={(value: any) => setJGNO(value)}
             listMaterialBOM={(value: any) => setListMaterialBOM(value)}
             listMaterialStockOut={(value: any) => setListMaterialStockout(value)}
             Article={(value: any) => setArticle(value)}
@@ -787,8 +943,8 @@ const DeliverySampleLYVScreen = () => {
                       <Grid item xs={12} display={'flex'}>
                         {/* Merge No */}
                         <Stack direction={'row'} justifyContent={'space-evenly'} width={'100%'} >
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{JGNO === null && qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
+                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{JGNO === null && qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
                         </Stack>
                       </Grid>
                       <Grid item xs={isOpenSidebar === true ? 10 : 8}>
@@ -797,7 +953,7 @@ const DeliverySampleLYVScreen = () => {
                           xsLabel={2}
                           xsInput={9}
                           label={t("gpbScan") as string}
-                          disable={disable}
+                          disable={JGNO === null ? disable : true}
                           value={qrcode}
                           handle={handleQRcode}
                           id='scan-stock-out'
@@ -811,8 +967,8 @@ const DeliverySampleLYVScreen = () => {
                     <Grid container direction={'row'} gap={'10px'} justifyContent={isOpenSidebar === true ? 'center' : 'flex-start'} >
                       {/* Xuất chi tiết */}
                       <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
-                        <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={disable} />
-                        {modalName === 'ImportAndExport' && <ImportAndExport listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNoAndTestNo={PO_NOAndTestNo} MergeNo={mergeNo} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
+                        <MyButton height='2rem' name={t("dcpExport")} onClick={() => handleOpen('ImportAndExport')} disabled={JGNO === null ? disable : true} />
+                        {modalName === 'ImportAndExport' && <ImportAndExportSample listMaterialStockout={listMaterialStockout} KFJD={kfjd} PoNoAndTestNo={PO_NOAndTestNo} MergeNo={mergeNo} Article={article} listMaterialBOM={listMaterialBOM} dataColor={dataModal} onClose={handleClose} open={open} form={'stockout'} Insert_Material_Stock_Out_Sample={Insert_Material_Stock_Out_Sample} />}
                       </Grid>
 
                       <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
@@ -827,7 +983,7 @@ const DeliverySampleLYVScreen = () => {
                       </Grid>
                       <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
                         {/* Tìm ERP */}
-                        <MyButton height='2rem' name={"Xem ERP"} onClick={() => handleOpen('SearchERPSample')} disabled={disable} />
+                        <MyButton height='2rem' name={t("btnViewERP")} onClick={() => handleOpen('SearchERPSample')} disabled={disable} />
                         {modalName === 'SearchERPSample' && <SampleSearchERP open={open} onClose={handleClose} />}
                       </Grid>
                     </Grid>
@@ -837,16 +993,38 @@ const DeliverySampleLYVScreen = () => {
             </Box>
             <Stack sx={{ height: '100%', overflow: 'hidden' }}>
               {/* Bảng */}
-              <MyTableNew
-                columns={columns}
-                rows={listMaterialStockout}
-                checkBox={false}
-                paintingRow={paintingRow}
-                highlightText={highlightText}
-              />
+              {
+                JGNO === null ?
+                  (
+                    <MyTableNew
+                      columns={columns}
+                      rows={listMaterialStockout}
+                      checkBox={false}
+                      paintingRow={paintingRow}
+                      highlightText={highlightText}
+                    />
+                  )
+                  :
+                  (
+                    <MyTableNew
+                      columns={columnsOutSource}
+                      rows={listMaterialStockoutOutSource}
+                      checkBox={false}
+                    />
+                  )
+              }
               <Stack alignItems={'flex-end'} paddingRight={'10px'}>
                 {/* Tạo phiếu */}
-                <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
+                {
+                  JGNO === null ?
+                    (
+                      <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
+                    )
+                    :
+                    (
+                      <MyButton height='2rem' name={t("btnCreateSlipOutsource")} onClick={() => handleOpenConfirm("create-slip-outsource")} disabled={disable} />
+                    )
+                }
               </Stack>
             </Stack>
             {/* Loading khi tạo phiếu */}
@@ -865,8 +1043,10 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "insert-slip-error" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("lblCreateSlipError") as string} />}
         {cofirmType === "no-information" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCompleteInformation") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
+        {cofirmType === "create-slip-outsource" && <ModalCofirm onPressOK={create_Material_Stock_Out_Sample_Outsource} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCreateSlipOutsource") as string} />}
+
         {/* Quét Camera */}
-        {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => { setIsScannerOpen(false); }} />}
+        {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => setIsScannerOpen(false)} />}
       </Stack>
     </FullScreenContainerWithNavBar>
   )
@@ -874,9 +1054,12 @@ const DeliverySampleLYVScreen = () => {
 
 interface SidebarProps {
   column: any,
+  columnOutSource: any,
   PO_NOAndTestNo: any,
+  JGNO: any
   listMaterialBOM: any,
   listMaterialStockOut: any,
+  listMaterialStockOut_Outsource: any,
   Article: any,
   KFJD: any,
   MergeNo: any,
@@ -889,6 +1072,7 @@ interface SidebarProps {
 interface SidebarRef {
   refreshData: () => void;
   refreshMaterial_Stock_Out_Sample: () => void;
+  refreshMaterial_Stock_Out_Sample_Outsource: () => void;
   setPoNoValue: (value: any) => void
 }
 
@@ -896,9 +1080,12 @@ interface SidebarRef {
 const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const {
     column,
+    columnOutSource,
     PO_NOAndTestNo,
+    JGNO,
     listMaterialBOM,
     listMaterialStockOut,
+    listMaterialStockOut_Outsource,
     Article,
     KFJD,
     MergeNo,
@@ -916,6 +1103,9 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [listSampleOrder, setListSampleOrder] = useState<any[]>([])
   const [listDataWaiting, setListDataWaiting] = useState<any[]>([])
   const [PoNo, setPoNo] = useState("")
+  const [listDataWaitingOutsource, setListDataWaitingOutsource] = useState<any[]>([])
+  const [PoOutsource, setPoOutsource] = useState<any>(null)
+  const [mergeNo, setMergeNo] = useState<any>("")
   const [isLoading, setIsLoading] = useState(false)
   const [disable, setDisable] = useState(false)
   const [infoPO, setInfoPO] = useState<any>({})
@@ -931,6 +1121,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   useImperativeHandle(ref, () => ({
     refreshData,
     refreshMaterial_Stock_Out_Sample,
+    refreshMaterial_Stock_Out_Sample_Outsource,
     setPoNoValue
   }));
 
@@ -940,6 +1131,10 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   const refreshMaterial_Stock_Out_Sample = () => {
     get_Material_Stock_Out_Sample(valueAutocomplete)
+  };
+
+  const refreshMaterial_Stock_Out_Sample_Outsource = () => {
+    get_Material_Stock_Out_Sample_Outsource(PoOutsource)
   };
 
   const setPoNoValue = (value: any) => {
@@ -969,30 +1164,30 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       getAllPoNo(debouncedSearchTerm);
     }
   }, [debouncedSearchTerm]);
-  
+
   //#endregion
 
 
   //#region Func Logic
-  const getDataWaiting = (value: any) => {
-    if (value !== '') {
-      setListDataWaiting([])
-      setIsLoading(true)
-      setDisable(true)
-      console
-      getInfoPO(value)
-      const url = connect_string + "api/get_Merge_Bom_ERP"
+
+  const getDataWaiting = async (value: any) => {
+    if (value !== "") {
+      setListDataWaiting([]);
+      await getInfoPO(value);
+
+      const url = connect_string + "api/get_Merge_Bom_ERP";
       const data = {
         TestNo: value?.TestNo,
-        checkSole: checkSole
-      }
+        checkSole: checkSole,
+      };
 
-      axios.post(url, data).then(res => {
+      try {
+        const res = await axios.post(url, data);
+
         const arr = res.data.map((item: any, index: any) => ({
-
           _id: index,
-          ...item
-        }))
+          ...item,
+        }));
 
         arr.sort((a: any, b: any) => {
           const statusComparison = b.Status.localeCompare(a.Status);
@@ -1001,139 +1196,219 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
           return b.MJBH.localeCompare(a.MJBH);
         });
 
+        setListDataWaiting(arr);
+        listMaterialBOM(arr);
 
-
+        // Nếu cần, bạn có thể mở lại phần xử lý khác (như listMaterialStockOut):
         // const arr1 = res.data.Item2.map((item: any, index: any) => ({
         //   ...item,
         //   _id: index,
-        //   Modify_Date: item.Modify_Date
-        // }))
+        //   Modify_Date: item.Modify_Date,
+        // }));
+        // listMaterialStockOut(arr1);
 
-        // listMaterialStockOut(arr1)
-        setListDataWaiting(arr)
-        listMaterialBOM(arr)
-      })
-        .finally(() => {
-          setIsLoading(false)
-          setDisable(false)
-        })
+      } catch (error) {
+        console.error("Error fetching data from get_Merge_Bom_ERP:", error);
+      }
     }
-  }
+  };
 
-  const get_Material_Stock_Out_Sample = (value: any) => {
-    listMaterialStockOut([])
-    setIsLoading(true)
-    setDisable(true)
-    const url = connect_string + "api/get_Material_Stock_Out_Sample"
+  const get_Material_Stock_Out_Sample = async (value: any) => {
+    listMaterialStockOut([]);
+
+    const url = connect_string + "api/get_Material_Stock_Out_Sample";
     const data = {
-      TestNo: value?.TestNo
-    }
+      TestNo: value?.TestNo,
+    };
 
-    axios.post(url, data).then(res => {
+    try {
+      const res = await axios.post(url, data);
+
       const arr = res.data.map((item: any, index: any) => ({
         _id: index + 1,
-        ...item
-        // PONO: item.PONO,
-        // Material_No: item.Material_No,
-        // Barcode: item.Barcode,
-        // QTY_Bom: item.QTY_Bom,
-        // QTY_Sample: item.QTY_Sample,
-        // User_ID: item.User_ID,
-        // Modify_Date: item.Modify_Date,
-        // Article: item.Article
+        ...item,
+      }));
 
-      }))
-      listMaterialStockOut(arr)
-    })
-      .finally(() => {
-        setIsLoading(false)
-        setDisable(false)
-      })
-
-  }
-
-  const getInfoPO = (value: any) => {
-    setInfoPO("")
-    Article("")
-    KFJD("")
-    MergeNo("")
-    TestNo("")
-
-    setIsLoading(true)
-    setDisable(true)
-    const url = connect_string + "api/get_info_pono"
-    const data = {
-      TestNo: value?.TestNo
+      listMaterialStockOut(arr);
+    } catch (error) {
+      console.error("Error fetching Material Stock Out Sample:", error);
     }
+  };
 
-    axios.post(url, data).then(res => {
-      setInfoPO(res.data)
-      Article(res?.data?.ARTICLE)
-      KFJD(res?.data?.KFJD)
-      MergeNo(res?.data?.YPZLBH)
-      TestNo(res?.data?.TestNo)
-    })
-      .finally(() => {
-        setIsLoading(false)
-        setDisable(false)
-      })
+  const getInfoPO = async (value: any) => {
+    setInfoPO("");
+    Article("");
+    KFJD("");
+    MergeNo("");
+    TestNo("");
+    setMergeNo("")
+
+    const url = connect_string + "api/get_info_pono";
+    const data = {
+      TestNo: value?.TestNo,
+    };
+
+    try {
+
+      const res = await axios.post(url, data);
+      setInfoPO(res.data);
+      Article(res?.data?.ARTICLE || "");
+      KFJD(res?.data?.KFJD || "");
+      MergeNo(res?.data?.YPZLBH || "");
+      setMergeNo(res?.data?.YPZLBH || "")
+      TestNo(res?.data?.TestNo || "");
+      await loadDataJGNO(res?.data?.YPZLBH || "")
+    } catch (error) {
+      console.error("Error fetching PO info:", error);
+    }
+  };
+
+  const handleSearch = () => {
+    if (PoOutsource === null) {
+      getDataWaitingAndgetInfoPO(valueAutocomplete)
+    }
+    else {
+      getDataWaitingAndgetInfoPOOutSource(PoOutsource)
+    }
   }
 
   const getDataWaitingAndgetInfoPO = async (value: any) => {
-    setLoadingAll("load")
-    setLoadingState(true)
-
-
-    Promise.all([getDataWaiting(value), get_Material_Stock_Out_Sample(value)])
-      .finally(() => {
-        setLoadingAll("")
-        setLoadingState(false)
-      })
+    setDisable(true)
+    Promise.all([await getDataWaiting(value), await get_Material_Stock_Out_Sample(value)]).finally(() => {
+      setDisable(false)
+    })
   };
 
-  const getAllPoNo = (value: any) => {
-    const POAndTestNo = value.split("-")
-    setOnFocus(false)
-    const url = connect_string + "api/get_Merge_Bom_To_PONO"
+  const getDataWaitingAndgetInfoPOOutSource = async (value: any) => {
+    setDisable(true)
+    Promise.all([await getDataWatingOutSource(value)]).finally(() => {
+      setDisable(false)
+    })
 
+  };
+
+  const getAllPoNo = async (value: any) => {
+    setValueAutocomplete("")
+    setPoOutsource(null)
+    JGNO(null)
+    const POAndTestNo = value.split("-");
+    setOnFocus(false);
+
+    const url = connect_string + "api/get_Merge_Bom_To_PONO";
     const data = {
       TestNo: POAndTestNo[1]?.trim(),
       Po_No: POAndTestNo[0]?.trim(),
-      User_WH: dataUser[0].UserId
-    }
+      User_WH: dataUser[0].UserId,
+    };
 
-    axios.post(url, data).then(res => {
+    try {
+      const res = await axios.post(url, data);
+
       if (res.data.length > 0) {
-        setListSampleOrder(res.data)
+        setListSampleOrder(res.data);
 
-        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[1]?.trim())
+        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[1]?.trim());
 
         const newValue = {
           PONO: filterListPo[0]?.PONO?.trim(),
           TestNo: filterListPo[0]?.TestNo?.trim(),
         };
 
-
         PO_NOAndTestNo(newValue);
 
-        setValueAutocomplete(
-          newValue
-        );
+        setValueAutocomplete(newValue);
 
-        getDataWaitingAndgetInfoPO(
-          newValue
-        )
-        setPoNo('')
-      }
-      else {
-        setListSampleOrder([])
-        setValueAutocomplete(null)
-      }
-      
+        await getDataWaitingAndgetInfoPO(newValue);
 
-    }).finally(() => {
-      setOnFocus(true)
-    })
+        setPoNo('');
+      } else {
+        setListSampleOrder([]);
+        setValueAutocomplete(null);
+      }
+    } catch (error) {
+      console.error("Error fetching PO data:", error);
+    } finally {
+      setOnFocus(true);
+    }
+  };
+
+  const loadDataJGNO = async (value: any) => {
+    if (value !== "") {
+      setListDataWaitingOutsource([])
+      // setPoOutsource(null)
+      const url = connect_string + "api/get_JGNO_to_YPZLBH"
+      const data = {
+        YPZLBH: value
+      }
+
+      try {
+        const res = await axios.post(url, data)
+        setListDataWaitingOutsource(res.data)
+
+      } catch (error) {
+
+      }
+    }
+  }
+
+  const getDataWatingOutSource = async (value: any) => {
+    setListDataWaiting([]);
+    //await getInfoPO(value);
+    if (value === null) {
+      await getDataWaiting(valueAutocomplete);
+    } else if (value !== null && value !== "") {
+      const url = connect_string + "api/get_Merge_Bom_ERP_OutSource";
+      const data = {
+        JGNO: value,
+      };
+
+      try {
+        const res = await axios.post(url, data);
+
+        const arr = res.data.map((item: any, index: any) => ({
+          _id: index,
+          ...item,
+        }));
+
+        arr.sort((a: any, b: any) => {
+          const statusComparison = b.Status.localeCompare(a.Status);
+          if (statusComparison !== 0) return statusComparison;
+
+          return a.MatNo.localeCompare(b.MatNo);
+        });
+
+        setListDataWaiting(arr);
+      } catch (error) {
+        console.error("Error fetching data from get_Merge_Bom_ERP_OutSource:", error);
+      }
+    }
+  };
+
+  const get_Material_Stock_Out_Sample_Outsource = async (value: any) => {
+
+    if (value !== null) {
+      listMaterialStockOut_Outsource([])
+      const url = connect_string + "api/"
+      const data = {
+
+      }
+
+      try {
+        const res = await axios.post(url, data)
+
+        const arr = res.data.map((item: any, index: any) => ({
+          _id: index + 1,
+          ...item
+        }))
+
+        listMaterialStockOut_Outsource(arr)
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+
   }
 
   // Hàm để chuyển đổi trạng thái sidebar
@@ -1146,6 +1421,17 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     setListDataWaiting([])
     listMaterialBOM([])
     listMaterialStockOut([])
+    setListDataWaitingOutsource([])
+    setListSampleOrder([])
+    setValueAutocomplete("")
+    setPoOutsource(null)
+    setInfoPO("");
+    Article("");
+    KFJD("");
+    MergeNo("");
+    TestNo("");
+    JGNO(null)
+    get_qty_out_Sample()
   }
 
   //#endregion
@@ -1156,16 +1442,19 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       return item;
     }
 
-
     if (row.Status === "done") {
       return "grey"
     }
-
 
     return "white"
   };
   //----------------------------------------------------------------
 
+  const handleRowClick = (MatNo: any) => {
+    if (PoOutsource === null) {
+      get_qty_out_Sample(valueAutocomplete, MatNo)
+    }
+  }
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
@@ -1206,16 +1495,16 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                   {/* Pairs */}
                   <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
                 </Grid>
-              
+
                 <Grid item xs={6} display={'flex'}>
                   {/* Quét PO */}
                   <InputFieldV1
                     xsLabel={4}
                     xsInput={8}
                     label={t("gpbScan") as string}
-                    disable={loadingAll === "load" ? loadingState : disable}
+                    disable={disable}
                     value={PoNo}
-                    focus ={true}
+                    focus={true}
                     onFocus={onFocus}
                     handle={handlePoNoChange}
                     id='scan-po'
@@ -1229,100 +1518,6 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     <span className='textsize'>PO NO</span>
                   </Grid>
                   <Grid item display={'flex'} xs={9}>
-                    {/* <Autocomplete
-                      value={valueAutocomplete?.PONO || valueAutocomplete}
-                      onChange={(event: any, newValue: any | null) => {
-                        setValueAutocomplete(newValue?.PONO || newValue);
-                        PO_NO(newValue?.PONO || newValue);
-                        getDataWaitingAndgetInfoPO(newValue?.PONO || newValue)
-                      }}
-                      onInputChange={(event, newInputValue: any) => {
-                        setValueAutocomplete(newInputValue?.PONO || newInputValue);
-                        PO_NO(newInputValue?.PONO || newInputValue);
-                      }}
-
-                      freeSolo
-                      className="dark-bg-primary "
-                      disablePortal
-                      getOptionLabel={(option) => (typeof option === 'string' ? option : option?.PONO || '')}
-                      isOptionEqualToValue={(option, value) => {
-                        if (typeof value === 'string') {
-                          return option.PONO === value; // So sánh chuỗi với chuỗi
-                        }
-                        return option.PONO === value?.PONO; // So sánh object với object
-                      }}
-                      options={Array.isArray(listSampleOrder) ? listSampleOrder : []}
-                      id="combo-box-demo"
-                      disabled={disable}
-                      sx={{
-                        borderRadius: "50px",
-                        border: "1px solid",
-                        width: '100%',
-                        height: "2rem !important",
-
-                        "& .MuiInputBase-root": {
-                          height: "2rem !important",
-                          padding: 0,
-                          paddingLeft: 0.5,
-
-                          '@media screen and (max-width: 1200px)': {
-                            height: "1.8rem !important",
-                          },
-
-                          '@media screen and (max-width: 900px)': {
-                            height: "1.5rem !important",
-                          },
-                        },
-
-
-
-                      }}
-                      componentsProps={{
-                        popper: {
-                          sx: {
-                            "& .MuiAutocomplete-listbox": {
-                              '@media screen and (max-width: 1200px)': {
-                                fontSize: '14px !important',
-                              },
-                              '@media screen and (max-width: 900px)': {
-                                fontSize: '12px !important',
-                              },
-                            },
-                          },
-                        },
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          className="dark-bg-primary"
-                          sx={{
-                            borderRadius: "50px",
-                            color: "white",
-                            height: "1.9rem !important",
-                            "& fieldset": {
-                              borderColor: "white",
-                              border: "none",
-                            },
-                            "& .MuiInputBase-input": {
-                              '@media screen and (max-width: 1200px)': {
-                                fontSize: '14px'
-                              },
-
-                              '@media screen and (max-width: 900px)': {
-                                fontSize: '12px'
-                              },
-                            },
-                            '@media screen and (max-width: 1200px)': {
-                              height: "1.8rem  !important",
-                            },
-
-                            '@media screen and (max-width: 900px)': {
-                              height: "1.5rem  !important",
-                            },
-                          }}
-                        />
-                      )}
-                    />  */}
                     <GenericAutocomplete
                       options={Array.isArray(listSampleOrder) ? listSampleOrder : []}
                       value={valueAutocomplete}
@@ -1347,20 +1542,20 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                   </Grid>
                 </Grid>
                 <Grid item display={'flex'} alignItems={'center'} xs={6}>
-                    <FormControlLabel
-                      sx={styletext}
-                      control={
-                        <Checkbox
-                          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                            setCheckSole(event.target.checked)
-                          }
-                          defaultChecked={false}
-                          checked={checkSole}
-                        />
-                      }
-                      label={t("btnAccounting_Sole")}
-                    />
-                  </Grid>
+                  <FormControlLabel
+                    sx={styletext}
+                    control={
+                      <Checkbox
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setCheckSole(event.target.checked)
+                        }
+                        defaultChecked={false}
+                        checked={checkSole}
+                      />
+                    }
+                    label={t("btnAccounting_Sole")}
+                  />
+                </Grid>
 
                 {/* Đơn gia công */}
                 <Grid container item xs={6} display={'flex'} alignItems={'center'}>
@@ -1369,24 +1564,22 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                   </Grid>
                   <Grid item display={'flex'} xs={9}>
                     <GenericAutocomplete
-                      options={[]}
-                      value={""}
+                      options={listDataWaitingOutsource || []}
+                      value={PoOutsource}
                       onChange={(newValue: any | null) => {
-                        // if (newValue !== null) {
-                        //   setValueAutocomplete(newValue);
-                        //   PO_NOAndTestNo(newValue);
-                        //   getDataWaitingAndgetInfoPO(newValue)
-                        // }
+                        setPoOutsource(newValue?.JGNO || null);
+                        JGNO(newValue?.JGNO || null)
+                        getDataWaitingAndgetInfoPOOutSource(newValue?.JGNO || null)
                       }}
 
                       getOptionLabel={(option) =>
-                        typeof option === "string" ? option : option.PONO
+                        typeof option === "string" ? option : option.JGNO
                       }
                       isOptionEqualToValue={(option, value) => {
                         if (typeof value === 'string') {
-                          return option.TestNo === value;
+                          return option.JGNO === value;
                         }
-                        return option.TestNo === value?.TestNo;
+                        return option.JGNO === value?.JGNO;
                       }}
                     />
                   </Grid>
@@ -1396,21 +1589,20 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
                   <Grid item display={'flex'} alignItems={'center'} xs={2} >
                     {/* Nút tìm kiếm */}
-                    <MyButton height='2rem' name={t('btnSearch')} onClick={() => getDataWaitingAndgetInfoPO(valueAutocomplete)} disabled={loadingAll === "load" ? loadingState : disable} />
+                    <MyButton height='2rem' name={t('btnSearch')} onClick={handleSearch} disabled={disable} />
                   </Grid>
                   <Grid item display={'flex'} alignItems={'center'} xs={2}>
                     {/* Nút làm mới */}
-                    <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={loadingAll === "load" ? loadingState : disable} />
+                    <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={disable} />
                   </Grid>
                   {/* <Grid item display={'flex'}>
                     <MyButton height='2rem' name={t('btnExcel')} onClick={undefined} disabled={disable} />
                   </Grid> */}
                   <Grid item display={'flex'} alignItems={'center'} xs={2} >
                     {/* Nút tạo BOM */}
-                    <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={loadingAll === "load" ? loadingState : disable} />
+                    <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={disable} />
                     {openCreateBOM && <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)} />}
                   </Grid>
-                
                 </Grid>
               </Grid>
             </Stack>
@@ -1422,11 +1614,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         >
           {/* Bảng */}
           <MyTableNew
-            columns={column}
+            columns={PoOutsource === null ? column : columnOutSource}
             rows={listDataWaiting}
             paintingRow={paintingRow}
             checkBox={false}
-            handlerowClick={(params: any, item: any) => get_qty_out_Sample(valueAutocomplete, item?.MatNo || "")}
+            handlerowClick={(params: any, item: any) => handleRowClick(item?.MatNo || "")}
             selectedFirstRow={true}
           />
         </Stack>

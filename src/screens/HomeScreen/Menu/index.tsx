@@ -40,7 +40,6 @@ import axios from "axios";
 import ModalChoose from "../../../components/ModalChoose/index.tsx";
 import ChangePassword from "../../ModalScreen/ChangePasswordForm/index.tsx";
 import { useEffect, useState } from "react";
-import { config } from "../../../utils/api.ts";
 import { connect_string } from "../../LoginScreen/ChooseFactory/index.tsx";
 import { useSelector } from "react-redux";
 import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
@@ -141,9 +140,8 @@ const Menu = () => {
       modal: false,
       modalName: '',
     },
-
     {
-      title: t("btnDelivery"),
+      title: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV') ? t("btnDeliverySample") : t("btnDelivery"),
       icon: deliveryIcon,
       path: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName !== 'LYV') ? "/delivery-sample" : (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV') ? "/delivery-sample-lyv" : "/delivery",
       modal: false,
@@ -195,7 +193,6 @@ const Menu = () => {
       modal: true,
       modalName: 'change-password',
     },
-
     {
       title: t("tsmLanguage"),
       icon: languaguesIcon,

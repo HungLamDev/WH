@@ -27,6 +27,7 @@
     "btnData_Program_Priority": "程式權限變更",
     "btnDelete": "刪除",
     "btnDelivery": "交貨",
+    "btnDeliverySample": "交貨",
     "btnEnglish": "英文",
     "btnEnter_Shelves": "貨架輸入",
     "btnEnter_Stock": "庫存輸入",
@@ -432,6 +433,12 @@
     "noRecoverStamp": "此标签已生成出库单，无法退回。",
     "lblNoOption": "没有数据",
     "lblChooseWH": "选择仓库",
-    "lblRemainingQuota": "剩余定额"
+    "lblRemainingQuota": "剩余定额",
+    "lblDetail": "细节",
+    "msgNoMergeNo": "没有Merge No，您无法打印标签",
+    "btnPrintMergeNo": "打印Merge No",
+    "btnCreateSlipOutsource": "创建加工单",
+    "msgCreateSlipOutsource": "您确定要创建加工出库单吗？",
+    "btnViewERP": "查看ERP"
 
 }
