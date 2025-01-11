@@ -171,7 +171,7 @@ const DeliverySampleLYVScreen = () => {
 
   const columnsOutSource: any[] = [
     {
-      field: "Material_No",
+      field: "CLBH",
       headerName: "Material No",
       align: "center",
       headerAlign: 'center',
@@ -185,24 +185,16 @@ const DeliverySampleLYVScreen = () => {
       width: 150,
     },
     {
-      field: "QTY",
+      field: "Qty",
       headerName: "QTY",
       align: "center",
       headerAlign: 'center'
     },
     {
-      field: "Article",
+      field: "SCBH",
       headerName: "Article",
       align: "center",
       headerAlign: 'center'
-    },
-    {
-      field: "YPZLBH",
-      headerName: "Merge No",
-      align: "center",
-      headerAlign: 'center',
-      width: 150,
-
     },
     {
       field: "LLNO",
@@ -213,7 +205,7 @@ const DeliverySampleLYVScreen = () => {
 
     },
     {
-      field: "User_ID",
+      field: "USERID",
       headerName: "User ID",
       align: "center",
       headerAlign: 'center',
@@ -221,7 +213,7 @@ const DeliverySampleLYVScreen = () => {
 
     },
     {
-      field: "Modify_Date",
+      field: "USERDATE",
       headerName: t("dcpModify_Date"),
       align: "center",
       headerAlign: 'center',
@@ -430,6 +422,7 @@ const DeliverySampleLYVScreen = () => {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [focusedInputId, setFocusedInputId] = useState<string | null>(null);
   const [JGNO, setJGNO] = useState<any>(null)
+  const [JGNO_Check, setJGNO_Check] = useState<any>(null)
   //#endregion
 
   //#region Func OnChange Input
@@ -472,6 +465,7 @@ const DeliverySampleLYVScreen = () => {
 
   //#region Func Logic
 
+  // scan xuất hết số lượng tem
   const handleOutAll = (barcode: string) => {
     if (JGNO === null) {
       setDisable(true)
@@ -674,6 +668,7 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+  // thêm vật tư đã xuất vào bảng Stock_Out_Sample
   const Insert_Material_Stock_Out_Sample =
     (Material_No: string,
       Barcode: string,
@@ -752,6 +747,7 @@ const DeliverySampleLYVScreen = () => {
   };
 
 
+  // xử lý tô màu xanh vs nhưng qrcode đã tạo phiếu xuất
   const highlightText = (item: any, row: any) => {
     if (typeof item !== "string") {
       return item;
@@ -783,6 +779,7 @@ const DeliverySampleLYVScreen = () => {
 
   //----------------------------------------------------------------
 
+  // Tạo phiếu xuất
   const handleCreateSlip = (value: any) => {
     handleCloseConfirm()
     if (
@@ -818,6 +815,7 @@ const DeliverySampleLYVScreen = () => {
 
   }
 
+  // lấy thông tin tem
   const handleGet_qty_out_Sample = (value: any, materialNo: any) => {
     setQtyOutSample("")
     const url = connect_string + "api/get_qty_out_Sample"
@@ -857,8 +855,9 @@ const DeliverySampleLYVScreen = () => {
   };
 
 
+  // Tạo phiếu xuất đơn gia công
   const create_Material_Stock_Out_Sample_Outsource = async () => {
-    if (JGNO !== null && JGNO !== "" && mergeNo !== "") {
+    if (JGNO !== null && JGNO !== "" && mergeNo !== "" && JGNO_Check?.check === false) {
       handleCloseConfirm()
       setIsLoadingCreateSlip(true)
       const url = connect_string + "api/Insert_Stock_Out_Sample_OutSource";
@@ -871,6 +870,13 @@ const DeliverySampleLYVScreen = () => {
         const res = await axios.post(url, data);
         if (res.data === true) {
           handleOpenConfirm("insert-slip-sucess")
+          await sidebarRef.current?.refreshMaterial_Stock_Out_Sample_Outsource()
+          const arrJGNO = await sidebarRef.current?.refreshLoadDataJGNO()
+          await sidebarRef.current?.refreshGetDataWatingOutSource(JGNO, arrJGNO)
+          setJGNO_Check((prev: any) => ({
+            ...prev,
+            check: true
+          }));
         }
         else {
           handleOpenConfirm("insert-slip-error")
@@ -907,6 +913,7 @@ const DeliverySampleLYVScreen = () => {
             PO_NOAndTestNo={(value: any) => setPO_NOAndTestNo(value)}
             listMaterialStockOut_Outsource={(value: any) => setListMaterialStockoutOutSource(value)}
             JGNO={(value: any) => setJGNO(value)}
+            JGNO_Check={(value: any) => setJGNO_Check(value)}
             listMaterialBOM={(value: any) => setListMaterialBOM(value)}
             listMaterialStockOut={(value: any) => setListMaterialStockout(value)}
             Article={(value: any) => setArticle(value)}
@@ -918,6 +925,7 @@ const DeliverySampleLYVScreen = () => {
             get_qty_out_Sample={handleGet_qty_out_Sample}
             handleFocusInput={(id: any) => handleFocus(id)}
           />
+          
           <div className="main-content">
             <Box
               className={"dark-bg-secondary border-bottom-white"}
@@ -1022,7 +1030,7 @@ const DeliverySampleLYVScreen = () => {
                     )
                     :
                     (
-                      <MyButton height='2rem' name={t("btnCreateSlipOutsource")} onClick={() => handleOpenConfirm("create-slip-outsource")} disabled={disable} />
+                      <MyButton height='2rem' name={t("btnCreateSlipOutsource")} onClick={() => handleOpenConfirm("create-slip-outsource")} disabled={JGNO_Check?.check === true ? true : disable} />
                     )
                 }
               </Stack>
@@ -1066,14 +1074,17 @@ interface SidebarProps {
   TestNo: any,
   isOpenSidebar: any,
   get_qty_out_Sample: any,
-  handleFocusInput: any
+  handleFocusInput: any,
+  JGNO_Check: any
 }
 
 interface SidebarRef {
-  refreshData: () => void;
-  refreshMaterial_Stock_Out_Sample: () => void;
-  refreshMaterial_Stock_Out_Sample_Outsource: () => void;
+  refreshData: () => Promise<void>;
+  refreshMaterial_Stock_Out_Sample: () => Promise<void>;
+  refreshMaterial_Stock_Out_Sample_Outsource: () => Promise<void>;
+  refreshLoadDataJGNO: () => Promise<any[]>;
   setPoNoValue: (value: any) => void
+  refreshGetDataWatingOutSource: (value: any, arrJGNO: any) => Promise<void>
 }
 
 //#region Tạo BOM
@@ -1083,6 +1094,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     columnOutSource,
     PO_NOAndTestNo,
     JGNO,
+    JGNO_Check,
     listMaterialBOM,
     listMaterialStockOut,
     listMaterialStockOut_Outsource,
@@ -1122,20 +1134,32 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     refreshData,
     refreshMaterial_Stock_Out_Sample,
     refreshMaterial_Stock_Out_Sample_Outsource,
+    refreshGetDataWatingOutSource,
+    refreshLoadDataJGNO,
     setPoNoValue
   }));
 
-  const refreshData = () => {
-    getDataWaiting(valueAutocomplete);
+  const refreshData = async () => {
+    await getDataWaiting(valueAutocomplete);
   };
 
-  const refreshMaterial_Stock_Out_Sample = () => {
-    get_Material_Stock_Out_Sample(valueAutocomplete)
+  const refreshMaterial_Stock_Out_Sample = async () => {
+    await get_Material_Stock_Out_Sample(valueAutocomplete)
   };
 
-  const refreshMaterial_Stock_Out_Sample_Outsource = () => {
-    get_Material_Stock_Out_Sample_Outsource(PoOutsource)
+  const refreshMaterial_Stock_Out_Sample_Outsource = async () => {
+    await get_Material_Stock_Out_Sample_Outsource(PoOutsource)
   };
+
+  const refreshGetDataWatingOutSource = async (value: any, arrJGNO: any) => {
+    await getDataWatingOutSource(value, arrJGNO)
+  };
+
+
+  const refreshLoadDataJGNO = async () => {
+    return await loadDataJGNO(mergeNo)
+  };
+
 
   const setPoNoValue = (value: any) => {
     setPoNo(value)
@@ -1170,6 +1194,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   //#region Func Logic
 
+  // lấy danh sách vật tư liệu đơn của BOM 
   const getDataWaiting = async (value: any) => {
     if (value !== "") {
       setListDataWaiting([]);
@@ -1213,6 +1238,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   };
 
+  // lấy danh sách xuất tem
   const get_Material_Stock_Out_Sample = async (value: any) => {
     listMaterialStockOut([]);
 
@@ -1235,6 +1261,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   };
 
+  // lấy thông tin test no
   const getInfoPO = async (value: any) => {
     setInfoPO("");
     Article("");
@@ -1263,15 +1290,19 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   };
 
-  const handleSearch = () => {
+  // tìm kiếm lại 
+  const handleSearch = async () => {
     if (PoOutsource === null) {
-      getDataWaitingAndgetInfoPO(valueAutocomplete)
+      await getDataWaitingAndgetInfoPO(valueAutocomplete)
     }
     else {
-      getDataWaitingAndgetInfoPOOutSource(PoOutsource)
+      await getDataWaitingAndgetInfoPOOutSource(PoOutsource)
+      await get_Material_Stock_Out_Sample_Outsource(PoOutsource)
+      await loadDataJGNO(mergeNo)
     }
   }
 
+  // lấy danh sách vật tư liệu đơn của BOM, danh sách tem xuất, thông tin test no
   const getDataWaitingAndgetInfoPO = async (value: any) => {
     setDisable(true)
     Promise.all([await getDataWaiting(value), await get_Material_Stock_Out_Sample(value)]).finally(() => {
@@ -1279,15 +1310,18 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     })
   };
 
+  // lấy danh sách vật tư gia công của BOM, danh sách vật tư gia công đã xuất
   const getDataWaitingAndgetInfoPOOutSource = async (value: any) => {
     setDisable(true)
-    Promise.all([await getDataWatingOutSource(value)]).finally(() => {
+    Promise.all([await getDataWatingOutSource(value, listDataWaitingOutsource)]).finally(() => {
       setDisable(false)
     })
 
   };
 
+  // lấy toàn bộ test no của merge no
   const getAllPoNo = async (value: any) => {
+    setDisable(true)
     setValueAutocomplete("")
     setPoOutsource(null)
     JGNO(null)
@@ -1329,10 +1363,13 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       console.error("Error fetching PO data:", error);
     } finally {
       setOnFocus(true);
+      setDisable(false)
     }
   };
 
+  // load danh sách đơn gia công của merge no
   const loadDataJGNO = async (value: any) => {
+    let arrJGNO = []
     if (value !== "") {
       setListDataWaitingOutsource([])
       // setPoOutsource(null)
@@ -1344,16 +1381,17 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       try {
         const res = await axios.post(url, data)
         setListDataWaitingOutsource(res.data)
-
+        arrJGNO = res.data || []
       } catch (error) {
 
       }
     }
+    return arrJGNO
   }
 
-  const getDataWatingOutSource = async (value: any) => {
+  // lấy danh sách vật tư gia công của đơn
+  const getDataWatingOutSource = async (value: any, arrJGNO: any) => {
     setListDataWaiting([]);
-    //await getInfoPO(value);
     if (value === null) {
       await getDataWaiting(valueAutocomplete);
     } else if (value !== null && value !== "") {
@@ -1365,18 +1403,24 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       try {
         const res = await axios.post(url, data);
 
-        const arr = res.data.map((item: any, index: any) => ({
-          _id: index,
-          ...item,
-        }));
+        const checkOutsourceComplete: any = arrJGNO.filter((item: any) => item.JGNO === value)
 
-        arr.sort((a: any, b: any) => {
-          const statusComparison = b.Status.localeCompare(a.Status);
-          if (statusComparison !== 0) return statusComparison;
+        let arr = []
 
-          return a.MatNo.localeCompare(b.MatNo);
-        });
-
+        if (checkOutsourceComplete[0]?.check === true) {
+          arr = res.data.map((item: any, index: any) => ({
+            _id: index,
+            ...item,
+            Status: "done",
+          }));
+        }
+        else {
+          arr = res.data.map((item: any, index: any) => ({
+            _id: index,
+            ...item,
+            Status: ""
+          }));
+        }
         setListDataWaiting(arr);
       } catch (error) {
         console.error("Error fetching data from get_Merge_Bom_ERP_OutSource:", error);
@@ -1384,13 +1428,14 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   };
 
+  // lấy danh sách vật tư gia công đã xuất của đơn
   const get_Material_Stock_Out_Sample_Outsource = async (value: any) => {
 
     if (value !== null) {
       listMaterialStockOut_Outsource([])
-      const url = connect_string + "api/"
+      const url = connect_string + "api/get_list_Material_To_JGNO"
       const data = {
-
+        JGNO: value
       }
 
       try {
@@ -1417,6 +1462,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     isOpenSidebar(!isOpen)
   };
 
+  // làm mới
   const handleClean = () => {
     setListDataWaiting([])
     listMaterialBOM([])
@@ -1569,7 +1615,9 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                       onChange={(newValue: any | null) => {
                         setPoOutsource(newValue?.JGNO || null);
                         JGNO(newValue?.JGNO || null)
+                        JGNO_Check(newValue || null)
                         getDataWaitingAndgetInfoPOOutSource(newValue?.JGNO || null)
+                        get_Material_Stock_Out_Sample_Outsource(newValue?.JGNO || null)
                       }}
 
                       getOptionLabel={(option) =>
@@ -1629,5 +1677,3 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 //#endregion
 
 export default DeliverySampleLYVScreen;
-
-

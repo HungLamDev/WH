@@ -930,7 +930,7 @@ const PurchaseTraceListSample = () => {
     const [article, setArticle] = useState("")
     const [season, setSeason] = useState("")
     const [listStage, setListStage] = useState<any[]>([])
-    const [stage, setStage] = useState("")
+    const [stage, setStage] = useState<any>("")
     const [materialName, setMaterialName] = useState("")
     const [color, setColor] = useState("")
     const [dateETA, setDateETA] = useState(
@@ -1228,7 +1228,7 @@ const PurchaseTraceListSample = () => {
                             <GenericAutocomplete
                                 value={stage}
                                 onChange={(newValue: any | "") => {
-                                    setStage(newValue.KFJD);
+                                    setStage(newValue?.KFJD);
                                 }}
                                 getOptionLabel={(option) => (typeof option === 'string' ? option : option?.KFJD || "")}
                                 isOptionEqualToValue={(option, value) => {

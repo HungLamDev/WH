@@ -4,15 +4,14 @@ import TextField from '@mui/material/TextField';
 import { t } from 'i18next';
 
 type GenericAutocompleteProps<T> = {
-    options: T[]; // Mảng các đối tượng
-    value: T | string | null; // Giá trị hiện tại
-    onChange: (value: T | string | null) => void; // Hàm xử lý khi thay đổi
-    onInputChange?: (value: string) => void; // Hàm xử lý khi nhập
-    getOptionLabel: (option: T | string) => string; // Hàm để lấy nhãn của từng option
-    isOptionEqualToValue?: (option: T, value: T | string) => boolean; // Hàm so sánh
-    paintingText?: (value: any) => string;
-    disabled?: boolean; // Trạng thái vô hiệu hóa
-    allowFreeSolo?: boolean; // Bật/tắt tính năng freeSolo
+    options: T[]; 
+    value: T | string | null;
+    onChange: (value: T | string | null) => void; 
+    onInputChange?: (value: string) => void;
+    getOptionLabel: (option: T | string) => string; 
+    isOptionEqualToValue?: (option: T, value: T | string) => boolean;
+    disabled?: boolean; 
+    allowFreeSolo?: boolean; 
 };
 
 function GenericAutocomplete<T extends object | string>({
@@ -24,7 +23,6 @@ function GenericAutocomplete<T extends object | string>({
     isOptionEqualToValue,
     disabled = false,
     allowFreeSolo = false,
-    paintingText = () => "white",
 }: GenericAutocompleteProps<T>) {
     return (
         <Autocomplete
@@ -42,7 +40,7 @@ function GenericAutocomplete<T extends object | string>({
                 }
             }}
             noOptionsText={t("lblNoOption") as string}
-            freeSolo={allowFreeSolo} // Bật/tắt tính năng freeSolo
+            freeSolo={allowFreeSolo} 
             disablePortal
             options={options}
             getOptionLabel={(option) => getOptionLabel(option)}
@@ -51,6 +49,17 @@ function GenericAutocomplete<T extends object | string>({
                     ? isOptionEqualToValue(option, currentValue)
                     : option === currentValue
             }
+            renderOption={(props, option) => {
+                let color = "white"; 
+                if (option && (option as any)?.check === true) {
+                    color = "grey"; 
+                } 
+                return (
+                    <li {...props} style={{ color }}>
+                        {getOptionLabel(option)}
+                    </li>
+                );
+            }}
             disabled={disabled}
             sx={{
                 borderRadius: '50px',
@@ -72,7 +81,7 @@ function GenericAutocomplete<T extends object | string>({
                 popper: {
                     sx: {
                         '& .MuiAutocomplete-listbox': {
-                            color: paintingText(options),
+
                             '@media screen and (max-width: 1200px)': {
                                 fontSize: '14px !important',
                             },
@@ -96,7 +105,6 @@ function GenericAutocomplete<T extends object | string>({
                             border: 'none',
                         },
                         '& .MuiInputBase-input': {
-                            color: paintingText(options),
                             '@media screen and (max-width: 1200px)': {
                                 fontSize: '14px',
                             },

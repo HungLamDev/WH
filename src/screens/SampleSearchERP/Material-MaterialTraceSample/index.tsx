@@ -495,7 +495,6 @@ const MaterialTraceSample = () => {
                             value={valueWH}
                             onChange={(newValue: any | "") => {
                                 setValueWH(newValue);
-
                             }}
                             getOptionLabel={(option) => (typeof option === 'string' ? option : option?.CKBH || "")}
                             isOptionEqualToValue={(option, value) => {

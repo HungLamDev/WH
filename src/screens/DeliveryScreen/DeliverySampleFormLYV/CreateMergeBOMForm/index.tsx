@@ -183,10 +183,12 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
     //#region Func Logic
 
+    // mở camera
     const handleScanClick = () => {
         setModalScan(true);
     }
 
+    // scan camera
     const handleScan = async (result: any | null) => {
 
         if (result || result.text) {
@@ -195,11 +197,12 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         }
     }
 
-
+    // row click
     const handleRowClick = (params: any, item: any) => {
         setItemRow(item)
     }
 
+    // xóa dòng
     const handleDeleteRow = () => {
         const findItemIndex = data.findIndex(
             (item) => item.Po_No === itemRow.Po_No
@@ -213,6 +216,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         }
     }
 
+    // hàm xử lý các test no khi scan vào bảng
     const addPoNo = (prev: any[], newItem: any): any[] => {
         // Tìm xem đã có phần tử nào trong mảng trong không, nếu ko có trả về -1
         const existingItemIndex = prev.findIndex(
@@ -232,46 +236,51 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         }
     };
 
-    const scanPoNo = (value: any) => {
-        setDisable(true)
-        const POAndTestNo = value.split("-")
+    // scan po no
+    const scanPoNo = async (value: any) => {
+        setDisable(true);
+        const POAndTestNo = value.split("-");
 
-        const url = connect_string + "api/Create_Merge_Bom"
+        const url = connect_string + "api/Create_Merge_Bom";
         const dataPoNo = {
             User_WH: dataUser[0].UserId,
             Po_No: POAndTestNo[0]?.trim() || "",
             TestNo: [POAndTestNo[1]?.trim() || ""]
-        }
+        };
 
-        axios.post(url, dataPoNo).then(res => {
+        try {
+            const res = await axios.post(url, dataPoNo);
             if (res?.data?.TestNo !== null) {
 
                 const checkKFJDAndJiJie = data.some(
                     (item: any) => item.KFJD === res?.data?.KFJD && item.JiJie === res?.data?.JiJie
-                )
+                );
 
-                if (checkKFJDAndJiJie === true || data.length === 0) {
+                if (checkKFJDAndJiJie || data.length === 0) {
+
                     const _id = Math.floor(Math.random() * 10000000) + 1;
+                    const check = await handlePaintingPo(res.data?.TestNo)
                     const newItem = {
                         ...res.data,
                         _id: _id,
                         Modify_Date: moment(res.data.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
-                    }
+                        check: check,
+                    };
                     setData((prev: any[]) => addPoNo(prev, newItem));
-                }
-                else if (data.length > 0 && checkKFJDAndJiJie === false) {
-                    handleOpenConfirm("no-KFJD-JiJie")
-                }
-                setValueScan("")
 
+                } else {
+                    handleOpenConfirm("no-KFJD-JiJie");
+                }
+                setValueScan("");
             }
-        })
-        .finally(() => {
-            setDisable(false)
-        })
+        } catch (error) {
+            console.error("Error in scanPoNo:", error);
+        } finally {
+            setDisable(false);
+        }
+    };
 
-    }
-
+    // tạo BOM
     const createBOM = () => {
         if (data.length > 0) {
             setDisable(true)
@@ -313,27 +322,52 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
     }
 
-    const handleMergeNoToPono = () => {
-        setDisable(true)
-        const url = connect_string + "api/Merge_No_To_Pono"
+    // tìm kiếm theo merge no
+    const handleMergeNoToPono = async () => {
+        setDisable(true);
+        const url = connect_string + "api/Merge_No_To_Pono";
         const data = {
-            ypzlbh: mergeNo
-        }
+            ypzlbh: mergeNo.trim()
+        };
 
-        axios.post(url, data).then(res => {
-            const arr = res.data.map((item: any, index: any) => ({
-                _id: index + 1,
-                ...item,
-                Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss")
-            }))
-            setData(arr)
-            setMergeNo("")
-        })
-            .finally(() => {
-                setDisable(false)
-            })
+        try {
+            const res = await axios.post(url, data);
+
+            const list_data = await Promise.all(
+                res.data.map(async (item: any, index: any) => {
+                    const check = await handlePaintingPo(item.TestNo);
+
+                    return {
+                        _id: index + 1,
+                        ...item,
+                        check: check,
+                        Modify_Date: moment(item.Modify_Date).format("DD/MM/YYYY HH:mm:ss")
+                    };
+                })
+            );
+            setData(list_data);
+            setMergeNo("");
+        } catch (error) {
+            console.error("Error in handleMergeNoToPono:", error);
+        } finally {
+            setDisable(false);
+        }
+    };
+
+    // hàm gọi api để tô màu test no đã xuất đủ chưa
+    const handlePaintingPo = async (test_no: any) => {
+        let check = false
+        const url = connect_string + "api/check_testNo_and_MergeNo"
+        const data = {
+            test_no: test_no,
+        }
+        
+        const res = await axios.post(url, data)
+        check = res.data
+        return check
     }
 
+    // xử lý hiển thị 2 nút chi tiết và in merge no
     const handleOnClickBtn = (item: any, column: any) => {
         setItemRowMergeBom(item)
 
@@ -360,6 +394,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         }
     }
 
+    // In merge no
     const handlePrintAll = async () => {
         const hasMatchingItem = data.some(
             (item) => item.YPZLBH !== "" && item.YPZLBH !== null
@@ -380,6 +415,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
     }
 
+    // xử lý nút ok khi in
     const handlePrintAllOK = () => {
         handleCloseConfirm()
         setDisable(true)
@@ -401,6 +437,20 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             })
         }
     }
+
+    //Tô màu dòng trong bảng------------------------------------------
+    const paintingRow = (item: any, row: any) => {
+        if (typeof item !== "string") {
+            return item;
+        }
+
+        if (row.check === true) {
+            return "grey"
+        }
+
+        return "white"
+    };
+    //----------------------------------------------------------------
 
     //#endregion
 
@@ -486,6 +536,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                                 checkBox={false}
                                 handlerowClick={handleRowClick}
                                 onClickButton={handleOnClickBtn}
+                                paintingRow={paintingRow}
                             />
                         </Stack>
                         <Stack alignItems={'flex-end'} padding={'10px'}>
