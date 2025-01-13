@@ -1015,6 +1015,19 @@ const PurchaseTraceListSample = () => {
             "CGNO": "0"
         }
     ])
+    const [dataBottom1Total, setDataBottom1Total] = useState<any []>([
+        {
+            "ZLBH": "0",
+            "XXCC": "",
+            "Stage": "",
+            "Qty": "0",
+            "XIEMING": "",
+            "FD": "",
+            "ShipmentDate": "",
+            "SizSockliner": "",
+            "SizInsole": ""
+        }
+    ])
     const [dataBottom1, setDataBottom1] = useState<any[]>([])
     const [dataBottom2, setDataBottom2] = useState<any[]>([])
     const [dataBottom3, setDataBottom3] = useState<any[]>([])
@@ -1103,7 +1116,6 @@ const PurchaseTraceListSample = () => {
                     USACCK: item.USACCK ? "$" + item.USACCK : ""
                 }))
 
-                console.log(arr)
 
                 const arr1 = {
                     ...res.data.Item2,
@@ -1133,10 +1145,17 @@ const PurchaseTraceListSample = () => {
             Purpose: item.PURPOSE
         }
         axios.post(url, data).then(res => {
-            const arr = res.data.map((item: any, index: number) => ({
+            const arr = res.data.list_Sample_Detail1s.map((item: any, index: number) => ({
                 ...item,
                 id: index
             }))
+
+            const arrTotal = {
+                ZLBH: res.data?.count || 0,
+                Qty: res.data?.tong_qty || 0
+            }
+            
+            setDataBottom1Total([arrTotal])
             setDataBottom1(arr)
         }).finally(() => {
             setDisable(false)
@@ -1303,7 +1322,7 @@ const PurchaseTraceListSample = () => {
 
 
                     <Grid item display={'flex'} alignItems={'center'} xs={1}>
-                        {/* Nút làm mới */}
+                        {/* Nút tìm kiếm */}
                         <MyButton height='1.7rem' name={"Query"} onClick={handleSearch} disabled={disable} />
                     </Grid>
                 </Grid>
@@ -1328,6 +1347,8 @@ const PurchaseTraceListSample = () => {
                         columns={columnBottom11}
                         columnShow={columnBottom1ShowData}
                         data={dataBottom1}
+                        lastRow={true}
+                        lastRowData={dataBottom1Total}
                     />
                 </Stack>
                 <Stack height={'100%'} width={"40%"} borderRight={"2px solid white"}>

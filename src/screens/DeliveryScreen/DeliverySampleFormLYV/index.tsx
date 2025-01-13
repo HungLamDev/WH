@@ -746,7 +746,6 @@ const DeliverySampleLYVScreen = () => {
     return "white"
   };
 
-
   // xử lý tô màu xanh vs nhưng qrcode đã tạo phiếu xuất
   const highlightText = (item: any, row: any) => {
     if (typeof item !== "string") {
