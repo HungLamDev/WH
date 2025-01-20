@@ -43,6 +43,9 @@ import QRScannerV1 from '../../../components/QRScanner/indexV1';
 import { styletext } from '../../StockinScreenv2/StockinForm';
 import SampleSearchERP from '../../SampleSearchERP';
 import ImportAndExportSample from '../../StockinScreenv2/ModelImportandExport/index_sample';
+import { BiArrowBack } from 'react-icons/bi';
+import DataHistoryPrintScreen from '../../PrintOtherScreen/PrintSampleScreen';
+import { NewReleases } from '@mui/icons-material';
 
 //#endregion
 
@@ -423,6 +426,9 @@ const DeliverySampleLYVScreen = () => {
   const [focusedInputId, setFocusedInputId] = useState<string | null>(null);
   const [JGNO, setJGNO] = useState<any>(null)
   const [JGNO_Check, setJGNO_Check] = useState<any>(null)
+  const [onFocus, setOnFocus] = useState(false)
+  const [listCheckStockoutOutSource, setListCheckStockoutOutSource] = useState<any[]>([])
+
   //#endregion
 
   //#region Func OnChange Input
@@ -541,6 +547,7 @@ const DeliverySampleLYVScreen = () => {
                 // dispatch(addItemArrayStockout(newItem));
                 // dispatch(addTotalQtyOut(response.data.Value_Qty_Out))
                 setQRCode('')
+                setOnFocus(true)
               }
             }).finally(() => {
               setDisable(false)
@@ -609,6 +616,7 @@ const DeliverySampleLYVScreen = () => {
 
                 // Làm tròn 4 chữ số trừ tổng
                 setQRCode('')
+                setOnFocus(true)
 
                 const totalQtyOut = new Decimal(TotalQtyOut);
                 const valueRemain = new Decimal(response.data[0].Value_Remain);
@@ -703,33 +711,8 @@ const DeliverySampleLYVScreen = () => {
             ...res.data,
             _id: _id,
             Barcode: res.data.Barcode + " ➪ " + res.data.QTY_Sample,
-            // Modify_Date: res.data.Modify_Date,
-            // PONO: res.data.PONO,
-            // Material_No: res.data.Material_No,
-            // QTY_Bom: res.data.QTY_Bom,
-            // QTY_Sample: res.data.QTY_Sample,
-            // User_ID: res.data.User_ID,
-            // Article: res.data.Article
+
           }
-
-          // if (newItem.QTY_Bom !== "" && ((new Decimal(newItem.QTY_Bom).toNumber() - new Decimal(newItem.QTY_Sample).toNumber()) === 0)) {
-
-          //   const UpdatelistMaterialBOM = listMaterialBOM.map((item: any) => {
-          //     if (item.MatNo === newItem.Material_No) {
-          //       return {
-          //         ...item,
-          //         Status: "done",
-          //       };
-          //     }
-          //     return item;
-          //   }).sort((a: any, b: any) => {
-          //     const statusComparison = b.Status.localeCompare(a.Status);
-          //     if (statusComparison !== 0) return statusComparison;
-
-          //     return b.MJBH.localeCompare(a.MJBH);
-          //   });
-          //   setListMaterialBOMFilter(UpdatelistMaterialBOM)
-          // }
 
           setListMaterialStockout((prev: any[]) => addOrUpdateMaterialStockout(prev, newItem));
         }
@@ -891,6 +874,81 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+  // Xuất vật tư cho vật tư gia công về
+  const handleStockoutOutsource = async () => {
+    setIsLoadingCreateSlip(true);
+    handleCloseConfirm()
+    const arrFilter = listCheckStockoutOutSource.filter(
+      (item: any) => item?.CLZMLB === "Y" && item?.MJBH === "ZZZZZZZZZZ"
+    );
+
+    try {
+      // Duyệt từng phần tử tuần tự
+      if (arrFilter.length > 0) {
+        for (const newItem of arrFilter) {
+          await handleImport_Material_Stock_Out_Sample(
+            newItem.MatNo,
+            "Outsource",
+            newItem?.Qty,
+            dataUser[0].UserId,
+            PO_NOAndTestNo?.PONO,
+            PO_NOAndTestNo?.TestNo,
+            mergeNo,
+            article,
+            newItem?.Qty,
+            kfjd,
+            newItem.SIZE
+          );
+        }
+        if (sidebarRef.current) {
+          handleRefresh()
+          sidebarRef.current.refreshMaterial_Stock_Out_Sample()
+        }
+      }
+    } catch (error) {
+      console.error("Error during stock out:", error);
+    } finally {
+      setIsLoadingCreateSlip(false);
+
+    }
+  };
+
+  const handleImport_Material_Stock_Out_Sample = async (
+    Material_No: string,
+    Barcode: string,
+    QTY_Sample: string,
+    User_ID: string,
+    PO_NO: string,
+    TestNo: string,
+    YPZLBH: string,
+    Article: string,
+    QTY_BOM: any,
+    KFJD: any,
+    Size: any
+  ) => {
+    const url = connect_string + "api/insert_Key_Material_Stock_Out_Sample";
+    const data = {
+      Material_No: Material_No,
+      Barcode: Barcode,
+      QTY_Sample: QTY_Sample,
+      User_ID: User_ID,
+      PONO: PO_NO,
+      TestNo: TestNo,
+      YPZLBH: YPZLBH,
+      Article: Article,
+      QTY_Bom: QTY_BOM,
+      Size: Size,
+      KFJD: KFJD
+    };
+
+    try {
+      await axios.post(url, data);
+    } catch (error) {
+      console.error("Error inserting material stock out sample:", error);
+    }
+  };
+
+
   //#endregion
 
 
@@ -923,8 +981,8 @@ const DeliverySampleLYVScreen = () => {
             isOpenSidebar={(value: any) => setIsOpenSibar(value)}
             get_qty_out_Sample={handleGet_qty_out_Sample}
             handleFocusInput={(id: any) => handleFocus(id)}
+            listCheckMaterialStockout={(value: any) => setListCheckStockoutOutSource(value)}
           />
-          
           <div className="main-content">
             <Box
               className={"dark-bg-secondary border-bottom-white"}
@@ -965,6 +1023,7 @@ const DeliverySampleLYVScreen = () => {
                           handle={handleQRcode}
                           id='scan-stock-out'
                           handleOnFocus={() => handleFocus("scan-stock-out")}
+                          onFocus={onFocus}
                         />
                       </Grid>
                       <Grid item display={'flex'} alignItems={'center'} xs={1}>
@@ -1020,18 +1079,26 @@ const DeliverySampleLYVScreen = () => {
                     />
                   )
               }
-              <Stack alignItems={'flex-end'} paddingRight={'10px'}>
-                {/* Tạo phiếu */}
-                {
-                  JGNO === null ?
-                    (
-                      <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
-                    )
-                    :
-                    (
-                      <MyButton height='2rem' name={t("btnCreateSlipOutsource")} onClick={() => handleOpenConfirm("create-slip-outsource")} disabled={JGNO_Check?.check === true ? true : disable} />
-                    )
-                }
+              <Stack alignItems={'flex-end'} paddingRight={'10px'} paddingLeft={'10px'} flexDirection={"row"}>
+
+                <Stack width={"50%"} alignItems={'flex-start'}>
+                  <MyButton height='2rem' name={"Xuất gia công"} onClick={ () => handleOpenConfirm("stockout-outsource")} disabled={disable} />
+                </Stack>
+
+                <Stack width={"50%"} alignItems={'flex-end'}>
+                  {/* Tạo phiếu */}
+                  {
+                    JGNO === null ?
+                      (
+                        <MyButton height='2rem' name={t('btnCreate')} onClick={() => handleOpenConfirm("create-slip")} disabled={disable} />
+                      )
+                      :
+                      (
+                        <MyButton height='2rem' name={t("btnCreateSlipOutsource")} onClick={() => handleOpenConfirm("create-slip-outsource")} disabled={JGNO_Check?.check === true ? true : disable} />
+                      )
+                  }
+                </Stack>
+
               </Stack>
             </Stack>
             {/* Loading khi tạo phiếu */}
@@ -1051,6 +1118,7 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "no-information" && <ModalCofirm showOk={false} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCompleteInformation") as string} />}
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
         {cofirmType === "create-slip-outsource" && <ModalCofirm onPressOK={create_Material_Stock_Out_Sample_Outsource} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCreateSlipOutsource") as string} />}
+        {cofirmType === "stockout-outsource" && <ModalCofirm onPressOK={handleStockoutOutsource} open={openCofirm} onClose={handleCloseConfirm} title={t("msgStockOutOutsource") as string} />}
 
         {/* Quét Camera */}
         {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => setIsScannerOpen(false)} />}
@@ -1074,7 +1142,8 @@ interface SidebarProps {
   isOpenSidebar: any,
   get_qty_out_Sample: any,
   handleFocusInput: any,
-  JGNO_Check: any
+  JGNO_Check: any,
+  listCheckMaterialStockout: any
 }
 
 interface SidebarRef {
@@ -1103,7 +1172,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     TestNo,
     isOpenSidebar,
     get_qty_out_Sample,
-    handleFocusInput
+    handleFocusInput,
+    listCheckMaterialStockout = []
   } = props
   const { t } = useTranslation();
 
@@ -1117,14 +1187,55 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [listDataWaitingOutsource, setListDataWaitingOutsource] = useState<any[]>([])
   const [PoOutsource, setPoOutsource] = useState<any>(null)
   const [mergeNo, setMergeNo] = useState<any>("")
-  const [isLoading, setIsLoading] = useState(false)
   const [disable, setDisable] = useState(false)
   const [infoPO, setInfoPO] = useState<any>({})
-  const [listWH, setListWH] = useState<any[]>([])
   const [checkSole, setCheckSole] = useState(false)
-  const [loadingState, setLoadingState] = useState(false)
-  const [loadingAll, setLoadingAll] = useState("")
   const [onFocus, setOnFocus] = useState(false)
+  const [openModalPrintSample, setOpenModalPrintSample] = useState(false)
+
+  const listChooseMaterial = [
+    {
+      value: "all",
+      title: t("chxAll")
+    },
+    {
+      value: "lieu_don",
+      title: t("lblSingleMaterials")
+    },
+    {
+      value: "lieu_gia_cong",
+      title: t("lblOutsourceMaterials")
+    },
+  ]
+
+  const [valueChooseMaterial, setValueChooseMaterial] = useState({
+    value: "all",
+    title: t("chxAll")
+  })
+
+  const listChooseWarehouse = [
+    {
+      value: "all",
+      title: t("chxAll")
+    },
+    {
+      value: "da-vai-pu",
+      title: t("lblLeather-Fabric-PU")
+    },
+    {
+      value: "may-baobi",
+      title: t("lblSewing-Packaging")
+    },
+    {
+      value: "kho_de",
+      title: t("lblSoleWarehouse")
+    },
+  ]
+
+  const [valueChooseWarehouse, setValueChooseWarehouse] = useState({
+    value: "all",
+    title: t("chxAll")
+  })
 
   //#endregion
 
@@ -1202,7 +1313,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       const url = connect_string + "api/get_Merge_Bom_ERP";
       const data = {
         TestNo: value?.TestNo,
-        checkSole: checkSole,
+        check_de: valueChooseWarehouse?.value,
+        check_Gia_Cong_Lieu_Don: valueChooseMaterial?.value
       };
 
       try {
@@ -1501,6 +1613,14 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
   }
 
+  // Kiểm tra điều kiện xem phải gia công về ko
+  const handleCheckBox = (item: any) => {
+    if (item?.CLZMLB === "Y" && item?.MJBH === "ZZZZZZZZZZ") {
+      return true
+    }
+    return false
+  }
+
   return (
     <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <button className="toggle-button" onClick={toggleSidebar}>
@@ -1526,7 +1646,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         >
           <Stack direction={'row'} height={'100%'} alignItems={'flex-end'}>
             <Stack width={'100%'} padding={0.5}>
-              <Grid container columnSpacing={1} justifyContent={'center'}>
+              <Grid container columnSpacing={1} rowSpacing={0.5} justifyContent={'center'}>
 
                 <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Article */}
@@ -1549,7 +1669,6 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     label={t("gpbScan") as string}
                     disable={disable}
                     value={PoNo}
-                    focus={true}
                     onFocus={onFocus}
                     handle={handlePoNoChange}
                     id='scan-po'
@@ -1586,22 +1705,62 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     />
                   </Grid>
                 </Grid>
-                <Grid item display={'flex'} alignItems={'center'} xs={6}>
-                  <FormControlLabel
-                    sx={styletext}
-                    control={
-                      <Checkbox
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                          setCheckSole(event.target.checked)
-                        }
-                        defaultChecked={false}
-                        checked={checkSole}
-                      />
+                <Grid item display={'flex'} alignItems={'center'} xs={3}>
+                  {/* Chọn kho */}
+                  <GenericAutocomplete
+                    options={listChooseWarehouse}
+                    value={valueChooseWarehouse}
+                    onChange={(newValue: any | "") => {
+                      if (newValue === null) {
+                        setValueChooseWarehouse({
+                          value: "all",
+                          title: t("chxAll")
+                        })
+                      }
+                      else {
+                        setValueChooseWarehouse(newValue || "")
+                      }
+                    }}
+
+                    getOptionLabel={(option) =>
+                      typeof option === "string" ? option : option.title
                     }
-                    label={t("btnAccounting_Sole")}
+                    isOptionEqualToValue={(option, value) => {
+                      if (typeof value === 'string') {
+                        return option.title === value;
+                      }
+                      return option.title === value.title;
+                    }}
                   />
                 </Grid>
+                <Grid item display={'flex'} alignItems={'center'} xs={3}>
+                  {/* Chọn loại vật tư */}
+                  <GenericAutocomplete
+                    options={listChooseMaterial}
+                    value={valueChooseMaterial}
+                    onChange={(newValue: any | "") => {
+                      if (newValue === null) {
+                        setValueChooseMaterial({
+                          value: "all",
+                          title: t("chxAll")
+                        })
+                      }
+                      else {
+                        setValueChooseMaterial(newValue || "")
+                      }
+                    }}
 
+                    getOptionLabel={(option) =>
+                      typeof option === "string" ? option : option.title
+                    }
+                    isOptionEqualToValue={(option, value) => {
+                      if (typeof value === 'string') {
+                        return option.title === value;
+                      }
+                      return option.title === value.title;
+                    }}
+                  />
+                </Grid>
                 {/* Đơn gia công */}
                 <Grid container item xs={6} display={'flex'} alignItems={'center'}>
                   <Grid item display={'flex'} xs={3}>
@@ -1642,13 +1801,14 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     {/* Nút làm mới */}
                     <MyButton height='2rem' name={t('btnClean')} onClick={handleClean} disabled={disable} />
                   </Grid>
-                  {/* <Grid item display={'flex'}>
-                    <MyButton height='2rem' name={t('btnExcel')} onClick={undefined} disabled={disable} />
-                  </Grid> */}
                   <Grid item display={'flex'} alignItems={'center'} xs={2} >
                     {/* Nút tạo BOM */}
                     <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={disable} />
                     {openCreateBOM && <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)} />}
+                  </Grid>
+                  <Grid item display={'flex'}>
+                    <MyButton height='2rem' name={t('btnPrint_sample')} onClick={() => setOpenModalPrintSample(true)} disabled={disable} />
+                    {openModalPrintSample && <ModalPrintSample open={openModalPrintSample} handleClose={() => setOpenModalPrintSample(false)} data={PoOutsource || ""} />}
                   </Grid>
                 </Grid>
               </Grid>
@@ -1664,9 +1824,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             columns={PoOutsource === null ? column : columnOutSource}
             rows={listDataWaiting}
             paintingRow={paintingRow}
-            checkBox={false}
+            checkBox={true}
             handlerowClick={(params: any, item: any) => handleRowClick(item?.MatNo || "")}
             selectedFirstRow={true}
+            handleCheckBox={(item: any) => handleCheckBox(item)}
+            listChx={(row) => listCheckMaterialStockout(row)}
           />
         </Stack>
       </div>
@@ -1674,5 +1836,42 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   );
 });
 //#endregion
+
+
+export const ModalPrintSample = ({ open, handleClose, data }: { open: any, handleClose: any, data: any }) => {
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '100%',
+    height: '100%',
+    bgcolor: '#1c2538',
+  };
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Box sx={{
+          position: 'absolute',
+          height: '10%',
+          width: '10%',
+          zIndex: '9',
+          background: '#2f3b52'
+        }}>
+          <IconButton className={'back-button'} onClick={handleClose}>
+            <BiArrowBack className=" icon-wrapper" />
+          </IconButton>
+        </Box>
+        <DataHistoryPrintScreen data={data} />
+      </Box>
+    </Modal>
+  )
+}
+
 
 export default DeliverySampleLYVScreen;

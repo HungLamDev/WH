@@ -159,6 +159,7 @@ export const MyTableSampleMergeCell = (props: MyTableSampleMergeCellProps) => {
                     sx={{
                         width: '100%',
                         tableLayout: 'fixed',
+                        //borderCollapse: "collapse"
 
                     }}
                     stickyHeader
@@ -239,7 +240,8 @@ export const MyTableSampleMergeCell = (props: MyTableSampleMergeCellProps) => {
                                                 zIndex: 999,
                                                 left: item.stickyPosition,
                                                 backgroundColor: "#1E201E",
-                                                top: 0
+                                                top: 0,
+                                                
                                             }}
                                         >
                                             {item.headerName}
@@ -366,7 +368,7 @@ export const MyTableSampleMergeCell = (props: MyTableSampleMergeCellProps) => {
                             bottom: 0, // Luôn bám ở dưới cùng
                             zIndex: 2, // Đảm bảo không bị header hay body che khuất
                             background: "#1c2538", // Màu nền cố định
-                            borderCollapse: "separate"
+                            borderCollapse: "separate",
                         }}
                     >
 

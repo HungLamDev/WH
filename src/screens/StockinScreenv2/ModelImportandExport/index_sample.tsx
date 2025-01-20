@@ -62,7 +62,7 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
         listMaterialStockout = [],
         KFJD,
         MergeNo,
-        JGNO
+        JGNO = null
     } = props
 
     //#region Style
@@ -153,7 +153,7 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
         setchxPrint(event.target.checked);
     };
     //#endregion
-
+2
     //#region useEffect
 
     // useEffect(() => {
@@ -287,7 +287,7 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
                 remainingQty = new Decimal(QTY).minus(dinhMuc).toNumber();
             }
             else {
-                remainingQty = new Decimal(QTY).minus(dinhMucText).toNumber();
+                remainingQty = new Decimal(QTY).minus(isNaN(dinhMucText) ? 0 : dinhMucText).toNumber();
             }
         }
         return remainingQty >= 0 ? Number(remainingQty) : 0;
@@ -304,18 +304,37 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
         }
         else if (form === 'stockout' && dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
             if (dinhMuc <= QTY) {
-                if (dinhMucText <= dinhMuc) {
-                    return dinhMucText
+                if(MaterialNo.startsWith("F")) {
+                    
+                    if (dinhMucText <= dinhMuc + 2) {
+                        return dinhMucText
+                    }
+                    else if (dinhMucText > dinhMuc + 2) {
+                        return dinhMuc
+                    }
                 }
-                else if (dinhMucText > dinhMuc) {
-                    return dinhMuc
+                else{
+                    if (dinhMucText <= dinhMuc) {
+                        return dinhMucText
+                    }
+                    else if (dinhMucText > dinhMuc) {
+                        return dinhMuc
+                    }
                 }
             }
             else if (dinhMuc > QTY) {
-                return QTY
+                if(Number.isNaN(dinhMucText)){
+                    return 0 
+                }
+                if (dinhMucText <= QTY) {
+                   
+                    return dinhMucText;  
+                }
+                return QTY;  
             }
+           
         }
-        return ''
+        return 0
 
     }
 
@@ -334,7 +353,8 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
     }
 
     const ScanQR = (value_scan: string) => {
-        if (JGNO === null) {
+        if (JGNO === null || JGNO === undefined) {
+            
             setQtyOut(0)
             setIsLoading(true)
             setDisable(true)

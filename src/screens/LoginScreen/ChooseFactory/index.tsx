@@ -80,7 +80,7 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.32.81/'
         }
         else if (selectedValue === 'LYV') {
-           //connect_string = 'https://192.168.0.108:7777/'
+            //connect_string = 'https://192.168.0.108:7777/'
            connect_string = 'https://192.168.30.232/'
         }
     }, [selectedValue])

@@ -441,5 +441,11 @@
     "btnPrintMergeNo": "In MergeNo",
     "btnCreateSlipOutsource": "Tạo phiếu gia công",
     "msgCreateSlipOutsource": "Bạn có chắc chắn muốn tạo phiếu xuất gia công?",
-    "btnViewERP": "Xem ERP"
+    "msgStockOutOutsource": "Bạn có chắc chắn muốn xuất vật tư gia công?",
+    "btnViewERP": "Xem ERP",
+    "lblSingleMaterials": "Đơn",
+    "lblOutsourceMaterials": "Gia công",
+    "lblSoleWarehouse": "Đế",
+    "lblLeather-Fabric-PU": "Da - Vải - PU",
+    "lblSewing-Packaging": "May - Bao Bì"
 }

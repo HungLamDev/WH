@@ -39,7 +39,7 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 import TableSample from "../../../components/TableSample";
 
 //#endregion
-const DataHistoryPrintScreen = () => {
+const DataHistoryPrintScreen = ({data}:{data?: any}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -283,7 +283,7 @@ const DataHistoryPrintScreen = () => {
   const [txtOrderNo, setTxtOrderNo] = useState('')
   const [txtMaterial_No, setTxtMaterial_No] = useState('')
   const [txtInvoid_No, setTxtInvoid_No] = useState('')
-  const [txtOutsource, setTxtOutsource] = useState('')
+  const [txtOutsource, setTxtOutsource] = useState(data || '')
   const [listChxDown, setListChxDown] = useState<any[]>([])
   const [listChxOrder, setListChxOrder] = useState<any[]>([])
   const [dtpDateTo, setdtpDateTo] = useState(moment().format("YYYY/MM/DD"));

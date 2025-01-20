@@ -27,7 +27,8 @@ interface TableCheckBoxProps {
     checkBox?: any,
     highlightText?: any
     selectedFirstRow?: boolean,
-    onClickButton?: any
+    onClickButton?: any,
+    handleCheckBox?: (item: any) => boolean;
 }
 
 const MyTableNew = (props: TableCheckBoxProps) => {
@@ -45,7 +46,8 @@ const MyTableNew = (props: TableCheckBoxProps) => {
         checkBox = true,
         highlightText,
         selectedFirstRow = false,
-        onClickButton
+        onClickButton,
+        handleCheckBox = () => false
     } = props;
 
     const [selected, setSelected] = useState<GridRowsProp>([])
@@ -201,7 +203,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
 
                             >
                                 {
-                                    checkBox === true && (
+                                    (checkBox === true && handleCheckBox(item) === true) ? (
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 onClick={(event) => {
@@ -218,6 +220,12 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                             />
                                         </TableCell>
                                     )
+                                        :   (checkBox === true && handleCheckBox(item) === false) ?
+                                            <TableCell></TableCell>
+                                        :
+                                        (
+                                            <></>
+                                        )
                                 }
 
 
@@ -285,7 +293,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                                     (
                                                         column?.type === "button" ?
                                                             (
-                                                              onClickButton(item, column)
+                                                                onClickButton(item, column)
                                                             )
                                                             :
                                                             (
