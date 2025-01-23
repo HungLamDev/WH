@@ -69,19 +69,19 @@ const ChooseFactory = () => {
     useEffect(() => {
         if (selectedValue === 'LVL') {
             connect_string = 'https://192.168.60.21:7777/'
-            //connect_string = 'https://192.168.32.81/'
-        } 
+            //connect_string = 'https://192.168.30.232/'
+        }
         else if (selectedValue === 'LHG') {
-            connect_string = 'https://192.168.30.100:7777/'
-           // connect_string = 'https://192.168.32.81/'
+           connect_string = 'https://192.168.30.100:7777/'
+             // connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LYM') {
-            connect_string = 'https://192.168.55.7:7777/'
-            //connect_string = 'https://192.168.32.81/'
+            connect_string = 'https://192.168.55.7:7777/' 
+            //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LYV') {
             //connect_string = 'https://192.168.0.108:7777/'
-           connect_string = 'https://192.168.30.232/'
+            connect_string = 'https://192.168.30.232/'
         }
     }, [selectedValue])
     //#endregion

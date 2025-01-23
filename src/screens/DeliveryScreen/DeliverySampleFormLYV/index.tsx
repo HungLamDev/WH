@@ -52,7 +52,6 @@ import { NewReleases } from '@mui/icons-material';
 const DeliverySampleLYVScreen = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const stockout = location.state && location.state.data;
 
@@ -369,11 +368,8 @@ const DeliverySampleLYVScreen = () => {
 
   //#region useSelector
   const dataUser = useSelector((state: any) => state.UserLogin.user);
-  const dataUserERP = useSelector((state: any) => state.UserERP.user);
-  const ArrayStockout = useSelector((state: any) => state.ArrayStockout.items);
   const TotalQtyOut = useSelector((state: any) => state.TotalQtyOut.items);
   const dataFOC = useSelector((state: any) => state.FOC.foc);
-
   //#endregion
 
   //#region Variable
@@ -1082,7 +1078,16 @@ const DeliverySampleLYVScreen = () => {
               <Stack alignItems={'flex-end'} paddingRight={'10px'} paddingLeft={'10px'} flexDirection={"row"}>
 
                 <Stack width={"50%"} alignItems={'flex-start'}>
-                  <MyButton height='2rem' name={"Xuất gia công"} onClick={ () => handleOpenConfirm("stockout-outsource")} disabled={disable} />
+                  {
+                    JGNO === null ?
+                      (
+                        <MyButton height='2rem' name={t("btnOutsourcingExport")} onClick={() => handleOpenConfirm("stockout-outsource")} disabled={disable} />
+                      )
+                      :
+                      (
+                        <></>
+                      )
+                  }
                 </Stack>
 
                 <Stack width={"50%"} alignItems={'flex-end'}>
@@ -1806,7 +1811,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                     <MyButton height='2rem' name={t('btnCreateBOM')} onClick={() => setOpenCreateBOM(true)} disabled={disable} />
                     {openCreateBOM && <CreateMergeBom open={openCreateBOM} onClose={() => setOpenCreateBOM(false)} />}
                   </Grid>
-                  <Grid item display={'flex'}>
+                  <Grid item display={'flex'} xs={2}>
+                    {/* Nút In mẫu */}
                     <MyButton height='2rem' name={t('btnPrint_sample')} onClick={() => setOpenModalPrintSample(true)} disabled={disable} />
                     {openModalPrintSample && <ModalPrintSample open={openModalPrintSample} handleClose={() => setOpenModalPrintSample(false)} data={PoOutsource || ""} />}
                   </Grid>

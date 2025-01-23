@@ -11,6 +11,7 @@ import axios from "axios";
 import { over } from "lodash";
 import ModalCofirm from "../../ModalConfirm";
 import { useSelector } from "react-redux";
+import GenericAutocomplete from "../../GenericAutocomplete";
 
 interface DetailMergeBOMProps {
     item: any;
@@ -159,6 +160,52 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
     const [openCofirm, setOpenCofirm] = useState(false)
     const [materialNo, setMaterialNo] = useState("")
 
+    const listChooseMaterial = [
+        {
+            value: "all",
+            title: t("chxAll")
+        },
+        {
+            value: "lieu_don",
+            title: t("lblSingleMaterials")
+        },
+        {
+            value: "lieu_gia_cong",
+            title: t("lblOutsourceMaterials")
+        },
+    ]
+
+    const [valueChooseMaterial, setValueChooseMaterial] = useState({
+        value: "all",
+        title: t("chxAll")
+    })
+
+    const listChooseWarehouse = [
+        {
+            value: "all",
+            title: t("chxAll")
+        },
+        {
+            value: "da-vai-pu",
+            title: t("lblLeather-Fabric-PU")
+        },
+        {
+            value: "may-baobi",
+            title: t("lblSewing-Packaging")
+        },
+        {
+            value: "kho_de",
+            title: t("lblSoleWarehouse")
+        },
+    ]
+
+    const [valueChooseWarehouse, setValueChooseWarehouse] = useState({
+        value: "all",
+        title: t("chxAll")
+    })
+
+
+
     const handleOpenConfirm = (confirmName: string) => {
         setCofirmType(confirmName)
         setOpenCofirm(true)
@@ -199,7 +246,8 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
             const url = connect_string + "api/get_Merge_Bom_ERP"
             const data = {
                 TestNo: value?.TestNo,
-                checkSole: checkSole
+                check_de: valueChooseWarehouse?.value,
+                check_Gia_Cong_Lieu_Don: valueChooseMaterial?.value
             }
 
             axios.post(url, data).then(res => {
@@ -326,17 +374,60 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
                                 handle={handleOnChangeMaterialNo}
                             />
                         </Grid>
-                        <Grid item display={'flex'} alignItems={'center'}>
-                            <FormControlLabel
-                                sx={styletext}
-                                control={
-                                    <Checkbox
-                                        onChange={handleCheckSole}
-                                        defaultChecked={false}
-                                        checked={checkSole}
-                                    />
+                        <Grid item display={'flex'} alignItems={'center'} xs={2}>
+                            {/* Chọn kho */}
+                            <GenericAutocomplete
+                                options={listChooseWarehouse}
+                                value={valueChooseWarehouse}
+                                onChange={(newValue: any | "") => {
+                                    if (newValue === null) {
+                                        setValueChooseWarehouse({
+                                            value: "all",
+                                            title: t("chxAll")
+                                        })
+                                    }
+                                    else {
+                                        setValueChooseWarehouse(newValue || "")
+                                    }
+                                }}
+
+                                getOptionLabel={(option) =>
+                                    typeof option === "string" ? option : option.title
                                 }
-                                label={t("btnAccounting_Sole")}
+                                isOptionEqualToValue={(option, value) => {
+                                    if (typeof value === 'string') {
+                                        return option.title === value;
+                                    }
+                                    return option.title === value.title;
+                                }}
+                            />
+                        </Grid>
+                        <Grid item display={'flex'} alignItems={'center'} xs={2}>
+                            {/* Chọn loại vật tư */}
+                            <GenericAutocomplete
+                                options={listChooseMaterial}
+                                value={valueChooseMaterial}
+                                onChange={(newValue: any | "") => {
+                                    if (newValue === null) {
+                                        setValueChooseMaterial({
+                                            value: "all",
+                                            title: t("chxAll")
+                                        })
+                                    }
+                                    else {
+                                        setValueChooseMaterial(newValue || "")
+                                    }
+                                }}
+
+                                getOptionLabel={(option) =>
+                                    typeof option === "string" ? option : option.title
+                                }
+                                isOptionEqualToValue={(option, value) => {
+                                    if (typeof value === 'string') {
+                                        return option.title === value;
+                                    }
+                                    return option.title === value.title;
+                                }}
                             />
                         </Grid>
 
@@ -363,6 +454,7 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
                         rows={dataWaitingFilter}
                         checkBox={true}
                         listChx={(value: any) => setListChx(value)}
+                        handleCheckBox={() => { return true }}
                     />
                 </Stack>
             </Box>

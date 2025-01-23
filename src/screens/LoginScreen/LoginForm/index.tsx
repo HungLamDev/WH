@@ -242,7 +242,7 @@ const LoginForm = () => {
             </Button>
 
             {open && <ModalCofirm title={t("msgLoginIncorrect") as string} open={open} onClose={() => setOpen(false)} onPressOK={() => setOpen(false)} />}
-            {errorModal && <ModalCofirm title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
+            {errorModal && <ModalCofirm   title={t("lblNetworkError") as string} open={errorModal} onClose={() => setErrorModal(false)} onPressOK={() => setErrorModal(false)} />}
           </Stack>
         </Paper>
       </form>

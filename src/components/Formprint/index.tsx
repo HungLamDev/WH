@@ -11,6 +11,8 @@ const Formprint = (props: {
 }
 ) => {
     const { rows, open, onClose } = props;
+
+    console.log(rows)
     const style = {
         position: 'absolute',
         top: '50%',

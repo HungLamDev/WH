@@ -429,7 +429,7 @@ const StampPrintScreen = () => {
         dispatch(clearArrayRowDowntoUp())
         // setDataInRowUps([])
         const url = connect_string + 'api/btnSearch'
-        const data = {
+       const data = {
             user_id: dataUser[0].UserId,
             Order_No: orderNo,
             txtOutsource: outSource,
@@ -441,7 +441,7 @@ const StampPrintScreen = () => {
             chxPrint_RY: chxPrint_RY,
             CGDate_Date: date,
             get_version: dataUser[0].WareHouse,
-            get_Factory: dataUser[0].factoryName
+            get_Fatory: dataUser[0].factoryName
         }
 
         axios.post(url, data, configNew).then(response => {
@@ -776,7 +776,7 @@ const StampPrintScreen = () => {
                     <Grid container alignItems={'center'} >
                         {/* Đơn gia công */}
                         <Grid item xs={5} display={'flex'}>
-                            <InputField label={t("lblOutsource") as string} handle={handleOutSource} keydown={null} value={outSource} disable={disable} />
+                            <InputField  label={t("lblOutsource") as string} handle={handleOutSource} keydown={null} value={outSource} disable={disable} />
                         </Grid>
                         {/* Check In Lại */}
                         <Grid item xs={1}>
@@ -893,10 +893,22 @@ const StampPrintScreen = () => {
             </Box>
             <Stack overflow={"hidden"} sx={{ height: '100%' }}>
                 <Stack sx={{ height: '50%', }}>
-                    <TableCheckBox columns={columnsUp} rows={ArrayRowUps} listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} arrNotShowCell={['_id']} />
+                    <TableCheckBox 
+                    columns={columnsUp} 
+                    rows={ArrayRowUps} 
+                    listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} 
+                    arrNotShowCell={['_id']} 
+                    />
                 </Stack>
                 <Stack sx={{ height: '50%' }} >
-                    <TableDateTimePicker checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} checkOrderNo={orderNo !== "" ? true : false} columns={columnsDown} rows={ArrayRowDowns} onDoubleClick={handleDoubleClick} arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id','Suplier_no']} />
+                    <TableDateTimePicker 
+                    checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} 
+                    checkOrderNo={orderNo !== "" ? true : false} 
+                    columns={columnsDown} 
+                    rows={ArrayRowDowns} 
+                    onDoubleClick={handleDoubleClick} 
+                    arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id','Suplier_no']} 
+                    />
                 </Stack>
             </Stack>
         </FullScreenContainerWithNavBar>

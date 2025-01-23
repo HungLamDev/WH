@@ -445,6 +445,7 @@
     "lblOutsourceMaterials": "外包材料",
     "lblSoleWarehouse": "鞋底仓库",
     "lblLeather-Fabric-PU": "皮革-布料-PU",
-    "lblSewing-Packaging": "缝制-包装"
+    "lblSewing-Packaging": "缝制-包装",
+    "btnOutsourcingExport": "外包出库"
 
 }

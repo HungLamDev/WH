@@ -447,5 +447,6 @@
     "lblOutsourceMaterials": "Outsource materials",
     "lblSoleWarehouse": "Sole warehouse",
     "lblLeather-Fabric-PU": "Leather-Fabric-PU",
-    "lblSewing-Packaging": "Sewing-Packaging"
+    "lblSewing-Packaging": "Sewing-Packaging",
+    "btnOutsourcingExport": "Outsourcing export"
 }

@@ -416,5 +416,6 @@
     "lblOutsourceMaterials": "အောက်ခံလုပ်ငန်းပစ္စည်းများ",
     "lblSoleWarehouse": "ဖိနပ်ထောက်ခံဂိုဒေါင်",
     "lblLeather-Fabric-PU": "သားရေ-အထည်-ပျူ",
-    "lblSewing-Packaging": "ချည်သားချုပ်ခြင်း-ထုပ်ပိုးမှု"
+    "lblSewing-Packaging": "ချည်သားချုပ်ခြင်း-ထုပ်ပိုးမှု",
+    "btnOutsourcingExport": "ပြင်ပထောက်ပံ့ပစ္စည်းထုတ်ပို့"
 }

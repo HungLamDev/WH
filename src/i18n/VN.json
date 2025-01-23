@@ -447,5 +447,6 @@
     "lblOutsourceMaterials": "Gia công",
     "lblSoleWarehouse": "Đế",
     "lblLeather-Fabric-PU": "Da - Vải - PU",
-    "lblSewing-Packaging": "May - Bao Bì"
+    "lblSewing-Packaging": "May - Bao Bì",
+    "btnOutsourcingExport": "Xuất gia công"
 }
