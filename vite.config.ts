@@ -25,8 +25,6 @@ export default defineConfig({
       includeAssets: [
         "**/*",
       ],
-
-
       manifest: {
         name: "Warehouse App",
         short_name: "Warehouse App",

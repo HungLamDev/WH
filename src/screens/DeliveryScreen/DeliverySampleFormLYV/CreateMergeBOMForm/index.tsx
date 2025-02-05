@@ -32,13 +32,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
     //#region columnHeader
     const columns: any[] = [
-        {
-            field: "TestNo",
-            headerName: "Test No",
-            align: "center",
-            headerAlign: 'center',
-            width: 180,
-        },
+        // {
+        //     field: "TestNo",
+        //     headerName: "Test No",
+        //     align: "center",
+        //     headerAlign: 'center',
+        //     width: 180,
+        // },
         {
             field: "Po_No",
             headerName: "Po No",
@@ -305,7 +305,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     }
                     const arr = res.data.map((item: any, index: any) => ({
                         _id: index + 1,
-                        ...item
+                        ...item,
+                        Modify_Date: moment(res.data.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
                     }))
                     setData(arr)
 

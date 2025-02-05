@@ -46,6 +46,7 @@ import ImportAndExportSample from '../../StockinScreenv2/ModelImportandExport/in
 import { BiArrowBack } from 'react-icons/bi';
 import DataHistoryPrintScreen from '../../PrintOtherScreen/PrintSampleScreen';
 import { NewReleases } from '@mui/icons-material';
+import ModalReturnMaterialSample from './ModalReturnMaterialSample';
 
 //#endregion
 
@@ -364,6 +365,25 @@ const DeliverySampleLYVScreen = () => {
     },
   ];
 
+  const columnsMaterialReturn: GridColDef[] = [
+    {
+      field: "_id",
+      headerName: "ID",
+      align: "center",
+      headerAlign: 'center',
+      width: 180,
+
+    },
+    {
+      field: "Barcode",
+      headerName: "Barcode",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+  ];
+
   //#endregion
 
   //#region useSelector
@@ -424,6 +444,8 @@ const DeliverySampleLYVScreen = () => {
   const [JGNO_Check, setJGNO_Check] = useState<any>(null)
   const [onFocus, setOnFocus] = useState(false)
   const [listCheckStockoutOutSource, setListCheckStockoutOutSource] = useState<any[]>([])
+  const [itemRow, setItemRow] = useState<any>("")
+  const [dataMaterialSampleReturn, setDataMaterialSampleReturn] = useState<any[]>([])
 
   //#endregion
 
@@ -473,13 +495,18 @@ const DeliverySampleLYVScreen = () => {
       setDisable(true)
       setIsLoading(true)
       barcodeToMaterial(barcode).then(value => {
-        const QTY_BOM = listMaterialBOM
+
+        let QTY_BOM = listMaterialBOM
           .filter((item: any) => item.MatNo === value.Material_No)
           .reduce(
             (accumulator: Decimal, currentValue: any) =>
               accumulator.plus(new Decimal(currentValue.Qty)),
             new Decimal(0)
           );
+
+        // if (QTY_BOM < new Decimal(0.3)) {
+        //   QTY_BOM = new Decimal(0.3)
+        // }
 
         const QTY_Da_Xuat = listMaterialStockout
           .filter((item) => item.Material_No === value.Material_No)
@@ -493,7 +520,6 @@ const DeliverySampleLYVScreen = () => {
         const QTY_Dinh_Muc = (QTY_BOM.minus((new Decimal(value.QTY).plus(QTY_Da_Xuat)))).toNumber()
 
         const checkBarcode = listMaterialBOM.some((item: any) => item.MatNo === value.Material_No)
-
 
         if (listMaterialBOM.length === 0) {
           handleOpenConfirm("no-list-bom")
@@ -661,6 +687,7 @@ const DeliverySampleLYVScreen = () => {
             Barcode: newItem.Barcode + "\r\n" + item.Barcode,
             QTY_Sample: new Decimal(item.QTY_Sample).plus(new Decimal(newItem.QTY_Sample)).toNumber(),
             Modify_Date: newItem.Modify_Date + "\r\n" + item.Modify_Date,
+            Key: newItem.Key + "\r\n" + item.Key,
           };
         }
         return item;
@@ -709,7 +736,6 @@ const DeliverySampleLYVScreen = () => {
             Barcode: res.data.Barcode + " ➪ " + res.data.QTY_Sample,
 
           }
-
           setListMaterialStockout((prev: any[]) => addOrUpdateMaterialStockout(prev, newItem));
         }
       })
@@ -832,7 +858,6 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
-
   // Tạo phiếu xuất đơn gia công
   const create_Material_Stock_Out_Sample_Outsource = async () => {
     if (JGNO !== null && JGNO !== "" && mergeNo !== "" && JGNO_Check?.check === false) {
@@ -863,7 +888,6 @@ const DeliverySampleLYVScreen = () => {
         setIsLoadingCreateSlip(false)
 
       } catch (error) {
-        console.error("Error fetching Material Stock Out Sample:", error);
         handleOpenConfirm("insert-slip-error")
         setIsLoadingCreateSlip(false)
       }
@@ -885,6 +909,7 @@ const DeliverySampleLYVScreen = () => {
           await handleImport_Material_Stock_Out_Sample(
             newItem.MatNo,
             "Outsource",
+            // new Decimal(newItem?.Qty).lessThan(0.3) ? 0.3 : newItem?.Qty,
             newItem?.Qty,
             dataUser[0].UserId,
             PO_NOAndTestNo?.PONO,
@@ -944,6 +969,68 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+  const handleReturnMaterial = async () => {
+    handleCloseConfirm()
+    handleCloseConfirm()
+    const result = await handleReturnMaterialSample(dataMaterialSampleReturn)
+    if (result === true) {
+      sidebarRef.current?.refreshMaterial_Stock_Out_Sample()
+      sidebarRef.current?.refreshData()
+    }
+    else {
+      handleOpenConfirm("return-material-fail")
+    }
+
+  }
+
+  const handleDoubleClick = async (params: any, item: any) => {
+    setItemRow(item)
+    const barcodeList = item.Barcode.split("\r\n").map((item: any) => item.split("➪")[0].trim());
+
+    const keyList = item.Key.split("\r\n");
+
+    const result = barcodeList.map((barcode: any, index: any) => ({
+      Barcode: barcode,
+      Key: keyList[index],
+      _id: index,
+    }));
+
+    setDataMaterialSampleReturn(result)
+    if (item?.Barcode.includes("*")) {
+      handleOpenConfirm("return-material-error")
+    }
+    else if (item?.Barcode.includes("Outsource")) {
+      handleOpenConfirm("return-material")
+    }
+    else {
+      handleOpenConfirm("return-material-sample")
+    }
+  }
+
+  const handlePressOKReturnMaterialSample = async (data: any) => {
+    handleCloseConfirm()
+    const result = await handleReturnMaterialSample(data)
+    if (result === true) {
+      sidebarRef.current?.refreshMaterial_Stock_Out_Sample()
+      sidebarRef.current?.refreshData()
+
+    }
+    else {
+      handleOpenConfirm("return-material-fail")
+    }
+  }
+
+  const handleReturnMaterialSample = async (data: any) => {
+    const url = connect_string + "api/return_Material_Out";
+    const dataReturn = data.map((item: any) => ({
+      ...item,
+      User_ID: dataUser[0].UserId,
+    }))
+    const response = await axios.post(url, dataReturn);
+
+    return response.data;
+  }
+
 
   //#endregion
 
@@ -997,15 +1084,15 @@ const DeliverySampleLYVScreen = () => {
                       <Grid item xs={12} display={'flex'}>
                         {/* Test No */}
                         <Stack direction={'row'} justifyContent={'center'} width={'100%'} >
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{testNo ? "Test No: " + testNo : ""}</span>
+                          <span className='textsize' style={{ color: 'yellow', width: '50%' }}>{mergeNo ? "Merge No: " + mergeNo : ""}</span>
+                          <span className='textsize' style={{ color: 'yellow', width: '50%' }}>{testNo ? "Version: " + testNo : ""}</span>
                         </Stack>
                       </Grid>
                       <Grid item xs={12} display={'flex'}>
                         {/* Merge No */}
                         <Stack direction={'row'} justifyContent={'space-evenly'} width={'100%'} >
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{JGNO === null && qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
-                          <span className='textsize' style={{ color: 'orangered', width: '50%' }}>{JGNO === null && qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
+                          <span className='textsize' style={{ color: 'yellow', width: '50%' }}>{JGNO === null && qtyOutSample?.Material_No ? "Material No: " + qtyOutSample?.Material_No : ""}</span>
+                          <span className='textsize' style={{ color: 'yellow', width: '50%' }}>{JGNO === null && qtyOutSample?.QTY ? "QTY: " + qtyOutSample?.QTY : ""}</span>
                         </Stack>
                       </Grid>
                       <Grid item xs={isOpenSidebar === true ? 10 : 8}>
@@ -1064,6 +1151,7 @@ const DeliverySampleLYVScreen = () => {
                       checkBox={false}
                       paintingRow={paintingRow}
                       highlightText={highlightText}
+                      onDoubleClick={handleDoubleClick}
                     />
                   )
                   :
@@ -1124,6 +1212,10 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "create-slip" && <ConfirmDelivery onPressOK={handleCreateSlip} open={openCofirm} onClose={handleCloseConfirm} title={t("lblConfirmCreateSlip") as string} />}
         {cofirmType === "create-slip-outsource" && <ModalCofirm onPressOK={create_Material_Stock_Out_Sample_Outsource} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCreateSlipOutsource") as string} />}
         {cofirmType === "stockout-outsource" && <ModalCofirm onPressOK={handleStockoutOutsource} open={openCofirm} onClose={handleCloseConfirm} title={t("msgStockOutOutsource") as string} />}
+        {cofirmType === "return-material" && <ModalCofirm onPressOK={handleReturnMaterial} open={openCofirm} onClose={handleCloseConfirm} title={t("msgReturnMaterial") as string} />}
+        {cofirmType === "return-material-sample" && <ModalReturnMaterialSample columns={columnsMaterialReturn} data={dataMaterialSampleReturn} onPressOK={handlePressOKReturnMaterialSample} open={openCofirm} onClose={handleCloseConfirm} title={t("msgReturnMaterial") as string} />}
+        {cofirmType === "return-material-error" && <ModalCofirm onPressOK={handleCloseConfirm} showCancel={false} open={openCofirm} title={t("msgReturnMaterialError") as string} />}
+        {cofirmType === "return-material-fail" && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} showCancel={false} title={t("msgReturnMaterialFail") as string} />}
 
         {/* Quét Camera */}
         {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => setIsScannerOpen(false)} />}
@@ -1655,15 +1747,15 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
                 <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Article */}
-                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.ARTICLE ? "Article: " + infoPO.ARTICLE : ""}</span>
+                  <span className='textsize' style={{ color: 'yellow', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.ARTICLE ? "Article: " + infoPO.ARTICLE : ""}</span>
                 </Grid>
                 <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Stage */}
-                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.KFJD ? "Stage: " + infoPO.KFJD : ""}</span>
+                  <span className='textsize' style={{ color: 'yellow', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.KFJD ? "Stage: " + infoPO.KFJD : ""}</span>
                 </Grid>
                 <Grid item xs={3} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                   {/* Pairs */}
-                  <span className='textsize' style={{ color: 'orangered', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
+                  <span className='textsize' style={{ color: 'yellow', overflow: "hidden", textOverflow: "ellipsis" }}> {infoPO?.PAIRS ? "Pairs: " + infoPO.PAIRS : ""}</span>
                 </Grid>
 
                 <Grid item xs={6} display={'flex'}>

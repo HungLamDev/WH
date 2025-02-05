@@ -446,6 +446,9 @@
     "lblSoleWarehouse": "鞋底仓库",
     "lblLeather-Fabric-PU": "皮革-布料-PU",
     "lblSewing-Packaging": "缝制-包装",
-    "btnOutsourcingExport": "外包出库"
+    "btnOutsourcingExport": "外包出库",
+    "msgReturnMaterial" : "您确定要退回已发放的物料吗？",
+    "msgReturnMaterialError" : "退回物料失败",
+    "msgReturnMaterialFail": "退回物料失败，因为物料已被使用"
 
 }

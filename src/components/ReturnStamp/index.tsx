@@ -241,7 +241,6 @@ const ReturnStamp = (props: ReturnStampProps) => {
             })
     }
 
-
     const handleOK = () => {
         setDisable(true)
         const url = connect_string + "api/StockOut_CellDoubleClick"

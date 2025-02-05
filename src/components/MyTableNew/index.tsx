@@ -8,9 +8,8 @@ import {
     Checkbox,
     TextField,
 } from "@mui/material";
-import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import {  GridRowsProp } from "@mui/x-data-grid";
 import { useState, useEffect } from "react";
-import MyButton from "../MyButton";
 import { useTranslation } from "react-i18next";
 
 interface TableCheckBoxProps {
@@ -54,6 +53,8 @@ const MyTableNew = (props: TableCheckBoxProps) => {
     const [editingCellId, setEditingCellId] = useState<number | null>(null);
     const [selectedRow, setSelectedRow] = useState("");
     const [selectAll, setSelectAll] = useState(false);
+    const [lastClickTime, setLastClickTime] = useState(0);
+
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -117,27 +118,24 @@ const MyTableNew = (props: TableCheckBoxProps) => {
     const [keyDoubleClick, setKeyDoubleClick] = useState('')
 
     const handleRowClick = (params: any, item: any) => {
-        if (arrEditCell !== undefined && arrEditCell.includes(params)) {
-            if (editingCellId !== item._id) {
-                setEditingCellId(item._id);
-            }
-        }
-        else {
-            if (keyDoubleClick === item._id && typeof onDoubleClick === "function") {
+        const now = Date.now();
+    
+        if (keyDoubleClick === item._id && now - lastClickTime < 300) {
+            if (typeof onDoubleClick === "function") {
                 onDoubleClick(params, item);
-                setKeyDoubleClick("");
             }
-            else {
-
-                if (typeof handlerowClick === "function") {
-                    handlerowClick(params, item);
-                }
-                setKeyDoubleClick(item._id);
+            setKeyDoubleClick("");
+        } else {
+            if (typeof handlerowClick === "function") {
+                handlerowClick(params, item);
             }
-            setEditingCellId(null);
+            setKeyDoubleClick(item._id);
+            setLastClickTime(now);
         }
+    
+        setEditingCellId(null);
     };
-
+    
     const handleCellBlur = (event: React.FocusEvent<HTMLDivElement>, id: number) => {
         setEditingCellId(null);
     };

@@ -448,5 +448,8 @@
     "lblSoleWarehouse": "Đế",
     "lblLeather-Fabric-PU": "Da - Vải - PU",
     "lblSewing-Packaging": "May - Bao Bì",
-    "btnOutsourcingExport": "Xuất gia công"
+    "btnOutsourcingExport": "Xuất gia công",
+    "msgReturnMaterial" : "Bạn có chắc chắn muốn trả lại vật tư đã xuất?",
+    "msgReturnMaterialError" : "Vật tư đã tạo phiếu xuất không thể trả lại",
+    "msgReturnMaterialFail": "Trả lại vật tư thất bại"
 }

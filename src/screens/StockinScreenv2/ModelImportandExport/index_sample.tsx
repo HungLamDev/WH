@@ -347,8 +347,14 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
             Material_No: ""
         }
         axios.post(url, data).then(res => {
-            setDinhMuc(res.data)
-            setDinhMucText(res.data)
+            // if(new Decimal(res.data).greaterThan(0) && new Decimal(res.data).lessThan(0.3)) {
+            //     setDinhMuc(0.3)
+            //     setDinhMucText(0.3)
+            // }
+            // else{
+                setDinhMuc(res.data)
+                setDinhMucText(res.data)
+           // }
         })
     }
 
@@ -418,8 +424,6 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
                                 accumulator.plus(new Decimal(currentValue.QTY_Sample)),
                             new Decimal(0)
                         )
-
-
 
                     const QTY_Xuat = (new Decimal(calculateQtyOut()))
 

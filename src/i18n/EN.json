@@ -448,5 +448,8 @@
     "lblSoleWarehouse": "Sole warehouse",
     "lblLeather-Fabric-PU": "Leather-Fabric-PU",
     "lblSewing-Packaging": "Sewing-Packaging",
-    "btnOutsourcingExport": "Outsourcing export"
+    "btnOutsourcingExport": "Outsourcing export",
+    "msgReturnMaterial" : "Are you sure you want to return the issued materials?",
+    "msgReturnMaterialError" : "Failed to return the issued materials. Please try again.",
+    "msgReturnMaterialFail": "The materials have been returned."
 }
