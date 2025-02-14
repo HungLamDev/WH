@@ -15,6 +15,7 @@ import ModalCofirm from "../../../../components/ModalConfirm";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import QRScanner from "../../../../components/QRScanner";
 import DetailMergeBOM from "../../../../components/CreateMergeBOM/DetailMergeBOM";
+import { fromPOgetTestNoVersion } from "..";
 
 //#endregion
 
@@ -42,6 +43,13 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         {
             field: "Po_No",
             headerName: "Po No",
+            align: "center",
+            headerAlign: 'center',
+            width: 180,
+        },
+        {
+            field: "Version",
+            headerName: "Version",
             align: "center",
             headerAlign: 'center',
             width: 180,
@@ -110,7 +118,6 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     ];
     //#endregion
 
-
     //#region useSelector
     const dataUser = useSelector((state: any) => state.UserLogin.user);
     //#endregion
@@ -171,9 +178,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
         if (
-            debouncedSearchTerm !== "" &&
-            debouncedSearchTerm.length > 10 &&
-            debouncedSearchTerm.includes("-")
+            debouncedSearchTerm !== ""
         ) {
             scanPoNo(debouncedSearchTerm)
         }
@@ -239,44 +244,52 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     // scan po no
     const scanPoNo = async (value: any) => {
         setDisable(true);
-        const POAndTestNo = value.split("-");
-
-        const url = connect_string + "api/Create_Merge_Bom";
-        const dataPoNo = {
-            User_WH: dataUser[0].UserId,
-            Po_No: POAndTestNo[0]?.trim() || "",
-            TestNo: [POAndTestNo[1]?.trim() || ""]
-        };
-
-        try {
-            const res = await axios.post(url, dataPoNo);
-            if (res?.data?.TestNo !== null) {
-
-                const checkKFJDAndJiJie = data.some(
-                    (item: any) => item.KFJD === res?.data?.KFJD && item.JiJie === res?.data?.JiJie
-                );
-
-                if (checkKFJDAndJiJie || data.length === 0) {
-
-                    const _id = Math.floor(Math.random() * 10000000) + 1;
-                    const check = await handlePaintingPo(res.data?.TestNo)
-                    const newItem = {
-                        ...res.data,
-                        _id: _id,
-                        Modify_Date: moment(res.data.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
-                        check: check,
-                    };
-                    setData((prev: any[]) => addPoNo(prev, newItem));
-
-                } else {
-                    handleOpenConfirm("no-KFJD-JiJie");
-                }
-                setValueScan("");
-            }
-        } catch (error) {
-            console.error("Error in scanPoNo:", error);
-        } finally {
+        const infoPO = await fromPOgetTestNoVersion(value)
+        const result = await checkCreateSlip(infoPO?.PONO?.trim())
+        if (result) {
+            handleOpenConfirm("no-create")
             setDisable(false);
+        }
+        else {
+            const url = connect_string + "api/Create_Merge_Bom";
+            const dataPoNo = {
+                User_WH: dataUser[0].UserId,
+                Po_No: infoPO?.PONO?.trim() || "",
+                TestNo: [infoPO?.TestNo?.trim() || ""],
+                Version: infoPO?.Version?.trim() || "",
+            };
+
+            try {
+                const res = await axios.post(url, dataPoNo);
+                if (res?.data?.TestNo !== null) {
+
+                    const checkKFJDAndJiJie = data.some(
+                        (item: any) => item.KFJD === res?.data?.KFJD && item.JiJie === res?.data?.JiJie
+                    );
+
+                    if (checkKFJDAndJiJie || data.length === 0) {
+
+                        const _id = Math.floor(Math.random() * 10000000) + 1;
+
+                        const check = res.data?.YPZLBH === "" ? false : await handlePaintingPo(res.data?.TestNo)
+                        const newItem = {
+                            ...res.data,
+                            _id: _id,
+                            Modify_Date: moment(res.data.Modify_Date).format("DD/MM/YYYY HH:mm:ss"),
+                            check: check,
+                        };
+                        setData((prev: any[]) => addPoNo(prev, newItem));
+
+                    } else {
+                        handleOpenConfirm("no-KFJD-JiJie");
+                    }
+                    setValueScan("");
+                }
+            } catch (error) {
+                console.error("Error in scanPoNo:", error);
+            } finally {
+                setDisable(false);
+            }
         }
     };
 
@@ -362,7 +375,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         const data = {
             test_no: test_no,
         }
-        
+
         const res = await axios.post(url, data)
         check = res.data
         return check
@@ -401,7 +414,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
             (item) => item.YPZLBH !== "" && item.YPZLBH !== null
         );
 
-        if (await checkPermissionPrint(dataUser[0].UserId)) {
+        // user mayin sẽ in tem thông tin kho mẫu
+        if (await checkPermissionPrint("mayin")) {
 
             if (hasMatchingItem) {
                 handleOpenConfirm("confirm-print")
@@ -423,7 +437,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         if (itemRow?.YPZLBH !== "") {
             const data = {
                 Merge_No: itemRow?.YPZLBH,
-                UserID: dataUser[0].UserId
+                // user mayin sẽ in tem thông tin kho mẫu
+                UserID: "mayin"
             }
             const url = connect_string + "api/PrintLabel_Delivery_Sample_CLick_Standard_ALL"
 
@@ -453,6 +468,20 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     };
     //----------------------------------------------------------------
 
+    const checkCreateSlip = async (PONO: string) => {
+        const url = connect_string + "api/check_LLNO_TO_PONO";
+        const data = {
+            PONO: PONO,
+        };
+
+        try {
+            const res = await axios.post(url, data);
+            return res.data
+        }
+        catch (error) {
+            console.log("Error in checkCreateSlip:", error);
+        }
+    }
     //#endregion
 
     return (
@@ -558,6 +587,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     {cofirmType === "print-error" && <ModalCofirm showCancel={false} open={openCofirm} onClose={handleCloseConfirm} onPressOK={handleCloseConfirm} title={t("msgNoMergeNo") as string} />}
                     {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
                     {cofirmType === 'print-success' && <ModalCofirm showCancel={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />}
+                    {cofirmType === 'no-create' && <ModalCofirm showCancel={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgNoCreate") as string} />}
 
                     {modalScan && <QRScanner onScan={handleScan} open={modalScan} onClose={() => { setModalScan(false); }} />}
 

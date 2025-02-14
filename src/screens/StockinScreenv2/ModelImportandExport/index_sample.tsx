@@ -413,7 +413,7 @@ const ImportAndExportSample = (props: ImportAndExportProps) => {
                         .filter((item: any) => item.MatNo === value.Material_No)
                         .reduce(
                             (accumulator: Decimal, currentValue: any) =>
-                                accumulator.plus(new Decimal(currentValue.Qty)),
+                                accumulator.plus(new Decimal(currentValue.CLSLMin)),
                             new Decimal(0)
                         );
 

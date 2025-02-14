@@ -22,8 +22,8 @@ const ModalReturnMaterialSample = (props: ModalReturnMaterialSampleProps) => {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '35%',
-        height: '50%',
+        width: '50%',
+        height: '60%',
         bgcolor: '#1c2538',
         border: '2px solid white',
         borderRadius: 3,
@@ -32,6 +32,13 @@ const ModalReturnMaterialSample = (props: ModalReturnMaterialSampleProps) => {
     };
 
     const [listCheck, setListCheck] = useState<any []>([])
+
+    const handleCheckBox = (row: any) => {
+        if(row?.status === true){
+            return false
+        }
+        return true
+    }
 
     return (
         <Modal
@@ -56,7 +63,7 @@ const ModalReturnMaterialSample = (props: ModalReturnMaterialSampleProps) => {
                             columns={columns || []}
                             rows={data || []}
                             checkBox={true}
-                            handleCheckBox={() => { return true}}
+                            handleCheckBox={handleCheckBox}
                             listChx={(row: any) => setListCheck(row)}
                         />
                     </Stack>

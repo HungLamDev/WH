@@ -451,5 +451,7 @@
     "btnOutsourcingExport": "Xuất gia công",
     "msgReturnMaterial" : "Bạn có chắc chắn muốn trả lại vật tư đã xuất?",
     "msgReturnMaterialError" : "Vật tư đã tạo phiếu xuất không thể trả lại",
-    "msgReturnMaterialFail": "Trả lại vật tư thất bại"
+    "msgReturnMaterialFail": "Trả lại vật tư thất bại",
+    "msgVersionChange": "Phiên bản có thay đổi",
+    "msgNoCreate": "Bạn phải tạo phiếu xuất cho PO hoặc trả lại hết vật tư để tạo BOM"
 }

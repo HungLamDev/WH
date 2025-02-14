@@ -451,5 +451,8 @@
     "btnOutsourcingExport": "Outsourcing export",
     "msgReturnMaterial" : "Are you sure you want to return the issued materials?",
     "msgReturnMaterialError" : "Failed to return the issued materials. Please try again.",
-    "msgReturnMaterialFail": "The materials have been returned."
+    "msgReturnMaterialFail": "The materials have been returned.",
+    "msgVersionChange": "The version has changed.",
+    "msgNoCreate": "You must create an export slip for the PO or return all materials to create the BOM."
+
 }

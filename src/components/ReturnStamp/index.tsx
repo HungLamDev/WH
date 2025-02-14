@@ -220,51 +220,51 @@ const ReturnStamp = (props: ReturnStampProps) => {
         setMaterial_Label_Serial(item.Material_Label_Serial)
     }
 
-    const recoverStamp = () => {
-        setDisable(true)
-        setModalCofirm(false)
-        const url = connect_string + "api/recover_data_Material_Stock_Out_Sample"
-        const data = {
-            Barcode: qrcodedelte
-        }
+    // const recoverStamp = () => {
+    //     setDisable(true)
+    //     setModalCofirm(false)
+    //     const url = connect_string + "api/recover_data_Material_Stock_Out_Sample"
+    //     const data = {
+    //         Barcode: qrcodedelte
+    //     }
 
-        axios.post(url, data).then(res => {
-            if (res.data === true) {
-                handleOK()
-            }
-            else {
-                handleOpenConfirm('no-recover')
-            }
-        })
-            .finally(() => {
-                setDisable(false)
-            })
-    }
+    //     axios.post(url, data).then(res => {
+    //         if (res.data === true) {
+    //             handleOK()
+    //         }
+    //         else {
+    //             handleOpenConfirm('no-recover')
+    //         }
+    //     })
+    //         .finally(() => {
+    //             setDisable(false)
+    //         })
+    // }
 
-    const handleOK = () => {
-        setDisable(true)
-        const url = connect_string + "api/StockOut_CellDoubleClick"
-        const data = {
-            Value_Barcode: qrcodedelte,
-            Value_Material_Key: Material_Label_Serial,
-            User_Serial_Key: dataUser[0].UserId,
-            get_version: dataUser[0].WareHouse
+    // const handleOK = () => {
+    //     setDisable(true)
+    //     const url = connect_string + "api/StockOut_CellDoubleClick"
+    //     const data = {
+    //         Value_Barcode: qrcodedelte,
+    //         Value_Material_Key: Material_Label_Serial,
+    //         User_Serial_Key: dataUser[0].UserId,
+    //         get_version: dataUser[0].WareHouse
 
-        }
-        axios.post(url, data, config).then(response => {
-            if (response.data == true) {
-                setModalCofirm(false)
-                const result = ArrayStockout.find((item: any) => item.Barcode === qrcodedelte)
-                dispatch(removeArrayStockoutByBarcode(qrcodedelte))
-            }
-            else {
-                handleOpenConfirm('no-authorize')
-                setModalCofirm(false)
-            }
-        }).finally(() => {
-            setDisable(false)
-        })
-    }
+    //     }
+    //     axios.post(url, data, config).then(response => {
+    //         if (response.data == true) {
+    //             setModalCofirm(false)
+    //             const result = ArrayStockout.find((item: any) => item.Barcode === qrcodedelte)
+    //             dispatch(removeArrayStockoutByBarcode(qrcodedelte))
+    //         }
+    //         else {
+    //             handleOpenConfirm('no-authorize')
+    //             setModalCofirm(false)
+    //         }
+    //     }).finally(() => {
+    //         setDisable(false)
+    //     })
+    // }
 
     const handleSearchMaterialNo = (event: any) => {
         setDisable(true)
@@ -351,13 +351,13 @@ const ReturnStamp = (props: ReturnStampProps) => {
                         tableName="stockout-detail"
                         columns={columns}
                         rows={ArrayStockout}
-                        onDoubleClick={handleDoubleClick}
+                        // onDoubleClick={handleDoubleClick}
                         arrNotShowCell={arrnotshow}
                     />
                 </Stack>
                 {cofirmType === 'no-authorize' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblTitleNoAuthorize") as string} />}
                 {cofirmType === 'no-recover' && <ModalCofirm showCancel={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("noRecoverStamp") as string} />}
-                {modalCofirm && <ModalCofirm onPressOK={recoverStamp} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />}
+                {/* {modalCofirm && <ModalCofirm onPressOK={handleOK} open={modalCofirm} onClose={() => setModalCofirm(false)} title={t("msgYouWantUpdate") + qrcodedelte} />} */}
             </Box>
         </Modal>
     )

@@ -281,7 +281,8 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
     }
 
     const handlePrint = async () => {
-        if (await checkPermissionPrint(dataUser[0].UserId)) {
+        // user mayin sẽ in tem thông tin kho mẫu
+        if (await checkPermissionPrint("mayin")) {
             if (listChx.length > 0) {
                 handleOpenConfirm("print")
             }
@@ -308,7 +309,8 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
 
             const data = {
                 list_Prints: list_Prints,
-                UserID: dataUser[0].UserId
+                // user mayin sẽ in tem thông tin kho mẫu
+                UserID: "mayin"
             }
             const url = connect_string + "api/PrintLabel_Delivery_Sample_CLick_Standard"
 

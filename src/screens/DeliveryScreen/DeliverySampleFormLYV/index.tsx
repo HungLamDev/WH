@@ -1,9 +1,9 @@
 //#region  import
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
-import { IconButton, Box, Stack, Typography, Divider, Grid, Checkbox, FormControlLabel, FormGroup, TextField, Button, Modal, MenuItem, Autocomplete, CircularProgress, Backdrop } from "@mui/material";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { IconButton, Box, Stack, Grid, Modal, CircularProgress, Backdrop } from "@mui/material";
 import { GridColDef } from '@mui/x-data-grid';
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar";
 import MyButton from "../../../components/MyButton";
 import { useState } from "react";
@@ -11,28 +11,16 @@ import moment from 'moment';
 import { connect_string } from '../../LoginScreen/ChooseFactory';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from "react-i18next";
-import * as ExcelJS from "exceljs";
-import { listSupplier } from '../Data';
 import ModalCofirm from '../../../components/ModalConfirm';
 import { createConfig, config } from '../../../utils/api';
 import InputFieldV1 from '../../../components/InputField/index_new';
-import ImportAndExport from '../../StockinScreenv2/ModelImportandExport';
-import TableStockOut from '../../../components/TableStockOut';
-import { addTotalQtyOut, clearTotalQtyOut } from "../../../redux/TotalQtyOut";
-import { addItemArrayStockout, removeArrayStockoutByBarcode, copyValuesArrayStockout, clearArrayStockout } from "../../../redux/ArrayStockout";
+import { addTotalQtyOut } from "../../../redux/TotalQtyOut";
 import useDebounced from '../../../components/CustomHook/useDebounce';
 import Decimal from 'decimal.js';
 import './sidebar.scss'
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import ERPLogin from '../../../components/ERPLogin';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { clearUserERP } from '../../../redux/UserERP';
-import EnterIcon from '../../../assets/enter.png'
-import TableOrigin from '../../../components/TableOrigin';
-import TableOriginEdit from '../../../components/TableOriginEdit';
-import { barcodeToMaterial, handleCheckUserERP, isEmptyOrNull } from '../../../utils/api_global';
-import { random, result, set } from 'lodash';
+import { barcodeToMaterial, isEmptyOrNull } from '../../../utils/api_global';
 import MyTableNew from '../../../components/MyTableNew';
 import Statistics from '../../StockinScreenv2/StatisticsForm';
 import ConfirmDelivery from '../../../components/ConfirmDelivery';
@@ -40,15 +28,44 @@ import CreateMergeBom from './CreateMergeBOMForm';
 import ReturnStamp from '../../../components/ReturnStamp';
 import GenericAutocomplete from '../../../components/GenericAutocomplete';
 import QRScannerV1 from '../../../components/QRScanner/indexV1';
-import { styletext } from '../../StockinScreenv2/StockinForm';
 import SampleSearchERP from '../../SampleSearchERP';
 import ImportAndExportSample from '../../StockinScreenv2/ModelImportandExport/index_sample';
 import { BiArrowBack } from 'react-icons/bi';
 import DataHistoryPrintScreen from '../../PrintOtherScreen/PrintSampleScreen';
-import { NewReleases } from '@mui/icons-material';
 import ModalReturnMaterialSample from './ModalReturnMaterialSample';
 
 //#endregion
+
+// hàm lấy thông tin po, testno, version
+
+export const fromPOgetTestNoVersion = async (pono: string) => {
+  const url = connect_string + "api/get_testNo_Version"
+  const data = {
+    PONO: pono
+  }
+
+  try {
+    const res = await axios.post(url, data);
+    return res.data
+  } catch (error) {
+    console.error("Error during get test no and version:", error);
+  }
+}
+
+export const fromPOgetTestNoVersion_WH = async (pono: string) => {
+  const url = connect_string + "api/get_testNo_Version_WH"
+  const data = {
+    PONO: pono
+  }
+
+  try {
+    const res = await axios.post(url, data);
+    return res.data
+  } catch (error) {
+    console.error("Error during get test no and version:", error);
+  }
+}
+
 
 const DeliverySampleLYVScreen = () => {
   const { t } = useTranslation();
@@ -226,6 +243,7 @@ const DeliverySampleLYVScreen = () => {
   ];
 
   const columnsBOM: GridColDef[] = [
+
     {
       field: "MatNo",
       headerName: "Material No",
@@ -253,6 +271,12 @@ const DeliverySampleLYVScreen = () => {
     {
       field: "Qty",
       headerName: "Qty",
+      align: "center",
+      headerAlign: 'center'
+    },
+    {
+      field: "CLSLMin",
+      headerName: "CLSLMin",
       align: "center",
       headerAlign: 'center',
     },
@@ -367,7 +391,7 @@ const DeliverySampleLYVScreen = () => {
 
   const columnsMaterialReturn: GridColDef[] = [
     {
-      field: "_id",
+      field: "stt",
       headerName: "ID",
       align: "center",
       headerAlign: 'center',
@@ -375,8 +399,16 @@ const DeliverySampleLYVScreen = () => {
 
     },
     {
-      field: "Barcode",
+      field: "Barcode_Show",
       headerName: "Barcode",
+      align: "center",
+      headerAlign: 'center',
+      width: 150,
+
+    },
+    {
+      field: "LLNO",
+      headerName: "LLNO",
       align: "center",
       headerAlign: 'center',
       width: 150,
@@ -446,6 +478,7 @@ const DeliverySampleLYVScreen = () => {
   const [listCheckStockoutOutSource, setListCheckStockoutOutSource] = useState<any[]>([])
   const [itemRow, setItemRow] = useState<any>("")
   const [dataMaterialSampleReturn, setDataMaterialSampleReturn] = useState<any[]>([])
+  const [checkVersionChange, setCheckVersionChange] = useState<any>(false)
 
   //#endregion
 
@@ -500,7 +533,7 @@ const DeliverySampleLYVScreen = () => {
           .filter((item: any) => item.MatNo === value.Material_No)
           .reduce(
             (accumulator: Decimal, currentValue: any) =>
-              accumulator.plus(new Decimal(currentValue.Qty)),
+              accumulator.plus(new Decimal(currentValue.CLSLMin)),
             new Decimal(0)
           );
 
@@ -674,7 +707,7 @@ const DeliverySampleLYVScreen = () => {
     handleRefresh()
     // Tìm xem đã có phần tử nào trong mảng trong không, nếu ko có trả về -1
     const existingItemIndex = prev.findIndex(
-      (item) => item.TestNo === newItem.TestNo && item.Material_No === newItem.Material_No
+      (item) => item.PONO === newItem.PONO && item.Material_No === newItem.Material_No
     );
 
     // Nếu khác -1 thì gom hàng
@@ -688,6 +721,7 @@ const DeliverySampleLYVScreen = () => {
             QTY_Sample: new Decimal(item.QTY_Sample).plus(new Decimal(newItem.QTY_Sample)).toNumber(),
             Modify_Date: newItem.Modify_Date + "\r\n" + item.Modify_Date,
             Key: newItem.Key + "\r\n" + item.Key,
+            LLNO: newItem.LLNO + "\r\n" + item.LLNO,
           };
         }
         return item;
@@ -709,7 +743,7 @@ const DeliverySampleLYVScreen = () => {
       TestNo: string,
       YPZLBH: string,
       Article: string,
-      QTY_BOM: any,
+      CLSLMin: any,
       KFJD: any,
       Size: any) => {
       const url = connect_string + "api/insert_Key_Material_Stock_Out_Sample"
@@ -722,7 +756,7 @@ const DeliverySampleLYVScreen = () => {
         TestNo: TestNo,
         YPZLBH: YPZLBH,
         Article: Article,
-        QTY_Bom: QTY_BOM,
+        QTY_Bom: CLSLMin,
         Size: Size,
         KFJD: KFJD
       }
@@ -734,7 +768,7 @@ const DeliverySampleLYVScreen = () => {
             ...res.data,
             _id: _id,
             Barcode: res.data.Barcode + " ➪ " + res.data.QTY_Sample,
-
+            LLNO: res.data.LLNO === null ? "" : res.data.LLNO,
           }
           setListMaterialStockout((prev: any[]) => addOrUpdateMaterialStockout(prev, newItem));
         }
@@ -743,7 +777,10 @@ const DeliverySampleLYVScreen = () => {
 
   //Tô màu dòng trong bảng------------------------------------------
   const paintingRow = (item: any, row: any) => {
+    if (row?.checkMaterial === true) {
 
+      return "#E52020"
+    }
     if (row.Material_No !== null && row.QTY_Bom !== "" && ((new Decimal(row.QTY_Bom).minus(new Decimal(row.QTY_Sample))).toNumber() !== 0)) {
       return "orange"
     }
@@ -910,13 +947,13 @@ const DeliverySampleLYVScreen = () => {
             newItem.MatNo,
             "Outsource",
             // new Decimal(newItem?.Qty).lessThan(0.3) ? 0.3 : newItem?.Qty,
-            newItem?.Qty,
+            newItem?.CLSLMin,
             dataUser[0].UserId,
             PO_NOAndTestNo?.PONO,
             PO_NOAndTestNo?.TestNo,
             mergeNo,
             article,
-            newItem?.Qty,
+            newItem?.CLSLMin,
             kfjd,
             newItem.SIZE
           );
@@ -934,6 +971,7 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+  // hàm xuất vật tư gia công về
   const handleImport_Material_Stock_Out_Sample = async (
     Material_No: string,
     Barcode: string,
@@ -969,6 +1007,7 @@ const DeliverySampleLYVScreen = () => {
     }
   };
 
+  // trả vật tư gia công về
   const handleReturnMaterial = async () => {
     handleCloseConfirm()
     handleCloseConfirm()
@@ -983,30 +1022,66 @@ const DeliverySampleLYVScreen = () => {
 
   }
 
+  // double click set dữ liệu
   const handleDoubleClick = async (params: any, item: any) => {
     setItemRow(item)
-    const barcodeList = item.Barcode.split("\r\n").map((item: any) => item.split("➪")[0].trim());
-
-    const keyList = item.Key.split("\r\n");
+    const barcodeList = item?.Barcode?.split("\r\n");
+    const keyList = item?.Key?.split("\r\n");
+    const sizeList = item?.Size?.split("\r\n");
+    const LLNOList = item?.LLNO.split("\r\n") || [];
+    const YPZLBHList = item?.YPZLBH?.split("\r\n");
 
     const result = barcodeList.map((barcode: any, index: any) => ({
-      Barcode: barcode,
+      Barcode: barcode.split("➪")[0].trim(),
+      Barcode_Show: barcode,
       Key: keyList[index],
+      Material_No: item.Material_No,
+      XXCC: sizeList[index],
+      LLNO: LLNOList[index] || "",
+      Article: article,
+      SCBH: YPZLBHList[index],
+      User_ID: dataUser[0].UserId,
       _id: index,
+      stt: index + 1
     }));
 
-    setDataMaterialSampleReturn(result)
-    if (item?.Barcode.includes("*")) {
-      handleOpenConfirm("return-material-error")
-    }
-    else if (item?.Barcode.includes("Outsource")) {
-      handleOpenConfirm("return-material")
-    }
-    else {
+
+
+    const url = connect_string + "api/check_list_LLNO_CFMID_KCLL"
+
+    const data = result.map((item: any) => ({
+      LLNO: item.LLNO,
+    }))
+
+    try {
+      setIsLoadingCreateSlip(true)
+      const response = await axios.post(url, data);
+      const updatedDataList = result.map((item: any) => ({
+        ...item,
+        status: response.data.find((x: any) => x.LLNO === item.LLNO)?.status
+      }));
+
+      setDataMaterialSampleReturn(updatedDataList)
+      setIsLoadingCreateSlip(false)
       handleOpenConfirm("return-material-sample")
+
     }
+    catch (error) {
+      console.error("Error checking LLNO:", error);
+    }
+
+
+    // if (item?.Barcode.includes("*")) {
+    //   handleOpenConfirm("return-material-error")
+    // }
+    // if (item?.Barcode.includes("Outsource")) {
+    //   handleOpenConfirm("return-material")
+    // }
+    // else {
+    //}
   }
 
+  // hàm chọn ok khi hiện danh sách qrcode để trả vật tư
   const handlePressOKReturnMaterialSample = async (data: any) => {
     handleCloseConfirm()
     const result = await handleReturnMaterialSample(data)
@@ -1020,6 +1095,7 @@ const DeliverySampleLYVScreen = () => {
     }
   }
 
+  // hàm gửi api trả vật tư
   const handleReturnMaterialSample = async (data: any) => {
     const url = connect_string + "api/return_Material_Out";
     const dataReturn = data.map((item: any) => ({
@@ -1030,7 +1106,6 @@ const DeliverySampleLYVScreen = () => {
 
     return response.data;
   }
-
 
   //#endregion
 
@@ -1050,7 +1125,7 @@ const DeliverySampleLYVScreen = () => {
           <Sidebar
             column={columnsBOM}
             columnOutSource={columnsBOMOutSource}
-            PO_NOAndTestNo={(value: any) => setPO_NOAndTestNo(value)}
+            PO_NOAndTestNo={(value: any) => { setPO_NOAndTestNo(value) }}
             listMaterialStockOut_Outsource={(value: any) => setListMaterialStockoutOutSource(value)}
             JGNO={(value: any) => setJGNO(value)}
             JGNO_Check={(value: any) => setJGNO_Check(value)}
@@ -1065,13 +1140,14 @@ const DeliverySampleLYVScreen = () => {
             get_qty_out_Sample={handleGet_qty_out_Sample}
             handleFocusInput={(id: any) => handleFocus(id)}
             listCheckMaterialStockout={(value: any) => setListCheckStockoutOutSource(value)}
+            checkVersion={setCheckVersionChange}
           />
           <div className="main-content">
             <Box
               className={"dark-bg-secondary border-bottom-white"}
               style={{
                 flexShrink: 0,
-                minHeight: isOpenSidebar === true ? 'calc(80dvh/ 3)' : 'calc(80dvh/ 5)',
+                minHeight: isOpenSidebar === true ? 'calc(80dvh/ 2.9)' : 'calc(80dvh/ 5)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center'
@@ -1079,8 +1155,11 @@ const DeliverySampleLYVScreen = () => {
             >
               <Stack direction={'row'} height={'100%'}>
                 <Stack direction={'row'} width={'100%'} padding={0.5} height={'100%'} alignItems={'flex-end'}>
-                  <Stack padding={0.5} width={'100%'} gap={1} flexDirection={isOpenSidebar === true ? 'column' : 'row'}>
+                  <Stack padding={0.5} width={'100%'} gap={0.5} flexDirection={isOpenSidebar === true ? 'column' : 'row'}>
                     <Grid container >
+                      <Grid item xs={12} display={'flex'} justifyContent={'flex-end'} >
+                        {checkVersionChange ? <span style={{ color: "#E52020", fontSize: "13px" }}>{t("msgVersionChange")}</span> : ""}
+                      </Grid>
                       <Grid item xs={12} display={'flex'}>
                         {/* Test No */}
                         <Stack direction={'row'} justifyContent={'center'} width={'100%'} >
@@ -1240,7 +1319,8 @@ interface SidebarProps {
   get_qty_out_Sample: any,
   handleFocusInput: any,
   JGNO_Check: any,
-  listCheckMaterialStockout: any
+  listCheckMaterialStockout: any,
+  checkVersion: any
 }
 
 interface SidebarRef {
@@ -1270,7 +1350,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     isOpenSidebar,
     get_qty_out_Sample,
     handleFocusInput,
-    listCheckMaterialStockout = []
+    listCheckMaterialStockout = [],
+    checkVersion
   } = props
   const { t } = useTranslation();
 
@@ -1289,6 +1370,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   const [checkSole, setCheckSole] = useState(false)
   const [onFocus, setOnFocus] = useState(false)
   const [openModalPrintSample, setOpenModalPrintSample] = useState(false)
+  const [testNoPoNo, setTestNoPoNo] = useState<any>({})
+  const [listMaterialStockOutSample, setListMaterialStockOutSample] = useState<any[]>([])
 
   const listChooseMaterial = [
     {
@@ -1388,13 +1471,71 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   useEffect(() => {
     if (
-      debouncedSearchTerm !== "" &&
-      debouncedSearchTerm.length > 10 &&
-      debouncedSearchTerm.includes("-")
+      debouncedSearchTerm !== ""
     ) {
       getAllPoNo(debouncedSearchTerm);
     }
   }, [debouncedSearchTerm]);
+
+  // check vật tư có thay đổi hay không 
+  useEffect(() => {
+    (async () => {
+
+      if (testNoPoNo?.PONO) {
+        const checkResult = await checkVersionChange(testNoPoNo?.PONO)
+        checkVersion(checkResult)
+      }
+
+      if (listMaterialStockOutSample.length > 0) {
+
+        const list_data = await getDataWaitingApi(testNoPoNo, "all", "all")
+
+        const listDataWaitingFilter = list_data.map((item: any) => ({
+          Material_NO_Bom: item?.MatNo,
+          QTY_Bom: item?.CLSLMin
+        }))
+
+        const listMaterialStockOutSampleFilter = listMaterialStockOutSample.map((item: any) => ({
+          Material_NO_WH: item?.Material_No,
+          QTY_WH: item?.QTY_Bom
+        }))
+
+        const url = connect_string + "api/check_Version_Change";
+        const data = {
+          list_Bom: listDataWaitingFilter,
+          list_WH: listMaterialStockOutSampleFilter,
+          pono: testNoPoNo?.PONO
+        }
+
+        try {
+          const res = await axios.post(url, data);
+          let dataApi = []
+
+          if (res.data.Item2 === true) {
+            dataApi = await get_Material_Stock_Out_Sample_Api(testNoPoNo)
+            const result = dataApi.map((item: any) => ({
+              ...item,
+              checkMaterial: res.data.Item1.includes(item?.Material_No)
+            }))
+
+            listMaterialStockOut(result)
+          }
+          if (res.data.Item1.length > 0 && res.data.Item2 === false) {
+            
+            const result = listMaterialStockOutSample.map((item: any) => ({
+              ...item,
+              checkMaterial: res.data.Item1.includes(item?.Material_No)
+            }))
+            listMaterialStockOut(result)
+          }
+
+        } catch (error) {
+          console.error("Error fetching data from check_Version_Change:", error);
+        }
+        // }
+      }
+    })();
+  }, [listMaterialStockOutSample]);
 
   //#endregion
 
@@ -1407,11 +1548,56 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       setListDataWaiting([]);
       await getInfoPO(value);
 
+      if (value?.PONO !== "" && value?.PONO) {
+        const url = connect_string + "api/get_Merge_Bom_ERP";
+        const data = {
+          Po_No: value?.PONO || "",
+          check_de: valueChooseWarehouse.value,
+          check_Gia_Cong_Lieu_Don: valueChooseMaterial.value
+        };
+
+        try {
+          const res = await axios.post(url, data);
+
+          const arr = res.data.map((item: any, index: any) => ({
+            _id: index,
+            ...item,
+          }));
+
+          arr.sort((a: any, b: any) => {
+            const statusComparison = b.Status.localeCompare(a.Status);
+            if (statusComparison !== 0) return statusComparison;
+
+            return b.MJBH.localeCompare(a.MJBH);
+          });
+
+          setListDataWaiting(arr);
+          listMaterialBOM(arr);
+          return arr;
+          // Nếu cần, bạn có thể mở lại phần xử lý khác (như listMaterialStockOut):
+          // const arr1 = res.data.Item2.map((item: any, index: any) => ({
+          //   ...item,
+          //   _id: index,
+          //   Modify_Date: item.Modify_Date,
+          // }));
+          // listMaterialStockOut(arr1);
+
+        } catch (error) {
+          console.error("Error fetching data from get_Merge_Bom_ERP:", error);
+        }
+      }
+    }
+  };
+
+
+  const getDataWaitingApi = async (value: any, check_de: any, check_Gia_Cong_Lieu_Don: any) => {
+    if (value !== "") {
+
       const url = connect_string + "api/get_Merge_Bom_ERP";
       const data = {
-        TestNo: value?.TestNo,
-        check_de: valueChooseWarehouse?.value,
-        check_Gia_Cong_Lieu_Don: valueChooseMaterial?.value
+        Po_No: value?.PONO,
+        check_de: check_de,
+        check_Gia_Cong_Lieu_Don: check_Gia_Cong_Lieu_Don
       };
 
       try {
@@ -1429,16 +1615,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
           return b.MJBH.localeCompare(a.MJBH);
         });
 
-        setListDataWaiting(arr);
-        listMaterialBOM(arr);
-
-        // Nếu cần, bạn có thể mở lại phần xử lý khác (như listMaterialStockOut):
-        // const arr1 = res.data.Item2.map((item: any, index: any) => ({
-        //   ...item,
-        //   _id: index,
-        //   Modify_Date: item.Modify_Date,
-        // }));
-        // listMaterialStockOut(arr1);
+        return arr;
 
       } catch (error) {
         console.error("Error fetching data from get_Merge_Bom_ERP:", error);
@@ -1448,11 +1625,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   // lấy danh sách xuất tem
   const get_Material_Stock_Out_Sample = async (value: any) => {
-    listMaterialStockOut([]);
-
+    setListMaterialStockOutSample([])
     const url = connect_string + "api/get_Material_Stock_Out_Sample";
     const data = {
       TestNo: value?.TestNo,
+      Po_No: value?.PONO,
     };
 
     try {
@@ -1463,7 +1640,30 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         ...item,
       }));
 
-      listMaterialStockOut(arr);
+      setListMaterialStockOutSample(arr)
+      listMaterialStockOut(arr)
+    } catch (error) {
+      console.error("Error fetching Material Stock Out Sample:", error);
+    }
+  };
+
+  const get_Material_Stock_Out_Sample_Api = async (value: any) => {
+    const url = connect_string + "api/get_Material_Stock_Out_Sample";
+    const data = {
+      TestNo: value?.TestNo,
+      Po_No: value?.PONO,
+    };
+
+    try {
+      const res = await axios.post(url, data);
+
+      const arr = res.data.map((item: any, index: any) => ({
+        _id: index + 1,
+        ...item,
+      }));
+
+      return arr
+
     } catch (error) {
       console.error("Error fetching Material Stock Out Sample:", error);
     }
@@ -1471,6 +1671,11 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   // lấy thông tin test no
   const getInfoPO = async (value: any) => {
+    const infoPO = await fromPOgetTestNoVersion_WH(value?.PONO)
+    setTestNoPoNo(infoPO)
+    PO_NOAndTestNo({ PONO: infoPO?.PONO?.trim(), TestNo: infoPO?.TestNo?.trim() });
+
+
     setInfoPO("");
     Article("");
     KFJD("");
@@ -1480,8 +1685,10 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
     const url = connect_string + "api/get_info_pono";
     const data = {
-      TestNo: value?.TestNo,
+      TestNo: value?.TestNo || "",
+      Po_No: value?.PONO || "",
     };
+
 
     try {
 
@@ -1491,12 +1698,27 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       KFJD(res?.data?.KFJD || "");
       MergeNo(res?.data?.YPZLBH || "");
       setMergeNo(res?.data?.YPZLBH || "")
-      TestNo(res?.data?.TestNo || "");
+      TestNo(res?.data?.Version || "");
       await loadDataJGNO(res?.data?.YPZLBH || "")
     } catch (error) {
       console.error("Error fetching PO info:", error);
     }
   };
+
+  // lấy version mới nhất
+  const handleGetNewVersion = async (value: any) => {
+    const url = connect_string + "api/insert_PONO_version_new"
+    const data = {
+      PONO: value?.PONO,
+      user_id: dataUser[0].UserId
+    }
+
+    try {
+      const res = await axios.post(url, data)
+    } catch (error) {
+      console.error("Error fetching PO info:", error);
+    }
+  }
 
   // tìm kiếm lại 
   const handleSearch = async () => {
@@ -1513,6 +1735,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   // lấy danh sách vật tư liệu đơn của BOM, danh sách tem xuất, thông tin test no
   const getDataWaitingAndgetInfoPO = async (value: any) => {
     setDisable(true)
+
+    await handleGetNewVersion(value)
     Promise.all([await getDataWaiting(value), await get_Material_Stock_Out_Sample(value)]).finally(() => {
       setDisable(false)
     })
@@ -1533,40 +1757,38 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     setValueAutocomplete("")
     setPoOutsource(null)
     JGNO(null)
-    const POAndTestNo = value.split("-");
-    setOnFocus(false);
-
+    // lấy version mới nhất
+    const infoPO = await fromPOgetTestNoVersion_WH(value)
+    setTestNoPoNo(infoPO)
+    setOnFocus(false)
     const url = connect_string + "api/get_Merge_Bom_To_PONO";
     const data = {
-      TestNo: POAndTestNo[1]?.trim(),
-      Po_No: POAndTestNo[0]?.trim(),
+      TestNo: infoPO?.TestNo?.trim(),
+      Po_No: infoPO?.PONO?.trim(),
       User_WH: dataUser[0].UserId,
     };
 
     try {
       const res = await axios.post(url, data);
 
-      if (res.data.length > 0) {
-        setListSampleOrder(res.data);
 
-        const filterListPo = res?.data.filter((item: any) => item.TestNo === POAndTestNo[1]?.trim());
+      setListSampleOrder(res.data || []);
 
-        const newValue = {
-          PONO: filterListPo[0]?.PONO?.trim(),
-          TestNo: filterListPo[0]?.TestNo?.trim(),
-        };
+      const filterListPo = res?.data.filter((item: any) => item.PONO === infoPO?.PONO?.trim());
 
-        PO_NOAndTestNo(newValue);
+      const newValue = {
+        PONO: filterListPo[0]?.PONO?.trim(),
+        TestNo: infoPO?.TestNo?.trim(),
+      };
 
-        setValueAutocomplete(newValue);
+      PO_NOAndTestNo(newValue);
 
-        await getDataWaitingAndgetInfoPO(newValue);
+      setValueAutocomplete(newValue || "");
 
-        setPoNo('');
-      } else {
-        setListSampleOrder([]);
-        setValueAutocomplete(null);
-      }
+      await getDataWaitingAndgetInfoPO(newValue);
+
+      setPoNo('');
+
     } catch (error) {
       console.error("Error fetching PO data:", error);
     } finally {
@@ -1657,7 +1879,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         listMaterialStockOut_Outsource(arr)
 
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -1706,7 +1928,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   const handleRowClick = (MatNo: any) => {
     if (PoOutsource === null) {
-      get_qty_out_Sample(valueAutocomplete, MatNo)
+      get_qty_out_Sample(testNoPoNo, MatNo)
     }
   }
 
@@ -1717,6 +1939,26 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     }
     return false
   }
+
+  //api check có version thay đổi hay không
+  const checkVersionChange = async (value: any) => {
+    const url = connect_string + "api/check_status_Create";
+    const data = {
+      PONO: value
+    }
+
+    try {
+
+      const response = await axios.post(url, data);
+      return response.data;
+    }
+    catch (error) {
+      console.error("Error during check version change:", error);
+    }
+
+
+  }
+
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
@@ -1739,7 +1981,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       <div className="content" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Box
           className={"dark-bg-secondary border-bottom-white"}
-          style={{ minHeight: 'calc(80dvh/ 3)', flexShrink: 0 }}
+          style={{ minHeight: 'calc(80dvh/ 2.9)', flexShrink: 0 }}
         >
           <Stack direction={'row'} height={'100%'} alignItems={'flex-end'}>
             <Stack width={'100%'} padding={0.5}>
@@ -1781,17 +2023,16 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                   <Grid item display={'flex'} xs={9}>
                     <GenericAutocomplete
                       options={Array.isArray(listSampleOrder) ? listSampleOrder : []}
-                      value={valueAutocomplete}
+                      value={valueAutocomplete || ""}
                       onChange={(newValue: any | null) => {
                         if (newValue !== null) {
                           setValueAutocomplete(newValue);
-                          PO_NOAndTestNo(newValue);
                           getDataWaitingAndgetInfoPO(newValue)
                         }
                       }}
 
                       getOptionLabel={(option) =>
-                        typeof option === "string" ? option : option.PONO
+                        typeof option === "string" ? option : option.PONO || ""
                       }
                       isOptionEqualToValue={(option, value) => {
                         if (typeof value === 'string') {
@@ -1935,7 +2176,6 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 });
 //#endregion
 
-
 export const ModalPrintSample = ({ open, handleClose, data }: { open: any, handleClose: any, data: any }) => {
   const style = {
     position: 'absolute',
@@ -1970,6 +2210,5 @@ export const ModalPrintSample = ({ open, handleClose, data }: { open: any, handl
     </Modal>
   )
 }
-
 
 export default DeliverySampleLYVScreen;

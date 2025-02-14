@@ -32,7 +32,7 @@ export const checkPermissionPrint = async (UserId: string) => {
 };
 
 const ChooseFactory = () => {
-    
+
     const { t } = useTranslation();
 
     //#region List Factory
@@ -69,8 +69,8 @@ const ChooseFactory = () => {
 
     useEffect(() => {
         if (selectedValue === 'LVL') {
-           connect_string = 'https://192.168.60.21:7777/'
-           //connect_string = 'https://192.168.30.232/'
+            connect_string = 'https://192.168.60.21:7777/'
+            //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LHG') {
             connect_string = 'https://192.168.30.100:7777/'
@@ -81,8 +81,8 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LYV') {
-            //connect_string = 'https://192.168.0.108:7777/'
-            connect_string = 'https://192.168.30.232/'
+            connect_string = 'https://192.168.0.108:7777/'
+            //connect_string = 'https://192.168.30.232/'
         }
     }, [selectedValue])
     //#endregion
