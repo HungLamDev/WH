@@ -147,7 +147,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
     return (
         <TableContainer sx={{ height: '100%' }}>
             <Table size={"small"} sx={{ width: 'fix-content' }} stickyHeader>
-                <TableHead>
+                <TableHead sx={{zIndex:10}}>
                     <TableRow>
                         {
                             checkBox === true && (
@@ -166,7 +166,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                         {columns.map((item: any, index: number) => {
                             return (
                                 <TableCell
-                                    className="td-responesive"
+                                    className="td-responesive-sample1"
                                     key={index}
                                     align={"left"}
                                     sx={{
@@ -234,7 +234,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                     return (
                                         <TableCell
                                             key={i}
-                                            className="td-responesive"
+                                            className="td-responesive-sample1"
                                             onClick={() => {
                                                 handleRowClick(key, item);
                                                 setSelectedRow(item._id === selectedRow ? null : item._id);
@@ -306,8 +306,7 @@ const MyTableNew = (props: TableCheckBoxProps) => {
                                         </TableCell>
                                     );
                                 })}
-
-
+                                
                             </TableRow>
                         );
                     })}

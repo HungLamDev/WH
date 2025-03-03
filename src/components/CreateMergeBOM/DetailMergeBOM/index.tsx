@@ -55,6 +55,12 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
             headerAlign: 'center',
         },
         {
+            field: "CLSLMin",
+            headerName: "CLSLMin",
+            align: "center",
+            headerAlign: 'center',
+        },
+        {
             field: "Unit",
             headerName: "Unit",
             align: "center",
@@ -142,7 +148,6 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
     };
 
     const dataUser = useSelector((state: any) => state.UserLogin.user);
-
 
     useEffect(() => {
         if (open) {
@@ -245,7 +250,7 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
             setDisable(true)
             const url = connect_string + "api/get_Merge_Bom_ERP"
             const data = {
-                TestNo: value?.TestNo,
+                Po_No: value?.Po_No,
                 check_de: valueChooseWarehouse?.value,
                 check_Gia_Cong_Lieu_Don: valueChooseMaterial?.value
             }
@@ -297,7 +302,8 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
             handleCloseConfirm()
             //setDisable(true)
             const list_Prints = listChx.map((item) => ({
-                standard: item?.Qty || "",
+               // standard: item?.Qty || "",
+                standard: item?.CLSLMin || "",
                 Name_Material: item?.MatName || "",
                 article: item?.ARTICLE || "",
                 Stage: item?.stage || "",

@@ -40,8 +40,8 @@ import RegisterLabel from "./screens/StampPrintScreenv2/RegisterLabel";
 import InventoryIn from "./screens/StockinScreenv2/InventoryInForm";
 import PrintFOC from "./screens/PrintOtherScreen/PrintFOCScreen";
 import AccountingCardSole from "./screens/ReportScreen/AccountingCardSole";
-import DeliverySampleLYVScreen from "./screens/DeliveryScreen/DeliverySampleFormLYV";
 import HistoryDeliveryForm from "./screens/DeliveryScreen/DeliverySampleFormLYV/HistoryDeliveryForm";
+import DeliverySampleLYVScreen from "./screens/DeliveryScreen/DeliverySampleFormLYV/indexV2";
 //#endregion
 
 const ProtectedRoutes = ({ authenticate }: { authenticate: boolean }) => {

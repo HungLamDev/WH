@@ -78,6 +78,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     const [chxpair, setChxPair] = useState(false)
     const [title, setTitle] = useState<any>('')
     const [message, setMessage] = useState('')
+    const [chxPrint, setchxPrint] = useState(false)
 
     //#endregion
 
@@ -105,6 +106,10 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
 
     const handlechxPair = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChxPair(event.target.checked);
+    };
+
+    const handlechxPrint = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setchxPrint(event.target.checked);
     };
     //#endregion
 
@@ -289,7 +294,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     const SavePartial = async () => {
-        if (await checkPermissionPrint(dataUser[0].UserId)) {
+        if (await checkPermissionPrint(dataUser[0].UserId) || chxPrint === false ) {
             // Xuất tách tem
             if (form === 'stockout') {
                 setIsLoading(true)
@@ -304,7 +309,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     Value_Unit: Unit,
                     txtScan: Barcode,
                     User_Serial_Key: dataUser[0].UserId,
-                    chxAll: chxAll,
+                    chxAll: (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") ? chxPrint : chxAll,
                     chxpair: chxpair,
                     get_version: dataFOC === true ? "FOC" : dataUser[0].WareHouse,
                     Value_Remain: dataColor.Value_Remain === "" ? 0 : dataColor.Value_Remain,
@@ -318,7 +323,9 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                     rbtColor_G: dataColor.rbtColor_G,
                     rbtColor_H: dataColor.rbtColor_H,
                     rbtColor_O: dataColor.rbtColor_O,
-                    Check_ScanMore: false
+                    Check_ScanMore: false,
+                    chxPrint: chxPrint
+
                 }
                 axios.post(url, data, config).then(response => {
                     const item = response.data;
@@ -599,17 +606,42 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
                                     <Grid item xs={12} display={'flex'} justifyContent={'flex-end'} paddingLeft={'20px'}>
                                         <Box display={'flex'} width={'22rem'} marginRight={'16px'} justifyContent={'space-between'} alignItems={'center'}>
                                             {/* Check tất cả */}
-                                            <FormGroup>
-                                                <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxAll} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
-                                            </FormGroup>
+                                            {/* Check tất cả */}
+                                            {
+                                                (form === "stockout" && dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV")
+                                                    ?
+                                                    (
+                                                        <></>
+                                                    )
+                                                    :
+                                                    (
+                                                        <FormGroup>
+                                                            <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxAll} defaultChecked onChange={handlechxALL} />} label={t("chxAll") as string} />
+                                                        </FormGroup>
+
+                                                    )
+                                            }
+
+
                                             {
                                                 // Check đôi
-                                                form === "stockout" && (
+                                                (form === "stockout" && dataUser[0].WareHouse !== "Sample") &&
+                                                (
                                                     <FormGroup>
                                                         <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} value={chxpair} onChange={handlechxPair} />} label={t("chxPair")} />
                                                     </FormGroup>
                                                 )
                                             }
+                                            {
+                                                // Check In
+                                                (form === "stockout" && dataUser[0].WareHouse === "Sample") &&
+                                                (
+                                                    <FormGroup>
+                                                        <FormControlLabel sx={styletext} control={<Checkbox sx={{ color: 'white' }} checked={chxPrint} onChange={handlechxPrint} />} label={t("btnPrint")} />
+                                                    </FormGroup>
+                                                )
+                                            }
+
                                             {isloading && <CircularProgress size={'25px'} color="info" />}
                                             {/* Nút lưu */}
                                             <MyButton name={t("btnSave") as string} onClick={SavePartial} disabled={disable} />

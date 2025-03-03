@@ -85,7 +85,6 @@ const TableDelivery = (props: TableDeliveryProps) => {
   const isSelected = (id: number) => selected.findIndex((item: any) => item._id === id) !== -1;
 
 
-
   const handleFocus = (key: any) => {
     // || key === 'RY_Status1'
     setFocus(true)

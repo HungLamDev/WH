@@ -453,5 +453,7 @@
     "msgReturnMaterialError" : "Vật tư đã tạo phiếu xuất không thể trả lại",
     "msgReturnMaterialFail": "Trả lại vật tư thất bại",
     "msgVersionChange": "Phiên bản có thay đổi",
-    "msgNoCreate": "Bạn phải tạo phiếu xuất cho PO hoặc trả lại hết vật tư để tạo BOM"
+    "msgNoCreate": "Bạn phải tạo phiếu xuất cho PO hoặc trả lại hết vật tư để tạo BOM",
+    "btnGuide": "Hướng dẫn",
+    "msgStockOut": "Bạn có chắc chắn muốn xuất vật tư?"
 }

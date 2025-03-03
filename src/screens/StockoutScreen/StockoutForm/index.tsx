@@ -314,24 +314,31 @@ const StockoutScreen = () => {
     const debouncedSearchTerm = useDebounced(qrcode, 200);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
-        if (
-            dataUser[0].factoryName !== "LYM"
-        ) {
-            if (debouncedSearchTerm.length >= 15) {
-                checkMaterial(debouncedSearchTerm).then(result => {
-                    if (result !== "") {
-                        setMessage(result)
-                        handleOpenConfirm('notify-reject-material')
-                    }
-                    else {
-                        handleOutAll(debouncedSearchTerm)
-                    }
-                })
-            }
-        }
-        else {
+        if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
             if (debouncedSearchTerm.length >= 15) {
                 handleOutAll(debouncedSearchTerm)
+            }
+        }
+        else{
+            if (
+                dataUser[0].factoryName !== "LYM"
+            ) {
+                if (debouncedSearchTerm.length >= 15) {
+                    checkMaterial(debouncedSearchTerm).then(result => {
+                        if (result !== "") {
+                            setMessage(result)
+                            handleOpenConfirm('notify-reject-material')
+                        }
+                        else {
+                            handleOutAll(debouncedSearchTerm)
+                        }
+                    })
+                }
+            }
+            else {
+                if (debouncedSearchTerm.length >= 15) {
+                    handleOutAll(debouncedSearchTerm)
+                }
             }
         }
     }, [debouncedSearchTerm]);

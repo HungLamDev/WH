@@ -453,6 +453,8 @@
     "msgReturnMaterialError" : "Failed to return the issued materials. Please try again.",
     "msgReturnMaterialFail": "The materials have been returned.",
     "msgVersionChange": "The version has changed.",
-    "msgNoCreate": "You must create an export slip for the PO or return all materials to create the BOM."
+    "msgNoCreate": "You must create an export slip for the PO or return all materials to create the BOM.",
+    "btnGuide": "Guidance",
+    "msgStockOut": "Are you sure you want to export the materials?"
 
 }

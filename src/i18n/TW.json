@@ -451,6 +451,8 @@
     "msgReturnMaterialError" : "退回物料失败",
     "msgReturnMaterialFail": "退回物料失败，因为物料已被使用",
     "msgVersionChange": "版本已更改。",
-    "msgNoCreate": "您必须为PO创建出库单，或退回所有物料以创建BOM。"
+    "msgNoCreate": "您必须为PO创建出库单，或退回所有物料以创建BOM。",
+    "btnGuide": "指南",
+    "msgStockOut": "您确定要导出物料吗？"
 
 }

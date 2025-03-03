@@ -120,12 +120,24 @@ html {
   }
 }
 
+.td-responesive-sample1{
+  @media screen and (max-width: 1200px) {
+    font-size: 14px !important;
+    text-align: left !important;
+  }
+
+  @media screen and (max-width: 670px) {
+    font-size: 13px !important;
+    text-align: left !important;
+  }
+}
+
+
 .textsizebtn {
   @media screen and (max-width: 1200px) {
     font-size: 15px !important;
   }
 }
-
 
 
 ::-webkit-scrollbar{
