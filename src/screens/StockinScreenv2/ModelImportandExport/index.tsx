@@ -145,7 +145,7 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [scanqr])
 
-    const debouncedSearchTerm = useDebounced(scanqr, 200);
+    const debouncedSearchTerm = useDebounced(scanqr, 0);
     useEffect(() => {
         //Phiên bản có kiểm tra chất lượng vật tư
         if (dataUser[0].factoryName === "LYV" && dataUser[0].WareHouse === "Sample") {
@@ -294,7 +294,15 @@ function ImportAndExport({ open, onClose, form, dataColor }: { open: any, onClos
     }
 
     const SavePartial = async () => {
-        if (await checkPermissionPrint(dataUser[0].UserId) || chxPrint === false ) {
+        let flat = false
+        if(dataUser[0].WareHouse === "Sample" && chxPrint === false){
+            flat = true
+        }
+        else {
+            flat = await checkPermissionPrint(dataUser[0].UserId)
+        }
+
+        if (flat)  {
             // Xuất tách tem
             if (form === 'stockout') {
                 setIsLoading(true)
