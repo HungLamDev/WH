@@ -47,7 +47,7 @@ const ArrayRowUps = createSlice({
         addItemRowUps: (state, action: PayloadAction<any>) => {
             state.items.push(action.payload);
         },
-        copyValuesRowUps: (state, action: PayloadAction<any[]>) => {
+        copyValuesRowUps:  (state, action: PayloadAction<any[]>) => {
             state.items = [...action.payload];
         },
         removeItemByBarcodeRowUps: (state, action: PayloadAction<string>) => {

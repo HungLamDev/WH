@@ -7,24 +7,28 @@ import {
   TableCell,
   Backdrop,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import { orange } from "@mui/material/colors";
 import { useState } from "react";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { includes } from "lodash";
+import MyAutocomplete from "../Autocomplete";
 
 interface TableOriginProps {
-  columns: GridColDef[];
+  columns: any[];
   rows: any;
   handlerowClick?: any;
   handleDoubleClick?: any;
   arrNotShowCell?: string[];
   border?: boolean;
   color?: boolean;
+  dataSelected?: string[];
 }
 
+
 const TableOrigin = (props: TableOriginProps) => {
-  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color } = props;
+  const { columns, rows, handlerowClick, handleDoubleClick, arrNotShowCell, border, color,dataSelected=[] } = props;
 
   const [keyDoubleClick, setKeyDoubleClick] = useState("");
   const [selectedRow, setSelectedRow] = useState("");
@@ -42,6 +46,11 @@ const TableOrigin = (props: TableOriginProps) => {
       }
     }
   };
+
+  const handleSelected = (rowInd: number, colName: string, value: string) => {
+    rows[rowInd][colName] = value;
+  }
+
   return (
     <TableContainer sx={{ height: "100%" }}>
       <Table size={"small"} stickyHeader >
@@ -87,7 +96,7 @@ const TableOrigin = (props: TableOriginProps) => {
                   height: '35px'
                 }}
               >
-                {columns.map((column: GridColDef, i: number) => {
+                {columns.map((column: any, i: number) => {
                   const key = column.field;
                   if (includes(arrNotShowCell, key)) {
                     return null;
@@ -136,15 +145,30 @@ const TableOrigin = (props: TableOriginProps) => {
                       {
                         key === "Arr_Material" && item["Arr_Material"] === null && (item["RY"])
                       }
-                      {key === "Img_DF" ? (
-                        <img
-                          src={"data:image/jpeg;base64," + item[key]}
-                          alt=""
-                          height="20px"
-                        />
-                      ) : (
-                        item[key]
-                      )}
+                      {key === "Img_DF" ?
+                        (
+                          <img
+                            src={"data:image/jpeg;base64," + item[key]}
+                            alt=""
+                            height="20px"
+                          />
+                        )
+                        : column.selected && column.selected === true ?
+                          (
+                            <Stack justifyContent={"center"} alignItems={"center"}>
+                              <MyAutocomplete
+                                xsLabel={0}
+                                xsInput={10}
+                                value={item?.WH}
+                                data={dataSelected}
+                                handle={(value: any) => handleSelected(index, key, value)}
+                              />
+                            </Stack>
+                          )
+                          :
+                          (
+                            item[key]
+                          )}
                     </TableCell>
                   );
                 })}

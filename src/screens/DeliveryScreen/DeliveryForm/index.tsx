@@ -196,6 +196,7 @@ const DeliveryScreen = () => {
   const contentDetail = locate.state
   const [openModelAuthorize, setOpenModelAuthorize] = useState(false)
   const [openModelConfirm, setOpenModelConfirm] = useState(false)
+  const [showWarning, setShowWarning] = useState(false);
   //#endregion
 
   //#region Func OnChange Input
@@ -723,6 +724,20 @@ const DeliveryScreen = () => {
     setDataUpdate({ params: params, dgvcount: ArrayDelivery.length })
     setDataStatistic(params.Material_No)
     setDataAccounting([data])
+
+    const url = connect_string + 'api/check_print_60_day'
+    const DL = {
+      Material_No: params.Material_No,
+      Version: dataUser[0].WareHouse
+    }
+    axios.post(url, DL, configNew).then(response => {
+      if (response.data.length > 0) {
+        setShowWarning(true);
+      } else {
+        setShowWarning(false);
+      }
+
+    })
   }
 
   const exportToExcel = () => {
@@ -990,7 +1005,29 @@ const DeliveryScreen = () => {
             <Grid item xs={4} display={'flex'} className='order-no'>
               <InputFieldV1 disable={disable} label={t('dcmMaterial_Name') as string} value={materialName} />
             </Grid>
-            <Grid item xs={1.5} ></Grid>
+            <Grid
+              item
+              xs={1.5}
+              style={{
+                fontWeight: "bold",
+                textDecorationColor: "yellow",
+                fontSize: "12px",
+                animation: showWarning ? "blinkColor 1s infinite" : "none", 
+                visibility: showWarning ? "visible" : "hidden" 
+              }}
+            >
+              {showWarning ? t('Warring') : ""}
+            </Grid>
+
+            <style>
+              {`
+                @keyframes blinkColor {
+                  0% { color: red; }
+                  50% { color: yellow; }
+                  100% { color: red; }
+                }
+              `}
+            </style>
             {/* Danh sách nhà cung ứng */}
             <Grid item xs={2.5} paddingLeft={'5px'} paddingRight={'12px'}>
               {checked && (
@@ -1150,7 +1187,7 @@ const DeliveryScreen = () => {
           {
             (dataUser[0].factoryName === 'LVL' || dataUser[0].factoryName === 'LYV' || dataUser[0].factoryName === 'LHG') && (
               <Grid item display={'flex'}>
-                <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} />
+                <MyButton name={"ICMWH"} onClick={() => handleOpen("confirm-Material")} disabled={disable} />
               </Grid>
             )
           }

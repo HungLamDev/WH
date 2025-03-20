@@ -33,6 +33,13 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
 
         },
         {
+            field: "MatName",
+            headerName: "Material Name",
+            align: "center",
+            headerAlign: 'center',
+            width: 150,
+        },
+        {
             field: "MJBH",
             headerName: "MJBH",
             align: "center",
@@ -122,13 +129,7 @@ const DetailMergeBOM = (props: DetailMergeBOMProps) => {
             width: 150,
 
         },
-        {
-            field: "MatName",
-            headerName: "Material Name",
-            align: "center",
-            headerAlign: 'center',
-            width: 150,
-        },
+        
     ];
 
     const style = {

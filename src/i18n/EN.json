@@ -455,6 +455,7 @@
     "msgVersionChange": "The version has changed.",
     "msgNoCreate": "You must create an export slip for the PO or return all materials to create the BOM.",
     "btnGuide": "Guidance",
-    "msgStockOut": "Are you sure you want to export the materials?"
+    "msgStockOut": "Are you sure you want to export the materials?",
+    "Warring": "Warning: There are expired supplies!"
 
 }

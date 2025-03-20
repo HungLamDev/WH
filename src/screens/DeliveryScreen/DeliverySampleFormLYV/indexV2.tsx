@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import FullScreenContainerWithNavBar from "../../../components/FullScreenContainerWithNavBar";
 import MyButton from "../../../components/MyButton";
 import { useState } from "react";
-import { connect_string } from '../../LoginScreen/ChooseFactory';
+import { checkPermissionPrint, connect_string } from '../../LoginScreen/ChooseFactory';
 import { useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import ModalCofirm from '../../../components/ModalConfirm';
@@ -323,7 +323,7 @@ const DeliverySampleLYVScreen = () => {
       width: 150,
 
     },
-   
+
   ];
 
   const columnsBOMOutSource: GridColDef[] = [
@@ -463,6 +463,7 @@ const DeliverySampleLYVScreen = () => {
   const [listMaterialStockoutOutSource, setListMaterialStockoutOutSource] = useState<any[]>([])
   const [article, setArticle] = useState("")
   const [kfjd, setKFJD] = useState("")
+  const [JiJie, setJiJie] = useState("")
   const [mergeNo, setMerNo] = useState("")
   const [testNo, setTestNo] = useState("")
   const [qtyOutSample, setQtyOutSample] = useState<any>({})
@@ -478,6 +479,7 @@ const DeliverySampleLYVScreen = () => {
   const [itemRow, setItemRow] = useState<any>("")
   const [dataMaterialSampleReturn, setDataMaterialSampleReturn] = useState<any[]>([])
   const [checkVersionChange, setCheckVersionChange] = useState<any>(false)
+  const [listCheckPrintInfo, setListCheckPrintInfo] = useState<any[]>([])
 
   //#endregion
 
@@ -845,6 +847,56 @@ const DeliverySampleLYVScreen = () => {
     return response.data;
   }
 
+  const handlePrintInfo = async () => {
+    if (await checkPermissionPrint("mayin")) {
+      if (listCheckPrintInfo.length > 0) {
+        handleOpenConfirm("print")
+      }
+    }
+    else {
+      handleOpenConfirm('print-permission')
+    }
+  }
+
+  const handlePrintInfoOK = () => {
+    handleCloseConfirm()
+    const filteredList = listMaterialBOM.filter((item1: any) =>
+      listCheckPrintInfo.some((item2: any) =>  item1.MatNo  ===   (JGNO === null ? item2.Material_No : item2.CLBH) )
+    );
+    if (filteredList.length > 0) {
+      handleCloseConfirm()
+      //setDisable(true)
+      const list_Prints = filteredList.map((item: any) => ({
+        // standard: item?.Qty || "",
+        standard: (JGNO ===null ? item?.CLSLMin : item?.Qty) || "",
+        Name_Material: item?.MatName || "",
+        article: item?.ARTICLE || "",
+        Stage: kfjd || "",
+        Season: JiJie || "",
+        Pono: item?.po || "",
+        Supplier_Name: item?.Supplier || "",
+        Material_No: item?.MatNo || ""
+      }))
+
+      const data = {
+        list_Prints: list_Prints,
+        // user mayin sẽ in tem thông tin kho mẫu
+        UserID: "51400"
+      }
+      const url = connect_string + "api/PrintLabel_Delivery_Sample_CLick_Standard"
+
+      axios.post(url, data).then(res => {
+        if (res.data == true) {
+          handleOpenConfirm('print-success')
+        }
+        setDisable(false)
+      }).catch(() => {
+        handleOpenConfirm('print-permission')
+        setDisable(false)
+      })
+    }
+  }
+
   //#endregion
 
 
@@ -867,11 +919,12 @@ const DeliverySampleLYVScreen = () => {
             listMaterialStockOut_Outsource={(value: any) => setListMaterialStockoutOutSource(value)}
             JGNO={(value: any) => setJGNO(value)}
             JGNO_Check={(value: any) => setJGNO_Check(value)}
-            listMaterialBOM={(value: any) => setListMaterialBOM(value)}
+            listMaterialBOM={(value: any) => { setListMaterialBOM(value) }}
             listMaterialStockOut={(value: any) => setListMaterialStockout(value)}
             Article={(value: any) => setArticle(value)}
             ref={sidebarRef}
             KFJD={(value: any) => setKFJD(value)}
+            JiJie={(value: any) => setJiJie(value)}
             MergeNo={(value: any) => setMerNo(value)}
             TestNo={(value: any) => setTestNo(value)}
             isOpenSidebar={(value: any) => setIsOpenSibar(value)}
@@ -937,6 +990,10 @@ const DeliverySampleLYVScreen = () => {
                         <MyButton height='2rem' name={t("btnGuide")} onClick={() => handleOpen('Guide')} disabled={disable} />
                         {modalName === 'Guide' && <PdfViewer onClose={handleClose} open={open} pdfFile={pdfFile} />}
                       </Grid>
+                      <Grid item display={'flex'} alignItems={'flex-end'} xs={2}>
+                        {/* In tem thông tin */}
+                        <MyButton height='2rem' name={t("btnPrint")} onClick={handlePrintInfo} disabled={disable} />
+                      </Grid>
                     </Grid>
                   </Stack>
                 </Stack>
@@ -950,10 +1007,12 @@ const DeliverySampleLYVScreen = () => {
                     <MyTableNew
                       columns={columns}
                       rows={listMaterialStockout}
-                      checkBox={false}
+                      checkBox={true}
                       paintingRow={paintingRow}
                       highlightText={highlightText}
                       onDoubleClick={handleDoubleClick}
+                      handleCheckBox={() => { return true }}
+                      listChx={(value: any) => setListCheckPrintInfo(value)}
                     />
                   )
                   :
@@ -961,7 +1020,9 @@ const DeliverySampleLYVScreen = () => {
                     <MyTableNew
                       columns={columnsOutSource}
                       rows={listMaterialStockoutOutSource}
-                      checkBox={false}
+                      checkBox={true}
+                      handleCheckBox={() => { return true }}
+                      listChx={(value: any) => setListCheckPrintInfo(value)}
                     />
                   )
               }
@@ -1020,7 +1081,9 @@ const DeliverySampleLYVScreen = () => {
         {cofirmType === "return-material-sample" && <ModalReturnMaterialSample columns={columnsMaterialReturn} data={dataMaterialSampleReturn} onPressOK={handlePressOKReturnMaterialSample} open={openCofirm} onClose={handleCloseConfirm} title={t("msgReturnMaterial") as string} />}
         {cofirmType === "return-material-error" && <ModalCofirm onPressOK={handleCloseConfirm} showCancel={false} open={openCofirm} title={t("msgReturnMaterialError") as string} />}
         {cofirmType === "return-material-fail" && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} showCancel={false} title={t("msgReturnMaterialFail") as string} />}
-
+        {cofirmType === 'print-permission' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("lblPrintPermission") as string} />}
+        {cofirmType === "print" && <ModalCofirm open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} onPressOK={handlePrintInfoOK} />}
+        {cofirmType === 'print-success' && <ModalCofirm showCancel={false} onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />}
         {/* Quét Camera */}
         {isScannerOpen && <QRScannerV1 onScan={handleScan} open={isScannerOpen} onClose={() => setIsScannerOpen(false)} />}
       </Stack>
@@ -1038,6 +1101,7 @@ interface SidebarProps {
   listMaterialStockOut_Outsource: any,
   Article: any,
   KFJD: any,
+  JiJie: any,
   MergeNo: any,
   TestNo: any,
   isOpenSidebar: any,
@@ -1070,6 +1134,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
     listMaterialStockOut_Outsource,
     Article,
     KFJD,
+    JiJie,
     MergeNo,
     TestNo,
     isOpenSidebar,
@@ -1420,6 +1485,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
       setInfoPO(res.data);
       Article(res?.data?.ARTICLE || "");
       KFJD(res?.data?.KFJD || "");
+      JiJie(res?.data?.JiJie || "")
       MergeNo(res?.data?.YPZLBH || "");
       setMergeNo(res?.data?.YPZLBH || "")
       TestNo(res?.data?.Version || "");
@@ -1546,6 +1612,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
   // lấy danh sách vật tư gia công của đơn
   const getDataWatingOutSource = async (value: any, arrJGNO: any) => {
     setListDataWaiting([]);
+    listMaterialBOM([]);
     if (value === null) {
       await getDataWaiting(valueAutocomplete);
     } else if (value !== null && value !== "") {
@@ -1576,6 +1643,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
           }));
         }
         setListDataWaiting(arr);
+        listMaterialBOM(arr);
       } catch (error) {
         console.error("Error fetching data from get_Merge_Bom_ERP_OutSource:", error);
       }
@@ -1658,7 +1726,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
   // Kiểm tra điều kiện xem phải gia công về ko
   const handleCheckBox = (item: any) => {
-    if (PoOutsource !== null || item.Status === "done" ) {
+    if (PoOutsource !== null || item.Status === "done") {
       return false
     }
     return true

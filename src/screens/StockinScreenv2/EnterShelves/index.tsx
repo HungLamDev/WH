@@ -33,8 +33,12 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     };
     //#endregion
 
+    //#region useSelector
+    const dataUser = useSelector((state: any) => state.UserLogin.user);
+    //#endregion
+
     //#region column header table
-    const columns: GridColDef[] = [
+    const columns: any[] = [
         {
             field: 'stt',
             headerName: t("dcpNum") as string,
@@ -66,11 +70,17 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
             width: 160,
             headerClassName: 'custom-header'
         },
-    ];
-    //#endregion
+        ...(dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV"
+            ? [{
+                field: 'WH',
+                headerName: "WH",
+                width: 160,
+                headerClassName: 'custom-header',
+                selected: true
+            }]
+            : [])
 
-    //#region useSelector
-    const dataUser = useSelector((state: any) => state.UserLogin.user);
+    ];
     //#endregion
 
     //#region Variable
@@ -87,6 +97,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     const [materialNo, setMaterialNo] = useState('')
     const [rows, setRows] = useState([])
     const [color, setColor] = useState(false)
+    const [listWH, setListWH] = useState<string[]>([])
     //#endregion
 
     //#region Func OnChange Input
@@ -125,24 +136,31 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         setOpenCofirm(false)
     }
 
-    const Login = () => {
+    const Login = async () => {
+        
         setIsLoading(true)
         const url = connect_string + "api/Login_ERP"
         const data = {
             UserID: userID,
             PWD: password
         }
-        axios.post(url, data, config).then(response => {
-            if (response.data === true) {
+        try{
+            const res = await axios.post(url, data, config)
+            if (res.data === true) {
+                if (dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV") {
+                    await getDataWH()
+                }
                 setChxLogin(true)
                 setIsLoading(false)
             }
-        }).finally(() => {
+        }
+        catch{
             setIsLoading(false)
-        })
+        }
     }
 
     const showStockInERP = (rack: string) => {
+
         setIsLoading(true)
         setColor(false)
         const url = connect_string + "api/Show_StockIn_ERP"
@@ -155,11 +173,13 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         }
         axios.post(url, data, config).then(response => {
             const arr = response.data.map((item: any, index: any) => ({
+                _id: index,
                 stt: item.stt,
                 Material_No: item.Material_No,
                 Color: item.Color,
                 Total_Qty: item.Total_Qty,
-                Rack: item.Rack
+                Rack: item.Rack,
+                WH: item?.WH || ""
             }))
             setRows(arr)
             if (arr.length > 0) {
@@ -211,6 +231,20 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
             })
         }
     }
+
+    const getDataWH = async () => {
+        setIsLoading(true)
+        const url = connect_string + "api/Get_WH_From_Data_Storage"
+        try {
+            const res = await axios.post(url)
+            setListWH(res.data)
+            setIsLoading(false)
+        }
+        catch {
+            setIsLoading(false)
+        }
+
+    }
     //#endregion
 
     return (
@@ -238,7 +272,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                                             <Grid container rowSpacing={1}>
                                                 <Grid item xs={3}>
                                                     <FormGroup>
-                                                        <FormControlLabel sx={styletext}  control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxAll} onChange={handleChxAll} />} label={t("chxAll") as string} />
+                                                        <FormControlLabel sx={styletext} control={<Checkbox defaultChecked sx={{ color: 'white' }} value={chxAll} onChange={handleChxAll} />} label={t("chxAll") as string} />
                                                     </FormGroup>
                                                 </Grid>
                                                 {/* Tên kệ label*/}
@@ -308,7 +342,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                             </Stack>
                         </Box>
                         <Box sx={{ height: '70%', width: '100%', overflow: 'hidden', }}>
-                            <TableOrigin color={color} columns={columns} rows={rows} arrNotShowCell={[]} handleDoubleClick={null} handlerowClick={null} />
+                            <TableOrigin color={color} columns={columns} rows={rows} arrNotShowCell={[]} handleDoubleClick={null} handlerowClick={null} dataSelected={listWH} />
                         </Box>
                         {cofirmType === 'confirm' && <ModalCofirm onPressOK={enterRackERP} open={openCofirm} onClose={handleCloseConfirm} title={t("msgYouWantUpdate") as string} />}
                         <Backdrop

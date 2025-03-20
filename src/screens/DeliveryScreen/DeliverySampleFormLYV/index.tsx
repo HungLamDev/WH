@@ -1107,6 +1107,7 @@ const DeliverySampleLYVScreen = () => {
     return response.data;
   }
 
+
   //#endregion
 
 
@@ -1227,10 +1228,11 @@ const DeliverySampleLYVScreen = () => {
                     <MyTableNew
                       columns={columns}
                       rows={listMaterialStockout}
-                      checkBox={false}
+                      checkBox={true}
                       paintingRow={paintingRow}
                       highlightText={highlightText}
                       onDoubleClick={handleDoubleClick}
+                      handleCheckBox={() => { return true }}
                     />
                   )
                   :
@@ -1521,7 +1523,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             listMaterialStockOut(result)
           }
           if (res.data.Item1.length > 0 && res.data.Item2 === false) {
-            
+
             const result = listMaterialStockOutSample.map((item: any) => ({
               ...item,
               checkMaterial: res.data.Item1.includes(item?.Material_No)

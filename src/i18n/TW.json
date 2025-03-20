@@ -453,6 +453,7 @@
     "msgVersionChange": "版本已更改。",
     "msgNoCreate": "您必须为PO创建出库单，或退回所有物料以创建BOM。",
     "btnGuide": "指南",
-    "msgStockOut": "您确定要导出物料吗？"
+    "msgStockOut": "您确定要导出物料吗？",
+     "Warring": "警告：有過期用品！"
 
 }

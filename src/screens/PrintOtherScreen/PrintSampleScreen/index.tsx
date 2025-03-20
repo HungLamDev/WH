@@ -39,7 +39,7 @@ import { clearArrayDeleteAndPrint, copyValuesArrayDeleteAndPrint, changeItemsByB
 import TableSample from "../../../components/TableSample";
 
 //#endregion
-const DataHistoryPrintScreen = ({data}:{data?: any}) => {
+const DataHistoryPrintScreen = ({ data }: { data?: any }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -443,88 +443,97 @@ const DataHistoryPrintScreen = ({data}:{data?: any}) => {
     }
   }
 
-  const handleDoubleClick = (colname: string, item: any) => {
+  const handleDoubleClick = async (colname: string, item: any) => {
     // && listChxDown.includes(item)
     if (listChxDown) {
       setOpen(true)
       setIsLoading(true)
-      const url = connect_string + "api/DoubleClick_Data_Print_Sample"
-      const data =
-      {
-        txtInvoid_No: txtInvoid_No,
-        txtOutsource: txtOutsource,
-        txtOrderNo: txtOrderNo,
-        txtMaterial_No: txtMaterial_No,
-        RFID_ini: "",
-        chxSize: chxSize,
-        chxResidual_supplies: chxResidual_supplies,
-        chxChange_Material: chxChange_Material,
-        chxRY: false,
-        chxAll_Outsourt: chxAll_Outsource,
-        chxReprint: chxReprint,
-        dcmCheck: true,
-        User_Serial_Key: dataUser[0].UserId,
-        dcmOrder_No: item.CGNO_Order_No,
-        dcmMaterial_No: item.CLBH_Material_No,
-        dcmMaterial_Type: item.cllb_Material_Type,
-        dcmColor: item.Color,
-        dcmUnit: item.dwbh_Units,
-        dcmQty_ROLL: item.Print_QTY ? item.Print_QTY : "",
-        dcmArrival_QTY: item.Arrial_Qty,
-        dcmQTY: item.QTY,
-        dcmRoll: item.Roll,
-        dcmSize: item.Size,
-        dcmMaterial: item.ywpm_Material !== "" ? item?.ywpm_Material : item.Name_M,
-        dcmProduction: item.nhasx,
-        dcmWork_Order: item.ZLBH_Work_Order,
-        dcmSupplier_no: item.zsdh_Supplier_No,
-        dcmSupplier: item.zsywjc_Supplier,
-        dcmDate: item.CGDate_Date,
-        get_version: dataUser[0].WareHouse,
-        Type_Order: item?.Type_Order
 
+      let rowTableUpFilter: any[] = []
+      for (const item of listChxDown) {
+        rowTableUpFilter.push(await handleLogicDoubleClickStamp(item));
       }
-      axios.post(url, data, configNew).then(response => {
-        if (response.data.length > 0) {
-          const arr = response.data.map((item: any, index: any) => ({
-            _id: item.Barcode,
-            Supplier: item.Supplier,
-            Material_No: item.Material_No,
-            Material_Name: item.Material_Name,
-            Color: item.Color,
-            Size: item.Size,
-            Print_QTY: item.Print_QTY,
-            QTY: item.QTY,
-            dwbh_Units: item.dwbh_Units,
-            Order_No: item.Order_No,
-            Roll: item.Roll,
-            Print_Date: moment(item.Print_Date).format("DD/MM/YYYY"),
-            Production: item.Production,
-            Work_Order: item.Work_Order,
-            Material_Types: item.Material_Types,
-            Barcode: item.Barcode,
-            Supplier_No: item.Supplier_No,
-            Type_Order: item?.Type_Order
-          }))
 
-          const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
-            return !arr.some((newItem: any) => {
-              return newItem.Barcode === oldItem.Barcode;
-            });
-          });
+      const filteredDataInRowUps1 = ArrayRowUps.filter((oldItem: any) => {
+        return !rowTableUpFilter.some((newItem: any) => {
+          return newItem.Barcode === oldItem.Barcode;
+        });
+      });
+      const mergedDataInRowUps = [...filteredDataInRowUps1, ...rowTableUpFilter];
 
-          const mergedDataInRowUps = [...filteredDataInRowUps1, ...arr];
-          dispatch(copyValuesRowUps(mergedDataInRowUps));
+      dispatch(copyValuesRowUps(mergedDataInRowUps));
 
-          // setrowUps(mergedDataInRowUps);
-        }
-      }).finally(() => {
-        setIsLoading(false)
-        setOpen(false)
-      })
-    } else {
+      setIsLoading(false)
+      setOpen(false)
+    }
+    else {
       handleOpenConfirm('checkdata')
-      // alert('bạn phải check trước khi print')
+    }
+  }
+
+  const handleLogicDoubleClickStamp = async (item: any) => {
+    const url = connect_string + "api/DoubleClick_Data_Print_Sample"
+    const data =
+    {
+      txtInvoid_No: txtInvoid_No,
+      txtOutsource: txtOutsource,
+      txtOrderNo: txtOrderNo,
+      txtMaterial_No: txtMaterial_No,
+      RFID_ini: "",
+      chxSize: chxSize,
+      chxResidual_supplies: chxResidual_supplies,
+      chxChange_Material: chxChange_Material,
+      chxRY: false,
+      chxAll_Outsourt: chxAll_Outsource,
+      chxReprint: chxReprint,
+      dcmCheck: true,
+      User_Serial_Key: dataUser[0].UserId,
+      dcmOrder_No: item.CGNO_Order_No,
+      dcmMaterial_No: item.CLBH_Material_No,
+      dcmMaterial_Type: item.cllb_Material_Type,
+      dcmColor: item.Color,
+      dcmUnit: item.dwbh_Units,
+      dcmQty_ROLL: item.Print_QTY ? item.Print_QTY : "",
+      dcmArrival_QTY: item.Arrial_Qty,
+      dcmQTY: item.QTY,
+      dcmRoll: item.Roll,
+      dcmSize: item.Size,
+      dcmMaterial: item.ywpm_Material !== "" ? item?.ywpm_Material : item.Name_M,
+      dcmProduction: item.nhasx,
+      dcmWork_Order: item.ZLBH_Work_Order,
+      dcmSupplier_no: item.zsdh_Supplier_No,
+      dcmSupplier: item.zsywjc_Supplier,
+      dcmDate: item.CGDate_Date,
+      get_version: dataUser[0].WareHouse,
+      Type_Order: item?.Type_Order
+    }
+
+    const res = await axios.post(url, data, configNew)
+
+    if (res.data.length > 0) {
+      const arr = res.data.map((item: any, index: any) => ({
+        _id: item.Barcode,
+        Supplier: item.Supplier,
+        Material_No: item.Material_No,
+        Material_Name: item.Material_Name,
+        Color: item.Color,
+        Size: item.Size,
+        Print_QTY: item.Print_QTY,
+        QTY: item.QTY,
+        dwbh_Units: item.dwbh_Units,
+        Order_No: item.Order_No,
+        Roll: item.Roll,
+        Print_Date: moment(item.Print_Date).format("DD/MM/YYYY"),
+        Production: item.Production,
+        Work_Order: item.Work_Order,
+        Material_Types: item.Material_Types,
+        Barcode: item.Barcode,
+        Supplier_No: item.Supplier_No,
+        Type_Order: item?.Type_Order
+      }))
+
+      return arr[0] || [];
+
     }
   }
 
@@ -825,6 +834,7 @@ const DataHistoryPrintScreen = ({data}:{data?: any}) => {
                 "ZLBH_Work_Order"
               ]}
               dschx={listChxDown}
+              listChx={(value: any) => setListChxDown(value)}
               arrNotShowCell={["_id", "zsdh_Supplier_No", "zsywjc_Supplier"]}
               columnEdit={columnEdit}
             />
