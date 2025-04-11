@@ -36,7 +36,7 @@ interface SidebarProps {
     checkVersion: any
 }
 
-export interface SidebarRef {
+export interface  SidebarRef {
     refreshData: () => Promise<void>;
     refreshMaterial_Stock_Out_Sample: () => Promise<void>;
     refreshMaterial_Stock_Out_Sample_Outsource: () => Promise<void>;
@@ -188,6 +188,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         ) {
             getAllPoNo(debouncedSearchTerm);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm]);
 
     // check vật tư có thay đổi hay không 
@@ -248,6 +249,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                 // }
             }
         })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listMaterialStockOutSample]);
 
     //#endregion
@@ -352,7 +354,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                 _id: index + 1,
                 ...item,
             }));
-
+            console.log("Material_Stock_Out_Sample", arr)
             setListMaterialStockOutSample(arr)
             listMaterialStockOut(arr)
         } catch (error) {
@@ -521,13 +523,12 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
             const data = {
                 YPZLBH: value
             }
-
             try {
                 const res = await axios.post(url, data)
                 setListDataWaitingOutsource(res.data)
                 arrJGNO = res.data || []
             } catch (error) {
-
+             error
             }
         }
         return arrJGNO
@@ -565,6 +566,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                         ...item,
                         Status: ""
                     }));
+                    console.log("danh sách vật tư gia công của đơn", arr)
                 }
                 setListDataWaiting(arr);
                 listMaterialBOM(arr);
@@ -593,7 +595,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
                 }))
 
                 listMaterialStockOut_Outsource(arr)
-
+                console.log(" listMaterialStockOut_Outsource", arr)
             } catch (error) {
                 console.error(error)
             }
@@ -655,24 +657,20 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         }
         return true
     }
-
     //api check có version thay đổi hay không
     const checkVersionChange = async (value: any) => {
         const url = connect_string + "api/check_status_Create";
         const data = {
             PONO: value
         }
-
+        console.log("version" , data)
         try {
-
             const response = await axios.post(url, data);
             return response.data;
         }
         catch (error) {
             console.error("Error during check version change:", error);
         }
-
-
     }
 
 

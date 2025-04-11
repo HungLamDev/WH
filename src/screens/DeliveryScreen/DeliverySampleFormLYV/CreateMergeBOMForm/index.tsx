@@ -246,6 +246,9 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
         setDisable(true);
         const infoPO = await fromPOgetTestNoVersion(value)
         const result = await checkCreateSlip(infoPO?.PONO?.trim())
+        console.log("scan", infoPO)
+        console.log("scan", result)
+
         if (result) {
             handleOpenConfirm("no-create")
             setDisable(false);
@@ -261,6 +264,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
 
             try {
                 const res = await axios.post(url, dataPoNo);
+                console.log("create boom", res)
                 if (res?.data?.TestNo !== null) {
 
                     const checkKFJDAndJiJie = data.some(
@@ -359,6 +363,8 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
                     };
                 })
             );
+            
+            console.log("hung", list_data)
             setData(list_data);
             setMergeNo("");
         } catch (error) {
@@ -455,7 +461,7 @@ const CreateMergeBom = (props: CreateMergeBomProps) => {
     }
 
     //Tô màu dòng trong bảng------------------------------------------
-    const paintingRow = (item: any, row: any) => {
+    const  paintingRow = (item: any, row: any) => {
         if (typeof item !== "string") {
             return item;
         }

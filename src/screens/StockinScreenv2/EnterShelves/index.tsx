@@ -208,7 +208,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     const enterRackERP = () => {
         if (rows.length > 0) {
             setIsLoading(true)
-            const url = connect_string + "api/btn_StockIn_ERP"
+            const url = connect_string + ""
             const data =
             {
                 chxTransition: "false",
@@ -218,6 +218,9 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                 txtUser_ERP: userID,
                 USERID_PWA: dataUser[0].UserId,
             }
+            console.log("data",data)
+            console.log("data rows", rows)
+
             axios.post(url, data, config).then(response => {
                 if (response.data === true) {
                     setColor(true)
@@ -238,6 +241,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
         try {
             const res = await axios.post(url)
             setListWH(res.data)
+
             setIsLoading(false)
         }
         catch {

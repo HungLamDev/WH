@@ -503,7 +503,7 @@ const DeliverySampleLYVScreen = () => {
 
     // Chuyển `row.Barcode` từ chuỗi thành mảng
     const barcodes = row?.Barcode?.split("\r\n");
-
+  
     // Tạo regex từ mảng `barcodes`
     const regex = new RegExp(`(${barcodes?.join("|")})`, "gi");
 
@@ -967,6 +967,7 @@ const DeliverySampleLYVScreen = () => {
               {
                 JGNO === null ?
                   (
+                    
                     <MyTableNew
                       columns={columns}
                       rows={listMaterialStockout}
@@ -977,6 +978,7 @@ const DeliverySampleLYVScreen = () => {
                       handleCheckBox={() => { return true }}
                       listChx={(value: any) => setListCheckPrintInfo(value)}
                     />
+                    
                   )
                   :
                   (

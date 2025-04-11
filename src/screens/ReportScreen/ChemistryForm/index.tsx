@@ -1118,7 +1118,7 @@ const AccountingCardScreen = ({ dataMaterialNo }: { dataMaterialNo?: any }) => {
               >
                 <MyButton
                   name={t("btnClean") as string}
-                  disabled={loading ? loading : disable}
+                  disabled={disable}
                   onClick={handleRefresh}
                 />
               </Grid>

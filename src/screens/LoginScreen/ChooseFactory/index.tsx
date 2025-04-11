@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 //#region  import
 import { Box, FormControl, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { getFactory, setFactory } from "../../../utils/localStorage";
@@ -82,7 +83,8 @@ const ChooseFactory = () => {
         }
         else if (selectedValue === 'LYV') {
             //connect_string = 'https://192.168.0.108:7777/'
-            connect_string = 'https://192.168.30.232/'
+            //connect_string = 'https://192.168.30.232/'
+           connect_string = 'https://192.168.30.100:8989/'
         }
     }, [selectedValue])
     //#endregion

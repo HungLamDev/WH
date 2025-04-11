@@ -460,7 +460,9 @@ const DataHistoryPrintScreen = ({ data }: { data?: any }) => {
         });
       });
       const mergedDataInRowUps = [...filteredDataInRowUps1, ...rowTableUpFilter];
-
+      console.log("mergedDataInRowUps", mergedDataInRowUps)
+      
+      
       dispatch(copyValuesRowUps(mergedDataInRowUps));
 
       setIsLoading(false)
@@ -531,6 +533,7 @@ const DataHistoryPrintScreen = ({ data }: { data?: any }) => {
         Supplier_No: item.Supplier_No,
         Type_Order: item?.Type_Order
       }))
+    
 
       return arr[0] || [];
 
