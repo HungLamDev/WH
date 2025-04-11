@@ -501,7 +501,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
 
             await getDataWaitingAndgetInfoPO(newValue);
 
-            setPoNo('');
+            if(res.data.length > 0) setPoNo('');
 
         } catch (error) {
             console.error("Error fetching PO data:", error);
@@ -671,10 +671,7 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>((props, ref) => {
         catch (error) {
             console.error("Error during check version change:", error);
         }
-
-
     }
-
 
     return (
         <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>

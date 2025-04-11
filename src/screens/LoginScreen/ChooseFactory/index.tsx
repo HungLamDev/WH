@@ -73,7 +73,7 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LHG') {
-           connect_string = 'https://192.168.30.100:7777/'
+            connect_string = 'https://192.168.30.100:7777/'
             //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LYM') {
@@ -81,8 +81,8 @@ const ChooseFactory = () => {
             //connect_string = 'https://192.168.30.232/'
         }
         else if (selectedValue === 'LYV') {
-            //connect_string = 'https://192.168.0.108:7777/'
-            connect_string = 'https://192.168.30.232/'
+            connect_string = 'https://192.168.0.108:7777/'
+            // connect_string = 'https://192.168.30.232/'
         }
     }, [selectedValue])
     //#endregion

@@ -456,6 +456,6 @@
     "msgNoCreate": "You must create an export slip for the PO or return all materials to create the BOM.",
     "btnGuide": "Guidance",
     "msgStockOut": "Are you sure you want to export the materials?",
-    "Warring": "Warning: There are expired supplies!"
-
+    "Warring": "Warning: There are expired supplies!",
+    "msgNotRegisteredWH": "You have materials that are not registered in the warehouse. Please check again."
 }

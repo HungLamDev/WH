@@ -454,6 +454,7 @@
     "msgNoCreate": "您必须为PO创建出库单，或退回所有物料以创建BOM。",
     "btnGuide": "指南",
     "msgStockOut": "您确定要导出物料吗？",
-     "Warring": "警告：有過期用品！"
+     "Warring": "警告：有過期用品！",
+    "msgNotRegisteredWH": "您有未注册到仓库的物料，请检查。"
 
 }

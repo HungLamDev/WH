@@ -8,7 +8,7 @@ import TableCheckBox from "../../components/TableCheckBox";
 import { useState } from "react";
 import { GridColDef } from "@mui/x-data-grid";
 import { config } from "../../utils/api";
-import { connect_string } from "../LoginScreen/ChooseFactory";
+import { checkPermissionPrint, connect_string } from "../LoginScreen/ChooseFactory";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import moment from "moment";
@@ -437,14 +437,25 @@ const LabelSplit = () => {
         setRowUps([])
     }
 
-    const handlePrint = () => {
-        handleOpenConfirm('print')
+    const handlePrint = async () => {
+        if (await checkPermissionPrint(dataUser[0].UserId)) {
+            if (listChx.length > 0) {
+                handleOpenConfirm('print')
+            }
+            else {
+                handleOpenConfirm('error-data')
+            }
+        }
+        else {
+            handleOpenConfirm('print-permission')
+        }
+
     }
 
     const handlePrintOK = () => {
         handleCloseConfirm()
         setIsLoading(true)
-        const url = connect_string + "/api/Print_Label_Cut"
+        const url = connect_string + "api/Print_Label_Cut"
         const userid = dataUser[0].UserId
         const arr = listChx.map((item: any) => ({
             dcpBarcode: item.BarCode,
@@ -461,6 +472,8 @@ const LabelSplit = () => {
                 handleOpenConfirm('print-erorr')
                 setIsLoading(false)
             }
+        }).finally(() => {
+            setIsLoading(false)
         })
     }
 

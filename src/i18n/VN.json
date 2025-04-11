@@ -456,5 +456,6 @@
     "msgNoCreate": "Bạn phải tạo phiếu xuất cho PO hoặc trả lại hết vật tư để tạo BOM",
     "btnGuide": "Hướng dẫn",
     "msgStockOut": "Bạn có chắc chắn muốn xuất vật tư?",
-    "Warring": " Cảnh báo: Có vật tư quá hạn!"
+    "Warring": " Cảnh báo: Có vật tư quá hạn!",
+    "msgNotRegisteredWH": "Bạn có vật tư chưa đăng ký kho vui lòng kiểm tra lại"
 }

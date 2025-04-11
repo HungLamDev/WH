@@ -844,7 +844,7 @@ const DeliverySampleLYVScreen = () => {
       const data = {
         list_Prints: list_Prints,
         // user mayin sẽ in tem thông tin kho mẫu
-        UserID: "51400"
+        UserID: "mayin"
       }
       const url = connect_string + "api/PrintLabel_Delivery_Sample_CLick_Standard"
 
