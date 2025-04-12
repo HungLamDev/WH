@@ -38,7 +38,6 @@ const MyAutocomplete = (props: InputFieldV1Props) => {
                         className="dark-bg-primary "
                         disablePortal
                         options={data}
-                        id="combo-box-demo"
                         // disabled={disable}
                         sx={{
                             borderRadius: "50px",

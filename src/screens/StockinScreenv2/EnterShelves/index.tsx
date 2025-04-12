@@ -137,14 +137,14 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     }
 
     const Login = async () => {
-        
+
         setIsLoading(true)
         const url = connect_string + "api/Login_ERP"
         const data = {
             UserID: userID,
             PWD: password
         }
-        try{
+        try {
             const res = await axios.post(url, data, config)
             if (res.data === true) {
                 if (dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV") {
@@ -154,7 +154,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                 setIsLoading(false)
             }
         }
-        catch{
+        catch {
             setIsLoading(false)
         }
     }
@@ -206,32 +206,35 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
     }
 
     const enterRackERP = () => {
-        if (rows.length > 0) {
-            setIsLoading(true)
-            const url = connect_string + ""
-            const data =
-            {
-                chxTransition: "false",
-                List_dgv: rows,
-                saFactory: dataUser[0].factoryName,
-                saVersion: dataUser[0].WareHouse,
-                txtUser_ERP: userID,
-                USERID_PWA: dataUser[0].UserId,
+        const check = rows.findIndex((item: any) => item?.WH === "")
+        if (check !== -1 && dataUser[0].WareHouse === "Sample" && dataUser[0].factoryName === "LYV") {
+            handleOpenConfirm("error-register-wh")
+        }
+        else {
+            if (rows.length > 0) {
+                setIsLoading(true)
+                const url = connect_string + "api/btn_StockIn_ERP"
+                const data =
+                {
+                    chxTransition: "false",
+                    List_dgv: rows,
+                    saFactory: dataUser[0].factoryName,
+                    saVersion: dataUser[0].WareHouse,
+                    txtUser_ERP: userID,
+                    USERID_PWA: dataUser[0].UserId,
+                }
+                axios.post(url, data, config).then(response => {
+                    if (response.data === true) {
+                        setColor(true)
+                    }
+                    else {
+                        setColor(false)
+                    }
+                    setOpenCofirm(false)
+                }).finally(() => {
+                    setIsLoading(false)
+                })
             }
-            console.log("data",data)
-            console.log("data rows", rows)
-
-            axios.post(url, data, config).then(response => {
-                if (response.data === true) {
-                    setColor(true)
-                }
-                else {
-                    setColor(false)
-                }
-                setOpenCofirm(false)
-            }).finally(() => {
-                setIsLoading(false)
-            })
         }
     }
 
@@ -349,6 +352,7 @@ const EnterShelves = ({ open, onClose }: { open?: any, onClose?: any }) => {
                             <TableOrigin color={color} columns={columns} rows={rows} arrNotShowCell={[]} handleDoubleClick={null} handlerowClick={null} dataSelected={listWH} />
                         </Box>
                         {cofirmType === 'confirm' && <ModalCofirm onPressOK={enterRackERP} open={openCofirm} onClose={handleCloseConfirm} title={t("msgYouWantUpdate") as string} />}
+                        {cofirmType === 'error-register-wh' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgNotRegisteredWH") as string} showOk={false}/>}
                         <Backdrop
                             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                             open={isLoading}

@@ -429,7 +429,7 @@ const StampPrintScreen = () => {
         dispatch(clearArrayRowDowntoUp())
         // setDataInRowUps([])
         const url = connect_string + 'api/btnSearch'
-       const data = {
+        const data = {
             user_id: dataUser[0].UserId,
             Order_No: orderNo,
             txtOutsource: outSource,
@@ -441,7 +441,7 @@ const StampPrintScreen = () => {
             chxPrint_RY: chxPrint_RY,
             CGDate_Date: date,
             get_version: dataUser[0].WareHouse,
-            get_Fatory: dataUser[0].factoryName
+            get_Factory: dataUser[0].factoryName
         }
 
         axios.post(url, data, configNew).then(response => {
@@ -463,7 +463,7 @@ const StampPrintScreen = () => {
                 ZLBH_Work_Order: item.ZLBH_Work_Order,
                 cllb_Material_Type: item.cllb_Material_Type,
                 Name_Material_Detail: item.Name_Material_Detail,
-                Type_Order:item?.Type_Order,
+                Type_Order: item?.Type_Order,
                 Suplier_no: item?.zsdh_Supplier_No
             }))
             dispatch(copyValues(arr))
@@ -535,7 +535,7 @@ const StampPrintScreen = () => {
                                 Production: item.Production,
                                 Work_Order: item.Work_Order,
                                 Material_Type: item.Material_Type,
-                                Barcode: item.Barcode, 
+                                Barcode: item.Barcode,
                                 Type_Order: item?.Type_Order
                             };
                         });
@@ -652,7 +652,7 @@ const StampPrintScreen = () => {
             get_Factory: dataUser[0].factoryName
         }))
 
-        if(isApi === true){
+        if (isApi === true) {
             setIsApi(false)
             axios.post(url, dataprint, config).then(response => {
                 if (response.status == 200) {
@@ -668,7 +668,7 @@ const StampPrintScreen = () => {
                 setIsApi(true)
             })
         }
-      
+
     }
 
     const handleOrderWordKeyDown = (event: any) => {
@@ -776,7 +776,7 @@ const StampPrintScreen = () => {
                     <Grid container alignItems={'center'} >
                         {/* Đơn gia công */}
                         <Grid item xs={5} display={'flex'}>
-                            <InputField  label={t("lblOutsource") as string} handle={handleOutSource} keydown={null} value={outSource} disable={disable} />
+                            <InputField label={t("lblOutsource") as string} handle={handleOutSource} keydown={null} value={outSource} disable={disable} />
                         </Grid>
                         {/* Check In Lại */}
                         <Grid item xs={1}>
@@ -868,17 +868,17 @@ const StampPrintScreen = () => {
                 </Stack>
                 <Stack direction={"row"} spacing={2} alignItems={'center'}>
                     {/* Tìm kiếm  */}
-                    <MyButton name={t("btnSearch") as string} onClick={Search} disabled={disable} />
+                    <MyButton name={t("btnSearch") as string} onClick={Search} disabled={isLoading} />
                     {/* Làm mới */}
-                    <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={disable} />
+                    <MyButton name={t("btnClean") as string} onClick={handleRefresh} disabled={isLoading} />
                     {/* Xóa */}
-                    <MyButton name={t("btnDelete") as string} onClick={handleDelete} disabled={disable} />
+                    <MyButton name={t("btnDelete") as string} onClick={handleDelete} disabled={isLoading} />
                     {/* In */}
-                    <MyButton name={t("btnPrint") as string} onClick={handlePrint} disabled={disable} />
+                    <MyButton name={t("btnPrint") as string} onClick={handlePrint} disabled={isLoading} />
                     {/* Xem trước */}
-                    <MyButton name={t("btnPrivewPrint") as string} onClick={() => setOpen(true)} disabled={disable} />
+                    <MyButton name={t("btnPrivewPrint") as string} onClick={() => setOpen(true)} disabled={isLoading} />
                     {/* Đăng ký */}
-                    <MyButton name={t("btnRegister")} disabled={disable} onClick={() => navigate("/register-label")} />
+                    <MyButton name={t("btnRegister")} disabled={isLoading} onClick={() => navigate("/register-label")} />
                     {isLoading && <CircularProgress size={'25px'} color="info" />}
                     {cofirmType === 'print' && <ModalCofirm onPressOK={handlePrintOK} open={openCofirm} onClose={handleCloseConfirm} title={t("msgCofirmPrint") as string} />}
                     {/* {cofirmType === 'print-success' && <ModalCofirm onPressOK={handleCloseConfirm} open={openCofirm} onClose={handleCloseConfirm} title={t("msgPrintSuccess") as string} />} */}
@@ -893,21 +893,21 @@ const StampPrintScreen = () => {
             </Box>
             <Stack overflow={"hidden"} sx={{ height: '100%' }}>
                 <Stack sx={{ height: '50%', }}>
-                    <TableCheckBox 
-                    columns={columnsUp} 
-                    rows={ArrayRowUps} 
-                    listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }} 
-                    arrNotShowCell={['_id']} 
+                    <TableCheckBox
+                        columns={columnsUp}
+                        rows={ArrayRowUps}
+                        listChx={(params: any) => { dispatch(copyValuesArrayDeleteAndPrint(params)) }}
+                        arrNotShowCell={['_id']}
                     />
                 </Stack>
                 <Stack sx={{ height: '50%' }} >
-                    <TableDateTimePicker 
-                    checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false} 
-                    checkOrderNo={orderNo !== "" ? true : false} 
-                    columns={columnsDown} 
-                    rows={ArrayRowDowns} 
-                    onDoubleClick={handleDoubleClick} 
-                    arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id','Suplier_no']} 
+                    <TableDateTimePicker
+                        checkOther={(chxRY === true || chxResidual_supplies === true || chxTotal_RY === true) ? true : false}
+                        checkOrderNo={orderNo !== "" ? true : false}
+                        columns={columnsDown}
+                        rows={ArrayRowDowns}
+                        onDoubleClick={handleDoubleClick}
+                        arrEditCell={["Size", "qty_roll", "Roll", "ywpm_Material", "Arrival_QTY", "ywsm_Production", "ZLBH_Work_Order", "ngay", "Color"]} arrNotShowCell={['_id', 'Suplier_no']}
                     />
                 </Stack>
             </Stack>

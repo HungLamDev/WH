@@ -46,6 +46,7 @@ import { ILanguageItem } from "../../LoginScreen/ChooseLanguage/interface.ts";
 import { registerSW } from 'virtual:pwa-register'
 import { handleCheckUserERP } from "../../../utils/api_global.ts";
 import ModalCofirm from "../../../components/ModalConfirm/index.tsx";
+import { getFactory, getWareHouse } from "../../../utils/localStorage.ts";
 
 //#endregion
 
@@ -111,6 +112,8 @@ const Menu = () => {
   //#region List Data
 
   // Danh sách chức năng
+  const WH = getWareHouse()
+  const Factory = getFactory()
   const menuList: { title: string; icon: string; path: string, modal: boolean, modalName: string, disabled?: boolean }[] = [
     {
       title: t("btnStock_In") as string,
@@ -141,16 +144,16 @@ const Menu = () => {
       modalName: '',
     },
     {
-      title: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV') ? t("btnDeliverySample") : t("btnDelivery"),
+      title: (WH === 'Sample' && Factory === 'LYV') ? t("btnDeliverySample") : t("btnDelivery"),
       icon: deliveryIcon,
-      path: (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName !== 'LYV') ? "/delivery-sample" : (dataUser[0].WareHouse === 'Sample' && dataUser[0].factoryName === 'LYV') ? "/delivery-sample-lyv" : "/delivery",
+      path: (WH === 'Sample' && Factory !== 'LYV') ? "/delivery-sample" : (WH === 'Sample' && Factory === 'LYV') ? "/delivery-sample-lyv" : "/delivery",
       modal: false,
       modalName: '',
     },
     {
       title: t("btnAccounting_Card") as string,
       icon: reportIcon,
-      path: dataUser[0].WareHouse === 'Fitting' ? "/accountingcard-sole" : "/accounting-card",
+      path: WH === 'Fitting' ? "/accountingcard-sole" : "/accounting-card",
       modal: dataUser[0].UserRole === 'Administrator' || dataUser[0].UserRole === 'Manager' || dataUser[0].UserRole === 'Account' ? true : false,
       modalName: 'listAccounting_Card',
     },
